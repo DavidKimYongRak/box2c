@@ -1,0 +1,116 @@
+﻿using System;
+using System.Runtime.InteropServices;
+
+namespace Box2CS
+{
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate void BeginEndContactDelegate(IntPtr contact);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate void PreSolveDelegate(IntPtr contact, IntPtr oldManifold);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate void PostSolveDelegate(IntPtr contact, IntPtr impulse);
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct cb2contactlistener
+	{
+		public BeginEndContactDelegate BeginContact;
+		public BeginEndContactDelegate EndContact;
+		public PreSolveDelegate PreSolve;
+		public PostSolveDelegate PostSolve;
+	}
+
+	/// Contact impulses for reporting. Impulses are used instead of forces because
+	/// sub-step forces may approach infinity for rigid body collisions. These
+	/// match up one-to-one with the contact points in Manifold.
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct ContactImpulse
+	{
+		public fixed float normalImpulses[Box2DSettings.b2_maxManifoldPoints];
+		public fixed float tangentImpulses[Box2DSettings.b2_maxManifoldPoints];
+	};
+
+	public abstract class ContactListener : IDisposable
+	{
+		static class NativeMethods
+		{
+			[DllImport(Box2DSettings.Box2CDLLName)]
+			public static extern IntPtr cb2contactlistener_create(cb2contactlistener functions);
+
+			[DllImport(Box2DSettings.Box2CDLLName)]
+			public static extern void cb2contactlistener_destroy(IntPtr listener);
+		}
+
+		IntPtr _listener;
+		cb2contactlistener functions;
+
+		internal IntPtr Listener
+		{
+			get { return _listener; }
+		}
+
+		public ContactListener()
+		{
+			functions = new cb2contactlistener();
+			functions.BeginContact += BeginContactInternal;
+			functions.EndContact += EndContactInternal;
+			functions.PreSolve += PreSolveInternal;
+			functions.PostSolve += PostSolveInternal;
+
+			_listener = NativeMethods.cb2contactlistener_create(functions);
+		}
+
+		void BeginContactInternal(IntPtr contact)
+		{
+			BeginContact(Contact.FromPtr(contact));
+		}
+
+		void EndContactInternal(IntPtr contact)
+		{
+			EndContact(Contact.FromPtr(contact));
+		}
+
+		void PreSolveInternal(IntPtr contact, IntPtr oldManifold)
+		{
+			PreSolve(Contact.FromPtr(contact), (Manifold)Marshal.PtrToStructure(oldManifold, typeof(Manifold)));
+		}
+
+		void PostSolveInternal(IntPtr contact, IntPtr impulse)
+		{
+			PostSolve(Contact.FromPtr(contact), (ContactImpulse)Marshal.PtrToStructure(impulse, typeof(ContactImpulse)));
+		}
+
+		public abstract void BeginContact(Contact contact);
+		public abstract void EndContact(Contact contact);
+		public abstract void PreSolve(Contact contact, Manifold oldManifold);
+		public abstract void PostSolve(Contact contact, ContactImpulse impulse);
+
+		#region IDisposable
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		bool disposed;
+
+		private void Dispose(bool disposing)
+		{
+			if (!this.disposed)
+			{
+				if (disposing)
+				{
+				}
+
+				NativeMethods.cb2contactlistener_destroy(_listener);
+
+				disposed = true;
+			}
+		}
+
+		~ContactListener()
+		{
+			Dispose(false);
+		}
+		#endregion
+	}
+}
