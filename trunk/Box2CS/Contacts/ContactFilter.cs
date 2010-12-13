@@ -44,7 +44,19 @@ namespace Box2CS
 			return ShouldCollide(Fixture.FromPtr(fixtureA), Fixture.FromPtr(fixtureB));
 		}
 
-		public abstract bool ShouldCollide(Fixture fixtureA, Fixture fixtureB);
+		public virtual bool ShouldCollide(Fixture fixtureA, Fixture fixtureB)
+		{
+			FilterData filterA = fixtureA.FilterData;
+			FilterData filterB = fixtureB.FilterData;
+
+			if (filterA.GroupIndex == filterB.GroupIndex && filterA.GroupIndex != 0)
+			{
+				return filterA.GroupIndex > 0;
+			}
+
+			bool collide = (filterA.MaskBits & filterB.CategoryBits) != 0 && (filterA.CategoryBits & filterB.MaskBits) != 0;
+			return collide;
+		}
 
 		#region IDisposable
 		public void Dispose()
