@@ -73,6 +73,29 @@ namespace Box2CS
 			return new Vec2(-l.x, -l.y);
 		}
 
+		public static bool operator==(Vec2 l, Vec2 r)
+		{
+			return (l.x == r.x && l.y == r.y);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is Vec2)
+				return ((Vec2)obj) == this;
+
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
+		public static bool operator !=(Vec2 l, Vec2 r)
+		{
+			return !(l == r);
+		}
+
 		/// Perform the dot product on two vectors.
 		public float Dot(Vec2 b)
 		{

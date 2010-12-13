@@ -233,14 +233,15 @@ namespace Box2DSharpRenderTest
 			{
 				if (fixtureA.Body.UserData == null ||
 					fixtureB.Body.UserData == null)
-					return true;
+					return base.ShouldCollide(fixtureA, fixtureB);
 
 				if ((((int)fixtureA.Body.UserData) == 1 &&
 					((int)fixtureB.Body.UserData) == 2) ||
 					(((int)fixtureB.Body.UserData) == 1 &&
 					((int)fixtureA.Body.UserData) == 2))
 					return false;
-				return true;
+
+				return base.ShouldCollide(fixtureA, fixtureB);
 			}
 		}
 
@@ -425,6 +426,8 @@ namespace Box2DSharpRenderTest
 		ContactFilter _filterer;
 		MyListener _listener;
 
+		Biped player;
+
 		private void Form2_Load(object sender, EventArgs e)
 		{
 			sogc = new SimpleOpenGlControl();
@@ -437,20 +440,22 @@ namespace Box2DSharpRenderTest
 			sogc.MouseDown += new MouseEventHandler(sogc_MouseDown);
 			sogc.MouseUp += new MouseEventHandler(sogc_MouseUp);
 			sogc.KeyDown += new KeyEventHandler(sogc_KeyDown);
+			sogc.KeyUp += new KeyEventHandler(sogc_KeyUp);
 			Controls.Add(sogc);
 
 			sogc.InitializeContexts();
 			InitOpenGL(sogc.Size, 1, PointF.Empty);
 
 			// Define the gravity vector.
-			Vec2 gravity = new Vec2(0.0f, -21.0f);
+			Vec2 gravity = new Vec2(0.0f, -17.0f);
 
 			// Do we want to let bodies sleep?
 			bool doSleep = true;
 
 			// Construct a world object, which will hold and simulate the rigid bodies.
 			world = new World(gravity, doSleep);
-			//	world.SetWarmStarting(true);
+			world.WarmStarting = true;
+			world.ContinuousPhysics = true;
 
 			{
 				float bottom = (float)(sogc.Height / 2) / 14.0f;
@@ -508,8 +513,18 @@ namespace Box2DSharpRenderTest
 			_glidChain2 = Ilut.ilutGLLoadImage("chain_bottom.png");
 			_glidChainball = Ilut.ilutGLLoadImage("chainball.png");
 
+			player = new Biped(world, new Vec2(0, 0));
 		}
 
+		[Flags]
+		public enum EGameKeys
+		{
+			Up = 1,
+			Right = 2,
+			Down = 4,
+			Left = 8,
+		}
+		EGameKeys _gameKeys = 0;
 
 		Point _downPos;
 		void sogc_MouseUp(object sender, MouseEventArgs e)
@@ -600,8 +615,39 @@ namespace Box2DSharpRenderTest
 		{
 			switch (e.KeyCode)
 			{
-			case Keys.D:
+			case Keys.L:
 				_drawDebug = !_drawDebug;
+				break;
+			case Keys.W:
+				_gameKeys |= EGameKeys.Up;
+				break;
+			case Keys.S:
+				_gameKeys |= EGameKeys.Down;
+				break;
+			case Keys.A:
+				_gameKeys |= EGameKeys.Left;
+				break;
+			case Keys.D:
+				_gameKeys |= EGameKeys.Right;
+				break;
+			}
+		}
+
+		void sogc_KeyUp(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyCode)
+			{
+			case Keys.W:
+				_gameKeys &= ~EGameKeys.Up;
+				break;
+			case Keys.S:
+				_gameKeys &= ~EGameKeys.Down;
+				break;
+			case Keys.A:
+				_gameKeys &= ~EGameKeys.Left;
+				break;
+			case Keys.D:
+				_gameKeys &= ~EGameKeys.Right;
 				break;
 			}
 		}
@@ -654,6 +700,17 @@ namespace Box2DSharpRenderTest
 			int velocityIterations = 8;
 			int positionIterations = 4;
 
+			const int MoveSpeed = 450 * 9;
+
+			if ((_gameKeys & EGameKeys.Up) != 0)
+				player.Bodies[(int)EBipedFixtureIndex.Chest].ApplyForce(new Vec2(0, MoveSpeed), player.Bodies[(int)EBipedFixtureIndex.Chest].WorldCenter);
+			if ((_gameKeys & EGameKeys.Down) != 0)
+				player.Bodies[(int)EBipedFixtureIndex.Chest].ApplyForce(new Vec2(0, -MoveSpeed / 2), player.Bodies[(int)EBipedFixtureIndex.Chest].WorldCenter);
+			if ((_gameKeys & EGameKeys.Left) != 0)
+				player.Bodies[(int)EBipedFixtureIndex.Chest].ApplyForce(new Vec2(-MoveSpeed / 2, 0), player.Bodies[(int)EBipedFixtureIndex.Chest].WorldCenter);
+			if ((_gameKeys & EGameKeys.Right) != 0)
+				player.Bodies[(int)EBipedFixtureIndex.Chest].ApplyForce(new Vec2(MoveSpeed / 2, 0), player.Bodies[(int)EBipedFixtureIndex.Chest].WorldCenter);
+
 			// This is our little game loop.
 			// Instruct the world to perform a single step of simulation.
 			// It is generally best to keep the time step and iterations fixed.
@@ -704,7 +761,7 @@ namespace Box2DSharpRenderTest
 			Gl.glMatrixMode(Gl.GL_MODELVIEW);
 		}
 
-		bool _drawDebug = false;
+		bool _drawDebug = true;
 
 		public void OpenGLDraw()
 		{
