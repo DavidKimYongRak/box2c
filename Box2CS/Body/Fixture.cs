@@ -457,6 +457,19 @@ namespace Box2CS
 		{
 			get { AABB temp; NativeMethods.b2fixture_getaabb(_fixturePtr, out temp); return temp; }
 		}
+
+		public static bool operator ==(Fixture l, Fixture r)
+		{
+			return !(l == r);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is Fixture)
+				return (obj as Fixture) == this;
+
+			return base.Equals(obj);
+		}
 	}
 
 }

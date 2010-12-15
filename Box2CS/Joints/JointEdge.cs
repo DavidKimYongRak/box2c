@@ -54,5 +54,23 @@ namespace Box2CS
 		{
 			get { return JointEdge.FromPtr(NativeMethods.b2jointedge_getprev(_jointEdgePtr)); }
 		}
+
+		public static bool operator ==(JointEdge l, JointEdge r)
+		{
+			return l._jointEdgePtr == r._jointEdgePtr;
+		}
+
+		public static bool operator !=(JointEdge l, JointEdge r)
+		{
+			return !(l == r);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is JointEdge)
+				return (obj as JointEdge) == this;
+
+			return base.Equals(obj);
+		}
 	}
 }

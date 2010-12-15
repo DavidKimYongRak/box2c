@@ -103,6 +103,24 @@ namespace Box2CS
 			get { return NativeMethods.b2jointdef_getcollideconnected(_jointDefPtr); }
 			set { NativeMethods.b2jointdef_setcollideconnected(_jointDefPtr, value); }
 		}
+
+		public static bool operator ==(JointDef l, JointDef r)
+		{
+			return l._jointDefPtr == r._jointDefPtr;
+		}
+
+		public static bool operator !=(JointDef l, JointDef r)
+		{
+			return !(l == r);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is JointDef)
+				return (obj as JointDef) == this;
+
+			return base.Equals(obj);
+		}
 	}
 
 	public abstract class Joint
@@ -254,6 +272,24 @@ namespace Box2CS
 				else
 					NativeMethods.b2joint_setuserdata(_jointPtr, IntPtr.Zero);
 			}
+		}
+
+		public static bool operator ==(Joint l, Joint r)
+		{
+			return l._jointPtr == r._jointPtr;
+		}
+
+		public static bool operator !=(Joint l, Joint r)
+		{
+			return !(l == r);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is Joint)
+				return (obj as Joint) == this;
+
+			return base.Equals(obj);
 		}
 	}
 }

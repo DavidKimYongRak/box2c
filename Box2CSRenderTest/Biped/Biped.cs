@@ -14,11 +14,11 @@ namespace Box2DSharpRenderTest
 			biped.Bodies[(int)type].CreateFixture(def.Fixtures[(int)type]);
 		}
 
-		public Biped(World world, Vec2 position)
+		public Biped(World world, Vec2 position, float xScale, float yScale)
 		{
 			m_world = world;
 
-			BipedDef def = new BipedDef(9.0f);
+			BipedDef def = new BipedDef(xScale, yScale);
 			BodyDef bd = new BodyDef();
 
 			// create body parts

@@ -693,5 +693,23 @@ namespace Box2CS
 		{
 			get { return World.FromPtr(NativeMethods.b2body_getworld(_bodyPtr)); }
 		}
+
+		public static bool operator ==(Body l, Body r)
+		{
+			return l.BodyPtr == r.BodyPtr;
+		}
+
+		public static bool operator !=(Body l, Body r)
+		{
+			return !(l == r);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is Body)
+				return (obj as Body) == this;
+
+			return base.Equals(obj);
+		}
 	}
 }

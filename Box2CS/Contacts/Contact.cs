@@ -206,5 +206,23 @@ namespace Box2CS
 
 			NativeMethods.b2contact_evaluate(_contactPtr, out manifold, xfA, xfB);
 		}
+
+		public static bool operator ==(Contact l, Contact r)
+		{
+			return l._contactPtr == r._contactPtr;
+		}
+
+		public static bool operator !=(Contact l, Contact r)
+		{
+			return !(l == r);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is Contact)
+				return (obj as Contact) == this;
+
+			return base.Equals(obj);
+		}
 	}
 }

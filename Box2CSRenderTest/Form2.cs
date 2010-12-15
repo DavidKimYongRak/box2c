@@ -400,10 +400,63 @@ namespace Box2DSharpRenderTest
 			}
 		}
 
+		public class Bullet
+		{
+			Body _body;
+			bool _remove;
+
+			public bool Remove
+			{
+				get { return _remove; }
+				set { _remove = value; }
+			}
+
+			public Body Body
+			{
+				get { return _body; }
+			}
+
+			public Bullet(Biped biped)
+			{
+				var gunHand = biped.Bodies[(int)EBipedFixtureIndex.LHand];
+
+				//var pos = gunHand.WorldCenter + new Vec2((float)(cos * 0.5f), (float)(-sin * 0.5f)) + new Vec2((float)(sin * 2), (float)(-cos * 2));
+				Vec2 test = gunHand.WorldCenter;
+				Vec2 Vel = new Vec2((float)Math.Sin(gunHand.Angle), (float)-Math.Cos(gunHand.Angle));
+				Vec2 ShootPoint = new Vec2(2.0f, -0.17f);
+
+				test.x += (0.5f + ShootPoint.y) * (float)Math.Sin(gunHand.Angle + (90.0f).ToRad());
+				test.y += (0.5f + ShootPoint.y) * (float)-Math.Cos(gunHand.Angle + (90.0f).ToRad());
+
+				test.x += (ShootPoint.x) * (float)Math.Sin(gunHand.Angle);
+				test.y += (ShootPoint.x) * (float)-Math.Cos(gunHand.Angle);
+
+				var bulletBodyDef = new BodyDef(EBodyType.b2_dynamicBody, test);
+				var bulletBodyShape = new PolygonShape(0.5f, 0.15f, gunHand.Angle + ((float)Math.PI / 2));
+				_body = world.CreateBody(bulletBodyDef);
+				_body.CreateFixture(new FixtureDef(bulletBodyShape, 75, 0.0f, 0.2f, gunHand.FixtureList.FilterData));
+				_body.IsBullet = true;
+				_body.LinearVelocity = new Vec2((float)(Vel.x * 80), (float)(Vel.y * 80));
+				_body.UserData = (biped == player1) ? 4 : 5;
+			}
+		}
+
+		static List<Body> BodiesToRemove = new List<Body>();
+
 		public class MyListener : ContactListener
 		{
 			public override void BeginContact(Contact contact)
 			{
+				if ((contact.FixtureA.Body.UserData != null && ((int)contact.FixtureA.Body.UserData == 4 || (int)contact.FixtureA.Body.UserData == 5)) ||
+					(contact.FixtureB.Body.UserData != null && ((int)contact.FixtureB.Body.UserData == 4 || (int)contact.FixtureB.Body.UserData == 5)))
+				{
+					var bullet = contact.FixtureA.Body.UserData != null && ((int)contact.FixtureA.Body.UserData == 4 || (int)contact.FixtureA.Body.UserData == 5) ? contact.FixtureA.Body : contact.FixtureB.Body;
+					var body = (contact.FixtureB.Body == bullet) ? contact.FixtureA.Body : contact.FixtureB.Body;
+
+					contact.Enabled = false;
+					if (!BodiesToRemove.Contains(bullet))
+						BodiesToRemove.Add(bullet);
+				}
 			}
 
 			public override void EndContact(Contact contact)
@@ -426,7 +479,7 @@ namespace Box2DSharpRenderTest
 		ContactFilter _filterer;
 		MyListener _listener;
 
-		Biped player;
+		static Biped player1, player2;
 
 		private void Form2_Load(object sender, EventArgs e)
 		{
@@ -483,6 +536,13 @@ namespace Box2DSharpRenderTest
 						shape.SetAsEdge(new Vec2(left, bottom), new Vec2(left, -bottom));
 						ground.CreateFixture(shape, 0.0f);
 					}
+
+					ground = world.CreateBody(bd);
+
+					{
+						shape.SetAsEdge(new Vec2(left, bottom), new Vec2(-left, bottom));
+						ground.CreateFixture(shape, 0.0f);
+					}
 				}
 			}
 
@@ -513,7 +573,29 @@ namespace Box2DSharpRenderTest
 			_glidChain2 = Ilut.ilutGLLoadImage("chain_bottom.png");
 			_glidChainball = Ilut.ilutGLLoadImage("chainball.png");
 
-			player = new Biped(world, new Vec2(0, 0));
+			player1 = new Biped(world, new Vec2(-24, 0), 9, 9);
+
+			var gun = new MeshShape("gun.bmesh", 3, true);
+			var gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player1.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(1.5f, 1.7f), 4.71238898f));
+			gun.AddToBody(gunBody, 2);
+			foreach (var f in gunBody.Fixtures)
+				f.FilterData = player1.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
+
+			var weld = new WeldJointDef();
+			weld.Initialize(gunBody, player1.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
+			world.CreateJoint(weld);
+
+			player2 = new Biped(world, new Vec2(24, 0), -9, 9);
+
+			gun = new MeshShape("gun.bmesh", 3, false);
+			gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player2.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(-1.5f, 1.7f), 4.71238898f));
+			gun.AddToBody(gunBody, 2);
+			foreach (var f in gunBody.Fixtures)
+				f.FilterData = player2.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
+
+			weld = new WeldJointDef();
+			weld.Initialize(gunBody, player2.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
+			world.CreateJoint(weld);
 		}
 
 		[Flags]
@@ -523,6 +605,8 @@ namespace Box2DSharpRenderTest
 			Right = 2,
 			Down = 4,
 			Left = 8,
+			Legs = 16,
+			Hands = 32,
 		}
 		EGameKeys _gameKeys = 0;
 
@@ -615,7 +699,7 @@ namespace Box2DSharpRenderTest
 		{
 			switch (e.KeyCode)
 			{
-			case Keys.L:
+			case Keys.Z:
 				_drawDebug = !_drawDebug;
 				break;
 			case Keys.W:
@@ -629,6 +713,15 @@ namespace Box2DSharpRenderTest
 				break;
 			case Keys.D:
 				_gameKeys |= EGameKeys.Right;
+				break;
+			case Keys.L:
+				_gameKeys |= EGameKeys.Hands;
+				break;
+			case Keys.K:
+				_gameKeys |= EGameKeys.Legs;
+				break;
+			case Keys.H:
+				new Bullet(player1);
 				break;
 			}
 		}
@@ -648,6 +741,12 @@ namespace Box2DSharpRenderTest
 				break;
 			case Keys.D:
 				_gameKeys &= ~EGameKeys.Right;
+				break;
+			case Keys.L:
+				_gameKeys &= ~EGameKeys.Hands;
+				break;
+			case Keys.K:
+				_gameKeys &= ~EGameKeys.Legs;
 				break;
 			}
 		}
@@ -696,27 +795,58 @@ namespace Box2DSharpRenderTest
 			// Prepare for simulation. Typically we use a time step of 1/60 of a
 			// second (60Hz) and 10 iterations. This provides a high quality simulation
 			// in most game scenarios.
-			float timeStep = 1.0f / 60.0f;
+			float timeStep = 1.0f / 75.0f;
 			int velocityIterations = 8;
 			int positionIterations = 4;
 
 			const int MoveSpeed = 450 * 9;
 
-			if ((_gameKeys & EGameKeys.Up) != 0)
-				player.Bodies[(int)EBipedFixtureIndex.Chest].ApplyForce(new Vec2(0, MoveSpeed), player.Bodies[(int)EBipedFixtureIndex.Chest].WorldCenter);
-			if ((_gameKeys & EGameKeys.Down) != 0)
-				player.Bodies[(int)EBipedFixtureIndex.Chest].ApplyForce(new Vec2(0, -MoveSpeed / 2), player.Bodies[(int)EBipedFixtureIndex.Chest].WorldCenter);
-			if ((_gameKeys & EGameKeys.Left) != 0)
-				player.Bodies[(int)EBipedFixtureIndex.Chest].ApplyForce(new Vec2(-MoveSpeed / 2, 0), player.Bodies[(int)EBipedFixtureIndex.Chest].WorldCenter);
-			if ((_gameKeys & EGameKeys.Right) != 0)
-				player.Bodies[(int)EBipedFixtureIndex.Chest].ApplyForce(new Vec2(MoveSpeed / 2, 0), player.Bodies[(int)EBipedFixtureIndex.Chest].WorldCenter);
+			EBipedFixtureIndex[] fixturesToMove;
+			float speedMultiplier = 1;
 
+			if ((_gameKeys & EGameKeys.Legs) != 0)
+			{
+				fixturesToMove = new EBipedFixtureIndex[] { EBipedFixtureIndex.LFoot, EBipedFixtureIndex.RFoot };
+				speedMultiplier = 0.25f;
+			}
+			else if ((_gameKeys & EGameKeys.Hands) != 0)
+			{
+				fixturesToMove = new EBipedFixtureIndex[] { EBipedFixtureIndex.LHand, EBipedFixtureIndex.RHand };
+				speedMultiplier = 0.25f;
+			}
+			else
+				fixturesToMove = new EBipedFixtureIndex[] { EBipedFixtureIndex.Chest };
+
+			if ((_gameKeys & EGameKeys.Up) != 0)
+			{
+				foreach (var x in fixturesToMove)
+					player1.Bodies[(int)x].ApplyForce(new Vec2(0, MoveSpeed * speedMultiplier), player1.Bodies[(int)x].WorldCenter);
+			}
+			if ((_gameKeys & EGameKeys.Down) != 0)
+			{
+				foreach (var x in fixturesToMove)
+					player1.Bodies[(int)x].ApplyForce(new Vec2(0, (-MoveSpeed / 2) * speedMultiplier), player1.Bodies[(int)x].WorldCenter);
+			}
+			if ((_gameKeys & EGameKeys.Left) != 0)
+			{
+				foreach (var x in fixturesToMove)
+					player1.Bodies[(int)x].ApplyForce(new Vec2((-MoveSpeed / 2) * speedMultiplier, 0), player1.Bodies[(int)x].WorldCenter);
+			}
+			if ((_gameKeys & EGameKeys.Right) != 0)
+			{
+				foreach (var x in fixturesToMove)
+					player1.Bodies[(int)x].ApplyForce(new Vec2((MoveSpeed / 2) * speedMultiplier, 0), player1.Bodies[(int)x].WorldCenter);
+			}
 			// This is our little game loop.
 			// Instruct the world to perform a single step of simulation.
 			// It is generally best to keep the time step and iterations fixed.
 			world.Step(timeStep, velocityIterations, positionIterations);
 
 			sogc.Invalidate();
+
+			foreach (var x in BodiesToRemove)
+				world.DestroyBody(x);
+			BodiesToRemove.Clear();
 		}
 
 		void sogc_Resize(object sender, EventArgs e)
@@ -768,7 +898,6 @@ namespace Box2DSharpRenderTest
 			Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
 			Gl.glMatrixMode(Gl.GL_MODELVIEW);
 			Gl.glLoadIdentity();
-
 
 			Gl.glTranslatef(sogc.Width / 2, sogc.Height / 2, 0);
 			Gl.glScalef(14, -14, 14);
@@ -858,6 +987,19 @@ namespace Box2DSharpRenderTest
 		private void Form2_KeyDown(object sender, KeyEventArgs e)
 		{
 
+		}
+	}
+
+	public static class Extensions
+	{
+		public static float ToDeg(this float rad)
+		{
+			return (float)(180.0f * rad / Math.PI);
+		}
+
+		public static float ToRad(this float deg)
+		{
+			return (float)(Math.PI * deg / 180.0f);
 		}
 	}
 }
