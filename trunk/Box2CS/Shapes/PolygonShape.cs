@@ -34,9 +34,18 @@ namespace Box2CS
 			InternalShape.m_type = EShapeType.e_polygon;
 		}
 
-		public PolygonShape(Vec2[] vertices, Vec2 centroid) :
+		bool _autoReverse;
+
+		public bool AutoReverse
+		{
+			get { return _autoReverse; }
+			set { _autoReverse = value; }
+		}
+
+		public PolygonShape(Vec2[] vertices, Vec2 centroid, bool autoReverse = false) :
 			this()
 		{
+			_autoReverse = autoReverse;
 			if (vertices.Length == 2)
 				SetAsEdge(vertices[0], vertices[1]);
 			else
@@ -45,7 +54,12 @@ namespace Box2CS
 		}
 
 		public PolygonShape(params Vec2[] vertices) :
-			this(vertices, Vec2.Empty)
+			this(false, vertices)
+		{
+		}
+
+		public PolygonShape(bool autoReverse, params Vec2[] vertices) :
+			this(vertices, Vec2.Empty, autoReverse)
 		{
 		}
 
@@ -234,7 +248,13 @@ _internalPolyShape.m_vertices[0];
 					// has colinear edges.
 					float s = edge.Cross(r);
 					if (!(s > 0.0f))
-						throw new Exception();
+					{
+						if (_autoReverse)
+							ReverseOrder();
+						else
+							throw new Exception();
+						return;
+					}
 				}
 			}
 #endif
@@ -292,6 +312,13 @@ _internalPolyShape.m_vertices[0];
 
 				_internalPolyShape.m_vertexCount = value.Length;
 			}
+		}
+
+		public void ReverseOrder()
+		{
+			var list = new System.Collections.Generic.List<Vec2>(Vertices);
+			list.Reverse();
+			Vertices = list.ToArray();
 		}
 	}
 }

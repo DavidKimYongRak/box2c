@@ -65,7 +65,7 @@ namespace Testbed
 				{
 					bd.BodyType = EBodyType.b2_dynamicBody;
 					bd.Position = new Vec2(0, 10.0f);
-					using (MeshShape ms = new MeshShape("stool.bmesh"))
+					using (MeshShape ms = new MeshShape("stool.bmesh", 1, false))
 					{
 						var body = m_world.CreateBody(bd);
 						body.IsBullet = true;

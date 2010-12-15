@@ -54,5 +54,23 @@ namespace Box2CS
 		{
 			get { return ContactEdge.FromPtr(NativeMethods.b2contactedge_getprev(_contactEdgePtr)); }
 		}
+
+		public static bool operator ==(ContactEdge l, ContactEdge r)
+		{
+			return l._contactEdgePtr == r._contactEdgePtr;
+		}
+
+		public static bool operator !=(ContactEdge l, ContactEdge r)
+		{
+			return !(l == r);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is ContactEdge)
+				return (obj as ContactEdge) == this;
+
+			return base.Equals(obj);
+		}
 	}
 }

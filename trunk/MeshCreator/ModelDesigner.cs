@@ -18,12 +18,25 @@ namespace MeshCreator
 			InitializeComponent();
 		}
 
-		public List<Vec2> vecs = new List<Vec2>();
-		public Vec2 placingVec = new Vec2();
+		public List<Mesh> _meshes = new List<Mesh>();
+		public Mesh _currentMesh;
 
+		public Vec2 placingVec = new Vec2();
 		public Bitmap RefImage;
 		public int MovingVertex = -1;
 		public Point ClickPos = new Point(), LastMovePos = new Point();
+
+		public void AddMesh(Mesh mesh)
+		{
+			_meshes.Add(mesh);
+			treeView1.Nodes.Add("Mesh");
+		}
+
+		public void RemoveMesh(Mesh mesh)
+		{
+			treeView1.Nodes.RemoveAt(_meshes.IndexOf(mesh));
+			_meshes.Remove(mesh);
+		}
 
 		public void DrawGrid(Graphics e)
 		{
@@ -50,54 +63,59 @@ namespace MeshCreator
 
 			DrawGrid(e.Graphics);
 
-			try
+			foreach (var mesh in _meshes)
 			{
-				ConvexDecomposition.Polygon p = new ConvexDecomposition.Polygon();
-
-				foreach (var b in vecs)
+				var vecs = mesh.Vertices;
+				var lineColor = (mesh == _currentMesh) ? Color.Blue : Color.Black;
+				try
 				{
-					p.x.Add(b.x);
-					p.y.Add(b.y);
-				}
+					ConvexDecomposition.Polygon p = new ConvexDecomposition.Polygon();
 
-				List<ConvexDecomposition.Polygon> results = new List<ConvexDecomposition.Polygon>();
-				ConvexDecomposition.Statics.DecomposeConvex(p, results, 24);
-
-				foreach (var res in results)
-				{
-					List<Vec2> v = res.GetVertexVecs();
-
-					for (int i = 0; i < v.Count; ++i)
+					foreach (var b in vecs)
 					{
-						e.Graphics.FillRectangle((SolidBrush)Brushes.Black, v[i].x - 1, v[i].y - 1, 3, 3);
+						p.x.Add(b.x);
+						p.y.Add(b.y);
+					}
+
+					List<ConvexDecomposition.Polygon> results = new List<ConvexDecomposition.Polygon>();
+					ConvexDecomposition.Statics.DecomposeConvex(p, results, 24);
+
+					foreach (var res in results)
+					{
+						List<Vec2> v = res.GetVertexVecs();
+
+						for (int i = 0; i < v.Count; ++i)
+						{
+							e.Graphics.FillRectangle(Brushes.Black, v[i].x - 1, v[i].y - 1, 3, 3);
+
+							int nextVec = i + 1;
+							if (nextVec == v.Count)
+								nextVec = 0;
+							e.Graphics.DrawLine(new Pen(Color.Goldenrod, 2), v[i].x, v[i].y, v[nextVec].x, v[nextVec].y);
+						}
+					}
+
+					for (int i = 0; i < vecs.Count; ++i)
+					{
+						e.Graphics.FillRectangle(Brushes.Black, vecs[i].x - 1, vecs[i].y - 1, 3, 3);
 
 						int nextVec = i + 1;
-						if (nextVec == v.Count)
+						if (nextVec == vecs.Count)
 							nextVec = 0;
-						e.Graphics.DrawLine(new Pen(Color.Goldenrod, 2), v[i].x, v[i].y, v[nextVec].x, v[nextVec].y);
+						e.Graphics.DrawLine(new Pen(lineColor, 2), vecs[i].x, vecs[i].y, vecs[nextVec].x, vecs[nextVec].y);
 					}
 				}
-
-				for (int i = 0; i < vecs.Count; ++i)
+				catch
 				{
-					e.Graphics.FillRectangle((SolidBrush)Brushes.Black, vecs[i].x - 1, vecs[i].y - 1, 3, 3);
+					for (int i = 0; i < vecs.Count; ++i)
+					{
+						e.Graphics.FillRectangle((SolidBrush)Brushes.Black, vecs[i].x - 1, vecs[i].y - 1, 3, 3);
 
-					int nextVec = i + 1;
-					if (nextVec == vecs.Count)
-						nextVec = 0;
-					e.Graphics.DrawLine(new Pen(Color.Black, 2), vecs[i].x, vecs[i].y, vecs[nextVec].x, vecs[nextVec].y);
-				}
-			}
-			catch
-			{
-				for (int i = 0; i < vecs.Count; ++i)
-				{
-					e.Graphics.FillRectangle((SolidBrush)Brushes.Black, vecs[i].x - 1, vecs[i].y - 1, 3, 3);
-
-					int nextVec = i + 1;
-					if (nextVec == vecs.Count)
-						nextVec = 0;
-					e.Graphics.DrawLine(new Pen(Color.Red, 2), vecs[i].x, vecs[i].y, vecs[nextVec].x, vecs[nextVec].y);
+						int nextVec = i + 1;
+						if (nextVec == vecs.Count)
+							nextVec = 0;
+						e.Graphics.DrawLine(new Pen(Color.Red, 2), vecs[i].x, vecs[i].y, vecs[nextVec].x, vecs[nextVec].y);
+					}
 				}
 			}
 		}
@@ -130,15 +148,15 @@ namespace MeshCreator
 		{
 			if (e.Button == System.Windows.Forms.MouseButtons.Left)
 			{
-				vecs.Add(new Vec2(e.Location.X, e.Location.Y));
-				MovingVertex = vecs.Count - 1;
+				_currentMesh.Vertices.Add(new Vec2(e.Location.X, e.Location.Y));
+				MovingVertex = _currentMesh.Vertices.Count - 1;
 			}
 			else if (e.Button == System.Windows.Forms.MouseButtons.Right)
 			{
 				Rectangle b = new Rectangle(e.Location.X - 2, e.Location.Y - 2, 7, 7);
-				for (int i = 0; i < vecs.Count; ++i)
+				for (int i = 0; i < _currentMesh.Vertices.Count; ++i)
 				{
-					if (b.IntersectsWith(new Rectangle((int)vecs[i].x, (int)vecs[i].y, 1, 1)))
+					if (b.IntersectsWith(new Rectangle((int)_currentMesh.Vertices[i].x, (int)_currentMesh.Vertices[i].y, 1, 1)))
 					{
 						MovingVertex = i;
 						break;
@@ -148,11 +166,11 @@ namespace MeshCreator
 			else if (e.Button == System.Windows.Forms.MouseButtons.Middle)
 			{
 				Rectangle b = new Rectangle(e.Location.X - 2, e.Location.Y - 2, 7, 7);
-				for (int i = 0; i < vecs.Count; ++i)
+				for (int i = 0; i < _currentMesh.Vertices.Count; ++i)
 				{
-					if (b.IntersectsWith(new Rectangle((int)vecs[i].x, (int)vecs[i].y, 1, 1)))
+					if (b.IntersectsWith(new Rectangle((int)_currentMesh.Vertices[i].x, (int)_currentMesh.Vertices[i].y, 1, 1)))
 					{
-						vecs.RemoveAt(i);
+						_currentMesh.Vertices.RemoveAt(i);
 						break;
 					}
 				}
@@ -168,8 +186,8 @@ namespace MeshCreator
 		{
 			if (MovingVertex != -1)
 			{
-				vecs[MovingVertex] = new Vec2(vecs[MovingVertex].x -  (LastMovePos.X - e.Location.X),
-								vecs[MovingVertex].y - (LastMovePos.Y - e.Location.Y));
+				_currentMesh.Vertices[MovingVertex] = new Vec2(_currentMesh.Vertices[MovingVertex].x - (LastMovePos.X - e.Location.X),
+								_currentMesh.Vertices[MovingVertex].y - (LastMovePos.Y - e.Location.Y));
 				LastMovePos = e.Location;
 				pictureBox1.Invalidate();
 			}
@@ -179,7 +197,7 @@ namespace MeshCreator
 		{
 			if (MovingVertex != -1)
 			{
-				vecs[MovingVertex] = new Vec2(Snap(vecs[MovingVertex].x), Snap(vecs[MovingVertex].y));
+				_currentMesh.Vertices[MovingVertex] = new Vec2(Snap(_currentMesh.Vertices[MovingVertex].x), Snap(_currentMesh.Vertices[MovingVertex].y));
 				MovingVertex = -1;
 				pictureBox1.Invalidate();
 			}
@@ -207,40 +225,44 @@ namespace MeshCreator
 			{
 				sf.RestoreDirectory = true;
 				sf.Filter = "All Files (*)|*";
-				sf.DefaultExt = "txt";
+				sf.DefaultExt = "bmesh";
 
 				if (sf.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{
 					using (System.IO.FileStream fs = new System.IO.FileStream(sf.FileName, System.IO.FileMode.Create))
 					{
-						using (System.IO.StreamWriter sw = new System.IO.StreamWriter(fs))
+						List<PolygonShape> shapes = new List<PolygonShape>();
+
+						float largestX = 0, largestY = 0;
+						foreach (var mesh in _meshes)
 						{
-							ConvexDecomposition.Polygon p = new ConvexDecomposition.Polygon();
-
-							foreach (var b in vecs)
+							for (int i = 0; i < mesh.Vertices.Count; ++i)
 							{
-								p.x.Add(b.x);
-								p.y.Add(b.y);
-							}
-
-							List<Vec2> newVecs = new List<Vec2>();
-							
-							float largestX = 0, largestY = 0;
-							for (int i = 0; i < vecs.Count; ++i)
-							{
-								if (Math.Abs(vecs[i].x) > largestX)
-									largestX = Math.Abs(vecs[i].x);
-								if (Math.Abs(vecs[i].y) > largestY)
-									largestY = Math.Abs(vecs[i].y);
+								if (Math.Abs(mesh.Vertices[i].x) > largestX)
+									largestX = Math.Abs(mesh.Vertices[i].x);
+								if (Math.Abs(mesh.Vertices[i].y) > largestY)
+									largestY = Math.Abs(mesh.Vertices[i].y);
 							}
 
 							if (largestY > largestX)
 								largestX = largestY;
 							else
 								largestY = largestX;
+						}
 
-							for (int i = 0; i < vecs.Count; ++i)
-								newVecs.Add(new Vec2(vecs[i].x / largestX, vecs[i].y / largestY));
+						foreach (var mesh in _meshes)
+						{
+							ConvexDecomposition.Polygon p = new ConvexDecomposition.Polygon();
+							foreach (var b in mesh.Vertices)
+							{
+								p.x.Add(b.x);
+								p.y.Add(b.y);
+							}
+
+							List<Vec2> newVecs = new List<Vec2>();
+
+							for (int i = 0; i < mesh.Vertices.Count; ++i)
+								newVecs.Add(new Vec2(mesh.Vertices[i].x / largestX, mesh.Vertices[i].y / largestY));
 
 							List<ConvexDecomposition.Polygon> results = new List<ConvexDecomposition.Polygon>();
 							ConvexDecomposition.Statics.DecomposeConvex(p, results, 24);
@@ -257,47 +279,19 @@ namespace MeshCreator
 							{
 								List<Vec2> v = res.GetVertexVecs();
 
-								sw.WriteLine (
-									"{");
+								//sw.WriteLine(
+								//	"{");
 
-								for (int i = 0; i < v.Count; ++i)
-									sw.WriteLine("\t"+v[i].x.ToString() + " " + v[i].y.ToString());
+								//for (int i = 0; i < v.Count; ++i)
+								//	sw.WriteLine("\t" + v[i].x.ToString() + " " + v[i].y.ToString());
 
-								sw.WriteLine("}");
+								//sw.WriteLine("}");
+
+								shapes.Add(new PolygonShape(v.ToArray()));
 							}
-
-#if OMIT
-							sw.WriteLine("\t\t}");
-							sw.WriteLine("\t),");
-
-							// write indices
-
-							sw.WriteLine("\tnew KeyValuePair<int, int>[] {");
-							for (int m = 0; m < vecs.Count; ++m)
-							{
-								bool Found = false;
-								for (int i = 0; i < results.Count; ++i)
-								{
-									List<Vec2> v = results[i].GetVertexVecs();
-
-									for (int z = 0; z < v.Count; ++z)
-									{
-										if (v[z] == newVecs[m])
-										{
-											Found = true;
-											sw.WriteLine("\t\tnew KeyValuePair<int, int> (" + i.ToString() + ", " + z.ToString()+"),");
-											break;
-										}
-									}
-
-									if (Found)
-										break;
-								}
-							}
-							sw.WriteLine("\t}");
-							sw.WriteLine(");");
-#endif
 						}
+
+						new MeshShape(shapes.ToArray()).SaveBinary(fs);
 					}
 				}
 			}
@@ -305,7 +299,8 @@ namespace MeshCreator
 
 		private void newToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			vecs.Clear();
+			_meshes.Clear();
+			_meshes.Add(_currentMesh = new Mesh());
 			pictureBox1.Invalidate();
 		}
 
@@ -319,21 +314,8 @@ namespace MeshCreator
 
 				if (dg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{
-					vecs.Clear();
-
-					using (System.IO.FileStream str = new System.IO.FileStream(dg.FileName, System.IO.FileMode.Open))
-					{
-						using (System.IO.StreamReader sr = new System.IO.StreamReader(str))
-						{
-							int amt = int.Parse(sr.ReadLine());
-
-							for (int i = 0; i < amt; ++i)
-							{
-								string[] p = sr.ReadLine().Split();
-								vecs.Add(new Vec2(float.Parse(p[0]), float.Parse(p[1])));
-							}
-						}
-					}
+					_meshes.Clear();
+					_meshes.Add(_currentMesh = new Mesh());
 
 					pictureBox1.Invalidate();
 				}
@@ -342,7 +324,7 @@ namespace MeshCreator
 
 		private void ModelDesigner_Load(object sender, EventArgs e)
 		{
-
+			AddMesh(_currentMesh = new Mesh());
 		}
 
 		private void referenceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -359,6 +341,62 @@ namespace MeshCreator
 
 				pictureBox1.Invalidate();
 			}
+		}
+
+		private void pictureBox1_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void pruneVerticesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			for (int i = 0; i < _currentMesh.Vertices.Count; ++i)
+			{
+				int start = i;
+				int middle = i + 1;
+
+				if (middle >= _currentMesh.Vertices.Count)
+					middle = 0;
+
+				int end = middle + 1;
+
+				if (end >= _currentMesh.Vertices.Count)
+					end = 0;
+
+				var len_sm = (_currentMesh.Vertices[start] - _currentMesh.Vertices[middle]).Length();
+				var len_me = (_currentMesh.Vertices[middle] - _currentMesh.Vertices[end]).Length();
+				var len_se = (_currentMesh.Vertices[start] - _currentMesh.Vertices[end]).Length();
+
+				if ((len_sm + len_me) == len_se)
+				{
+					_currentMesh.Vertices.RemoveAt(middle);
+					i = -1;
+					continue;
+				}
+			}
+
+			Invalidate();
+		}
+
+		private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+			_currentMesh = _meshes[e.Node.Index];
+			pictureBox1.Invalidate();
+		}
+
+		private void toolStripButton1_Click(object sender, EventArgs e)
+		{
+			AddMesh(new Mesh());
+		}
+	}
+
+	public class Mesh
+	{
+		List<Vec2> _vertices = new List<Vec2>();
+
+		public List<Vec2> Vertices
+		{
+			get { return _vertices; }
 		}
 	}
 }

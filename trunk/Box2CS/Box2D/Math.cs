@@ -58,9 +58,14 @@ namespace Box2CS
 			return new Vec2(l.x + r.x, l.y + r.y);
 		}
 
-		public static Vec2 operator*(Vec2 l, float v)
+		public static Vec2 operator *(Vec2 l, float v)
 		{
 			return new Vec2(l.x * v, l.y * v);
+		}
+
+		public static Vec2 operator *(Vec2 l, Vec2 v)
+		{
+			return new Vec2(l.x * v.x, l.y * v.y);
 		}
 
 		public static Vec2 operator*(float v, Vec2 l)

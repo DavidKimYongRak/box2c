@@ -12,6 +12,8 @@ namespace Box2CS
 	public class MeshShape : IDisposable
 	{
 		List<Shape> _shapes = new List<Shape>();
+		float _scale = 1;
+		bool _invert = false;
 
 		public List<Shape> Shapes
 		{
@@ -28,8 +30,10 @@ namespace Box2CS
 				_shapes.Add(shape.Clone());
 		}
 
-		public MeshShape(string fileName)
+		public MeshShape(string fileName, float scale, bool invert)
 		{
+			_invert = invert;
+			_scale = scale;
 			Load(fileName);
 		}
 
@@ -75,6 +79,7 @@ namespace Box2CS
 					case EShapeType.e_polygon:
 						{
 							PolygonShape shape = new PolygonShape();
+							shape.AutoReverse = true;
 							shape.Centroid = new Vec2(reader.ReadSingle(), reader.ReadSingle());
 							shape.Radius = reader.ReadSingle();
 
@@ -82,14 +87,14 @@ namespace Box2CS
 
 							Vec2[] vertices = new Vec2[vertexCount], normals = new Vec2[vertexCount];
 
-							for (byte x = 0; x < vertexCount; ++x)
+							for (int x = (vertexCount - 1); x >= 0; --x)
 							{
-								vertices[x] = new Vec2(reader.ReadSingle(), reader.ReadSingle());
-								normals[x] = new Vec2(reader.ReadSingle(), reader.ReadSingle());
+								vertices[x] = new Vec2(reader.ReadSingle() * _scale, (_invert ? -1 : 1) * (reader.ReadSingle() * _scale));
+								normals[x] = new Vec2(reader.ReadSingle(), (_invert ? -1 : 1) * (reader.ReadSingle()));
 							}
 
 							shape.Vertices = vertices;
-							shape.Normals = normals;
+							//shape.Normals = normals;
 							_shapes.Add(shape);
 						}
 						break;
