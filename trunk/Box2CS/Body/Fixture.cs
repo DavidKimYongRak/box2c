@@ -460,6 +460,11 @@ namespace Box2CS
 
 		public static bool operator ==(Fixture l, Fixture r)
 		{
+			return (l.FixturePtr == r.FixturePtr);
+		}
+
+		public static bool operator !=(Fixture l, Fixture r)
+		{
 			return !(l == r);
 		}
 
