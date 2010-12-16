@@ -460,6 +460,12 @@ namespace Box2CS
 
 		public static bool operator ==(Fixture l, Fixture r)
 		{
+			if ((object)l == null && (object)r == null)
+				return true;
+			else if ((object)l == null && (object)r != null ||
+				(object)l != null && (object)r == null)
+				return false;
+
 			return (l.FixturePtr == r.FixturePtr);
 		}
 
@@ -474,6 +480,11 @@ namespace Box2CS
 				return (obj as Fixture) == this;
 
 			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return FixturePtr.GetHashCode();
 		}
 	}
 

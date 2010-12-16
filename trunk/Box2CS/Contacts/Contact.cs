@@ -209,6 +209,12 @@ namespace Box2CS
 
 		public static bool operator ==(Contact l, Contact r)
 		{
+			if ((object)l == null && (object)r == null)
+				return true;
+			else if ((object)l == null && (object)r != null ||
+				(object)l != null && (object)r == null)
+				return false;
+
 			return l._contactPtr == r._contactPtr;
 		}
 
@@ -223,6 +229,11 @@ namespace Box2CS
 				return (obj as Contact) == this;
 
 			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return _contactPtr.GetHashCode();
 		}
 	}
 }

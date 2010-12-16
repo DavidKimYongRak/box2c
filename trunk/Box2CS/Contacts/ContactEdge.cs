@@ -57,6 +57,12 @@ namespace Box2CS
 
 		public static bool operator ==(ContactEdge l, ContactEdge r)
 		{
+			if ((object)l == null && (object)r == null)
+				return true;
+			else if ((object)l == null && (object)r != null ||
+				(object)l != null && (object)r == null)
+				return false;
+
 			return l._contactEdgePtr == r._contactEdgePtr;
 		}
 
@@ -71,6 +77,11 @@ namespace Box2CS
 				return (obj as ContactEdge) == this;
 
 			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return _contactEdgePtr.GetHashCode();
 		}
 	}
 }
