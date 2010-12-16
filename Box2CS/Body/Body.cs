@@ -701,6 +701,12 @@ namespace Box2CS
 
 		public static bool operator !=(Body l, Body r)
 		{
+			if ((object)l == null && (object)r == null)
+				return true;
+			else if ((object)l == null && (object)r != null ||
+				(object)l != null && (object)r == null)
+				return false;
+			
 			return !(l == r);
 		}
 
@@ -710,6 +716,11 @@ namespace Box2CS
 				return (obj as Body) == this;
 
 			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return BodyPtr.GetHashCode();
 		}
 	}
 }

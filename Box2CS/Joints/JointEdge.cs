@@ -57,6 +57,12 @@ namespace Box2CS
 
 		public static bool operator ==(JointEdge l, JointEdge r)
 		{
+			if ((object)l == null && (object)r == null)
+				return true;
+			else if ((object)l == null && (object)r != null ||
+				(object)l != null && (object)r == null)
+				return false;
+
 			return l._jointEdgePtr == r._jointEdgePtr;
 		}
 
@@ -71,6 +77,11 @@ namespace Box2CS
 				return (obj as JointEdge) == this;
 
 			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return _jointEdgePtr.GetHashCode();
 		}
 	}
 }

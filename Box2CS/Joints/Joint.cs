@@ -106,6 +106,12 @@ namespace Box2CS
 
 		public static bool operator ==(JointDef l, JointDef r)
 		{
+			if ((object)l == null && (object)r == null)
+				return true;
+			else if ((object)l == null && (object)r != null ||
+				(object)l != null && (object)r == null)
+				return false;
+
 			return l._jointDefPtr == r._jointDefPtr;
 		}
 
@@ -120,6 +126,11 @@ namespace Box2CS
 				return (obj as JointDef) == this;
 
 			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return _jointDefPtr.GetHashCode();
 		}
 	}
 
@@ -276,6 +287,12 @@ namespace Box2CS
 
 		public static bool operator ==(Joint l, Joint r)
 		{
+			if ((object)l == null && (object)r == null)
+				return true;
+			else if ((object)l == null && (object)r != null ||
+				(object)l != null && (object)r == null)
+				return false;
+
 			return l._jointPtr == r._jointPtr;
 		}
 
@@ -290,6 +307,11 @@ namespace Box2CS
 				return (obj as Joint) == this;
 
 			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return _jointPtr.GetHashCode();
 		}
 	}
 }
