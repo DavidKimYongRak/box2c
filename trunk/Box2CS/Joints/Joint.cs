@@ -17,6 +17,87 @@ namespace Box2CS
 		e_frictionJoint,
 	};
 
+#if !NEW_JOINTS
+	[StructLayout(LayoutKind.Sequential)]
+	public abstract class JointDef : IFixedSize
+	{
+		EJointType _type;
+		IntPtr _userData;
+		IntPtr _bodyA;
+		IntPtr _bodyB;
+		bool _collideConnected;
+
+		int IFixedSize.FixedSize()
+		{
+			throw new Exception();
+		}
+		
+		void IFixedSize.Lock()
+		{
+		}
+
+		void IFixedSize.Unlock()
+		{
+		}
+
+		public JointDef()
+		{
+			_type = EJointType.e_unknownJoint;
+			_userData = IntPtr.Zero;
+			_bodyA = IntPtr.Zero;
+			_bodyB = IntPtr.Zero;
+			_collideConnected = false;
+		}
+
+		public EJointType JointType
+		{
+			get { return _type; }
+			protected set { _type = value; }
+		}
+
+		public object UserData
+		{
+			get
+			{
+				return UserDataStorage.JointStorage.ObjectFromHandle(UserDataStorage.IntPtrToHandle(_userData));
+			}
+
+			set
+			{
+				var ptr = UserDataStorage.IntPtrToHandle(_userData);
+
+				if (ptr != 0)
+					UserDataStorage.JointStorage.UnpinObject(ptr);
+
+				if (value != null)
+				{
+					var handle = UserDataStorage.JointStorage.PinDataToHandle(value);
+					_userData = UserDataStorage.HandleToIntPtr(handle);
+				}
+				else
+					_userData = IntPtr.Zero;
+			}
+		}
+
+		public Body BodyA
+		{
+			get { return Body.FromPtr(_bodyA); }
+			set { _bodyA = value.BodyPtr; }
+		}
+
+		public Body BodyB
+		{
+			get { return Body.FromPtr(_bodyB); }
+			set { _bodyB = value.BodyPtr; }
+		}
+
+		public bool CollideConnected
+		{
+			get { return _collideConnected; }
+			set { _collideConnected = value; }
+		}
+	}
+#else
 	public abstract class JointDef
 	{
 		static class NativeMethods
@@ -133,6 +214,7 @@ namespace Box2CS
 			return _jointDefPtr.GetHashCode();
 		}
 	}
+#endif
 
 	public abstract class Joint
 	{

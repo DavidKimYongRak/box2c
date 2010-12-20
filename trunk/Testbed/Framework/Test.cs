@@ -403,7 +403,7 @@ namespace Testbed
 			if (m_fixture != null)
 			{
 				Body body = m_fixture.Body;
-				using (MouseJointDef md = new MouseJointDef())
+				MouseJointDef md = new MouseJointDef();
 				{
 					md.BodyA = m_groundBody;
 					md.BodyB = body;

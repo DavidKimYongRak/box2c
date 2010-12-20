@@ -2,6 +2,113 @@
 using System.Runtime.InteropServices;
 namespace Box2CS
 {
+#if !NEW_JOINTS
+	[StructLayout(LayoutKind.Sequential)]
+	public class LineJointDef : JointDef, IFixedSize
+	{
+		Vec2 _localAnchorA;
+		Vec2 _localAnchorB;
+		Vec2 _localAxisA;
+		bool _enableLimit;
+		float _lowerTranslation;
+		float _upperTranslation;
+		bool _enableMotor;
+		float _maxMotorForce;
+		float _motorSpeed;
+
+		int IFixedSize.FixedSize()
+		{
+			return Marshal.SizeOf(typeof(LineJointDef));
+		}
+
+		void IFixedSize.Lock()
+		{
+		}
+
+		void IFixedSize.Unlock()
+		{
+		}
+
+		public LineJointDef()
+		{
+			JointType = EJointType.e_lineJoint;
+			_localAnchorA = Vec2.Empty;
+			_localAnchorB = Vec2.Empty;
+			_localAxisA = new Vec2(1.0f, 0.0f);
+			_enableLimit = false;
+			_lowerTranslation = 0.0f;
+			_upperTranslation = 0.0f;
+			_enableMotor = false;
+			_maxMotorForce = 0.0f;
+			_motorSpeed = 0.0f;
+		}
+
+		/// Initialize the bodies, anchors, axis, and reference angle using the world
+		/// anchor and world axis.
+		public void Initialize(Body bodyA, Body bodyB, Vec2 anchor, Vec2 axis)
+		{
+			BodyA = bodyA;
+			BodyB = bodyB;
+			_localAnchorA = bodyA.GetLocalPoint(anchor);
+			_localAnchorB = bodyB.GetLocalPoint(anchor);
+			_localAxisA = bodyA.GetLocalVector(axis);
+		}
+
+		public Vec2 LocalAnchorA
+		{
+			get { return _localAnchorA; }
+			set { _localAnchorA = value; }
+		}
+
+		public Vec2 LocalAnchorB
+		{
+			get { return _localAnchorB; }
+			set { _localAnchorB = value; }
+		}
+
+		public Vec2 LocalAxisA
+		{
+			get { return _localAxisA; }
+			set { _localAxisA = value; }
+		}
+
+		public bool EnableLimit
+		{
+			get { return _enableLimit; }
+			set { _enableLimit = value; }
+		}
+
+		public float LowerTranslation
+		{
+			get { return _lowerTranslation; }
+			set { _lowerTranslation = value; }
+		}
+
+		public float UpperTranslation
+		{
+			get { return _upperTranslation; }
+			set { _upperTranslation = value; }
+		}
+
+		public bool EnableMotor
+		{
+			get { return _enableMotor; }
+			set { _enableMotor = value; }
+		}
+
+		public float MaxMotorForce
+		{
+			get { return _maxMotorForce; }
+			set { _maxMotorForce = value; }
+		}
+
+		public float MotorSpeed
+		{
+			get { return _motorSpeed; }
+			set { _motorSpeed = value; }
+		}
+	}
+#else
 	public class LineJointDef : JointDef, IDisposable
 	{
 		static class NativeMethods
@@ -170,6 +277,7 @@ namespace Box2CS
 		}
 		#endregion
 	}
+#endif
 
 	public class LineJoint : Joint
 	{

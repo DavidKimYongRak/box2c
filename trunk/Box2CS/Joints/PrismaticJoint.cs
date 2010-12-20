@@ -3,6 +3,114 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
+#if !NEW_JOINTS
+	[StructLayout(LayoutKind.Sequential)]
+	public class PrismaticJointDef : JointDef, IFixedSize
+	{
+		Vec2 _localAnchorA;
+		Vec2 _localAnchorB;
+		Vec2 _localAxis1;
+		float _referenceAngle;
+		bool _enableLimit;
+		float _lowerTranslation;
+		float _upperTranslation;
+		bool _enableMotor;
+		float _maxMotorForce;
+		float _motorSpeed;
+
+		int IFixedSize.FixedSize()
+		{
+			return Marshal.SizeOf(typeof(PrismaticJointDef));
+		}
+
+		void IFixedSize.Lock()
+		{
+		}
+
+		void IFixedSize.Unlock()
+		{
+		}
+
+		public PrismaticJointDef()
+		{
+			JointType = EJointType.e_prismaticJoint;
+			_localAnchorA = Vec2.Empty;
+			_localAnchorB = Vec2.Empty;
+			_localAxis1 = new Vec2(1.0f, 0.0f);
+			_referenceAngle = 0.0f;
+			_enableLimit = false;
+			_lowerTranslation = 0.0f;
+			_upperTranslation = 0.0f;
+			_enableMotor = false;
+			_maxMotorForce = 0.0f;
+			_motorSpeed = 0.0f;
+		}
+
+		public void Initialize(Body bodyA, Body bodyB, Vec2 anchor, Vec2 axis)
+		{
+			BodyA = bodyA;
+			BodyB = bodyB;
+			_localAnchorA = bodyA.GetLocalPoint(anchor);
+			_localAnchorB = bodyB.GetLocalPoint(anchor);
+			_localAxis1 = bodyA.GetLocalVector(axis);
+			_referenceAngle = bodyB.Angle - bodyA.Angle;
+		}
+
+		public Vec2 LocalAnchorA
+		{
+			get { return _localAnchorA; }
+			set { _localAnchorA = value; }
+		}
+
+		public Vec2 LocalAnchorB
+		{
+			get { return _localAnchorB; }
+			set { _localAnchorB = value; }
+		}
+
+		public float ReferenceAngle
+		{
+			get { return _referenceAngle; }
+			set { _referenceAngle = value; }
+		}
+
+		public bool EnableLimit
+		{
+			get { return _enableLimit; }
+			set { _enableLimit = value; }
+		}
+
+		public float LowerTranslation
+		{
+			get { return _lowerTranslation; }
+			set { _lowerTranslation = value; }
+		}
+
+		public float UpperTranslation
+		{
+			get { return _upperTranslation; }
+			set { _upperTranslation = value; }
+		}
+
+		public bool EnableMotor
+		{
+			get { return _enableMotor; }
+			set { _enableMotor = value; }
+		}
+
+		public float MotorSpeed
+		{
+			get { return _motorSpeed; }
+			set { _motorSpeed = value; }
+		}
+
+		public float MaxMotorForce
+		{
+			get { return _maxMotorForce; }
+			set { _maxMotorForce = value; }
+		}
+	}
+#else
 	public class PrismaticJointDef : JointDef, IDisposable
 	{
 		static class NativeMethods
@@ -184,6 +292,7 @@ namespace Box2CS
 		}
 		#endregion
 	}
+#endif
 
 	public class PrismaticJoint : Joint
 	{

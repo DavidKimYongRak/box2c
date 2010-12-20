@@ -12,11 +12,11 @@ namespace Box2CS
 			get { return _internalCircleShape; }
 		}
 
-		StructToPtrMarshaller<cb2circleshapeportable> _internalstruct;
+		StructToPtrMarshaller _internalstruct;
 		internal override IntPtr Lock()
 		{
 			_internalCircleShape.m_shape = base.InternalShape;
-			_internalstruct = new StructToPtrMarshaller<cb2circleshapeportable>(_internalCircleShape);
+			_internalstruct = new StructToPtrMarshaller(_internalCircleShape);
 			return _internalstruct.Pointer;
 		}
 

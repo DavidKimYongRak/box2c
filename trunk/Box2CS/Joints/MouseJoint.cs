@@ -3,6 +3,62 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
+#if !NEW_JOINTS
+	[StructLayout(LayoutKind.Sequential)]
+	public class MouseJointDef : JointDef, IFixedSize
+	{
+		Vec2 _target;
+		float _maxForce;
+		float _frequencyHz;
+		float _dampingRatio;
+
+		int IFixedSize.FixedSize()
+		{
+			return Marshal.SizeOf(typeof(MouseJointDef));
+		}
+
+		void IFixedSize.Lock()
+		{
+		}
+
+		void IFixedSize.Unlock()
+		{
+		}
+
+		public MouseJointDef()
+		{
+			JointType = EJointType.e_mouseJoint;
+			_target = Vec2.Empty;
+			_maxForce = 0.0f;
+			_frequencyHz = 5.0f;
+			_dampingRatio = 0.7f;
+		}
+
+		public Vec2 Target
+		{
+			get { return _target; }
+			set { _target = value; }
+		}
+
+		public float MaxForce
+		{
+			get { return _maxForce; }
+			set { _maxForce = value; }
+		}
+
+		public float FrequencyHz
+		{
+			get { return _frequencyHz; }
+			set { _frequencyHz = value; }
+		}
+
+		public float DampingRatio
+		{
+			get { return _dampingRatio; }
+			set { _dampingRatio = value; }
+		}
+	}
+#else
 	public class MouseJointDef : JointDef, IDisposable
 	{
 		static class NativeMethods
@@ -102,6 +158,7 @@ namespace Box2CS
 		}
 		#endregion
 	}
+#endif
 
 	public class MouseJoint : Joint
 	{

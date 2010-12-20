@@ -3,6 +3,55 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
+#if !NEW_JOINTS
+	[StructLayout(LayoutKind.Sequential)]
+	public class GearJointDef : JointDef, IFixedSize
+	{
+		IntPtr _joint1;
+		IntPtr _joint2;
+		float _ratio;
+
+		int IFixedSize.FixedSize()
+		{
+			return Marshal.SizeOf(typeof(GearJointDef));
+		}
+
+		void IFixedSize.Lock()
+		{
+		}
+
+		void IFixedSize.Unlock()
+		{
+		}
+
+		public GearJointDef ()
+		{
+			JointType = EJointType.e_gearJoint;
+			_joint1 = IntPtr.Zero;
+			_joint2 = IntPtr.Zero;
+			_ratio = 1.0f;
+		}
+
+		public Joint JointA
+		{
+			get { return Joint.FromPtr(_joint1); }
+			set { _joint1 = value.JointPtr; }
+		}
+
+		public Joint JointB
+		{
+			get { return Joint.FromPtr(_joint2); }
+			set { _joint2 = value.JointPtr; }
+		}
+
+		public float Ratio
+		{
+			get { return _ratio; }
+			set { _ratio = value; }
+		}
+	}
+
+#else
 	public class GearJointDef : JointDef, IDisposable
 	{
 		static class NativeMethods
@@ -90,6 +139,7 @@ namespace Box2CS
 		}
 		#endregion
 	}
+#endif
 
 	public class GearJoint : Joint
 	{

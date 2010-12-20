@@ -130,7 +130,7 @@ namespace Box2CS
 
 		public Body CreateBody(BodyDef def)
 		{
-			using (StructToPtrMarshaller<BodyDef> structPtr = new StructToPtrMarshaller<BodyDef>(def))
+			using (var structPtr = new StructToPtrMarshaller(def))
 				return Body.FromPtr(NativeMethods.b2world_createbody(_worldPtr, structPtr.Pointer));
 		}
 
@@ -141,7 +141,8 @@ namespace Box2CS
 
 		public Joint CreateJoint(JointDef def)
 		{
-			return Joint.FromPtr(NativeMethods.b2world_createjoint(_worldPtr, def.JointDefPtr));
+			using (var ptr = new StructToPtrMarshaller(def))
+				return Joint.FromPtr(NativeMethods.b2world_createjoint(_worldPtr, ptr.Pointer));
 		}
 
 		public void DestroyJoint(Joint joint)

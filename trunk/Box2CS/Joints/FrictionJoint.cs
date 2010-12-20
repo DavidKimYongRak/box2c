@@ -3,6 +3,70 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
+#if !NEW_JOINTS
+	[StructLayout(LayoutKind.Sequential)]
+	public class FrictionJointDef : JointDef, IFixedSize
+	{
+		Vec2 _localAnchorA;
+		Vec2 _localAnchorB;
+		float _maxForce;
+		float _maxTorque;
+
+		int IFixedSize.FixedSize()
+		{
+			return Marshal.SizeOf(typeof(FrictionJointDef));
+		}
+
+		void IFixedSize.Lock()
+		{
+		}
+
+		void IFixedSize.Unlock()
+		{
+		}
+
+		public FrictionJointDef()
+		{
+			JointType = EJointType.e_frictionJoint;
+			_localAnchorA = Vec2.Empty;
+			_localAnchorB = Vec2.Empty;
+			_maxForce = 0.0f;
+			_maxTorque = 0.0f;
+		}
+
+		public void Initialize(Body bodyA, Body bodyB, Vec2 anchor)
+		{
+			BodyA = bodyA;
+			BodyB = bodyB;
+			_localAnchorA = bodyA.GetLocalPoint(anchor);
+			_localAnchorB = bodyB.GetLocalPoint(anchor);
+		}
+
+		public Vec2 LocalAnchorA
+		{
+			get { return _localAnchorA; }
+			set { _localAnchorA = value; }
+		}
+
+		public Vec2 LocalAnchorB
+		{
+			get { return _localAnchorB; }
+			set { _localAnchorB = value; }
+		}
+
+		public float MaxForce
+		{
+			get { return _maxForce; }
+			set { _maxForce = value; }
+		}
+
+		public float MaxTorque
+		{
+			get { return _maxTorque; }
+			set { _maxTorque = value; }
+		}
+	}
+#else
 	public class FrictionJointDef : JointDef, IDisposable
 	{
 		static class NativeMethods
@@ -111,6 +175,7 @@ namespace Box2CS
 		}
 		#endregion
 	}
+#endif
 
 	public class FrictionJoint : Joint
 	{

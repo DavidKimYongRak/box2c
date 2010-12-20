@@ -401,7 +401,7 @@ namespace Box2CS
 		{
 			def.SetShape(def.Shape.Lock());
 			Fixture fixture;
-			using (StructToPtrMarshaller<FixtureDefInternal> structPtr = new StructToPtrMarshaller<FixtureDefInternal>(def.Internal))
+			using (var structPtr = new StructToPtrMarshaller(def.Internal))
 				fixture = Fixture.FromPtr(NativeMethods.b2body_createfixture(_bodyPtr, structPtr.Pointer));
 			def.Shape.Unlock();
 			return fixture;

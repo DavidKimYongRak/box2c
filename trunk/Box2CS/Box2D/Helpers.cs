@@ -10,36 +10,27 @@ namespace Box2CS
 		void Unlock();
 	}
 
-	internal class StructToPtrMarshaller<T> : IDisposable
-		where T : IFixedSize
+	internal class StructToPtrMarshaller : IDisposable
 	{
 		IntPtr _ptr;
-		T _storedVal;
-		bool _retrieve;
+		IFixedSize _storedVal;
 
 		public IntPtr Pointer
 		{
 			get { return _ptr; }
 		}
 
-		public StructToPtrMarshaller(T val, bool retrieve = false)
+		public StructToPtrMarshaller(IFixedSize val)
 		{
-			_retrieve = retrieve;
 			_storedVal = val;
 			_storedVal.Lock();
 			_ptr = Marshal.AllocHGlobal(val.FixedSize());
 			Marshal.StructureToPtr(val, _ptr, false);	
 		}
 
-		public T StoredValue
+		public object GetValue(Type type)
 		{
-			get
-			{
-				if (_retrieve)
-					_storedVal = (T)Marshal.PtrToStructure(_ptr, typeof(T));
-
-				return _storedVal;
-			}
+			return Marshal.PtrToStructure(_ptr, type);
 		}
 
 		public void Free()

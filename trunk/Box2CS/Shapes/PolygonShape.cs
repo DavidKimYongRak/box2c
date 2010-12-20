@@ -12,11 +12,11 @@ namespace Box2CS
 			get { return _internalPolyShape; }
 		}
 
-		StructToPtrMarshaller<cb2polygonshapeportable> _internalstruct;
+		StructToPtrMarshaller _internalstruct;
 		internal override IntPtr Lock()
 		{
 			_internalPolyShape.m_shape = base.InternalShape;
-			_internalstruct = new StructToPtrMarshaller<cb2polygonshapeportable>(_internalPolyShape);
+			_internalstruct = new StructToPtrMarshaller(_internalPolyShape);
 			return _internalstruct.Pointer;
 		}
 
@@ -225,7 +225,7 @@ _internalPolyShape.m_vertices[0];
 				_internalPolyShape.m_normals[i].Normalize();
 			}
 
-#if DEBUG
+			if (_autoReverse)
 			// Ensure the polygon is convex and the interior
 			// is to the left of each edge.
 			for (int i = 0; i < _internalPolyShape.m_vertexCount; ++i)
@@ -257,7 +257,6 @@ _internalPolyShape.m_vertices[0];
 					}
 				}
 			}
-#endif
 
 			// Compute the polygon centroid.
 			_internalPolyShape.m_centroid = ComputeCentroid();

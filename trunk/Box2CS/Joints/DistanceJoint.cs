@@ -3,6 +3,83 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
+#if !NEW_JOINTS
+	[StructLayout(LayoutKind.Sequential)]
+	public class DistanceJointDef : JointDef, IFixedSize
+	{
+		Vec2 _localAnchorA;
+		Vec2 _localAnchorB;
+		float _length;
+		float _frequencyHz;
+		float _dampingRatio;
+
+		int IFixedSize.FixedSize()
+		{
+			return Marshal.SizeOf(typeof(DistanceJointDef));
+		}
+
+		void IFixedSize.Lock()
+		{
+		}
+
+		void IFixedSize.Unlock()
+		{
+		}
+
+		public DistanceJointDef()
+		{
+			JointType = EJointType.e_distanceJoint;
+			_localAnchorA = Vec2.Empty;
+			_localAnchorB = Vec2.Empty;
+			_length = 1.0f;
+			_frequencyHz = 0.0f;
+			_dampingRatio = 0.0f;
+		}
+
+		/// Initialize the bodies, anchors, and length using the world
+		/// anchors.
+		public void Initialize(Body bodyA, Body bodyB,
+						Vec2 anchorA, Vec2 anchorB)
+		{
+			BodyA = bodyA;
+			BodyB = bodyB;
+			_localAnchorA = bodyA.GetLocalPoint(anchorA);
+			_localAnchorB = bodyB.GetLocalPoint(anchorB);
+			Vec2 d = anchorB - anchorA;
+			_length = d.Length();
+		}
+
+		public Vec2 LocalAnchorA
+		{
+			get { return _localAnchorA; }
+			set { _localAnchorA = value; }
+		}
+
+		public Vec2 LocalAnchorB
+		{
+			get { return _localAnchorB; }
+			set { _localAnchorB = value; }
+		}
+
+		public float Length
+		{
+			get { return _length; }
+			set { _length = value; }
+		}
+
+		public float FrequencyHz
+		{
+			get { return _frequencyHz; }
+			set { _frequencyHz = value; }
+		}
+
+		public float DampingRatio
+		{
+			get { return _dampingRatio; }
+			set { _dampingRatio = value; }
+		}
+	}
+#else
 	public class DistanceJointDef : JointDef, IDisposable
 	{
 		static class NativeMethods
@@ -125,7 +202,7 @@ namespace Box2CS
 		}
 		#endregion
 	}
-
+#endif
 	public class DistanceJoint : Joint
 	{
 		static class NativeMethods

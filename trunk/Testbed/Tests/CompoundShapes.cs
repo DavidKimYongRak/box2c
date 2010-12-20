@@ -62,7 +62,8 @@ namespace Testbed.Tests
 			}
 
 			{
-				var mesh = new MeshShape("mine.bmesh", 1.5f, false);
+				PolygonShape polygon = new PolygonShape(0.25f, 0.5f);
+				PolygonShape polygon2 = new PolygonShape(0.25f, 0.5f, new Vec2(0.0f, -0.5f), (float)(0.5 * Math.PI));
 
 				for (int i = 0; i < 10; ++i)
 				{
@@ -73,8 +74,8 @@ namespace Testbed.Tests
 						bd.Position = new Vec2(x - 5.0f, 1.05f + 2.5f * i);
 						bd.Angle = Rand.RandomFloat((float)-Math.PI, (float)Math.PI);
 						Body body = m_world.CreateBody(bd);
-						mesh.AddToBody(body, 2);
-						body.UserData = "thingies";
+						body.CreateFixture(polygon, 2.0f);
+						body.CreateFixture(polygon2, 2.0f);
 					}
 				}
 			}

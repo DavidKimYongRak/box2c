@@ -340,10 +340,10 @@ namespace Box2CS
 					{
 						cb2circleshapeportable shape = new cb2circleshapeportable();
 
-						using (var ptr = new StructToPtrMarshaller<cb2circleshapeportable>(shape, true))
+						using (var ptr = new StructToPtrMarshaller(shape))
 						{
 							NativeMethods.b2fixture_getshape(_fixturePtr, ptr.Pointer);
-							shape = ptr.StoredValue;
+							shape = (cb2circleshapeportable)ptr.GetValue(typeof(cb2circleshapeportable));
 						}
 
 						return new CircleShape(shape);
@@ -352,10 +352,10 @@ namespace Box2CS
 					{
 						cb2polygonshapeportable shape = new cb2polygonshapeportable();
 
-						using (var ptr = new StructToPtrMarshaller<cb2polygonshapeportable>(shape, true))
+						using (var ptr = new StructToPtrMarshaller(shape))
 						{
 							NativeMethods.b2fixture_getshape(_fixturePtr, ptr.Pointer);
-							shape = ptr.StoredValue;
+							shape = (cb2polygonshapeportable)ptr.GetValue(typeof(cb2polygonshapeportable));
 						}
 
 						return new PolygonShape(shape);
