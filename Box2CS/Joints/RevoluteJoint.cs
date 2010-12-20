@@ -3,6 +3,111 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
+#if !NEW_JOINTS
+	[StructLayout(LayoutKind.Sequential)]
+	public class RevoluteJointDef : JointDef, IFixedSize
+	{
+		Vec2 _localAnchorA;
+		Vec2 _localAnchorB;
+		float _referenceAngle;
+		bool _enableLimit;
+		float _lowerAngle;
+		float _upperAngle;
+		bool _enableMotor;
+		float _motorSpeed;
+		float _maxMotorTorque;
+
+		int IFixedSize.FixedSize()
+		{
+			return Marshal.SizeOf(typeof(RevoluteJointDef));
+		}
+
+		void IFixedSize.Lock()
+		{
+		}
+
+		void IFixedSize.Unlock()
+		{
+		}
+
+		public RevoluteJointDef()
+		{
+			JointType = EJointType.e_revoluteJoint;
+			_localAnchorA = Vec2.Empty;
+			_localAnchorB = Vec2.Empty;
+			_referenceAngle = 0.0f;
+			_lowerAngle = 0.0f;
+			_upperAngle = 0.0f;
+			_maxMotorTorque = 0.0f;
+			_motorSpeed = 0.0f;
+			_enableLimit = false;
+			_enableMotor = false;
+		}
+
+		public void Initialize(Body bodyA, Body bodyB, Vec2 anchor)
+		{
+			BodyA = bodyA;
+			BodyB = bodyB;
+			_localAnchorA = bodyA.GetLocalPoint(anchor);
+			_localAnchorB = bodyB.GetLocalPoint(anchor);
+			_referenceAngle = bodyB.Angle - bodyA.Angle;
+		}
+
+		public Vec2 LocalAnchorA
+		{
+			get { return _localAnchorA; }
+			set { _localAnchorA = value; }
+		}
+
+		public Vec2 LocalAnchorB
+		{
+			get { return _localAnchorB; }
+			set { _localAnchorB = value; }
+		}
+
+		public float ReferenceAngle
+		{
+			get { return _referenceAngle; }
+			set { _referenceAngle = value; }
+		}
+
+		public bool EnableLimit
+		{
+			get { return _enableLimit; }
+			set { _enableLimit = value; }
+		}
+
+		public float LowerAngle
+		{
+			get { return _lowerAngle; }
+			set { _lowerAngle = value; }
+		}
+
+		public float UpperAngle
+		{
+			get { return _upperAngle; }
+			set { _upperAngle = value; }
+		}
+
+		public bool EnableMotor
+		{
+			get { return _enableMotor; }
+			set { _enableMotor = value; }
+		}
+
+		public float MotorSpeed
+		{
+			get { return _motorSpeed; }
+			set { _motorSpeed = value; }
+		}
+
+		public float MaxMotorTorque
+		{
+			get { return _maxMotorTorque; }
+			set { _maxMotorTorque = value; }
+		}
+	}
+#else
 	public class RevoluteJointDef : JointDef, IDisposable
 	{
 		static class NativeMethods
@@ -171,6 +276,7 @@ namespace Box2CS
 		}
 		#endregion
 	}
+#endif
 
 	public class RevoluteJoint : Joint
 	{

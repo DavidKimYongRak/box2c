@@ -378,7 +378,7 @@ namespace Box2DSharpRenderTest
 							_wrecker = MakeCircle(new Vec2(_x + 1, position.y), 1);
 							_wrecker.MassData = new MassData(50, _wrecker.MassData.Value.Center, _wrecker.MassData.Value.I);
 
-							using (WeldJointDef wd = new WeldJointDef())
+							WeldJointDef wd = new WeldJointDef();
 							{
 								wd.Initialize(prevBody, _wrecker, new Vec2(_x, position.y));
 
@@ -434,14 +434,15 @@ namespace Box2DSharpRenderTest
 				var bulletBodyDef = new BodyDef(EBodyType.b2_dynamicBody, test);
 				var bulletBodyShape = new PolygonShape(0.5f, 0.15f, gunHand.Angle + ((float)Math.PI / 2));
 				_body = world.CreateBody(bulletBodyDef);
-				_body.CreateFixture(new FixtureDef(bulletBodyShape, 75, 0.0f, 0.2f, gunHand.FixtureList.FilterData));
+				_body.CreateFixture(new FixtureDef(bulletBodyShape, 0.01f, 0.0f, 0.2f, gunHand.FixtureList.FilterData));
 				_body.IsBullet = true;
-				_body.LinearVelocity = new Vec2((float)(Vel.x * 80), (float)(Vel.y * 80));
+				_body.LinearVelocity = new Vec2((float)(Vel.x * 45), (float)(Vel.y * 45));
 				_body.UserData = (biped == player1) ? 4 : 5;
 			}
 		}
 
 		static List<Body> BodiesToRemove = new List<Body>();
+		bool _slowmotion = false;
 
 		public class MyListener : ContactListener
 		{
@@ -455,7 +456,10 @@ namespace Box2DSharpRenderTest
 
 					contact.Enabled = false;
 					if (!BodiesToRemove.Contains(bullet))
+					{
+						body.ApplyLinearImpulse(-(bullet.Position - body.Position) * 45, contact.WorldManifold.Points[0]);
 						BodiesToRemove.Add(bullet);
+					}
 				}
 			}
 
@@ -564,7 +568,7 @@ namespace Box2DSharpRenderTest
 
 			//Gl.glEnable(Gl.GL_ALPHA_TEST); //Enable alpha-blending
 			//Gl.glAlphaFunc(Gl.GL_GREATER, 0.01f); 
-			
+
 			Il.ilInit();
 			Ilut.ilutInit();
 
@@ -582,20 +586,23 @@ namespace Box2DSharpRenderTest
 				f.FilterData = player1.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
 
 			var weld = new WeldJointDef();
-			weld.Initialize(gunBody, player1.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
-			world.CreateJoint(weld);
+			{
+				weld.Initialize(gunBody, player1.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
+				world.CreateJoint(weld);
 
-			player2 = new Biped(world, new Vec2(24, 0), -9, 9);
+				player2 = new Biped(world, new Vec2(24, 0), -9, 9);
 
-			gun = new MeshShape("gun.bmesh", 3, false);
-			gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player2.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(-1.5f, 1.7f), 4.71238898f));
-			gun.AddToBody(gunBody, 2);
-			foreach (var f in gunBody.Fixtures)
-				f.FilterData = player2.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
-
+				gun = new MeshShape("gun.bmesh", 3, false);
+				gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player2.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(-1.5f, 1.7f), 4.71238898f));
+				gun.AddToBody(gunBody, 2);
+				foreach (var f in gunBody.Fixtures)
+					f.FilterData = player2.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
+			}
 			weld = new WeldJointDef();
-			weld.Initialize(gunBody, player2.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
-			world.CreateJoint(weld);
+			{
+				weld.Initialize(gunBody, player2.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
+				world.CreateJoint(weld);
+			}
 		}
 
 		[Flags]
@@ -665,7 +672,7 @@ namespace Box2DSharpRenderTest
 				if (m_fixture != null)
 				{
 					Body body = m_fixture.Body;
-					using (MouseJointDef md = new MouseJointDef())
+					MouseJointDef md = new MouseJointDef();
 					{
 						md.BodyA = ground;
 						md.BodyB = body;
@@ -722,6 +729,9 @@ namespace Box2DSharpRenderTest
 				break;
 			case Keys.H:
 				new Bullet(player1);
+				break;
+			case Keys.O:
+				_slowmotion = !_slowmotion;
 				break;
 			}
 		}
@@ -795,7 +805,7 @@ namespace Box2DSharpRenderTest
 			// Prepare for simulation. Typically we use a time step of 1/60 of a
 			// second (60Hz) and 10 iterations. This provides a high quality simulation
 			// in most game scenarios.
-			float timeStep = 1.0f / 75.0f;
+			float timeStep = 1.0f / ((_slowmotion) ? 145.0f : 70.0f);
 			int velocityIterations = 8;
 			int positionIterations = 4;
 

@@ -65,45 +65,18 @@ namespace Testbed
 				{
 					bd.BodyType = EBodyType.b2_dynamicBody;
 					bd.Position = new Vec2(0, 10.0f);
-					using (MeshShape ms = new MeshShape("stool.bmesh", 1, false))
 					{
+						PolygonShape bottom = new PolygonShape(1.5f, 0.15f);
+						PolygonShape left = new PolygonShape(0.15f, 2.7f, new Vec2(-1.45f, 2.35f), 0.2f);
+						PolygonShape right = new PolygonShape(0.15f, 2.7f, new Vec2(1.45f, 2.35f), -0.2f);
+
 						var body = m_world.CreateBody(bd);
 						body.IsBullet = true;
-
-						var fixtures = ms.AddToBody(body, 2);
-
-						foreach (var s in fixtures)
-						{
-							s.Restitution = 10;
-							s.Friction = 0.1f;
-						}
-
-						bd.Position = new Vec2(0, 5.0f);
-						body = m_world.CreateBody(bd);
-						body.IsBullet = true;
-
-						fixtures = ms.AddToBody(body, 2);
-
-						foreach (var s in fixtures)
-						{
-							s.Restitution = 10;
-							s.Friction = 0.1f;
-						}
-
-						bd.Position = new Vec2(0, 15.0f);
-						body = m_world.CreateBody(bd);
-						body.IsBullet = true;
-
-						fixtures = ms.AddToBody(body, 2);
-
-						foreach (var s in fixtures)
-						{
-							s.Restitution = 10;
-							s.Friction = 0.1f;
-						}
+						body.CreateFixture(new FixtureDef(bottom, 1.0f, 10, 0.1f));
+						body.CreateFixture(new FixtureDef(left, 1.0f, 10, 0.1f));
+						body.CreateFixture(new FixtureDef(right, 1.0f, 10, 0.1f));
 					}
 				}
-
 			}
 		}
 	};

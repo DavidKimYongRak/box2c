@@ -3,6 +3,131 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
+#if !NEW_JOINTS
+	[StructLayout(LayoutKind.Sequential)]
+	public class PulleyJointDef : JointDef, IFixedSize
+	{
+		const float b2_minPulleyLength = 2.0f;
+		
+		Vec2 _groundAnchorA;
+		Vec2 _groundAnchorB;
+		Vec2 _localAnchorA;
+		Vec2 _localAnchorB;
+		float _lengthA;
+		float _maxLengthA;
+		float _lengthB;
+		float _maxLengthB;
+		float _ratio;
+
+		int IFixedSize.FixedSize()
+		{
+			return Marshal.SizeOf(typeof(PulleyJointDef));
+		}
+
+		void IFixedSize.Lock()
+		{
+		}
+
+		void IFixedSize.Unlock()
+		{
+		}
+
+		public PulleyJointDef()
+		{
+			JointType = EJointType.e_pulleyJoint;
+			_groundAnchorA = new Vec2(-1.0f, 1.0f);
+			_groundAnchorB = new Vec2(1.0f, 1.0f);
+			_localAnchorA = new Vec2(-1.0f, 0.0f);
+			_localAnchorB = new Vec2(1.0f, 0.0f);
+			_lengthA = 0.0f;
+			_maxLengthA = 0.0f;
+			_lengthB = 0.0f;
+			_maxLengthB = 0.0f;
+			_ratio = 1.0f;
+			CollideConnected = true;
+		}
+
+		/// Initialize the bodies, anchors, lengths, max lengths, and ratio using the world anchors.
+		public void Initialize(Body bodyA, Body bodyB,
+						Vec2 groundAnchorA, Vec2 groundAnchorB,
+						Vec2 anchorA, Vec2 anchorB,
+						float ratio)
+		{
+			BodyA = bodyA;
+			BodyB = bodyB;
+			_groundAnchorA = groundAnchorA;
+			_groundAnchorB = groundAnchorB;
+			_localAnchorA = bodyA.GetLocalPoint(anchorA);
+			_localAnchorB = bodyB.GetLocalPoint(anchorB);
+			Vec2 d1 = anchorA - groundAnchorA;
+			_lengthA = d1.Length();
+			Vec2 d2 = anchorB - groundAnchorB;
+			_lengthB = d2.Length();
+			_ratio = ratio;
+			
+			if (!(ratio > float.Epsilon))
+				throw new Exception();
+
+			float C = _lengthA + ratio * _lengthB;
+			_maxLengthA = C - ratio * b2_minPulleyLength;
+			_maxLengthB = (C - b2_minPulleyLength) / ratio;
+		}
+
+		public Vec2 GroundAnchorA
+		{
+			get { return _groundAnchorA; }
+			set { _groundAnchorA = value; }
+		}
+
+		public Vec2 GroundAnchorB
+		{
+			get { return _groundAnchorB; }
+			set { _groundAnchorB = value; }
+		}
+
+		public Vec2 LocalAnchorA
+		{
+			get { return _localAnchorA; }
+			set { _localAnchorA = value; }
+		}
+
+		public Vec2 LocalAnchorB
+		{
+			get { return _localAnchorB; }
+			set { _localAnchorB = value; }
+		}
+
+		public float LengthA
+		{
+			get { return _lengthA; }
+			set { _lengthA = value; }
+		}
+
+		public float LengthB
+		{
+			get { return _lengthB; }
+			set { _lengthB = value; }
+		}
+
+		public float MaxLengthA
+		{
+			get { return _maxLengthA; }
+			set { _maxLengthA = value; }
+		}
+
+		public float MaxLengthB
+		{
+			get { return _maxLengthB; }
+			set { _maxLengthB = value; }
+		}
+
+		public float Ratio
+		{
+			get { return _ratio; }
+			set { _ratio = value; }
+		}
+	}
+#else
 	public class PulleyJointDef : JointDef, IDisposable
 	{
 		static class NativeMethods
@@ -189,6 +314,7 @@ namespace Box2CS
 		}
 		#endregion
 	}
+#endif
 
 	public class PulleyJoint : Joint
 	{
