@@ -294,7 +294,7 @@ namespace Box2DSharpRenderTest
 				Joints[(int)EBipedJointIndex.LHip].LocalAnchorA = Joints[(int)EBipedJointIndex.RHip].LocalAnchorA = anchor - Bodies[(int)EBipedFixtureIndex.LThigh].Position;
 				Joints[(int)EBipedJointIndex.LHip].LocalAnchorB = Joints[(int)EBipedJointIndex.RHip].LocalAnchorB = anchor - Bodies[(int)EBipedFixtureIndex.Pelvis].Position;
 				Joints[(int)EBipedJointIndex.LHip].ReferenceAngle = Joints[(int)EBipedJointIndex.RHip].ReferenceAngle = 0.0f;
-				Joints[(int)EBipedJointIndex.LHip].LowerAngle = Joints[(int)EBipedJointIndex.RHip].LowerAngle = ReverseAngle(-2.26892803f);
+				Joints[(int)EBipedJointIndex.LHip].LowerAngle = Joints[(int)EBipedJointIndex.RHip].LowerAngle = ReverseAngle(-0.76892803f);
 				Joints[(int)EBipedJointIndex.LHip].UpperAngle = Joints[(int)EBipedJointIndex.RHip].UpperAngle = 0;
 			}
 

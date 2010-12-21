@@ -1,7 +1,7 @@
 ﻿using System;
 using Box2CS;
 
-namespace Testbed
+namespace Testbed.Tests
 {
 	public class ConfinedBullet : Test
 	{

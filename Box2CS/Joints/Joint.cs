@@ -269,7 +269,7 @@ namespace Box2CS
 		internal static Joint FromPtr(IntPtr ptr)
 		{
 			if (ptr == IntPtr.Zero)
-				return null;
+				throw new Exception("Invalid joint ptr (locked world?)");
 
 			switch ((EJointType)NativeMethods.b2joint_gettype(ptr))
 			{

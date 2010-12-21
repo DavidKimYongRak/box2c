@@ -3,8 +3,27 @@ using Box2CS;
 
 namespace Box2DSharpRenderTest
 {
+	public struct BipedBodyDescriptor
+	{
+		public EBipedFixtureIndex FixtureIndex;
+		public Biped Biped;
+
+		public BipedBodyDescriptor(EBipedFixtureIndex index, Biped biped)
+		{
+			FixtureIndex = index;
+			Biped = biped;
+		}
+	}
+
 	public class Biped
 	{
+		Form2.Player _ownedPlayer;
+
+		public Form2.Player OwnedPlayer
+		{
+			get { return _ownedPlayer; }
+		}
+
 		static void BodyFromFixture (EBipedFixtureIndex type,
 			Biped biped, BipedDef def, Vec2 position, World world)
 		{
@@ -12,10 +31,12 @@ namespace Box2DSharpRenderTest
 			bd.Position += position;
 			biped.Bodies[(int)type] = world.CreateBody(bd);
 			biped.Bodies[(int)type].CreateFixture(def.Fixtures[(int)type]);
+			biped.Bodies[(int)type].UserData = new BipedBodyDescriptor(type, biped);
 		}
 
-		public Biped(World world, Vec2 position, float xScale, float yScale)
+		public Biped(Form2.Player ownedPlayer, World world, Vec2 position, float xScale, float yScale)
 		{
+			_ownedPlayer = ownedPlayer;
 			m_world = world;
 
 			BipedDef def = new BipedDef(xScale, yScale);
@@ -78,9 +99,41 @@ namespace Box2DSharpRenderTest
 			Joints[(int)EBipedJointIndex.RWrist] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.RWrist]);
 		}
 
+		public void Disable()
+		{
+			foreach (var j in Joints)
+			{
+				j.UserData = new System.Drawing.PointF(j.LowerLimit, j.UpperLimit);
+				j.LowerLimit = j.UpperLimit = j.BodyB.Angle - j.BodyA.Angle;
+			}
+		}
+
+		public void Enable()
+		{
+			foreach (var j in Joints)
+			{
+				var pf = (System.Drawing.PointF)j.UserData;
+
+				j.LowerLimit = pf.X;
+				j.UpperLimit = pf.Y;
+				j.UserData = null;
+			}
+		}
+
 		World m_world;
 
-		public Body[]	Bodies = new Body[(int)EBipedFixtureIndex.Max]; 
-		public RevoluteJoint[]	Joints = new RevoluteJoint[(int)EBipedJointIndex.Max]; 
+		public Body[] Bodies = new Body[(int)EBipedFixtureIndex.Max]; 
+		public RevoluteJoint[] Joints = new RevoluteJoint[(int)EBipedJointIndex.Max];
+		bool stuck;
+
+		public void StickBody()
+		{
+			stuck = !stuck;
+
+			if (stuck)
+				Disable();
+			else
+				Enable();
+		}
 	}
 }

@@ -329,5 +329,24 @@ namespace Box2CS
 			result = result && aabb._upperBound.y <= _upperBound.y;
 			return result;
 		}
+
+		public static bool TestOverlap(AABB a, AABB b)
+		{
+			var d1 = b.LowerBound - a.UpperBound;
+			var d2 = a.LowerBound - b.UpperBound;
+
+			if (d1.x > 0.0f || d1.y > 0.0f)
+				return false;
+
+			if (d2.x > 0.0f || d2.y > 0.0f)
+				return false;
+
+			return true;
+		}
+
+		public bool Overlaps(AABB b)
+		{
+			return TestOverlap(this, b);
+		}
 	};
 }
