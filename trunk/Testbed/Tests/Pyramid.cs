@@ -1,7 +1,7 @@
 ﻿using System;
 using Box2CS;
 
-namespace Testbed
+namespace Testbed.Tests
 {
 	public class Pyramid : Test
 	{
@@ -9,6 +9,7 @@ namespace Testbed
 		{
 			get { return "Pyramid"; }
 		}
+
 		const int e_count = 24;
 
 		public override void BeginContact(Contact contact)

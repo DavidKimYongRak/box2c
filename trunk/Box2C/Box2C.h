@@ -14,18 +14,12 @@
 
 typedef b2World cb2world;
 typedef b2Body cb2body;
-typedef b2BodyDef cb2bodydef;
 typedef b2Joint cb2joint;
-typedef b2JointDef cb2jointdef;
 typedef b2Fixture cb2fixture;
-typedef b2FixtureDef cb2fixturedef;
 typedef b2Contact cb2contact;
 typedef b2Vec2 cb2vec2;
 typedef b2Manifold cb2manifold;
 typedef b2ContactImpulse cb2contactimpulse;
-typedef b2Shape cb2shape;
-typedef b2CircleShape cb2circleshape;
-typedef b2PolygonShape cb2polygonshape;
 typedef b2Filter cb2filter;
 typedef b2RayCastOutput cb2raycastoutput;
 typedef b2RayCastInput cb2raycastinput;
@@ -35,15 +29,6 @@ typedef b2JointEdge cb2jointedge;
 typedef b2ContactEdge cb2contactedge;
 typedef b2WorldManifold cb2worldmanifold;
 typedef b2Transform cb2transform;
-typedef b2RevoluteJointDef cb2revolutejointdef;
-typedef b2DistanceJointDef cb2distancejointdef;
-typedef b2FrictionJointDef cb2frictionjointdef;
-typedef b2GearJointDef cb2gearjointdef;
-typedef b2LineJointDef cb2linejointdef;
-typedef b2MouseJointDef cb2mousejointdef;
-typedef b2PrismaticJointDef cb2prismaticjointdef;
-typedef b2PulleyJointDef cb2pulleyjointdef;
-typedef b2WeldJointDef cb2weldjointdef;
 typedef b2GearJoint cb2gearjoint;
 typedef b2DistanceJoint cb2distancejoint;
 typedef b2FrictionJoint cb2frictionjoint;
@@ -53,6 +38,7 @@ typedef b2LineJoint cb2linejoint;
 typedef b2RevoluteJoint cb2revolutejoint;
 typedef b2PrismaticJoint cb2prismaticjoint;
 typedef b2Version cb2version;
+typedef b2ClipVertex cb2clipvertex;
 
 #define QUICK_GET_SETTER(getname,setname,ptrtype,type,member) \
 	type getname (ptrtype *me) \

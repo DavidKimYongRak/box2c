@@ -239,6 +239,9 @@ namespace Box2CS
 			public static extern void b2body_settransform(IntPtr body, Vec2 position, float angle);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			public static extern void b2body_gettransform(IntPtr body, out Transform transform);
+
+			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern void b2body_getposition(IntPtr body, out Vec2 outPtr);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
@@ -423,6 +426,18 @@ namespace Box2CS
 		public void SetTransform(Vec2 position, float angle)
 		{
 			NativeMethods.b2body_settransform(_bodyPtr, position, angle);
+		}
+
+		public Transform Transform
+		{
+			get
+			{
+				Transform temp;
+				
+				NativeMethods.b2body_gettransform(_bodyPtr, out temp);
+				
+				return temp;
+			}
 		}
 
 		public Vec2 Position

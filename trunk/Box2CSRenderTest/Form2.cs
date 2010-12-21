@@ -235,10 +235,11 @@ namespace Box2DSharpRenderTest
 					fixtureB.Body.UserData == null)
 					return base.ShouldCollide(fixtureA, fixtureB);
 
-				if ((((int)fixtureA.Body.UserData) == 1 &&
+				if ((fixtureA.Body.UserData is int && fixtureB.Body.UserData is int) && 
+					((((int)fixtureA.Body.UserData) == 1 &&
 					((int)fixtureB.Body.UserData) == 2) ||
 					(((int)fixtureB.Body.UserData) == 1 &&
-					((int)fixtureA.Body.UserData) == 2))
+					((int)fixtureA.Body.UserData) == 2)))
 					return false;
 
 				return base.ShouldCollide(fixtureA, fixtureB);
@@ -437,7 +438,7 @@ namespace Box2DSharpRenderTest
 				_body.CreateFixture(new FixtureDef(bulletBodyShape, 0.01f, 0.0f, 0.2f, gunHand.FixtureList.FilterData));
 				_body.IsBullet = true;
 				_body.LinearVelocity = new Vec2((float)(Vel.x * 45), (float)(Vel.y * 45));
-				_body.UserData = (biped == player1) ? 4 : 5;
+				_body.UserData = (biped == player1.Biped) ? 4 : 5;
 			}
 		}
 
@@ -448,10 +449,11 @@ namespace Box2DSharpRenderTest
 		{
 			public override void BeginContact(Contact contact)
 			{
-				if ((contact.FixtureA.Body.UserData != null && ((int)contact.FixtureA.Body.UserData == 4 || (int)contact.FixtureA.Body.UserData == 5)) ||
-					(contact.FixtureB.Body.UserData != null && ((int)contact.FixtureB.Body.UserData == 4 || (int)contact.FixtureB.Body.UserData == 5)))
+				if (
+					(contact.FixtureA.Body.UserData is int && ((int)contact.FixtureA.Body.UserData == 4 || (int)contact.FixtureA.Body.UserData == 5) ||
+					(contact.FixtureB.Body.UserData is int && ((int)contact.FixtureB.Body.UserData == 4 || (int)contact.FixtureB.Body.UserData == 5))))
 				{
-					var bullet = contact.FixtureA.Body.UserData != null && ((int)contact.FixtureA.Body.UserData == 4 || (int)contact.FixtureA.Body.UserData == 5) ? contact.FixtureA.Body : contact.FixtureB.Body;
+					var bullet = (contact.FixtureA.Body.UserData is int && ((int)contact.FixtureA.Body.UserData == 4 || (int)contact.FixtureA.Body.UserData == 5)) ? contact.FixtureA.Body : contact.FixtureB.Body;
 					var body = (contact.FixtureB.Body == bullet) ? contact.FixtureA.Body : contact.FixtureB.Body;
 
 					contact.Enabled = false;
@@ -459,6 +461,95 @@ namespace Box2DSharpRenderTest
 					{
 						body.ApplyLinearImpulse(-(bullet.Position - body.Position) * 45, contact.WorldManifold.Points[0]);
 						BodiesToRemove.Add(bullet);
+						return;
+					}
+				}
+
+				if (contact.FixtureA.Body.UserData == null ||
+					contact.FixtureB.Body.UserData == null)
+					return;
+
+				if (contact.FixtureA.Body.UserData is BipedBodyDescriptor ||
+					contact.FixtureB.Body.UserData is BipedBodyDescriptor)
+				{
+					var bipedBody = (contact.FixtureA.Body.UserData is BipedBodyDescriptor) ? contact.FixtureA.Body : contact.FixtureB.Body;
+					var biped = (BipedBodyDescriptor)bipedBody.UserData;
+					var other = (bipedBody == contact.FixtureB.Body) ? contact.FixtureA.Body : contact.FixtureB.Body;
+
+					switch (biped.FixtureIndex)
+					{
+					case EBipedFixtureIndex.LFoot:
+						if (biped.Biped.OwnedPlayer.StickingLegs &&
+							biped.Biped.OwnedPlayer.Welds[0] == null &&
+							biped.Biped.OwnedPlayer.WeldDefs[0] == null)
+						{
+							var jd = new RevoluteJointDef();
+							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.Points[0]);
+							jd.LowerAngle = -0.5f * (float)Math.PI; // -90 degrees
+							jd.UpperAngle = 0.25f * (float)Math.PI; // 45 degrees
+							jd.EnableLimit = true;
+							jd.MaxMotorTorque = 10.0f;
+							jd.CollideConnected = true;
+							jd.MotorSpeed = 0.0f;
+							jd.EnableMotor = true;
+
+							biped.Biped.OwnedPlayer.WeldDefs[0] = jd;
+						}
+						break;
+					case EBipedFixtureIndex.RFoot:
+						if (biped.Biped.OwnedPlayer.StickingLegs && 
+							biped.Biped.OwnedPlayer.Welds[1] == null &&
+							biped.Biped.OwnedPlayer.WeldDefs[1] == null)
+						{
+							var jd = new RevoluteJointDef();
+							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.Points[0]);
+							jd.LowerAngle = -0.5f * (float)Math.PI; // -90 degrees
+							jd.UpperAngle = 0.25f * (float)Math.PI; // 45 degrees
+							jd.EnableLimit = true;
+							jd.MaxMotorTorque = 10.0f;
+							jd.CollideConnected = true;
+							jd.MotorSpeed = 0.0f;
+							jd.EnableMotor = true;
+
+							biped.Biped.OwnedPlayer.WeldDefs[1] = jd;
+						}
+						break;
+					/*case EBipedFixtureIndex.LHand:
+						if (biped.Biped.OwnedPlayer.StickingHands &&
+							biped.Biped.OwnedPlayer.Welds[2] == null &&
+							biped.Biped.OwnedPlayer.WeldDefs[2] == null)
+						{
+							var jd = new RevoluteJointDef();
+							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.Points[0]);
+							jd.LowerAngle = -0.5f * (float)Math.PI; // -90 degrees
+							jd.UpperAngle = 0.25f * (float)Math.PI; // 45 degrees
+							jd.EnableLimit = true;
+							jd.MaxMotorTorque = 10.0f;
+							jd.CollideConnected = true;
+							jd.MotorSpeed = 0.0f;
+							jd.EnableMotor = true;
+
+							biped.Biped.OwnedPlayer.WeldDefs[2] = jd;
+						}
+						break;*/
+					case EBipedFixtureIndex.RHand:
+						if (biped.Biped.OwnedPlayer.StickingHands && 
+							biped.Biped.OwnedPlayer.Welds[3] == null &&
+							biped.Biped.OwnedPlayer.WeldDefs[3] == null)
+						{
+							var jd = new RevoluteJointDef();
+							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.Points[0]);
+							jd.LowerAngle = -0.5f * (float)Math.PI; // -90 degrees
+							jd.UpperAngle = 0.25f * (float)Math.PI; // 45 degrees
+							jd.EnableLimit = true;
+							jd.MaxMotorTorque = 10.0f;
+							jd.CollideConnected = true;
+							jd.MotorSpeed = 0.0f;
+							jd.EnableMotor = true;
+
+							biped.Biped.OwnedPlayer.WeldDefs[3] = jd;
+						}
+						break;
 					}
 				}
 			}
@@ -483,7 +574,60 @@ namespace Box2DSharpRenderTest
 		ContactFilter _filterer;
 		MyListener _listener;
 
-		static Biped player1, player2;
+		public class Player
+		{
+			Biped _biped;
+
+			public Biped Biped
+			{
+				get { return _biped; }
+			}
+
+			public Player(World world, Vec2 position, float xScale, float yScale)
+			{
+				_biped = new Biped(this, world, position, xScale, yScale);
+			}
+
+			bool _stickingLegs, _stickingHands;
+
+			public bool StickingLegs
+			{
+				get { return _stickingLegs; }
+				set { _stickingLegs = value; }
+			}
+
+			public bool StickingHands
+			{
+				get { return _stickingHands; }
+				set { _stickingHands = value; }
+			}
+
+			RevoluteJoint[] _welds = new RevoluteJoint[4];
+
+			public RevoluteJoint[] Welds
+			{
+				get { return _welds; }
+			}
+
+			RevoluteJointDef[] _weldDefs = new RevoluteJointDef[4];
+
+			public RevoluteJointDef[] WeldDefs
+			{
+				get { return _weldDefs; }
+			}
+		}
+
+		static Player player1, player2;
+
+		public struct GroundBodyDescriptor
+		{
+			Body Body;
+
+			public GroundBodyDescriptor(Body body)
+			{
+				Body = body;
+			}
+		}
 
 		private void Form2_Load(object sender, EventArgs e)
 		{
@@ -525,6 +669,7 @@ namespace Box2DSharpRenderTest
 					{
 						shape.SetAsEdge(new Vec2(-left, -bottom), new Vec2(left, -bottom));
 						ground.CreateFixture(shape, 0.0f);
+						ground.UserData = new GroundBodyDescriptor(ground);
 					}
 
 					ground = world.CreateBody(bd);
@@ -532,6 +677,7 @@ namespace Box2DSharpRenderTest
 					{
 						shape.SetAsEdge(new Vec2(-left, bottom), new Vec2(-left, -bottom));
 						ground.CreateFixture(shape, 0.0f);
+						ground.UserData = new GroundBodyDescriptor(ground);
 					}
 
 					ground = world.CreateBody(bd);
@@ -539,6 +685,7 @@ namespace Box2DSharpRenderTest
 					{
 						shape.SetAsEdge(new Vec2(left, bottom), new Vec2(left, -bottom));
 						ground.CreateFixture(shape, 0.0f);
+						ground.UserData = new GroundBodyDescriptor(ground);
 					}
 
 					ground = world.CreateBody(bd);
@@ -546,6 +693,7 @@ namespace Box2DSharpRenderTest
 					{
 						shape.SetAsEdge(new Vec2(left, bottom), new Vec2(-left, bottom));
 						ground.CreateFixture(shape, 0.0f);
+						ground.UserData = new GroundBodyDescriptor(ground);
 					}
 				}
 			}
@@ -577,30 +725,30 @@ namespace Box2DSharpRenderTest
 			_glidChain2 = Ilut.ilutGLLoadImage("chain_bottom.png");
 			_glidChainball = Ilut.ilutGLLoadImage("chainball.png");
 
-			player1 = new Biped(world, new Vec2(-24, 0), 9, 9);
+			player1 = new Player(world, new Vec2(-24, 0), 9, 9);
 
 			var gun = new MeshShape("gun.bmesh", 3, true);
-			var gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player1.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(1.5f, 1.7f), 4.71238898f));
+			var gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player1.Biped.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(1.5f, 1.7f), 4.71238898f));
 			gun.AddToBody(gunBody, 2);
 			foreach (var f in gunBody.Fixtures)
-				f.FilterData = player1.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
+				f.FilterData = player1.Biped.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
 
 			var weld = new WeldJointDef();
 			{
-				weld.Initialize(gunBody, player1.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
+				weld.Initialize(gunBody, player1.Biped.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
 				world.CreateJoint(weld);
 
-				player2 = new Biped(world, new Vec2(24, 0), -9, 9);
+				player2 = new Player(world, new Vec2(24, 0), -9, 9);
 
 				gun = new MeshShape("gun.bmesh", 3, false);
-				gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player2.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(-1.5f, 1.7f), 4.71238898f));
+				gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player2.Biped.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(-1.5f, 1.7f), 4.71238898f));
 				gun.AddToBody(gunBody, 2);
 				foreach (var f in gunBody.Fixtures)
-					f.FilterData = player2.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
+					f.FilterData = player2.Biped.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
 			}
 			weld = new WeldJointDef();
 			{
-				weld.Initialize(gunBody, player2.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
+				weld.Initialize(gunBody, player2.Biped.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
 				world.CreateJoint(weld);
 			}
 		}
@@ -702,8 +850,13 @@ namespace Box2DSharpRenderTest
 				_moveCount++;
 		}
 
+		Dictionary<Keys, bool> _keyRepeats = new Dictionary<Keys, bool>();
+
 		void sogc_KeyDown(object sender, KeyEventArgs e)
 		{
+			if (_keyRepeats.ContainsKey(e.KeyCode))
+				return;
+
 			switch (e.KeyCode)
 			{
 			case Keys.Z:
@@ -728,12 +881,23 @@ namespace Box2DSharpRenderTest
 				_gameKeys |= EGameKeys.Legs;
 				break;
 			case Keys.H:
-				new Bullet(player1);
+				new Bullet(player1.Biped);
 				break;
 			case Keys.O:
 				_slowmotion = !_slowmotion;
 				break;
+			case Keys.U:
+				player1.Biped.StickBody();
+				break;
+			case Keys.M:
+				player1.StickingLegs = true;
+				break;
+			case Keys.N:
+				player1.StickingHands = true;
+				break;
 			}
+
+			_keyRepeats.Add(e.KeyCode, true);
 		}
 
 		void sogc_KeyUp(object sender, KeyEventArgs e)
@@ -758,7 +922,18 @@ namespace Box2DSharpRenderTest
 			case Keys.K:
 				_gameKeys &= ~EGameKeys.Legs;
 				break;
+			case Keys.M:
+				player1.StickingLegs = false;
+				break;
+			case Keys.N:
+				player1.StickingHands = false;
+				break;
+			case Keys.U:
+				player1.Biped.StickBody();
+				break;
 			}
+
+			_keyRepeats.Remove(e.KeyCode);
 		}
 
 		void sogc_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -830,22 +1005,22 @@ namespace Box2DSharpRenderTest
 			if ((_gameKeys & EGameKeys.Up) != 0)
 			{
 				foreach (var x in fixturesToMove)
-					player1.Bodies[(int)x].ApplyForce(new Vec2(0, MoveSpeed * speedMultiplier), player1.Bodies[(int)x].WorldCenter);
+					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2(0, MoveSpeed * speedMultiplier), player1.Biped.Bodies[(int)x].WorldCenter);
 			}
 			if ((_gameKeys & EGameKeys.Down) != 0)
 			{
 				foreach (var x in fixturesToMove)
-					player1.Bodies[(int)x].ApplyForce(new Vec2(0, (-MoveSpeed / 2) * speedMultiplier), player1.Bodies[(int)x].WorldCenter);
+					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2(0, (-MoveSpeed / 2) * speedMultiplier), player1.Biped.Bodies[(int)x].WorldCenter);
 			}
 			if ((_gameKeys & EGameKeys.Left) != 0)
 			{
 				foreach (var x in fixturesToMove)
-					player1.Bodies[(int)x].ApplyForce(new Vec2((-MoveSpeed / 2) * speedMultiplier, 0), player1.Bodies[(int)x].WorldCenter);
+					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2((-MoveSpeed / 2) * speedMultiplier, 0), player1.Biped.Bodies[(int)x].WorldCenter);
 			}
 			if ((_gameKeys & EGameKeys.Right) != 0)
 			{
 				foreach (var x in fixturesToMove)
-					player1.Bodies[(int)x].ApplyForce(new Vec2((MoveSpeed / 2) * speedMultiplier, 0), player1.Bodies[(int)x].WorldCenter);
+					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2((MoveSpeed / 2) * speedMultiplier, 0), player1.Biped.Bodies[(int)x].WorldCenter);
 			}
 			// This is our little game loop.
 			// Instruct the world to perform a single step of simulation.
@@ -857,6 +1032,41 @@ namespace Box2DSharpRenderTest
 			foreach (var x in BodiesToRemove)
 				world.DestroyBody(x);
 			BodiesToRemove.Clear();
+
+			for (int i = 0; i < player1.WeldDefs.Length; ++i)
+			{
+				if (player1.WeldDefs[i] != null)
+				{
+					player1.Welds[i] = (RevoluteJoint)world.CreateJoint(player1.WeldDefs[i]);
+					player1.WeldDefs[i] = null;
+				}
+
+				if (i < 2 && !player1.StickingLegs ||
+					i >= 2 && !player1.StickingHands)
+				{
+					if (player1.Welds[i] != null)
+					{
+						world.DestroyJoint(player1.Welds[i]);
+						player1.Welds[i] = null;
+					}
+				}
+
+				if (player2.WeldDefs[i] != null)
+				{
+					player2.Welds[i] = (RevoluteJoint)world.CreateJoint(player2.WeldDefs[i]);
+					player2.WeldDefs[i] = null;
+				}
+
+				if (i < 2 && !player1.StickingLegs ||
+					i >= 2 && !player1.StickingHands)
+				{
+					if (player2.Welds[i] != null)
+					{
+						world.DestroyJoint(player2.Welds[i]);
+						player2.Welds[i] = null;
+					}
+				}
+			}
 		}
 
 		void sogc_Resize(object sender, EventArgs e)

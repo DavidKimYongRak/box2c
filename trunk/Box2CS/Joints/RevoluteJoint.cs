@@ -327,7 +327,7 @@ namespace Box2CS
 		{
 		}
 
-		public float JointTranslation
+		public float JointAngle
 		{
 			get { return NativeMethods.b2revolutejoint_getjointangle(JointPtr); }
 		}
@@ -345,8 +345,8 @@ namespace Box2CS
 
 		public void SetLimits(float lower, float upper)
 		{
-			LowerLimit = lower;
-			UpperLimit = upper;
+			if (LowerLimit != lower || UpperLimit != upper)
+				NativeMethods.b2revolutejoint_setlimits(JointPtr, lower, upper);
 		}
 
 		public float LowerLimit
