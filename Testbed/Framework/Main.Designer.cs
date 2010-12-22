@@ -376,6 +376,8 @@
 			this.Controls.Add(this.splitContainer1);
 			this.Name = "Main";
 			this.Text = "Main";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
+			this.Load += new System.EventHandler(this.Main_Load);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.Panel2.PerformLayout();
 			this.splitContainer1.ResumeLayout(false);

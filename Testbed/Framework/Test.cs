@@ -23,7 +23,7 @@ namespace Testbed
 		/// Random floating point number in range [lo, hi]
 		public static float RandomFloat(float lo, float hi)
 		{
-			return (float)(rand.NextDouble() * hi) - lo;
+			return (float)(rand.NextDouble() * hi) + lo;
 		}
 	}
 

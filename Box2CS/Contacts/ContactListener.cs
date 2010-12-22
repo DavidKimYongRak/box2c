@@ -23,10 +23,13 @@ namespace Box2CS
 	/// sub-step forces may approach infinity for rigid body collisions. These
 	/// match up one-to-one with the contact points in Manifold.
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct ContactImpulse
+	public struct ContactImpulse
 	{
-		public fixed float normalImpulses[Box2DSettings.b2_maxManifoldPoints];
-		public fixed float tangentImpulses[Box2DSettings.b2_maxManifoldPoints];
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
+		public float[] normalImpulses;
+
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
+		public float[] tangentImpulses;
 	};
 
 	public abstract class ContactListener : IDisposable

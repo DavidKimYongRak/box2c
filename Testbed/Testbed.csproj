@@ -60,10 +60,12 @@
     <Compile Include="Framework\Test.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\Breakable.cs" />
     <Compile Include="Tests\Cantilever.cs" />
     <Compile Include="Tests\CompoundShapes.cs" />
     <Compile Include="Tests\ConfinedBullet.cs" />
     <Compile Include="Tests\Dominos.cs" />
+    <Compile Include="Tests\EdgeShapes.cs" />
     <Compile Include="Tests\PolyShapes.cs" />
     <Compile Include="Tests\Pyramid.cs" />
     <EmbeddedResource Include="Framework\Main.resx">
