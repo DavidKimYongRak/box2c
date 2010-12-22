@@ -4,12 +4,12 @@
 #include "stdafx.h"
 #include "Box2C.h"
 
-BOX2C_API cb2world *b2world_constructor (cb2vec2 gravity, bool doSleep)
+cb2world *b2world_constructor (cb2vec2 gravity, bool doSleep)
 {
 	return new b2World(gravity, doSleep);
 }
 
-BOX2C_API void b2world_destroy (cb2world *world)
+void b2world_destroy (cb2world *world)
 {
 	delete world;
 }
@@ -44,18 +44,18 @@ public:
 	}
 };
 
-BOX2C_API cb2DestructionListenerWrapper *cb2destructionlistener_create (cb2destructionlistener functions)
+cb2DestructionListenerWrapper *cb2destructionlistener_create (cb2destructionlistener functions)
 {
 	return new cb2DestructionListenerWrapper(functions);
 }
 
-BOX2C_API void cb2destructionlistener_destroy (cb2DestructionListenerWrapper *listener)
+void cb2destructionlistener_destroy (cb2DestructionListenerWrapper *listener)
 {
 	delete listener;
 }
 
 //SetDestructionListener
-BOX2C_API void b2world_setdestructionlistener (cb2world *world, cb2DestructionListenerWrapper *listener)
+void b2world_setdestructionlistener (cb2world *world, cb2DestructionListenerWrapper *listener)
 {
 	world->SetDestructionListener(listener);
 }
@@ -84,17 +84,17 @@ public:
 	}
 };
 
-BOX2C_API cb2ContactFilterWrapper *cb2contactfilter_create (cb2contactfilter functions)
+cb2ContactFilterWrapper *cb2contactfilter_create (cb2contactfilter functions)
 {
 	return new cb2ContactFilterWrapper(functions);
 }
 
-BOX2C_API void cb2contactfilter_destroy (cb2ContactFilterWrapper *listener)
+void cb2contactfilter_destroy (cb2ContactFilterWrapper *listener)
 {
 	delete listener;
 }
 
-BOX2C_API void b2world_setcontactfilter (cb2world *world, cb2ContactFilterWrapper *listener)
+void b2world_setcontactfilter (cb2world *world, cb2ContactFilterWrapper *listener)
 {
 	world->SetContactFilter(listener);
 }
@@ -143,17 +143,17 @@ public:
 	  }
 };
 
-BOX2C_API cb2ContactListenerWrapper *cb2contactlistener_create (cb2contactlistener functions)
+cb2ContactListenerWrapper *cb2contactlistener_create (cb2contactlistener functions)
 {
 	return new cb2ContactListenerWrapper(functions);
 }
 
-BOX2C_API void cb2contactlistener_destroy (cb2ContactListenerWrapper *listener)
+void cb2contactlistener_destroy (cb2ContactListenerWrapper *listener)
 {
 	delete listener;
 }
 
-BOX2C_API void b2world_setcontactlistener (cb2world *world, cb2ContactListenerWrapper *listener)
+void b2world_setcontactlistener (cb2world *world, cb2ContactListenerWrapper *listener)
 {
 	world->SetContactListener(listener);
 }
@@ -222,62 +222,62 @@ public:
 	}
 };
 
-BOX2C_API cb2DebugDrawWrapper *cb2debugdraw_create (cb2debugdraw functions)
+cb2DebugDrawWrapper *cb2debugdraw_create (cb2debugdraw functions)
 {
 	return new cb2DebugDrawWrapper(functions);
 }
 
-BOX2C_API uint32 cb2debugdraw_getflags (cb2DebugDrawWrapper *listener)
+uint32 cb2debugdraw_getflags (cb2DebugDrawWrapper *listener)
 {
 	return listener->GetFlags();
 }
 
-BOX2C_API void cb2debugdraw_setflags (cb2DebugDrawWrapper *listener, uint32 flags)
+void cb2debugdraw_setflags (cb2DebugDrawWrapper *listener, uint32 flags)
 {
 	listener->SetFlags(flags);
 }
 
-BOX2C_API void cb2debugdraw_destroy (cb2DebugDrawWrapper *listener)
+void cb2debugdraw_destroy (cb2DebugDrawWrapper *listener)
 {
 	delete listener;
 }
 
-BOX2C_API void b2world_setdebugdraw (cb2world *world, cb2DebugDrawWrapper *listener)
+void b2world_setdebugdraw (cb2world *world, cb2DebugDrawWrapper *listener)
 {
 	world->SetDebugDraw(listener);
 }
 
-BOX2C_API cb2body *b2world_createbody (cb2world *world, b2BodyDef *def)
+cb2body *b2world_createbody (cb2world *world, b2BodyDef *def)
 {
 	return world->CreateBody (def);
 }
 
-BOX2C_API void b2world_destroybody (cb2world *world, cb2body *body)
+void b2world_destroybody (cb2world *world, cb2body *body)
 {
 	world->DestroyBody(body);
 }
 
-BOX2C_API cb2joint *b2world_createjoint (cb2world *world, b2JointDef *def)
+cb2joint *b2world_createjoint (cb2world *world, b2JointDef *def)
 {
 	return world->CreateJoint(def);
 }
 
-BOX2C_API void b2world_destroyjoint (cb2world *world, cb2joint *joint)
+void b2world_destroyjoint (cb2world *world, cb2joint *joint)
 {
 	world->DestroyJoint(joint);
 }
 
-BOX2C_API void b2world_step (cb2world *world, float timeStep, int velocityIterations, int positionIterations)
+void b2world_step (cb2world *world, float timeStep, int velocityIterations, int positionIterations)
 {
 	world->Step(timeStep, velocityIterations, positionIterations);
 }
 
-BOX2C_API void b2world_clearforces (cb2world *world)
+void b2world_clearforces (cb2world *world)
 {
 	world->ClearForces();
 }
 
-BOX2C_API void b2world_drawdebugdata (cb2world *world)
+void b2world_drawdebugdata (cb2world *world)
 {
 	world->DrawDebugData();
 }
@@ -286,72 +286,72 @@ BOX2C_API void b2world_drawdebugdata (cb2world *world)
 
 // RayCast
 
-BOX2C_API cb2body *b2world_getbodylist (cb2world *world)
+cb2body *b2world_getbodylist (cb2world *world)
 {
 	return world->GetBodyList();
 }
 
-BOX2C_API cb2joint *b2world_getjointlist (cb2world *world)
+cb2joint *b2world_getjointlist (cb2world *world)
 {
 	return world->GetJointList();
 }
 
-BOX2C_API cb2contact *b2world_getcontactlist (cb2world *world)
+cb2contact *b2world_getcontactlist (cb2world *world)
 {
 	return world->GetContactList();
 }
 
-BOX2C_API void b2world_setwarmstarting (cb2world *world, bool flag)
+void b2world_setwarmstarting (cb2world *world, bool flag)
 {
 	world->SetWarmStarting(flag);
 }
 
-BOX2C_API void b2world_setcontinuousphysics (cb2world *world, bool flag)
+void b2world_setcontinuousphysics (cb2world *world, bool flag)
 {
 	world->SetContinuousPhysics(flag);
 }
 
-BOX2C_API int b2world_getproxycount (cb2world *world)
+int b2world_getproxycount (cb2world *world)
 {
 	return world->GetProxyCount();
 }
 
-BOX2C_API int b2world_getbodycount (cb2world *world)
+int b2world_getbodycount (cb2world *world)
 {
 	return world->GetBodyCount();
 }
 
-BOX2C_API int b2world_getjointcount (cb2world *world)
+int b2world_getjointcount (cb2world *world)
 {
 	return world->GetJointCount();
 }
 
-BOX2C_API int b2world_getcontactcount (cb2world *world)
+int b2world_getcontactcount (cb2world *world)
 {
 	return world->GetContactCount();
 }
 
-BOX2C_API void b2world_setgravity (cb2world *world, cb2vec2 gravity)
+void b2world_setgravity (cb2world *world, cb2vec2 gravity)
 {
 	world->SetGravity(gravity);
 }
 
-BOX2C_API cb2vec2 b2world_getgravity (cb2world *world)
+cb2vec2 b2world_getgravity (cb2world *world)
 {
 	return world->GetGravity();
 }
 
-BOX2C_API bool b2world_islocked (cb2world *world)
+bool b2world_islocked (cb2world *world)
 {
 	return world->IsLocked();
 }
 
-BOX2C_API void b2world_setautoclearforces (cb2world *world, bool flag)
+void b2world_setautoclearforces (cb2world *world, bool flag)
 {
 	world->SetAutoClearForces(flag);
 }
 
-BOX2C_API bool b2world_getautoclearforces (cb2world *world)
+bool b2world_getautoclearforces (cb2world *world)
 {
 	return world->GetAutoClearForces();
 }
@@ -379,12 +379,12 @@ public:
 	}
 };
 
-BOX2C_API cb2QueryCallbackWrapper *cb2querycallback_create (cb2querycallback functions)
+cb2QueryCallbackWrapper *cb2querycallback_create (cb2querycallback functions)
 {
 	return new cb2QueryCallbackWrapper(functions);
 }
 
-BOX2C_API void cb2querycallback_destroy (cb2QueryCallbackWrapper *listener)
+void cb2querycallback_destroy (cb2QueryCallbackWrapper *listener)
 {
 	delete listener;
 }
@@ -414,12 +414,12 @@ public:
 	}
 };
 
-BOX2C_API cb2RayCastCallbackWrapper *cb2raycastcallback_create (cb2raycastcallback functions)
+cb2RayCastCallbackWrapper *cb2raycastcallback_create (cb2raycastcallback functions)
 {
 	return new cb2RayCastCallbackWrapper(functions);
 }
 
-BOX2C_API void cb2raycastcallback_destroy (cb2RayCastCallbackWrapper *listener)
+void cb2raycastcallback_destroy (cb2RayCastCallbackWrapper *listener)
 {
 	delete listener;
 }
@@ -576,6 +576,32 @@ b2PolygonShape PolygonShapeFromPortableCircleShape (cb2polygonshapeportable *por
 	memcpy (polyShape.m_normals, portable->m_normals, sizeof(polyShape.m_normals));
 	memcpy (polyShape.m_vertices, portable->m_vertices, sizeof(polyShape.m_vertices));
 	return polyShape;
+}
+
+// be sure to free this
+b2Shape *ShapeFromPortableShape (cb2shapeportable *portable)
+{
+	b2Shape *newShape;
+
+	switch (portable->m_type)
+	{
+	case b2Shape::e_circle:
+		{
+			b2CircleShape ncircle = CircleShapeFromPortableCircleShape((cb2circleshapeportable*)portable);
+			newShape = new b2CircleShape;
+			memcpy (newShape, &ncircle, sizeof(ncircle));
+		}
+		break;
+	case b2Shape::e_polygon:
+		{
+			b2PolygonShape npoly = PolygonShapeFromPortableCircleShape((cb2polygonshapeportable*)portable);
+			newShape = new b2PolygonShape;
+			memcpy (newShape, &npoly, sizeof(npoly));
+		}
+		break;
+	}
+
+	return newShape;
 }
 
 cb2fixture *b2body_createfixture (cb2body *body, cb2fixturedefportable *fixtureDef)
@@ -1337,31 +1363,6 @@ void b2version_get (cb2version *outVersion)
 
 
 // Globals
-/*
-/// Compute the collision manifold between two circles.
-void b2CollideCircles(b2Manifold* manifold,
-					  const b2CircleShape* circle1, const b2Transform& xf1,
-					  const b2CircleShape* circle2, const b2Transform& xf2);
-
-/// Compute the collision manifold between a polygon and a circle.
-void b2CollidePolygonAndCircle(b2Manifold* manifold,
-							   const b2PolygonShape* polygon, const b2Transform& xf1,
-							   const b2CircleShape* circle, const b2Transform& xf2);
-
-/// Compute the collision manifold between two polygons.
-void b2CollidePolygons(b2Manifold* manifold,
-					   const b2PolygonShape* polygon1, const b2Transform& xf1,
-					   const b2PolygonShape* polygon2, const b2Transform& xf2);
-
-/// Clipping for contact manifolds.
-int32 b2ClipSegmentToLine(b2ClipVertex vOut[2], const b2ClipVertex vIn[2],
-							const b2Vec2& normal, float32 offset);
-
-/// Determine if two generic shapes overlap.
-bool b2TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB,
-				   const b2Transform& xfA, const b2Transform& xfB);
-*/
-
 void cb2_collidecircles (cb2manifold *manifold, cb2circleshapeportable *circle1, cb2transform xf1, cb2circleshapeportable *circle2, cb2transform xf2)
 {
 	b2CircleShape	sh1 = CircleShapeFromPortableCircleShape(circle1),
@@ -1389,4 +1390,17 @@ void cb2_collidepolygons (cb2manifold *manifold, cb2polygonshapeportable *polygo
 int cb2_clipsegmenttoline(cb2clipvertex *vOut, cb2clipvertex vIn[2], cb2vec2 normal, float offset)
 {
 	return b2ClipSegmentToLine(vOut, vIn, normal, offset);
+}
+
+bool cb2_testoverlap (cb2shapeportable *shapeA, cb2shapeportable *shapeB, cb2transform xfA, cb2transform xfB)
+{
+	b2Shape *shapeAReal = ShapeFromPortableShape(shapeA);
+	b2Shape *shapeBReal = ShapeFromPortableShape(shapeB);
+
+	bool rV = b2TestOverlap(shapeAReal, shapeBReal, xfA, xfB);
+
+	delete shapeAReal;
+	delete shapeBReal;
+
+	return rV;
 }

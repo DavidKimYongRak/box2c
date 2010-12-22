@@ -167,6 +167,7 @@ namespace Box2CS
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Mat22
 	{
+		public static Mat22 Identity = new Mat22(new Vec2(1.0f, 0.0f), new Vec2(0.0f, 1.0f));
 		public Vec2 col1, col2;
 
 		public void Set(float angle)
@@ -180,11 +181,18 @@ namespace Box2CS
 		{
 			return new Vec2(A.col1.x * v.x + A.col2.x * v.y, A.col1.y * v.x + A.col2.y * v.y);
 		}
+
+		public Mat22 (Vec2 ncol1, Vec2 ncol2)
+		{
+			col1 = ncol1;
+			col2 = ncol2;
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Transform
 	{
+		public static Transform Identity = new Transform(Vec2.Empty, Mat22.Identity);
 		public Vec2 position;
 		public Mat22 R;
 
@@ -194,6 +202,12 @@ namespace Box2CS
 			float y = T.position.y + T.R.col1.y * v.x + T.R.col2.y * v.y;
 
 			return new Vec2(x, y);
+		}
+
+		public Transform (Vec2 nposition, Mat22 nR)
+		{
+			position = nposition;
+			R = nR;
 		}
 	}
 

@@ -711,17 +711,17 @@ namespace Box2CS
 
 		public static bool operator ==(Body l, Body r)
 		{
-			return l.BodyPtr == r.BodyPtr;
-		}
-
-		public static bool operator !=(Body l, Body r)
-		{
 			if ((object)l == null && (object)r == null)
 				return true;
 			else if ((object)l == null && (object)r != null ||
 				(object)l != null && (object)r == null)
 				return false;
-			
+
+			return l.BodyPtr == r.BodyPtr;
+		}
+
+		public static bool operator !=(Body l, Body r)
+		{
 			return !(l == r);
 		}
 

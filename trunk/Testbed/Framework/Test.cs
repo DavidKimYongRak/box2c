@@ -9,10 +9,10 @@ namespace Testbed
 {
 	public delegate Test TestCreateFcn();
 
-		public static class Rand
-		{
-			static Random rand = new Random();
-			const int RAND_LIMIT	= 32767;
+	public static class Rand
+	{
+		static Random rand = new Random();
+		const int RAND_LIMIT	= 32767;
 
 		/// Random number in range [-1,1]
 		public static float RandomFloat()
@@ -51,8 +51,8 @@ namespace Testbed
 
 	public class TestEntry
 	{
-		public string		Name;
-		public Type			Type;
+		public string Name;
+		public Type Type;
 
 		public Test Construct()
 		{
@@ -154,13 +154,13 @@ namespace Testbed
 			m_stepCount = 0;
 
 			BodyDef bodyDef = new BodyDef();
-				m_groundBody = m_world.CreateBody(bodyDef);
+			m_groundBody = m_world.CreateBody(bodyDef);
 		}
 
 		public virtual void DisposeTest() { }
 
 		bool _disposed = false;
-		public new void Dispose ()
+		public new void Dispose()
 		{
 			if (!_disposed)
 			{
@@ -180,6 +180,7 @@ namespace Testbed
 
 		public virtual void Step()
 		{
+			Program.MainForm.GLWindow.Invalidate();
 			float timeStep = TestSettings.hz > 0.0f ? 1.0f / TestSettings.hz : 0.0f;
 
 			if (TestSettings.pause)
@@ -213,7 +214,6 @@ namespace Testbed
 			m_world.Step(timeStep, TestSettings.velocityIterations, TestSettings.positionIterations);
 
 			//m_world.DrawDebugData();
-			Program.MainForm.GLWindow.Invalidate();
 
 			if (timeStep > 0.0f)
 			{
@@ -353,7 +353,7 @@ namespace Testbed
 			}
 		}
 
-		public virtual void Keyboard(Keys key) {  }
+		public virtual void Keyboard(Keys key) { }
 		public void ShiftMouseDown(Vec2 p)
 		{
 			m_mouseWorld = p;
@@ -366,7 +366,7 @@ namespace Testbed
 		public virtual void MouseDown(Vec2 p)
 		{
 			m_mouseWorld = p;
-	
+
 			if (m_mouseJoint != null)
 				return;
 
@@ -377,7 +377,7 @@ namespace Testbed
 			aabb.UpperBound = p + d;
 
 			// Query the world for overlapping shapes.
-				Fixture m_fixture = null;
+			Fixture m_fixture = null;
 
 			m_world.QueryAABB(
 			delegate(Fixture fixture)

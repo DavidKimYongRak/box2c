@@ -25,6 +25,8 @@ namespace Testbed.Tests
 		{
 		}
 
+		public const int e_count = 8;
+
 		public Cantilever()
 		{
 			Body ground;

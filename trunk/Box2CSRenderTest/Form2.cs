@@ -977,6 +977,8 @@ namespace Box2DSharpRenderTest
 
 		void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+			sogc.Invalidate();
+			
 			// Prepare for simulation. Typically we use a time step of 1/60 of a
 			// second (60Hz) and 10 iterations. This provides a high quality simulation
 			// in most game scenarios.
@@ -1026,8 +1028,6 @@ namespace Box2DSharpRenderTest
 			// Instruct the world to perform a single step of simulation.
 			// It is generally best to keep the time step and iterations fixed.
 			world.Step(timeStep, velocityIterations, positionIterations);
-
-			sogc.Invalidate();
 
 			foreach (var x in BodiesToRemove)
 				world.DestroyBody(x);

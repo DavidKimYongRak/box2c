@@ -220,3 +220,9 @@ EXPORTS
 	b2prismaticjoint_getmotorforce
 
 	b2version_get
+
+	cb2_collidecircles
+	cb2_collidepolygonandcircle
+	cb2_collidepolygons
+	cb2_clipsegmenttoline
+	cb2_testoverlap
