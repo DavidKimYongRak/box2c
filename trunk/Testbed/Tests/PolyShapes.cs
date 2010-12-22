@@ -224,7 +224,7 @@ namespace Testbed.Tests
 
 		public override void  Keyboard(System.Windows.Forms.Keys key)
 		{
-			switch ((char)key)
+			switch ((char.ToLower((char)key)))
 			{
 			case '1':
 			case '2':

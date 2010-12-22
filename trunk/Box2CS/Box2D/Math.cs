@@ -22,6 +22,11 @@ namespace Box2CS
 		{
 			return Math.Max(low, Math.Min(a, high));
 		}
+
+		public static Vec2 b2Cross(float s, Vec2 a)
+		{
+			return new Vec2(-s * a.y, s * a.x);
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

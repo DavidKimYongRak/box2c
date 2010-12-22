@@ -30,6 +30,7 @@ namespace Testbed
 			get { return _glcontrol; }
 		}
 
+		System.Timers.Timer simulationTimer;
 		public Main()
 		{
 			InitializeComponent();
@@ -54,7 +55,7 @@ namespace Testbed
 			//Gl.glEnable(Gl.GL_LINE_SMOOTH);
 			//Gl.glHint(Gl.GL_LINE_SMOOTH_HINT, Gl.GL_NICEST);
 
-			System.Timers.Timer simulationTimer = new System.Timers.Timer();
+			simulationTimer = new System.Timers.Timer();
 			simulationTimer.Interval = framePeriod;
 			simulationTimer.SynchronizingObject = this;
 			simulationTimer.Elapsed += new System.Timers.ElapsedEventHandler(simulationTimer_Elapsed);
@@ -468,6 +469,18 @@ namespace Testbed
 		private void numericUpDown1_ValueChanged(object sender, EventArgs e)
 		{
 			TestSettings.velocityIterations = (int)numericUpDown1.Value;
+		}
+
+		private void Main_Load(object sender, EventArgs e)
+		{
+
+		}
+
+		private void Main_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			simulationTimer.Stop();
+			simulationTimer.Dispose();
+			simulationTimer = null;
 		}
 	}
 }
