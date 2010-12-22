@@ -14,14 +14,14 @@ namespace Testbed.Tests
 	/// overlap a circle. Up to 4 overlapped fixtures will be highlighted with a yellow border.
 	public class PolyShapesCallback : QueryCallback
 	{	
-		public const int e_maxCount = 4
+		public const int e_maxCount = 4;
 
-		PolyShapesCallback()
+		public PolyShapesCallback()
 		{
 			m_count = 0;
 		}
 
-		void DrawFixture(Fixture fixture)
+		public void DrawFixture(Fixture fixture)
 		{
 			ColorF color = new ColorF(0.95f, 0.95f, 0.6f);
 			Transform xf = fixture.Body.Transform;
@@ -57,7 +57,7 @@ namespace Testbed.Tests
 
 		/// Called for each fixture found in the query AABB.
 		/// @return false to terminate the query.
-		bool ReportFixture(Fixture fixture)
+		public override bool ReportFixture(Fixture fixture)
 		{
 			if (m_count == e_maxCount)
 				return false;
@@ -65,123 +65,145 @@ namespace Testbed.Tests
 			Body body = fixture.Body;
 			Shape shape = fixture.Shape;
 
-			bool overlap = TestOverlap(shape, &m_circle, body->GetTransform(), m_transform);
+			bool overlap = Box2D.TestOverlap(shape, m_circle, body.Transform, m_transform);
 
 			if (overlap)
 			{
-				DrawFixture(fixture);
+				//DrawFixture(fixture);
+				m_debugDraw.DrawAABB(fixture.AABB, new ColorF(1, 0, 0));
 				++m_count;
 			}
 
 			return true;
 		}
 
-		CircleShape m_circle;
-		Transform m_transform;
-		DebugDraw m_debugDraw;
-		int m_count;
+		public CircleShape m_circle;
+		public Transform m_transform;
+		public TestDebugDraw m_debugDraw;
+		public int m_count;
 	};
 
 	public class PolyShapes : Test
 	{
 		public const int k_maxBodies = 256;
+		
+		public static string Name
+		{
+			get { return "PolyShapes"; }
+		}
 
-		PolyShapes()
+		public override void BeginContact(Contact contact)
+		{
+		}
+
+		public override void EndContact(Contact contact)
+		{
+		}
+
+		public override void PostSolve(Contact contact, ContactImpulse impulse)
+		{
+		}
+
+		public PolyShapes()
 		{
 			// Ground body
 			{
-				BodyDef bd;
-				Body* ground = m_world->CreateBody(&bd);
+				BodyDef bd = new BodyDef();
+				Body ground = m_world.CreateBody(bd);
 
-				PolygonShape shape;
-				shape.SetAsEdge(Vec2(-40.0f, 0.0f), Vec2(40.0f, 0.0f));
-				ground->CreateFixture(&shape, 0.0f);
+				PolygonShape shape = new PolygonShape();
+				shape.SetAsEdge(new Vec2(-40.0f, 0.0f), new Vec2(40.0f, 0.0f));
+				ground.CreateFixture(shape, 0.0f);
 			}
 
 			{
-				Vec2 vertices[3];
-				vertices[0].Set(-0.5f, 0.0f);
-				vertices[1].Set(0.5f, 0.0f);
-				vertices[2].Set(0.0f, 1.5f);
-				m_polygons[0].Set(vertices, 3);
+				Vec2[] vertices = new Vec2[3];
+				vertices[0] = new Vec2(-0.5f, 0.0f);
+				vertices[1] = new Vec2(0.5f, 0.0f);
+				vertices[2] = new Vec2(0.0f, 1.5f);
+				m_polygons[0] = new PolygonShape();
+				m_polygons[0].Vertices = vertices;
 			}
 		
 			{
-				Vec2 vertices[3];
-				vertices[0].Set(-0.1f, 0.0f);
-				vertices[1].Set(0.1f, 0.0f);
-				vertices[2].Set(0.0f, 1.5f);
-				m_polygons[1].Set(vertices, 3);
+				Vec2[] vertices = new Vec2[3];
+				vertices[0] = new Vec2(-0.1f, 0.0f);
+				vertices[1] = new Vec2(0.1f, 0.0f);
+				vertices[2] = new Vec2(0.0f, 1.5f);
+				m_polygons[1] = new PolygonShape();
+				m_polygons[1].Vertices = vertices;
 			}
 
 			{
-				float32 w = 1.0f;
-				float32 b = w / (2.0f + sqrtf(2.0f));
-				float32 s = sqrtf(2.0f) * b;
+				float w = 1.0f;
+				float b = w / (2.0f + (float)Math.Sqrt(2.0f));
+				float s = (float)Math.Sqrt(2.0f) * b;
 
-				Vec2 vertices[8];
-				vertices[0].Set(0.5f * s, 0.0f);
-				vertices[1].Set(0.5f * w, b);
-				vertices[2].Set(0.5f * w, b + s);
-				vertices[3].Set(0.5f * s, w);
-				vertices[4].Set(-0.5f * s, w);
-				vertices[5].Set(-0.5f * w, b + s);
-				vertices[6].Set(-0.5f * w, b);
-				vertices[7].Set(-0.5f * s, 0.0f);
+				Vec2[] vertices = new Vec2[8];
+				vertices[0] = new Vec2(0.5f * s, 0.0f);
+				vertices[1] = new Vec2(0.5f * w, b);
+				vertices[2] = new Vec2(0.5f * w, b + s);
+				vertices[3] = new Vec2(0.5f * s, w);
+				vertices[4] = new Vec2(-0.5f * s, w);
+				vertices[5] = new Vec2(-0.5f * w, b + s);
+				vertices[6] = new Vec2(-0.5f * w, b);
+				vertices[7] = new Vec2(-0.5f * s, 0.0f);
 
-				m_polygons[2].Set(vertices, 8);
+				m_polygons[2] = new PolygonShape();
+				m_polygons[2].Vertices = vertices;
 			}
 
 			{
+				m_polygons[3] = new PolygonShape();
 				m_polygons[3].SetAsBox(0.5f, 0.5f);
 			}
 
 			{
-				m_circle.m_radius = 0.5f;
+				m_circle = new CircleShape();
+				m_circle.Radius = 0.5f;
 			}
 
 			m_bodyIndex = 0;
-			memset(m_bodies, 0, sizeof(m_bodies));
 		}
 
 		void Create(int index)
 		{
-			if (m_bodies[m_bodyIndex] != NULL)
+			if (m_bodies[m_bodyIndex] != null)
 			{
-				m_world->DestroyBody(m_bodies[m_bodyIndex]);
-				m_bodies[m_bodyIndex] = NULL;
+				m_world.DestroyBody(m_bodies[m_bodyIndex]);
+				m_bodies[m_bodyIndex] = null;
 			}
 
-			BodyDef bd;
-			bd.type = _dynamicBody;
+			BodyDef bd = new BodyDef();
+			bd.BodyType = EBodyType.b2_dynamicBody;
 
-			float32 x = RandomFloat(-2.0f, 2.0f);
-			bd.position.Set(x, 10.0f);
-			bd.angle = RandomFloat(-_pi, _pi);
+			float x = Rand.RandomFloat(-2.0f, 2.0f);
+			bd.Position = new Vec2(x, 10.0f);
+			bd.Angle = Rand.RandomFloat((float)-Math.PI, (float)Math.PI);
 
 			if (index == 4)
 			{
-				bd.angularDamping = 0.02f;
+				bd.AngularDamping = 0.02f;
 			}
 
-			m_bodies[m_bodyIndex] = m_world->CreateBody(&bd);
+			m_bodies[m_bodyIndex] = m_world.CreateBody(bd);
 
 			if (index < 4)
 			{
-				FixtureDef fd;
-				fd.shape = m_polygons + index;
-				fd.density = 1.0f;
-				fd.friction = 0.3f;
-				m_bodies[m_bodyIndex]->CreateFixture(&fd);
+				FixtureDef fd = new FixtureDef();
+				fd.Shape = m_polygons[index];
+				fd.Density = 1.0f;
+				fd.Friction = 0.3f;
+				m_bodies[m_bodyIndex].CreateFixture(fd);
 			}
 			else
 			{
-				FixtureDef fd;
-				fd.shape = &m_circle;
-				fd.density = 1.0f;
-				fd.friction = 0.3f;
+				FixtureDef fd = new FixtureDef();
+				fd.Shape = m_circle;
+				fd.Density = 1.0f;
+				fd.Friction = 0.3f;
 
-				m_bodies[m_bodyIndex]->CreateFixture(&fd);
+				m_bodies[m_bodyIndex].CreateFixture(fd);
 			}
 
 			m_bodyIndex = (m_bodyIndex + 1) % k_maxBodies;
@@ -191,34 +213,34 @@ namespace Testbed.Tests
 		{
 			for (int i = 0; i < k_maxBodies; ++i)
 			{
-				if (m_bodies[i] != NULL)
+				if (m_bodies[i] != null)
 				{
-					m_world->DestroyBody(m_bodies[i]);
-					m_bodies[i] = NULL;
+					m_world.DestroyBody(m_bodies[i]);
+					m_bodies[i] = null;
 					return;
 				}
 			}
 		}
 
-		void Keyboard(unsigned char key)
+		public override void  Keyboard(System.Windows.Forms.Keys key)
 		{
-			switch (key)
+			switch ((char)key)
 			{
 			case '1':
 			case '2':
 			case '3':
 			case '4':
 			case '5':
-				Create(key - '1');
+				Create((int)(key - '1'));
 				break;
 
 			case 'a':
 				for (int i = 0; i < k_maxBodies; i += 2)
 				{
-					if (m_bodies[i])
+					if (m_bodies[i] != null)
 					{
-						bool active = m_bodies[i]->IsActive();
-						m_bodies[i]->SetActive(!active);
+						bool active = m_bodies[i].IsActive;
+						m_bodies[i].IsActive = !active;
 					}
 				}
 				break;
@@ -229,23 +251,25 @@ namespace Testbed.Tests
 			}
 		}
 
-		void Step(Settings* settings)
+		public override void Step()
 		{
-			Test::Step(settings);
+			base.Step();
 
-			PolyShapesCallback callback;
-			callback.m_circle.m_radius = 2.0f;
-			callback.m_circle.m_p.Set(0.0f, 2.1f);
-			callback.m_transform.SetIdentity();
-			callback.m_debugDraw = &m_debugDraw;
+			PolyShapesCallback callback = new PolyShapesCallback();
+			callback.m_circle = new CircleShape();
+			callback.m_circle.Radius = 2.0f;
+			callback.m_circle.Position = new Vec2(0.0f, 2.1f);
+			callback.m_transform = Transform.Identity;
+			callback.m_debugDraw = m_debugDraw;
 
 			AABB aabb;
-			callback.m_circle.ComputeAABB(&aabb, callback.m_transform);
+			callback.m_circle.ComputeAABB(out aabb, callback.m_transform);
 
-			m_world->QueryAABB(&callback, aabb);
+			m_world.QueryAABB(callback, aabb);
 
-			Color color(0.4f, 0.7f, 0.8f);
-			m_debugDraw.DrawCircle(callback.m_circle.m_p, callback.m_circle.m_radius, color);
+			ColorF color = new ColorF(0.4f, 0.7f, 0.8f);
+			m_debugDraw.DrawCircle(callback.m_circle.Position, callback.m_circle.Radius, color);
+			m_debugDraw.DrawAABB(aabb, new ColorF(0.6f, 0.3f, 0.4f));
 
 			m_debugDraw.DrawString(5, m_textLine, "Press 1-5 to drop stuff");
 			m_textLine += 15;
@@ -255,14 +279,9 @@ namespace Testbed.Tests
 			m_textLine += 15;
 		}
 
-		static Test* Create()
-		{
-			return new PolyShapes;
-		}
-
 		int m_bodyIndex;
-		Body* m_bodies[k_maxBodies];
-		PolygonShape m_polygons[4];
+		Body[] m_bodies = new Body[k_maxBodies];
+		PolygonShape[] m_polygons = new PolygonShape[4];
 		CircleShape m_circle;
 	};
 }

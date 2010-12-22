@@ -67,8 +67,7 @@
       <ModuleDefinitionFile>mod.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-copy "$(OutDir)$(TargetName)$(TargetExt)" "..\Box2CSRenderTest\bin\$(Configuration)\$(TargetName)$(TargetExt)"
+      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "..\Box2CSRenderTest\bin\$(Configuration)\$(TargetName)$(TargetExt)"
 copy "$(OutDir)$(TargetName)$(TargetExt)" "..\Testbed\bin\$(Configuration)\$(TargetName)$(TargetExt)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

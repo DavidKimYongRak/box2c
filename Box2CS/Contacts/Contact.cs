@@ -17,6 +17,21 @@ namespace Box2CS
 
 		[FieldOffset(0)]
 		public uint Key;
+
+		public ContactID(uint key)
+		{
+			ReferenceEdge = IncidentEdge = IncidentVertex = Flip = 0;
+			Key = key;
+		}
+
+		public ContactID(byte referenceEdge, byte incidentEdge, byte incidentVertex, byte flip)
+		{
+			Key = 0;
+			ReferenceEdge = referenceEdge;
+			IncidentEdge = incidentEdge;
+			IncidentVertex = incidentVertex;
+			Flip = flip;
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

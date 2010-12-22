@@ -59,6 +59,21 @@ namespace Box2CS
 			return shape;
 		}
 
+		public override void ComputeAABB(out AABB aabb, Transform xf)
+		{
+			Vec2 p = xf.position + (xf.R * Position);
+			aabb = new AABB(new Vec2(p.x - Radius, p.y - Radius),
+				new Vec2(p.x + Radius, p.y + Radius));
+		}
+
+		public override void ComputeMass(out MassData massData, float density)
+		{
+			var mass = density * Math.PI * Radius * Radius;
+			massData = new MassData((float)mass,
+				Position,
+				(float)mass * (0.5f * Radius * Radius + Position.Dot(Position)));
+		}
+
 		public Vec2 Position
 		{
 			get { return _internalCircleShape.m_p; }

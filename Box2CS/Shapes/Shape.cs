@@ -89,6 +89,9 @@ namespace Box2CS
 		internal abstract IntPtr Lock();
 		internal abstract void Unlock();
 
+		public abstract void ComputeAABB(out AABB aabb, Transform xf);
+		public abstract void ComputeMass(out MassData massData, float density);
+
 		object ICloneable.Clone()
 		{
 			return Clone();

@@ -319,5 +319,90 @@ _internalPolyShape.m_vertices[0];
 			list.Reverse();
 			Vertices = list.ToArray();
 		}
+
+		public override void ComputeAABB(out AABB aabb, Transform xf)
+		{
+			Vec2 lower = xf * Vertices[0];
+			Vec2 upper = lower;
+
+			for (int i = 1; i < VertexCount; ++i)
+			{
+				Vec2 v = xf * Vertices[i];
+				lower = Vec2.Min(lower, v);
+				upper = Vec2.Max(upper, v);
+			}
+
+			Vec2 r = new Vec2(Radius, Radius);
+			aabb = new AABB(lower - r,
+							upper + r);
+		}
+
+		public override void ComputeMass(out MassData massData, float density)
+		{
+			if (!(VertexCount >= 2))
+				throw new Exception();
+
+			// A line segment has zero mass.
+			if (VertexCount == 2)
+			{
+				massData = new MassData(0.0f,
+										0.5f * (Vertices[0] + Vertices[1]),
+										0.0f);
+				return;
+			}
+
+			Vec2 center = Vec2.Empty;
+			float area = 0.0f;
+			float I = 0.0f;
+
+			// pRef is the reference point for forming triangles.
+			// It's location doesn't change the result (except for rounding error).
+			Vec2 pRef = Vec2.Empty;
+		#if NO
+			// This code would put the reference point inside the polygon.
+			for (int i = 0; i < VertexCount; ++i)
+			{
+				pRef += Vertices[i];
+			}
+			pRef *= 1.0f / count;
+		#endif
+
+			const float k_inv3 = 1.0f / 3.0f;
+
+			for (int i = 0; i < VertexCount; ++i)
+			{
+				// Triangle vertices.
+				Vec2 p1 = pRef;
+				Vec2 p2 = Vertices[i];
+				Vec2 p3 = i + 1 < VertexCount ? Vertices[i+1] : Vertices[0];
+
+				Vec2 e1 = p2 - p1;
+				Vec2 e2 = p3 - p1;
+
+				float D = e1.Cross(e2);
+
+				float triangleArea = 0.5f * D;
+				area += triangleArea;
+
+				// Area weighted centroid
+				center += triangleArea * k_inv3 * (p1 + p2 + p3);
+
+				float px = p1.x, py = p1.y;
+				float ex1 = e1.x, ey1 = e1.y;
+				float ex2 = e2.x, ey2 = e2.y;
+
+				float intx2 = k_inv3 * (0.25f * (ex1*ex1 + ex2*ex1 + ex2*ex2) + (px*ex1 + px*ex2)) + 0.5f*px*px;
+				float inty2 = k_inv3 * (0.25f * (ey1*ey1 + ey2*ey1 + ey2*ey2) + (py*ey1 + py*ey2)) + 0.5f*py*py;
+
+				I += D * (intx2 + inty2);
+			}
+
+			if (!(area > float.Epsilon))
+				throw new Exception();
+
+			massData = new MassData(density * area,
+				center * (1.0f / area),
+				density * I);
+		}
 	}
 }

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Body\Body.cs" />
+    <Compile Include="Box2D\Globals.cs" />
     <Compile Include="Box2D\Helpers.cs" />
     <Compile Include="Shapes\CircleShape.cs" />
     <Compile Include="Contacts\Contact.cs" />
@@ -77,6 +78,10 @@
     <Compile Include="World\World.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)..\..\..\Box2CSRenderTest\bin\$(Configuration)\$(TargetName)$(TargetExt)"
+copy "$(TargetPath)" "$(TargetDir)..\..\..\Testbed\bin\$(Configuration)\$(TargetName)$(TargetExt)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
