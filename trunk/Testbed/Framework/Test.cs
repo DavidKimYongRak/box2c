@@ -47,6 +47,7 @@ namespace Testbed
 		public static bool enableContinuous = true;
 		public static bool pause;
 		public static bool singleStep;
+		public static bool restart;
 	};
 
 	public class TestEntry
