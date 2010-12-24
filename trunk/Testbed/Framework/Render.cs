@@ -135,8 +135,8 @@ namespace Testbed
 			Gl.glMatrixMode(Gl.GL_PROJECTION);
 			Gl.glPushMatrix();
 			Gl.glLoadIdentity();
-			int w = Program.MainForm.GLWindow.Width;
-			int h = Program.MainForm.GLWindow.Height;
+			int w = (int)Main.GLWindow.Width;
+			int h = (int)Main.GLWindow.Height;
 			Glu.gluOrtho2D(0, w, h, 0);
 			Gl.glMatrixMode(Gl.GL_MODELVIEW);
 			Gl.glPushMatrix();

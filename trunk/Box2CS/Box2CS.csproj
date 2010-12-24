@@ -50,6 +50,7 @@
     <Compile Include="Contacts\ContactEdge.cs" />
     <Compile Include="Contacts\ContactFilter.cs" />
     <Compile Include="Contacts\ContactListener.cs" />
+    <Compile Include="Shapes\EdgeChain.cs" />
     <Compile Include="Shapes\MeshShape.cs" />
     <Compile Include="World\DebugDraw.cs" />
     <Compile Include="World\DestructionListener.cs" />

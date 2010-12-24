@@ -4,6 +4,9 @@ using Box2CS;
 using Tao.OpenGl;
 using Tao.Platform.Windows;
 using System.Windows.Forms;
+using System.Threading;
+using SFML.Window;
+using SFML.Graphics;
 
 namespace Testbed
 {
@@ -16,50 +19,33 @@ namespace Testbed
 		Test test;
 		int width = 640;
 		int height = 480;
-		int framePeriod = 15;
 		float settingsHz = 60.0f;
 		float viewZoom = 1.0f;
 		Vec2 viewCenter = new Vec2(0.0f, 20.0f);
 		int tx, ty, tw, th;
 		bool rMouseDown;
 		Vec2 lastp;
-		SimpleOpenGlControl _glcontrol;
+		Thread simulationThread;
 
-		public SimpleOpenGlControl GLWindow
+		public float ViewZoom
 		{
-			get { return _glcontrol; }
+			get { return viewZoom; }
+			set
+			{
+				viewZoom = value;
+				OnGLResize(width, height);
+			}
 		}
 
-		System.Timers.Timer simulationTimer;
 		public Main()
 		{
+			StartPosition = FormStartPosition.Manual;
 			InitializeComponent();
 
-			_glcontrol = new SimpleOpenGlControl();
-			_glcontrol.Dock = DockStyle.Fill;
-			_glcontrol.AutoCheckErrors = true;
-			_glcontrol.AutoFinish = true;
-			_glcontrol.AutoMakeCurrent = true;
-			_glcontrol.Paint += new PaintEventHandler(_glcontrol_Paint);
-			_glcontrol.Resize += new EventHandler(_glcontrol_Resize);
-			_glcontrol.MouseDown += new MouseEventHandler(_glcontrol_MouseDown);
-			_glcontrol.MouseUp += new MouseEventHandler(_glcontrol_MouseUp);
-			_glcontrol.MouseMove += new MouseEventHandler(_glcontrol_MouseMove);
-			_glcontrol.KeyDown += new KeyEventHandler(_glcontrol_KeyDown);
-			splitContainer1.Panel1.Controls.Add(_glcontrol);
-
-			_glcontrol.InitializeContexts();
 			Tao.FreeGlut.Glut.glutInit();
-			OnGLResize(_glcontrol.Width, _glcontrol.Height);
+			//OnGLResize(_glcontrol.Width, _glcontrol.Height);
 
-			//Gl.glEnable(Gl.GL_LINE_SMOOTH);
-			//Gl.glHint(Gl.GL_LINE_SMOOTH_HINT, Gl.GL_NICEST);
-
-			simulationTimer = new System.Timers.Timer();
-			simulationTimer.Interval = framePeriod;
-			simulationTimer.SynchronizingObject = this;
-			simulationTimer.Elapsed += new System.Timers.ElapsedEventHandler(simulationTimer_Elapsed);
-			simulationTimer.Start();
+			simulationThread = new Thread(SimulationLoop);
 
 			Text = "Box2CS Testbed - Box2D version " + Box2DVersion.Version.ToString();
 
@@ -78,47 +64,19 @@ namespace Testbed
 			numericUpDown1.Value = TestSettings.velocityIterations;
 			numericUpDown2.Value = TestSettings.positionIterations;
 			numericUpDown3.Value = (decimal)TestSettings.hz;
+
+			simulationThread.Start();
+
+			while (renderWindow == null || !renderWindow.IsOpened())
+			{
+			}
+
+			Location = new System.Drawing.Point((int)(renderWindow.CurrentView.Center.X + renderWindow.Width), (int)(renderWindow.CurrentView.Center.Y));
 		}
 
 		void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			testSelection = comboBox1.SelectedIndex;
-		}
-
-		void _glcontrol_KeyDown(object sender, KeyEventArgs e)
-		{
-			OnGLKeyboard(e.KeyCode, _glcontrol.PointToClient(Cursor.Position).X,
-				_glcontrol.PointToClient(Cursor.Position).Y);
-		}
-
-		void _glcontrol_MouseMove(object sender, MouseEventArgs e)
-		{
-			OnGLMouseMotion(e.Location.X, e.Location.Y);
-		}
-
-		void _glcontrol_MouseUp(object sender, MouseEventArgs e)
-		{
-			OnGLMouse(e.Button, EMouseButtonState.Up, e.Location.X, e.Location.Y);
-		}
-
-		void _glcontrol_MouseDown(object sender, MouseEventArgs e)
-		{
-			OnGLMouse(e.Button, EMouseButtonState.Down, e.Location.X, e.Location.Y);
-		}
-
-		void _glcontrol_Resize(object sender, EventArgs e)
-		{
-			OnGLResize(_glcontrol.Width, _glcontrol.Height);
-		}
-
-		void _glcontrol_Paint(object sender, PaintEventArgs e)
-		{
-			test.m_world.DrawDebugData();
-		}
-
-		void simulationTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			SimulationLoop();
 		}
 
 		void OnGLResize(int w, int h)
@@ -163,22 +121,13 @@ namespace Testbed
 			return p;
 		}
 
-		// This is used to control the frame rate (60Hz).
-		void SimulationLoop()
+		void Simulate()
 		{
-			Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
-
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-			Gl.glLoadIdentity();
-
 			if (test != null)
 			{
-				test.SetTextLine(30);
 				TestSettings.hz = settingsHz;
 				if (!TestSettings.pause)
 					test.Step();
-
-				test.DrawTitle(5, 15, entry.Name);
 
 				if (testSelection != testIndex)
 				{
@@ -193,44 +142,151 @@ namespace Testbed
 			}
 		}
 
-		void OnGLKeyboard(Keys key, int x, int y)
+		void DrawTest()
+		{
+			if (test != null)
+			{
+				test.SetTextLine(30);
+				test.DrawTitle(5, 15, entry.Name);
+				test.Draw();
+			}
+		}
+
+		// This is used to control the frame rate (60Hz).
+		static long NextGameTick = System.Environment.TickCount;
+		static int gameFrame = 0;
+		public static System.Drawing.Point CursorPos = new System.Drawing.Point();
+		static RenderWindow renderWindow;
+
+		public static RenderWindow GLWindow
+		{
+			get { return renderWindow; }
+		}
+
+		void SimulationLoop()
+		{
+			renderWindow = new RenderWindow(new VideoMode(800, 600, 32), "RenderWindow", Styles.Close);
+			renderWindow.Resized += new EventHandler<SizeEventArgs>(render_Resized);
+			renderWindow.MouseButtonPressed += new EventHandler<MouseButtonEventArgs>(renderWindow_MouseButtonPressed);
+			renderWindow.MouseButtonReleased += new EventHandler<MouseButtonEventArgs>(renderWindow_MouseButtonReleased);
+			renderWindow.MouseMoved += new EventHandler<MouseMoveEventArgs>(renderWindow_MouseMoved);
+			renderWindow.KeyPressed += new EventHandler<SFML.Window.KeyEventArgs>(renderWindow_KeyPressed);
+			renderWindow.KeyReleased += new EventHandler<SFML.Window.KeyEventArgs>(renderWindow_KeyReleased);
+			renderWindow.Show(true);
+
+			OnGLResize((int)renderWindow.Width, (int)renderWindow.Height);
+
+			while (true)
+			{
+				// Process events
+				renderWindow.DispatchEvents();
+
+				// Clear the window
+				renderWindow.Clear();
+
+				//renderWindow.SaveGLStates();
+				Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
+
+				Gl.glMatrixMode(Gl.GL_MODELVIEW);
+				Gl.glLoadIdentity();
+
+				CursorPos = new System.Drawing.Point(renderWindow.Input.GetMouseX(), renderWindow.Input.GetMouseY());
+
+				int TICKS_PER_SECOND = (int)settingsHz;
+				int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
+				const int MAX_FRAMESKIP = 5;
+
+				int loops = 0;
+				while (System.Environment.TickCount > NextGameTick && loops < MAX_FRAMESKIP)
+				{					
+					Simulate();
+
+					NextGameTick += SKIP_TICKS;
+					loops++;
+					gameFrame++;
+				}
+
+				// Sleep it off
+				Thread.Sleep(0);
+
+				// Draw
+				test.m_world.DrawDebugData();
+				//renderWindow.RestoreGLStates();
+
+				DrawTest();
+
+				renderWindow.Display();
+			}
+		}
+
+		void renderWindow_KeyReleased(object sender, SFML.Window.KeyEventArgs e)
+		{
+		}
+
+		void renderWindow_KeyPressed(object sender, SFML.Window.KeyEventArgs e)
+		{
+			OnGLKeyboard(e.Code, renderWindow.Input.GetMouseX(),
+				renderWindow.Input.GetMouseY());
+		}
+
+		void renderWindow_MouseMoved(object sender, MouseMoveEventArgs e)
+		{
+			OnGLMouseMotion(e.X, e.Y);
+		}
+
+		void renderWindow_MouseButtonReleased(object sender, MouseButtonEventArgs e)
+		{
+			OnGLMouse(e.Button, EMouseButtonState.Up, e.X, e.Y);
+		}
+
+		void renderWindow_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+		{
+			OnGLMouse(e.Button, EMouseButtonState.Down, e.X, e.Y);
+		}
+
+		void render_Resized(object sender, SizeEventArgs e)
+		{
+			OnGLResize((int)e.Width, (int)e.Height);
+		}
+
+		void OnGLKeyboard(KeyCode key, int x, int y)
 		{
 			switch (key)
 			{
-			case Keys.Escape:
+			case KeyCode.Escape:
 				Application.Exit();
 				break;
 
 				// Press 'z' to zoom out.
-			case Keys.Z:
+			case KeyCode.Z:
 				viewZoom = Math.Min(1.1f * viewZoom, 20.0f);
 				OnGLResize(width, height);
 				break;
 
 				// Press 'x' to zoom in.
-			case Keys.X:
+			case KeyCode.X:
 				viewZoom = Math.Max(0.9f * viewZoom, 0.02f);
 				OnGLResize(width, height);
 				break;
 
 				// Press 'r' to reset.
-			case Keys.R:
+			case KeyCode.R:
 				test.Dispose();
 				test = entry.Construct();
 				break;
 
 				// Press space to launch a bomb.
-			case Keys.Space:
+			case KeyCode.Space:
 				if (test != null)
 					test.LaunchBomb();
 				break;
- 
-			case Keys.P:
+
+			case KeyCode.P:
 				TestSettings.pause = !TestSettings.pause;
 				break;
 
 				// Press [ to prev test.
-			case Keys.OemOpenBrackets:
+			case KeyCode.LBracket:
 				--testSelection;
 				if (testSelection < 0)
 				{
@@ -239,7 +295,7 @@ namespace Testbed
 				break;
 
 				// Press ] to next test.
-			case Keys.OemCloseBrackets:
+			case KeyCode.RBracket:
 				++testSelection;
 				if (testSelection == entries.Entries.Count)
 				{
@@ -248,31 +304,31 @@ namespace Testbed
 				break;
 
 				// Press left to pan left.
-			case Keys.Left:
+			case KeyCode.Left:
 				viewCenter.x -= 0.5f;
 				OnGLResize(width, height);
 				break;
 
 				// Press right to pan right.
-			case Keys.Right:
+			case KeyCode.Right:
 				viewCenter.x += 0.5f;
 				OnGLResize(width, height);
 				break;
 
 				// Press down to pan down.
-			case Keys.Down:
+			case KeyCode.Down:
 				viewCenter.y -= 0.5f;
 				OnGLResize(width, height);
 				break;
 
 				// Press up to pan up.
-			case Keys.Up:
+			case KeyCode.Up:
 				viewCenter.y += 0.5f;
 				OnGLResize(width, height);
 				break;
 
 				// Press home to reset the view.
-			case Keys.Home:
+			case KeyCode.Home:
 				viewZoom = 1.0f;
 				viewCenter = new Vec2(0.0f, 20.0f);
 				OnGLResize(width, height);
@@ -291,10 +347,10 @@ namespace Testbed
 			Up
 		}
 
-		void OnGLMouse(MouseButtons button, EMouseButtonState state, int x, int y)
+		void OnGLMouse(MouseButton button, EMouseButtonState state, int x, int y)
 		{
 			// Use the mouse to move things around.
-			if (button == System.Windows.Forms.MouseButtons.Left)
+			if (button == MouseButton.Left)
 			{
 				Vec2 p = ConvertScreenToWorld(x, y);
 				if (state == EMouseButtonState.Down)
@@ -314,7 +370,7 @@ namespace Testbed
 					test.MouseUp(p);
 				}
 			}
-			else if (button == System.Windows.Forms.MouseButtons.Right)
+			else if (button == MouseButton.Right)
 			{
 				if (state == EMouseButtonState.Down)
 				{	
@@ -478,9 +534,9 @@ namespace Testbed
 
 		private void Main_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			simulationTimer.Stop();
-			simulationTimer.Dispose();
-			simulationTimer = null;
+			//simulationTimer.Stop();
+			//simulationTimer.Dispose();
+			//simulationTimer = null;
 		}
 	}
 }

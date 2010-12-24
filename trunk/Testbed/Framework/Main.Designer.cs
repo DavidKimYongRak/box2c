@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.button4 = new System.Windows.Forms.Button();
 			this.button3 = new System.Windows.Forms.Button();
 			this.button2 = new System.Windows.Forms.Button();
@@ -54,45 +53,15 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.splitContainer1.Panel2.SuspendLayout();
-			this.splitContainer1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// splitContainer1
-			// 
-			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-			this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-			this.splitContainer1.Name = "splitContainer1";
-			// 
-			// splitContainer1.Panel2
-			// 
-			this.splitContainer1.Panel2.Controls.Add(this.button4);
-			this.splitContainer1.Panel2.Controls.Add(this.button3);
-			this.splitContainer1.Panel2.Controls.Add(this.button2);
-			this.splitContainer1.Panel2.Controls.Add(this.button1);
-			this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
-			this.splitContainer1.Panel2.Controls.Add(this.checkBox2);
-			this.splitContainer1.Panel2.Controls.Add(this.checkBox1);
-			this.splitContainer1.Panel2.Controls.Add(this.numericUpDown3);
-			this.splitContainer1.Panel2.Controls.Add(this.numericUpDown2);
-			this.splitContainer1.Panel2.Controls.Add(this.numericUpDown1);
-			this.splitContainer1.Panel2.Controls.Add(this.label4);
-			this.splitContainer1.Panel2.Controls.Add(this.label3);
-			this.splitContainer1.Panel2.Controls.Add(this.label2);
-			this.splitContainer1.Panel2.Controls.Add(this.comboBox1);
-			this.splitContainer1.Panel2.Controls.Add(this.label1);
-			this.splitContainer1.Size = new System.Drawing.Size(702, 478);
-			this.splitContainer1.SplitterDistance = 524;
-			this.splitContainer1.TabIndex = 0;
-			// 
 			// button4
 			// 
-			this.button4.Location = new System.Drawing.Point(87, 427);
+			this.button4.Location = new System.Drawing.Point(96, 427);
 			this.button4.Name = "button4";
 			this.button4.Size = new System.Drawing.Size(75, 23);
 			this.button4.TabIndex = 14;
@@ -102,7 +71,7 @@
 			// 
 			// button3
 			// 
-			this.button3.Location = new System.Drawing.Point(9, 427);
+			this.button3.Location = new System.Drawing.Point(18, 427);
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(75, 23);
 			this.button3.TabIndex = 13;
@@ -112,7 +81,7 @@
 			// 
 			// button2
 			// 
-			this.button2.Location = new System.Drawing.Point(87, 398);
+			this.button2.Location = new System.Drawing.Point(96, 398);
 			this.button2.Name = "button2";
 			this.button2.Size = new System.Drawing.Size(75, 23);
 			this.button2.TabIndex = 12;
@@ -122,7 +91,7 @@
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(9, 398);
+			this.button1.Location = new System.Drawing.Point(18, 398);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(75, 23);
 			this.button1.TabIndex = 11;
@@ -142,7 +111,7 @@
 			this.groupBox1.Controls.Add(this.checkBox5);
 			this.groupBox1.Controls.Add(this.checkBox4);
 			this.groupBox1.Controls.Add(this.checkBox3);
-			this.groupBox1.Location = new System.Drawing.Point(9, 171);
+			this.groupBox1.Location = new System.Drawing.Point(18, 171);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(153, 221);
 			this.groupBox1.TabIndex = 10;
@@ -268,7 +237,7 @@
 			this.checkBox2.AutoSize = true;
 			this.checkBox2.Checked = true;
 			this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBox2.Location = new System.Drawing.Point(3, 147);
+			this.checkBox2.Location = new System.Drawing.Point(12, 147);
 			this.checkBox2.Name = "checkBox2";
 			this.checkBox2.Size = new System.Drawing.Size(96, 17);
 			this.checkBox2.TabIndex = 9;
@@ -281,7 +250,7 @@
 			this.checkBox1.AutoSize = true;
 			this.checkBox1.Checked = true;
 			this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBox1.Location = new System.Drawing.Point(3, 128);
+			this.checkBox1.Location = new System.Drawing.Point(12, 128);
 			this.checkBox1.Name = "checkBox1";
 			this.checkBox1.Size = new System.Drawing.Size(93, 17);
 			this.checkBox1.TabIndex = 8;
@@ -297,7 +266,7 @@
             0,
             0,
             65536});
-			this.numericUpDown3.Location = new System.Drawing.Point(83, 100);
+			this.numericUpDown3.Location = new System.Drawing.Point(92, 100);
 			this.numericUpDown3.Maximum = new decimal(new int[] {
             999,
             0,
@@ -310,7 +279,7 @@
 			// 
 			// numericUpDown2
 			// 
-			this.numericUpDown2.Location = new System.Drawing.Point(83, 77);
+			this.numericUpDown2.Location = new System.Drawing.Point(92, 77);
 			this.numericUpDown2.Name = "numericUpDown2";
 			this.numericUpDown2.Size = new System.Drawing.Size(79, 20);
 			this.numericUpDown2.TabIndex = 6;
@@ -318,7 +287,7 @@
 			// 
 			// numericUpDown1
 			// 
-			this.numericUpDown1.Location = new System.Drawing.Point(83, 54);
+			this.numericUpDown1.Location = new System.Drawing.Point(92, 54);
 			this.numericUpDown1.Name = "numericUpDown1";
 			this.numericUpDown1.Size = new System.Drawing.Size(79, 20);
 			this.numericUpDown1.TabIndex = 5;
@@ -327,7 +296,7 @@
 			// label4
 			// 
 			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(4, 102);
+			this.label4.Location = new System.Drawing.Point(13, 102);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(32, 13);
 			this.label4.TabIndex = 4;
@@ -336,7 +305,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(3, 79);
+			this.label3.Location = new System.Drawing.Point(12, 79);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(48, 13);
 			this.label3.TabIndex = 3;
@@ -345,7 +314,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(6, 56);
+			this.label2.Location = new System.Drawing.Point(15, 56);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(45, 13);
 			this.label2.TabIndex = 2;
@@ -354,7 +323,7 @@
 			// comboBox1
 			// 
 			this.comboBox1.FormattingEnabled = true;
-			this.comboBox1.Location = new System.Drawing.Point(6, 25);
+			this.comboBox1.Location = new System.Drawing.Point(15, 25);
 			this.comboBox1.Name = "comboBox1";
 			this.comboBox1.Size = new System.Drawing.Size(156, 21);
 			this.comboBox1.TabIndex = 1;
@@ -362,7 +331,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(3, 9);
+			this.label1.Location = new System.Drawing.Point(12, 9);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(33, 13);
 			this.label1.TabIndex = 0;
@@ -372,27 +341,38 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(702, 478);
-			this.Controls.Add(this.splitContainer1);
+			this.ClientSize = new System.Drawing.Size(188, 455);
+			this.Controls.Add(this.button4);
+			this.Controls.Add(this.button3);
+			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.button2);
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this.button1);
+			this.Controls.Add(this.comboBox1);
+			this.Controls.Add(this.label2);
+			this.Controls.Add(this.checkBox2);
+			this.Controls.Add(this.label3);
+			this.Controls.Add(this.checkBox1);
+			this.Controls.Add(this.label4);
+			this.Controls.Add(this.numericUpDown3);
+			this.Controls.Add(this.numericUpDown1);
+			this.Controls.Add(this.numericUpDown2);
 			this.Name = "Main";
 			this.Text = "Main";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
 			this.Load += new System.EventHandler(this.Main_Load);
-			this.splitContainer1.Panel2.ResumeLayout(false);
-			this.splitContainer1.Panel2.PerformLayout();
-			this.splitContainer1.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.SplitContainer splitContainer1;
 		private System.Windows.Forms.Button button4;
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Button button2;

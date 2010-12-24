@@ -70,7 +70,8 @@ namespace Testbed.Tests
 			if (overlap)
 			{
 				//DrawFixture(fixture);
-				m_debugDraw.DrawAABB(fixture.AABB, new ColorF(1, 0, 0));
+				//m_debugDraw.DrawAABB(fixture.AABB, new ColorF(1, 0, 0));
+				aabbs.Add(fixture.AABB);
 				++m_count;
 			}
 
@@ -81,6 +82,7 @@ namespace Testbed.Tests
 		public Transform m_transform;
 		public TestDebugDraw m_debugDraw;
 		public int m_count;
+		public List<AABB> aabbs = new List<AABB>();
 	};
 
 	public class PolyShapes : Test
@@ -222,7 +224,7 @@ namespace Testbed.Tests
 			}
 		}
 
-		public override void  Keyboard(System.Windows.Forms.Keys key)
+		public override void Keyboard(SFML.Window.KeyCode key)
 		{
 			switch ((char.ToLower((char)key)))
 			{
@@ -251,25 +253,38 @@ namespace Testbed.Tests
 			}
 		}
 
+		PolyShapesCallback callback = new PolyShapesCallback();
 		public override void Step()
 		{
 			base.Step();
 
-			PolyShapesCallback callback = new PolyShapesCallback();
 			callback.m_circle = new CircleShape();
 			callback.m_circle.Radius = 2.0f;
 			callback.m_circle.Position = new Vec2(0.0f, 2.1f);
 			callback.m_transform = Transform.Identity;
 			callback.m_debugDraw = m_debugDraw;
+			callback.aabbs.Clear();
+
+			AABB aabb;
+			callback.m_circle.ComputeAABB(out aabb, callback.m_transform);
+			
+			m_world.QueryAABB(callback, aabb);
+		}
+
+		public override void Draw()
+		{
+			base.Draw();
+
+			ColorF color = new ColorF(0.4f, 0.7f, 0.8f);
+			m_debugDraw.DrawCircle(callback.m_circle.Position, callback.m_circle.Radius, color);
 
 			AABB aabb;
 			callback.m_circle.ComputeAABB(out aabb, callback.m_transform);
 
-			m_world.QueryAABB(callback, aabb);
-
-			ColorF color = new ColorF(0.4f, 0.7f, 0.8f);
-			m_debugDraw.DrawCircle(callback.m_circle.Position, callback.m_circle.Radius, color);
 			m_debugDraw.DrawAABB(aabb, new ColorF(0.6f, 0.3f, 0.4f));
+
+			foreach (var ab in callback.aabbs)
+				m_debugDraw.DrawAABB(ab, new ColorF(1, 0, 0));
 
 			m_debugDraw.DrawString(5, m_textLine, "Press 1-5 to drop stuff");
 			m_textLine += 15;
