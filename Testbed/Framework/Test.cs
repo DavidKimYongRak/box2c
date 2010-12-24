@@ -23,7 +23,7 @@ namespace Testbed
 		/// Random floating point number in range [lo, hi]
 		public static float RandomFloat(float lo, float hi)
 		{
-			return (float)(rand.NextDouble() * hi) + lo;
+			return (float)((rand.NextDouble() * hi) + (rand.NextDouble() * lo));
 		}
 	}
 
@@ -56,14 +56,7 @@ namespace Testbed
 
 		public Test Construct()
 		{
-			try
-			{
-				return (Test)Type.GetConstructor(new System.Type[] { }).Invoke(null);
-			}
-			catch (Exception e)
-			{
-				throw e.InnerException;
-			}
+			return (Test)Type.GetConstructor(new System.Type[] { }).Invoke(null);
 		}
 	}
 
@@ -178,9 +171,10 @@ namespace Testbed
 			m_debugDraw.DrawString(x, y, str);
 		}
 
+		Fixture _selectedFixture;
+
 		public virtual void Step()
 		{
-			Program.MainForm.GLWindow.Invalidate();
 			float timeStep = TestSettings.hz > 0.0f ? 1.0f / TestSettings.hz : 0.0f;
 
 			if (TestSettings.pause)
@@ -193,9 +187,6 @@ namespace Testbed
 				{
 					timeStep = 0.0f;
 				}
-
-				m_debugDraw.DrawString(5, m_textLine, "****PAUSED****");
-				m_textLine += 15;
 			}
 
 			EDebugFlags flags = 0;
@@ -228,14 +219,14 @@ namespace Testbed
 			}
 
 			// Make a small box.
+			_selectedFixture = null;
 			{
 				AABB aabb = new AABB();
 				Vec2 d = new Vec2(0.001f, 0.001f);
-				var p2 = Program.MainForm.GLWindow.PointToClient(Cursor.Position);
-				var p = Program.MainForm.ConvertScreenToWorld(p2.X, p2.Y);
+				var p2 = Main.CursorPos;
+				var p = Program.MainForm.ConvertScreenToWorld((int)p2.X, (int)p2.Y);
 				aabb.LowerBound = p - d;
 				aabb.UpperBound = p + d;
-				Fixture m_fixture = null;
 
 				m_world.QueryAABB(
 				delegate(Fixture fixture)
@@ -246,7 +237,7 @@ namespace Testbed
 						bool inside = fixture.TestPoint(p);
 						if (inside)
 						{
-							m_fixture = fixture;
+							_selectedFixture = fixture;
 
 							// We are done, terminate the query.
 							return false;
@@ -257,103 +248,10 @@ namespace Testbed
 					return true;
 				},
 				aabb);
-
-				if (m_fixture != null)
-				{
-					var body = m_fixture.Body;
-
-					if (m_fixture.UserData != null)
-						m_debugDraw.DrawString(5, m_textLine, "Fixture data: " + m_fixture.UserData.ToString());
-
-					m_textLine += 15;
-
-					if (body.UserData != null)
-						m_debugDraw.DrawString(5, m_textLine, "Body data: " + body.UserData.ToString());
-
-					m_textLine += 15;
-				}
-			}
-
-			if (m_mouseJoint != null)
-			{
-				Vec2 p1 = m_mouseJoint.AnchorB;
-				Vec2 p2 = m_mouseJoint.Target;
-
-				Gl.glPointSize(4.0f);
-				Gl.glColor3f(0.0f, 1.0f, 0.0f);
-				Gl.glBegin(Gl.GL_POINTS);
-				Gl.glVertex2f(p1.x, p1.y);
-				Gl.glVertex2f(p2.x, p2.y);
-				Gl.glEnd();
-				Gl.glPointSize(1.0f);
-
-				Gl.glColor3f(0.8f, 0.8f, 0.8f);
-				Gl.glBegin(Gl.GL_LINES);
-				Gl.glVertex2f(p1.x, p1.y);
-				Gl.glVertex2f(p2.x, p2.y);
-				Gl.glEnd();
-			}
-
-			if (m_bombSpawning)
-			{
-				Gl.glPointSize(4.0f);
-				Gl.glColor3f(0.0f, 0.0f, 1.0f);
-				Gl.glBegin(Gl.GL_POINTS);
-				Gl.glColor3f(0.0f, 0.0f, 1.0f);
-				Gl.glVertex2f(m_bombSpawnPoint.x, m_bombSpawnPoint.y);
-				Gl.glEnd();
-
-				Gl.glColor3f(0.8f, 0.8f, 0.8f);
-				Gl.glBegin(Gl.GL_LINES);
-				Gl.glVertex2f(m_mouseWorld.x, m_mouseWorld.y);
-				Gl.glVertex2f(m_bombSpawnPoint.x, m_bombSpawnPoint.y);
-				Gl.glEnd();
-			}
-
-			if (TestSettings.drawContactPoints)
-			{
-				//const float32 k_impulseScale = 0.1f;
-				const float k_axisScale = 0.3f;
-
-				for (int i = 0; i < m_pointCount; ++i)
-				{
-					if (m_points[i].state == EPointState.b2_addState)
-					{
-						// Add
-						m_debugDraw.DrawPoint(m_points[i].position, 10.0f, new ColorF(0.3f, 0.95f, 0.3f));
-					}
-					else if (m_points[i].state == EPointState.b2_persistState)
-					{
-						// Persist
-						m_debugDraw.DrawPoint(m_points[i].position, 5.0f, new ColorF(0.3f, 0.3f, 0.95f));
-					}
-
-					if (TestSettings.drawContactNormals)
-					{
-						Vec2 p1 = m_points[i].position;
-						Vec2 p2 = p1 + k_axisScale * m_points[i].normal;
-						m_debugDraw.DrawSegment(p1, p2, new ColorF(0.9f, 0.9f, 0.9f));
-					}
-
-					else if (TestSettings.drawContactForces)
-					{
-						//b2Vec2 p1 = m_points[i].position;
-						//b2Vec2 p2 = p1 + k_forceScale * m_points[i].normalForce * m_points[i].normal;
-						//DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.3f));
-					}
-
-					if (TestSettings.drawFrictionForces)
-					{
-						//Vec2 tangent = m_points[i].normal.Cross (1.0f);
-						//Vec2 p1 = m_points[i].position;
-						//Vec2 p2 = p1 + k_forceScale * m_points[i].tangentForce * tangent;
-						//DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.3f));
-					}
-				}
 			}
 		}
 
-		public virtual void Keyboard(Keys key) { }
+		public virtual void Keyboard(SFML.Window.KeyCode key) { }
 		public void ShiftMouseDown(Vec2 p)
 		{
 			m_mouseWorld = p;
@@ -517,5 +415,107 @@ namespace Testbed
 		public bool m_bombSpawning;
 		public Vec2 m_mouseWorld;
 		public int m_stepCount;
+
+		public virtual void Draw()
+		{
+			if (TestSettings.pause)
+				m_debugDraw.DrawString(5, m_textLine, "****PAUSED****");
+			m_textLine += 15;
+
+			if (m_mouseJoint != null)
+			{
+				Vec2 p1 = m_mouseJoint.AnchorB;
+				Vec2 p2 = m_mouseJoint.Target;
+
+				Gl.glPointSize(4.0f);
+				Gl.glColor3f(0.0f, 1.0f, 0.0f);
+				Gl.glBegin(Gl.GL_POINTS);
+				Gl.glVertex2f(p1.x, p1.y);
+				Gl.glVertex2f(p2.x, p2.y);
+				Gl.glEnd();
+				Gl.glPointSize(1.0f);
+
+				Gl.glColor3f(0.8f, 0.8f, 0.8f);
+				Gl.glBegin(Gl.GL_LINES);
+				Gl.glVertex2f(p1.x, p1.y);
+				Gl.glVertex2f(p2.x, p2.y);
+				Gl.glEnd();
+			}
+
+			if (m_bombSpawning)
+			{
+				Gl.glPointSize(4.0f);
+				Gl.glColor3f(0.0f, 0.0f, 1.0f);
+				Gl.glBegin(Gl.GL_POINTS);
+				Gl.glColor3f(0.0f, 0.0f, 1.0f);
+				Gl.glVertex2f(m_bombSpawnPoint.x, m_bombSpawnPoint.y);
+				Gl.glEnd();
+
+				Gl.glColor3f(0.8f, 0.8f, 0.8f);
+				Gl.glBegin(Gl.GL_LINES);
+				Gl.glVertex2f(m_mouseWorld.x, m_mouseWorld.y);
+				Gl.glVertex2f(m_bombSpawnPoint.x, m_bombSpawnPoint.y);
+				Gl.glEnd();
+			}
+
+			if (_selectedFixture != null)
+			{
+				var body = _selectedFixture.Body;
+
+				if (_selectedFixture.UserData != null)
+				{
+					m_debugDraw.DrawString(5, m_textLine, "Fixture data: " + _selectedFixture.UserData.ToString());
+					m_textLine += 15;
+				}
+
+				if (body.UserData != null)
+				{
+					m_debugDraw.DrawString(5, m_textLine, "Body data: " + body.UserData.ToString());
+					m_textLine += 15;
+				}
+			}
+
+			if (TestSettings.drawContactPoints)
+			{
+				//const float32 k_impulseScale = 0.1f;
+				const float k_axisScale = 0.3f;
+
+				for (int i = 0; i < m_pointCount; ++i)
+				{
+					if (m_points[i].state == EPointState.b2_addState)
+					{
+						// Add
+						m_debugDraw.DrawPoint(m_points[i].position, 10.0f, new ColorF(0.3f, 0.95f, 0.3f));
+					}
+					else if (m_points[i].state == EPointState.b2_persistState)
+					{
+						// Persist
+						m_debugDraw.DrawPoint(m_points[i].position, 5.0f, new ColorF(0.3f, 0.3f, 0.95f));
+					}
+
+					if (TestSettings.drawContactNormals)
+					{
+						Vec2 p1 = m_points[i].position;
+						Vec2 p2 = p1 + k_axisScale * m_points[i].normal;
+						m_debugDraw.DrawSegment(p1, p2, new ColorF(0.9f, 0.9f, 0.9f));
+					}
+
+					else if (TestSettings.drawContactForces)
+					{
+						//b2Vec2 p1 = m_points[i].position;
+						//b2Vec2 p2 = p1 + k_forceScale * m_points[i].normalForce * m_points[i].normal;
+						//DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.3f));
+					}
+
+					if (TestSettings.drawFrictionForces)
+					{
+						//Vec2 tangent = m_points[i].normal.Cross (1.0f);
+						//Vec2 p1 = m_points[i].position;
+						//Vec2 p2 = p1 + k_forceScale * m_points[i].tangentForce * tangent;
+						//DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.3f));
+					}
+				}
+			}
+		}
 	};
 }

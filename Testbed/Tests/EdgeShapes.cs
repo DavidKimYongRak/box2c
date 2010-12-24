@@ -165,7 +165,7 @@ namespace Testbed.Tests
 			}
 		}
 
-		public override void  Keyboard(System.Windows.Forms.Keys key)
+		public override void Keyboard(SFML.Window.KeyCode key)
 		{
 			switch (char.ToLower((char)key))
 			{
@@ -183,22 +183,38 @@ namespace Testbed.Tests
 			}
 		}
 
+		EdgeShapesCallback callback = new EdgeShapesCallback();
+
 		public override void  Step()
 		{
 			bool advanceRay = TestSettings.pause == false || TestSettings.singleStep;
 
 			base.Step();
-			m_debugDraw.DrawString(5, m_textLine, "Press 1-5 to drop stuff");
-			m_textLine += 15;
 
 			float L = 25.0f;
 			Vec2 point1 = new Vec2(0.0f, 10.0f);
 			Vec2 d = new Vec2((float)(L * Math.Cos(m_angle)), (float)(-L * Math.Abs(Math.Sin(m_angle))));
 			Vec2 point2 = point1 + d;
 
-			EdgeShapesCallback callback = new EdgeShapesCallback();
-
 			m_world.RayCast(callback, point1, point2);
+
+			if (advanceRay)
+			{
+				m_angle += (float)(0.25f * Math.PI / 180.0f);
+			}
+		}
+
+		public override void Draw()
+		{
+			base.Draw();
+
+			float L = 25.0f;
+			Vec2 point1 = new Vec2(0.0f, 10.0f);
+			Vec2 d = new Vec2((float)(L * Math.Cos(m_angle)), (float)(-L * Math.Abs(Math.Sin(m_angle))));
+			Vec2 point2 = point1 + d;
+
+			m_debugDraw.DrawString(5, m_textLine, "Press 1-5 to drop stuff");
+			m_textLine += 15;
 
 			if (callback.m_fixture != null)
 			{
@@ -212,11 +228,6 @@ namespace Testbed.Tests
 			else
 			{
 				m_debugDraw.DrawSegment(point1, point2, new ColorF(0.8f, 0.8f, 0.8f));
-			}
-
-			if (advanceRay)
-			{
-				m_angle += (float)(0.25f * Math.PI / 180.0f);
 			}
 		}
 
