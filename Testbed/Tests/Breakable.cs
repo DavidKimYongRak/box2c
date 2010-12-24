@@ -63,6 +63,9 @@ namespace Testbed.Tests
 
 				m_breaks.Add(new BodyBreaker(m_world, m_body1, m_piece1, m_piece2));
 			}*/
+			float y = 2.0f;
+
+			for (int i = 0; i < 3; ++i)
 			{
 				PolygonShape bottom = new PolygonShape();
 				bottom.SetAsBox(1.5f, 0.15f);
@@ -75,7 +78,7 @@ namespace Testbed.Tests
 
 				BodyDef bd = new BodyDef();
 				bd.BodyType = EBodyType.b2_dynamicBody;
-				bd.Position = new Vec2(0.0f, 2.0f);
+				bd.Position = new Vec2(0.0f, y += 3.5f);
 				Body bottom_body = m_world.CreateBody(bd);
 				var bf = bottom_body.CreateFixture(bottom, 4.0f);
 				Body left_body = m_world.CreateBody(bd);
@@ -84,12 +87,12 @@ namespace Testbed.Tests
 				var rf = right_body.CreateFixture(right, 4.0f);
 
 				WeldJointDef wjd = new WeldJointDef();
-				wjd.Initialize(bottom_body, left_body, new Vec2(0, 0));
+				wjd.Initialize(bottom_body, left_body, bd.Position);
 				wjd.CollideConnected = false;
 
 				WeldJoint wj1 = (WeldJoint)m_world.CreateJoint(wjd);
 
-				wjd.Initialize(bottom_body, right_body, new Vec2(0, 0));
+				wjd.Initialize(bottom_body, right_body, bd.Position);
 				WeldJoint wj2 = (WeldJoint)m_world.CreateJoint(wjd);
 
 				m_breaks.Add(new BreakableJoint(wj1, 100));

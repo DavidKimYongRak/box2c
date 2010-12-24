@@ -125,9 +125,14 @@ namespace Testbed
 		{
 			if (test != null)
 			{
+				if (TestSettings.restart)
+				{
+					OnGLRestart();
+					TestSettings.restart = false;
+				}
+
 				TestSettings.hz = settingsHz;
-				if (!TestSettings.pause)
-					test.Step();
+				test.Step();
 
 				if (testSelection != testIndex)
 				{
@@ -504,7 +509,7 @@ namespace Testbed
 
 		private void button3_Click(object sender, EventArgs e)
 		{
-			OnGLRestart();
+			TestSettings.restart = true;
 		}
 
 		private void button4_Click(object sender, EventArgs e)

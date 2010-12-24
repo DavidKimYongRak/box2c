@@ -18,7 +18,6 @@ namespace Testbed.Tests
 
 		public PolyShapesCallback()
 		{
-			m_count = 0;
 		}
 
 		public void DrawFixture(Fixture fixture)
@@ -59,11 +58,14 @@ namespace Testbed.Tests
 		/// @return false to terminate the query.
 		public override bool ReportFixture(Fixture fixture)
 		{
-			if (m_count == e_maxCount)
+			if (aabbs.Count == e_maxCount)
 				return false;
 
 			Body body = fixture.Body;
 			Shape shape = fixture.Shape;
+
+			if (body.BodyType == EBodyType.b2_staticBody)
+				return false;
 
 			bool overlap = Box2D.TestOverlap(shape, m_circle, body.Transform, m_transform);
 
@@ -72,7 +74,6 @@ namespace Testbed.Tests
 				//DrawFixture(fixture);
 				//m_debugDraw.DrawAABB(fixture.AABB, new ColorF(1, 0, 0));
 				aabbs.Add(fixture.AABB);
-				++m_count;
 			}
 
 			return true;
@@ -81,7 +82,6 @@ namespace Testbed.Tests
 		public CircleShape m_circle;
 		public Transform m_transform;
 		public TestDebugDraw m_debugDraw;
-		public int m_count;
 		public List<AABB> aabbs = new List<AABB>();
 	};
 
@@ -274,6 +274,9 @@ namespace Testbed.Tests
 		public override void Draw()
 		{
 			base.Draw();
+
+			if (callback.m_circle == null)
+				return;
 
 			ColorF color = new ColorF(0.4f, 0.7f, 0.8f);
 			m_debugDraw.DrawCircle(callback.m_circle.Position, callback.m_circle.Radius, color);
