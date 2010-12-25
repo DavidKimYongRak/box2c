@@ -2,9 +2,8 @@
 using System.Runtime.InteropServices;
 namespace Box2CS
 {
-#if !NEW_JOINTS
 	[StructLayout(LayoutKind.Sequential)]
-	public class LineJointDef : JointDef, IFixedSize
+	public sealed class LineJointDef : JointDef
 	{
 		Vec2 _localAnchorA;
 		Vec2 _localAnchorB;
@@ -15,19 +14,6 @@ namespace Box2CS
 		bool _enableMotor;
 		float _maxMotorForce;
 		float _motorSpeed;
-
-		int IFixedSize.FixedSize()
-		{
-			return Marshal.SizeOf(typeof(LineJointDef));
-		}
-
-		void IFixedSize.Lock()
-		{
-		}
-
-		void IFixedSize.Unlock()
-		{
-		}
 
 		public LineJointDef()
 		{
@@ -108,178 +94,8 @@ namespace Box2CS
 			set { _motorSpeed = value; }
 		}
 	}
-#else
-	public class LineJointDef : JointDef, IDisposable
-	{
-		static class NativeMethods
-		{
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern IntPtr b2linejointdef_constructor();
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_destroy(IntPtr ptr);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_getlocalanchora(IntPtr jointDef, out Vec2 outPtr);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_setlocalanchora(IntPtr jointDef, Vec2 vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_getlocalanchorb(IntPtr jointDef, out Vec2 outPtr);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_setlocalanchorb(IntPtr jointDef, Vec2 vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_getlocalaxisa(IntPtr jointDef, out Vec2 outPtr);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_setlocalaxisa(IntPtr jointDef, Vec2 vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern bool b2linejointdef_getenablelimit(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_setenablelimit(IntPtr jointDef, bool vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2linejointdef_getlowertranslation(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_setlowertranslation(IntPtr jointDef, float vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2linejointdef_getuppertranslation(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_setuppertranslation(IntPtr jointDef, float vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern bool b2linejointdef_getenablemotor(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_setenablemotor(IntPtr jointDef, bool vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2linejointdef_getmaxmotorforce(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_setmaxmotorforce(IntPtr jointDef, float vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2linejointdef_getmotorspeed(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2linejointdef_setmotorspeed(IntPtr jointDef, float vec);
-		}
-
-		public LineJointDef()
-		{
-			JointDefPtr = NativeMethods.b2linejointdef_constructor();
-			shouldDispose = true;
-		}
-
-		public void Initialize(Body b1, Body b2, Vec2 anchor, Vec2 axis)
-		{
-			BodyA = b1;
-			BodyB = b2;
-			LocalAnchorA = BodyA.GetLocalPoint(anchor);
-			LocalAnchorB = BodyB.GetLocalPoint(anchor);
-			LocalAxisA = BodyA.GetLocalVector(axis);
-		}
-
-		public Vec2 LocalAnchorA
-		{
-			get { Vec2 temp; NativeMethods.b2linejointdef_getlocalanchora(JointDefPtr, out temp); return temp; }
-			set { NativeMethods.b2linejointdef_setlocalanchora(JointDefPtr, value); }
-		}
-
-		public Vec2 LocalAnchorB
-		{
-			get { Vec2 temp; NativeMethods.b2linejointdef_getlocalanchorb(JointDefPtr, out temp); return temp; }
-			set { NativeMethods.b2linejointdef_setlocalanchorb(JointDefPtr, value); }
-		}
-
-		public Vec2 LocalAxisA
-		{
-			get { Vec2 temp; NativeMethods.b2linejointdef_getlocalaxisa(JointDefPtr, out temp); return temp; }
-			set { NativeMethods.b2linejointdef_setlocalaxisa(JointDefPtr, value); }
-		}
-
-		public bool EnableLimit
-		{
-			get { return NativeMethods.b2linejointdef_getenablelimit(JointDefPtr); }
-			set { NativeMethods.b2linejointdef_setenablelimit(JointDefPtr, value); }
-		}
-
-		public float LowerTranslation
-		{
-			get { return NativeMethods.b2linejointdef_getlowertranslation(JointDefPtr); }
-			set { NativeMethods.b2linejointdef_setlowertranslation(JointDefPtr, value); }
-		}
-
-		public float UpperTranslation
-		{
-			get { return NativeMethods.b2linejointdef_getuppertranslation(JointDefPtr); }
-			set { NativeMethods.b2linejointdef_setuppertranslation(JointDefPtr, value); }
-		}
-
-		public bool EnableMotor
-		{
-			get { return NativeMethods.b2linejointdef_getenablemotor(JointDefPtr); }
-			set { NativeMethods.b2linejointdef_setenablemotor(JointDefPtr, value); }
-		}
-
-		public float MaxMotorForce
-		{
-			get { return NativeMethods.b2linejointdef_getmaxmotorforce(JointDefPtr); }
-			set { NativeMethods.b2linejointdef_setmaxmotorforce(JointDefPtr, value); }
-		}
-
-		public float MotorSpeed
-		{
-			get { return NativeMethods.b2linejointdef_getmotorspeed(JointDefPtr); }
-			set { NativeMethods.b2linejointdef_setmotorspeed(JointDefPtr, value); }
-		}
-
-		#region IDisposable
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		bool disposed;
-		bool shouldDispose;
-
-		private void Dispose(bool disposing)
-		{
-			if (!this.disposed)
-			{
-				if (disposing)
-				{
-				}
-
-				if (shouldDispose)
-				{
-					NativeMethods.b2linejointdef_destroy(JointDefPtr);
-					//System.Console.WriteLine("b2linejointdef_destroy");
-				}
-
-				disposed = true;
-			}
-		}
-
-		~LineJointDef()
-		{
-			Dispose(false);
-		}
-		#endregion
-	}
-#endif
-
-	public class LineJoint : Joint
+	public sealed class LineJoint : Joint
 	{
 		static class NativeMethods
 		{

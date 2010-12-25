@@ -27,7 +27,7 @@ namespace Box2CS
 		public Body[] GenerateBodies(World world, Vec2 basePosition, FixtureDef def)
 		{
 			if (_vecs.Count <= 1)
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException("Vecs");
 
 			Body[] bodies = new Body[_vecs.Count - 1];
 

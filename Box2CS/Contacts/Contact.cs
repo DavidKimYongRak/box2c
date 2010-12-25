@@ -123,7 +123,7 @@ namespace Box2CS
 		b2_removeState		///< point was removed in the update
 	};
 
-	public class Contact
+	public sealed class Contact
 	{
 		static class NativeMethods
 		{

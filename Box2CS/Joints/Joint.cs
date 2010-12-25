@@ -17,7 +17,6 @@ namespace Box2CS
 		e_frictionJoint,
 	};
 
-#if !NEW_JOINTS
 	[StructLayout(LayoutKind.Sequential)]
 	public abstract class JointDef : IFixedSize
 	{
@@ -29,19 +28,17 @@ namespace Box2CS
 
 		int IFixedSize.FixedSize()
 		{
-			throw new Exception();
-		}
-		
-		void IFixedSize.Lock()
-		{
+			return Marshal.SizeOf(GetType());
 		}
 
-		void IFixedSize.Unlock()
-		{
-		}
+		void IFixedSize.Lock() { }
+		void IFixedSize.Unlock() { }
 
 		public JointDef()
 		{
+			if (GetType().StructLayoutAttribute.Value != LayoutKind.Sequential)
+				throw new TypeLoadException("Derived joint type \""+ GetType().Name+"\" does not have StructLayout set to sequential.\n\nDerived joint defs MUST use StructLayout(LayoutKind.Sequential).");
+
 			_type = EJointType.e_unknownJoint;
 			_userData = IntPtr.Zero;
 			_bodyA = IntPtr.Zero;
@@ -97,124 +94,6 @@ namespace Box2CS
 			set { _collideConnected = value; }
 		}
 	}
-#else
-	public abstract class JointDef
-	{
-		static class NativeMethods
-		{
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern int b2jointdef_gettype(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern IntPtr b2jointdef_getuserdata(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2jointdef_setuserdata(IntPtr jointDef, IntPtr data);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern IntPtr b2jointdef_getbodya(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2jointdef_setbodya(IntPtr jointDef, IntPtr data);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern IntPtr b2jointdef_getbodyb(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2jointdef_setbodyb(IntPtr jointDef, IntPtr data);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern bool b2jointdef_getcollideconnected(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2jointdef_setcollideconnected(IntPtr jointDef, bool data);
-		}
-
-		IntPtr _jointDefPtr;
-
-		internal IntPtr JointDefPtr
-		{
-			get { return _jointDefPtr; }
-			set { _jointDefPtr = value; }
-		}
-
-		public EJointType EJointType
-		{
-			get { return (EJointType)NativeMethods.b2jointdef_gettype(_jointDefPtr); }
-		}
-
-		public object UserData
-		{
-			get
-			{
-				return UserDataStorage.JointStorage.ObjectFromHandle(UserDataStorage.IntPtrToHandle(NativeMethods.b2jointdef_getuserdata(_jointDefPtr)));
-			}
-
-			set
-			{
-				var ptr = UserDataStorage.IntPtrToHandle(NativeMethods.b2jointdef_getuserdata(_jointDefPtr));
-
-				if (ptr != 0)
-					UserDataStorage.JointStorage.UnpinObject(ptr);
-
-				if (value != null)
-				{
-					var handle = UserDataStorage.JointStorage.PinDataToHandle(value);
-					NativeMethods.b2jointdef_setuserdata(_jointDefPtr, UserDataStorage.HandleToIntPtr(handle));
-				}
-				else
-					NativeMethods.b2jointdef_setuserdata(_jointDefPtr, IntPtr.Zero);
-			}
-		}
-
-		public Body BodyA
-		{
-			get { return Body.FromPtr(NativeMethods.b2jointdef_getbodya(_jointDefPtr)); }
-			set { NativeMethods.b2jointdef_setbodya(_jointDefPtr, value.BodyPtr); }
-		}
-
-		public Body BodyB
-		{
-			get { return Body.FromPtr(NativeMethods.b2jointdef_getbodyb(_jointDefPtr)); }
-			set { NativeMethods.b2jointdef_setbodyb(_jointDefPtr, value.BodyPtr); }
-		}
-
-		public bool CollideConnected
-		{
-			get { return NativeMethods.b2jointdef_getcollideconnected(_jointDefPtr); }
-			set { NativeMethods.b2jointdef_setcollideconnected(_jointDefPtr, value); }
-		}
-
-		public static bool operator ==(JointDef l, JointDef r)
-		{
-			if ((object)l == null && (object)r == null)
-				return true;
-			else if ((object)l == null && (object)r != null ||
-				(object)l != null && (object)r == null)
-				return false;
-
-			return l._jointDefPtr == r._jointDefPtr;
-		}
-
-		public static bool operator !=(JointDef l, JointDef r)
-		{
-			return !(l == r);
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (obj is JointDef)
-				return (obj as JointDef) == this;
-
-			return base.Equals(obj);
-		}
-
-		public override int GetHashCode()
-		{
-			return _jointDefPtr.GetHashCode();
-		}
-	}
-#endif
 
 	public abstract class Joint
 	{
@@ -269,7 +148,7 @@ namespace Box2CS
 		internal static Joint FromPtr(IntPtr ptr)
 		{
 			if (ptr == IntPtr.Zero)
-				throw new Exception("Invalid joint ptr (locked world?)");
+				throw new ArgumentNullException("Invalid joint ptr (locked world?)");
 
 			switch ((EJointType)NativeMethods.b2joint_gettype(ptr))
 			{

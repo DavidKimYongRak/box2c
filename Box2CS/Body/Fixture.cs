@@ -100,7 +100,7 @@ namespace Box2CS
 		public FilterData _filter;
 	}
 
-	public class FixtureDef
+	public sealed class FixtureDef
 	{
 		FixtureDefInternal _internalFixture = new FixtureDefInternal();
 		// private, unrelated data
@@ -240,7 +240,7 @@ namespace Box2CS
 		}
 	}
 
-	public class Fixture
+	public sealed class Fixture
 	{
 		static class NativeMethods
 		{

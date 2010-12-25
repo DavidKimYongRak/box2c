@@ -3,9 +3,8 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-#if !NEW_JOINTS
 	[StructLayout(LayoutKind.Sequential)]
-	public class RevoluteJointDef : JointDef, IFixedSize
+	public sealed class RevoluteJointDef : JointDef
 	{
 		Vec2 _localAnchorA;
 		Vec2 _localAnchorB;
@@ -16,19 +15,6 @@ namespace Box2CS
 		bool _enableMotor;
 		float _motorSpeed;
 		float _maxMotorTorque;
-
-		int IFixedSize.FixedSize()
-		{
-			return Marshal.SizeOf(typeof(RevoluteJointDef));
-		}
-
-		void IFixedSize.Lock()
-		{
-		}
-
-		void IFixedSize.Unlock()
-		{
-		}
 
 		public RevoluteJointDef()
 		{
@@ -107,178 +93,8 @@ namespace Box2CS
 			set { _maxMotorTorque = value; }
 		}
 	}
-#else
-	public class RevoluteJointDef : JointDef, IDisposable
-	{
-		static class NativeMethods
-		{
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_getlocalanchora(IntPtr jointDef, out Vec2 outPtr);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_setlocalanchora(IntPtr jointDef, Vec2 vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_getlocalanchorb(IntPtr jointDef, out Vec2 outPtr);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_setlocalanchorb(IntPtr jointDef, Vec2 vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2revolutejointdef_getreferenceangle(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_setreferenceangle(IntPtr jointDef, float vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern bool b2revolutejointdef_getenablelimit(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_setenablelimit(IntPtr jointDef, bool vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2revolutejointdef_getlowerangle(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_setlowerangle(IntPtr jointDef, float vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2revolutejointdef_getupperangle(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_setupperangle(IntPtr jointDef, float vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern bool b2revolutejointdef_getenablemotor(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_setenablemotor(IntPtr jointDef, bool vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2revolutejointdef_getmotorspeed(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_setmotorspeed(IntPtr jointDef, float vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2revolutejointdef_getmaxmotortorque(IntPtr jointDef);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_setmaxmotortorque(IntPtr jointDef, float vec);
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern IntPtr b2revolutejointdef_constructor();
-
-			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejointdef_destroy(IntPtr ptr);
-		}
-
-		public RevoluteJointDef()
-		{
-			JointDefPtr = NativeMethods.b2revolutejointdef_constructor();
-			shouldDispose = true;
-		}
-
-		public void Initialize(Body b1, Body b2, Vec2 anchor)
-		{
-			BodyA = b1;
-			BodyB = b2;
-			LocalAnchorA = b1.GetLocalPoint(anchor);
-			LocalAnchorB = b2.GetLocalPoint(anchor);
-			ReferenceAngle = b2.Angle - b1.Angle;
-		}
-
-		public Vec2 LocalAnchorA
-		{
-			get { Vec2 temp; NativeMethods.b2revolutejointdef_getlocalanchora(JointDefPtr, out temp); return temp; }
-			set { NativeMethods.b2revolutejointdef_setlocalanchora(JointDefPtr, value); }
-		}
-
-		public Vec2 LocalAnchorB
-		{
-			get { Vec2 temp; NativeMethods.b2revolutejointdef_getlocalanchorb(JointDefPtr, out temp); return temp; }
-			set { NativeMethods.b2revolutejointdef_setlocalanchorb(JointDefPtr, value); }
-		}
-
-		public float ReferenceAngle
-		{
-			get { return NativeMethods.b2revolutejointdef_getreferenceangle(JointDefPtr); }
-			set { NativeMethods.b2revolutejointdef_setreferenceangle(JointDefPtr, value); }
-		}
-
-		public bool EnableLimit
-		{
-			get { return NativeMethods.b2revolutejointdef_getenablelimit(JointDefPtr); }
-			set { NativeMethods.b2revolutejointdef_setenablelimit(JointDefPtr, value); }
-		}
-
-		public float LowerAngle
-		{
-			get { return NativeMethods.b2revolutejointdef_getlowerangle(JointDefPtr); }
-			set { NativeMethods.b2revolutejointdef_setlowerangle(JointDefPtr, value); }
-		}
-
-		public float UpperAngle
-		{
-			get { return NativeMethods.b2revolutejointdef_getupperangle(JointDefPtr); }
-			set { NativeMethods.b2revolutejointdef_setupperangle(JointDefPtr, value); }
-		}
-
-		public bool EnableMotor
-		{
-			get { return NativeMethods.b2revolutejointdef_getenablemotor(JointDefPtr); }
-			set { NativeMethods.b2revolutejointdef_setenablemotor(JointDefPtr, value); }
-		}
-
-		public float MotorSpeed
-		{
-			get { return NativeMethods.b2revolutejointdef_getmotorspeed(JointDefPtr); }
-			set { NativeMethods.b2revolutejointdef_setmotorspeed(JointDefPtr, value); }
-		}
-
-		public float MaxMotorTorque
-		{
-			get { return NativeMethods.b2revolutejointdef_getmaxmotortorque(JointDefPtr); }
-			set { NativeMethods.b2revolutejointdef_setmaxmotortorque(JointDefPtr, value); }
-		}
-
-		#region IDisposable
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		bool disposed;
-		bool shouldDispose;
-
-		private void Dispose(bool disposing)
-		{
-			if (!this.disposed)
-			{
-				if (disposing)
-				{
-				}
-
-				if (shouldDispose)
-				{
-					NativeMethods.b2revolutejointdef_destroy(JointDefPtr);
-					//System.Console.WriteLine("b2revolutejointdef_destroy");
-				}
-
-				disposed = true;
-			}
-		}
-
-		~RevoluteJointDef()
-		{
-			Dispose(false);
-		}
-		#endregion
-	}
-#endif
-
-	public class RevoluteJoint : Joint
+	public sealed class RevoluteJoint : Joint
 	{
 		static class NativeMethods
 		{

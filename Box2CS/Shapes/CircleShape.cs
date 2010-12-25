@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-	public class CircleShape : Shape
+	public sealed class CircleShape : Shape
 	{
 		cb2circleshapeportable _internalCircleShape;
 
