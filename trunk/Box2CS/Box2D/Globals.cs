@@ -27,7 +27,7 @@ namespace Box2CS
 		}
 	};
 
-	public class Box2D
+	public static class Box2D
 	{
 		class NativeMethods
 		{

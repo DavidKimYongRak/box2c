@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-	public class World : IDisposable
+	public sealed class World : IDisposable
 	{
 		static class NativeMethods
 		{

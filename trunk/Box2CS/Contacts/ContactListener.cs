@@ -64,50 +64,22 @@ namespace Box2CS
 
 		void BeginContactInternal(IntPtr contact)
 		{
-			try
-			{
-				BeginContact(Contact.FromPtr(contact));
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
+			BeginContact(Contact.FromPtr(contact));
 		}
 
 		void EndContactInternal(IntPtr contact)
 		{
-			try
-			{
-				EndContact(Contact.FromPtr(contact));	
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
+			EndContact(Contact.FromPtr(contact));	
 		}
 
 		void PreSolveInternal(IntPtr contact, IntPtr oldManifold)
 		{
-			try
-			{
-				PreSolve(Contact.FromPtr(contact), (Manifold)Marshal.PtrToStructure(oldManifold, typeof(Manifold)));
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
+			PreSolve(Contact.FromPtr(contact), (Manifold)Marshal.PtrToStructure(oldManifold, typeof(Manifold)));
 		}
 
 		void PostSolveInternal(IntPtr contact, IntPtr impulse)
 		{
-			try
-			{
-				PostSolve(Contact.FromPtr(contact), (ContactImpulse)Marshal.PtrToStructure(impulse, typeof(ContactImpulse)));
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
+			PostSolve(Contact.FromPtr(contact), (ContactImpulse)Marshal.PtrToStructure(impulse, typeof(ContactImpulse)));
 		}
 
 		public abstract void BeginContact(Contact contact);

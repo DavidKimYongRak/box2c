@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-	public class PolygonShape : Shape
+	public sealed class PolygonShape : Shape
 	{
 		cb2polygonshapeportable _internalPolyShape;
 
@@ -163,7 +163,7 @@ namespace Box2CS
 		Vec2 ComputeCentroid()
 		{
 			if (!(_internalPolyShape.m_vertexCount >= 2))
-				throw new Exception();
+				throw new ArgumentOutOfRangeException("Vertice count");
 
 			Vec2 c = Vec2.Empty;
 			float area = 0.0f;
@@ -203,7 +203,7 @@ _internalPolyShape.m_vertices[0];
 
 			// Centroid
 			if (!(area > float.Epsilon))
-				throw new Exception();
+				throw new Exception("Area of polygon is too small");
 			c *= 1.0f / area;
 			return c;
 		}
@@ -211,7 +211,7 @@ _internalPolyShape.m_vertices[0];
 		void Set()
 		{
 			if (!(2 <= VertexCount && VertexCount <= Box2DSettings.b2_maxPolygonVertices))
-				throw new Exception();
+				throw new ArgumentOutOfRangeException("Vertices", "Vertice count is " + ((2 <= VertexCount) ? "less than 2" : "greater than "+Box2DSettings.b2_maxPolygonVertices.ToString()));
 
 			// Compute normals. Ensure the edges have non-zero length.
 			for (int i = 0; i < VertexCount; ++i)
@@ -219,8 +219,10 @@ _internalPolyShape.m_vertices[0];
 				int i1 = i;
 				int i2 = i + 1 < VertexCount ? i + 1 : 0;
 				Vec2 edge = _internalPolyShape.m_vertices[i2] - _internalPolyShape.m_vertices[i1];
+
 				if (!(edge.LengthSquared() > float.Epsilon * float.Epsilon))
-					throw new Exception();
+					throw new Exception("Edge has a close-to-zero length (vertices too close?)");
+
 				_internalPolyShape.m_normals[i] = edge.Cross(1.0f);
 				_internalPolyShape.m_normals[i].Normalize();
 			}
@@ -252,7 +254,7 @@ _internalPolyShape.m_vertices[0];
 						if (_autoReverse)
 							ReverseOrder();
 						else
-							throw new Exception();
+							throw new Exception("Polygon is non-convex or has colinear edges");
 						return;
 					}
 				}
@@ -277,7 +279,7 @@ _internalPolyShape.m_vertices[0];
 			set
 			{
 				if (value.Length > 8)
-					throw new IndexOutOfRangeException();
+					throw new IndexOutOfRangeException("value");
 
 				for (int i = 0; i < value.Length; ++i)
 					_internalPolyShape.m_vertices[i] = value[i];
@@ -304,7 +306,7 @@ _internalPolyShape.m_vertices[0];
 			set
 			{
 				if (value.Length > 8)
-					throw new IndexOutOfRangeException();
+					throw new IndexOutOfRangeException("value");
 
 				for (int i = 0; i < value.Length; ++i)
 					_internalPolyShape.m_normals[i] = value[i];
@@ -340,7 +342,7 @@ _internalPolyShape.m_vertices[0];
 		public override void ComputeMass(out MassData massData, float density)
 		{
 			if (!(VertexCount >= 2))
-				throw new Exception();
+				throw new ArgumentOutOfRangeException("Vertice count less than 2");
 
 			// A line segment has zero mass.
 			if (VertexCount == 2)
@@ -398,7 +400,7 @@ _internalPolyShape.m_vertices[0];
 			}
 
 			if (!(area > float.Epsilon))
-				throw new Exception();
+				throw new Exception("Area is too small");
 
 			massData = new MassData(density * area,
 				center * (1.0f / area),

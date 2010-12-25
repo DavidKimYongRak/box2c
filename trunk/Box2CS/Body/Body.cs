@@ -12,7 +12,7 @@ namespace Box2CS
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
-	public class BodyDef : IFixedSize
+	public sealed class BodyDef : IFixedSize
 	{
 		int IFixedSize.FixedSize()
 		{
@@ -222,7 +222,7 @@ namespace Box2CS
 		}
 	}
 
-	public class Body
+	public sealed class Body
 	{
 		static class NativeMethods
 		{

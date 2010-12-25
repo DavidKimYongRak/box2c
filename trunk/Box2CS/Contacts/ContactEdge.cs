@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-	public class ContactEdge
+	public sealed class ContactEdge
 	{
 		static class NativeMethods
 		{
