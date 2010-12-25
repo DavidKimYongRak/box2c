@@ -61,7 +61,7 @@ namespace Testbed.Tests
 				sdf.Friction   = 0.01f;
 				sdf.Filter = new FilterData(FilterData.Default.CategoryBits, FilterData.Default.MaskBits, -1);
 				sdf.Shape = sd;
-				Vec2 startpoint = new Vec2(30.0f, 20.0f);
+				Vec2 startpoint = new Vec2(0, 0);
 				BodyDef    bd = new BodyDef();
 				bd.BodyType = EBodyType.b2_dynamicBody;
 				bd.Bullet = false;

@@ -212,13 +212,6 @@ namespace Testbed
 				++m_stepCount;
 			}
 
-			if (TestSettings.drawStats)
-			{
-				m_debugDraw.DrawString(5, m_textLine, String.Format("bodies/contacts/joints/proxies = {0}/{1}/{2}/{3}",
-					m_world.BodyCount, m_world.ContactCount, m_world.JointCount, m_world.ProxyCount));
-				m_textLine += 15;
-			}
-
 			// Make a small box.
 			_selectedFixture = null;
 			{
@@ -423,6 +416,13 @@ namespace Testbed
 				m_debugDraw.DrawString(5, m_textLine, "****PAUSED****");
 			m_textLine += 15;
 
+			if (TestSettings.drawStats)
+			{
+				m_debugDraw.DrawString(5, m_textLine, String.Format("bodies/contacts/joints/proxies = {0}/{1}/{2}/{3}",
+					m_world.BodyCount, m_world.ContactCount, m_world.JointCount, m_world.ProxyCount));
+				m_textLine += 15;
+			}
+
 			if (m_mouseJoint != null)
 			{
 				Vec2 p1 = m_mouseJoint.AnchorB;
@@ -479,7 +479,7 @@ namespace Testbed
 			if (TestSettings.drawContactPoints)
 			{
 				//const float32 k_impulseScale = 0.1f;
-				const float k_axisScale = 0.3f;
+				const float k_axisScale = 0.6f;
 
 				for (int i = 0; i < m_pointCount; ++i)
 				{
@@ -498,7 +498,7 @@ namespace Testbed
 					{
 						Vec2 p1 = m_points[i].position;
 						Vec2 p2 = p1 + k_axisScale * m_points[i].normal;
-						m_debugDraw.DrawSegment(p1, p2, new ColorF(0.9f, 0.9f, 0.9f));
+						m_debugDraw.DrawSegment(p1, p2, new ColorF(0.9f, 0, 0));
 					}
 
 					else if (TestSettings.drawContactForces)
