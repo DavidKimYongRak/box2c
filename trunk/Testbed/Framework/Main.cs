@@ -70,8 +70,6 @@ namespace Testbed
 			while (renderWindow == null || !renderWindow.IsOpened())
 			{
 			}
-
-			Location = new System.Drawing.Point((int)(renderWindow.CurrentView.Center.X + renderWindow.Width), (int)(renderWindow.CurrentView.Center.Y));
 		}
 
 		void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -170,7 +168,7 @@ namespace Testbed
 
 		void SimulationLoop()
 		{
-			renderWindow = new RenderWindow(new VideoMode(800, 600, 32), "RenderWindow", Styles.Close);
+			renderWindow = new RenderWindow(new VideoMode(800, 600, 32), "RenderWindow", Styles.Titlebar);
 			renderWindow.Resized += new EventHandler<SizeEventArgs>(render_Resized);
 			renderWindow.MouseButtonPressed += new EventHandler<MouseButtonEventArgs>(renderWindow_MouseButtonPressed);
 			renderWindow.MouseButtonReleased += new EventHandler<MouseButtonEventArgs>(renderWindow_MouseButtonReleased);
@@ -542,6 +540,7 @@ namespace Testbed
 			//simulationTimer.Stop();
 			//simulationTimer.Dispose();
 			//simulationTimer = null;
+			simulationThread.Abort();
 		}
 	}
 }
