@@ -26,7 +26,7 @@ namespace Testbed
 		bool rMouseDown;
 		Vec2 lastp;
 		Thread simulationThread;
-		TimeSpan _ts = TimeSpan.Zero, _min = TimeSpan.MaxValue, _max = TimeSpan.MinValue;
+		long _ts = 0, _min = long.MaxValue, _max = long.MinValue;
 
 		public float ViewZoom
 		{
@@ -135,7 +135,7 @@ namespace Testbed
 				TestSettings.hz = settingsHz;
 				test.Step();
 				sw.Stop();
-				_ts = sw.Elapsed;
+				_ts = sw.ElapsedTicks;
 
 				if (_ts < _min)
 					_min = _ts;
@@ -161,9 +161,9 @@ namespace Testbed
 			{
 				test.SetTextLine(30);
 				test.DrawTitle(5, 15, entry.Name);
-				test.m_debugDraw.DrawString(5, 100, "Time: " + _ts.ToString() + " ("+_ts.Ticks.ToString()+")");
-				test.m_debugDraw.DrawString(5, 115, "MinTime: " + _min.ToString() + " ("+_min.Ticks.ToString()+")");
-				test.m_debugDraw.DrawString(5, 130, "MaxTime: " + _max.ToString() + " ("+_max.Ticks.ToString()+")");
+				test.m_debugDraw.DrawString(5, 100, "Time: "+_ts.ToString());
+				test.m_debugDraw.DrawString(5, 115, "MinTime: " + _min.ToString());
+				test.m_debugDraw.DrawString(5, 130, "MaxTime: " + _max.ToString());
 				test.Draw();
 			}
 		}
@@ -436,8 +436,8 @@ namespace Testbed
 			test = entry.Construct();
 			OnGLResize(width, height);
 
-			_min = TimeSpan.MaxValue;
-			_max = TimeSpan.MinValue;
+			_min = long.MaxValue;
+			_max = long.MinValue;
 			NextGameTick = System.Environment.TickCount;
 		}
 
