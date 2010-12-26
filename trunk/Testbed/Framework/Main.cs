@@ -26,6 +26,7 @@ namespace Testbed
 		bool rMouseDown;
 		Vec2 lastp;
 		Thread simulationThread;
+		TimeSpan _ts = TimeSpan.Zero, _min = TimeSpan.MaxValue, _max = TimeSpan.MinValue;
 
 		public float ViewZoom
 		{
@@ -129,8 +130,17 @@ namespace Testbed
 					TestSettings.restart = false;
 				}
 
+				System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+				sw.Start();
 				TestSettings.hz = settingsHz;
 				test.Step();
+				sw.Stop();
+				_ts = sw.Elapsed;
+
+				if (_ts < _min)
+					_min = _ts;
+				if (_ts > _max)
+					_max= _ts;
 
 				if (testSelection != testIndex)
 				{
@@ -151,6 +161,9 @@ namespace Testbed
 			{
 				test.SetTextLine(30);
 				test.DrawTitle(5, 15, entry.Name);
+				test.m_debugDraw.DrawString(5, 100, "Time: " + _ts.ToString() + " ("+_ts.Ticks.ToString()+")");
+				test.m_debugDraw.DrawString(5, 115, "MinTime: " + _min.ToString() + " ("+_min.Ticks.ToString()+")");
+				test.m_debugDraw.DrawString(5, 130, "MaxTime: " + _max.ToString() + " ("+_max.Ticks.ToString()+")");
 				test.Draw();
 			}
 		}
