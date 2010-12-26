@@ -20,7 +20,7 @@ namespace Box2CS
 
 		public PulleyJointDef()
 		{
-			JointType = EJointType.e_pulleyJoint;
+			JointType = JointType.Pulley;
 			_groundAnchorA = new Vec2(-1.0f, 1.0f);
 			_groundAnchorB = new Vec2(1.0f, 1.0f);
 			_localAnchorA = new Vec2(-1.0f, 0.0f);

@@ -9,24 +9,59 @@ namespace Box2CS
 	public struct ContactID
 	{
 		[FieldOffset(0)]
-		public byte ReferenceEdge;	///< The edge that defines the outward contact normal.
+		byte _referenceEdge;
+
 		[FieldOffset(1)]
-		public byte IncidentEdge;		///< The edge most anti-parallel to the reference edge.
+		byte _incidentEdge;
+
 		[FieldOffset(2)]
-		public byte IncidentVertex;	///< The vertex (0 or 1) on the incident edge that was clipped.
+		byte _incidentVertex;
+
 		[FieldOffset(3)]
-		public byte Flip;				///< A value of 1 indicates that the reference edge is on shape2.
+		byte _flip;
 
 		[FieldOffset(0)]
-		public uint Key;
+		uint _key;
 
-		public ContactID(uint key)
+		public byte ReferenceEdge
+		{
+			get { return _referenceEdge; }
+			set { _referenceEdge = value; }
+		}
+
+		public byte IncidentEdge
+		{
+			get { return _incidentEdge; }
+			set { _incidentEdge = value; }
+		}
+
+		public byte IncidentVertex
+		{
+			get { return _incidentVertex; }
+			set { _incidentVertex = value; }
+		}
+
+		public byte Flip
+		{
+			get { return _flip; }
+			set { _flip = value; }
+		}
+
+		public uint Key
+		{
+			get { return _key; }
+			set { _key = value; }
+		}
+
+		public ContactID(uint key) :
+			this()
 		{
 			ReferenceEdge = IncidentEdge = IncidentVertex = Flip = 0;
 			Key = key;
 		}
 
-		public ContactID(byte referenceEdge, byte incidentEdge, byte incidentVertex, byte flip)
+		public ContactID(byte referenceEdge, byte incidentEdge, byte incidentVertex, byte flip) :
+			this()
 		{
 			Key = 0;
 			ReferenceEdge = referenceEdge;
@@ -39,37 +74,87 @@ namespace Box2CS
 	[StructLayout(LayoutKind.Sequential)]
 	public struct ManifoldPoint
 	{
-		public Vec2 LocalPoint;		///< usage depends on manifold type
-		public float NormalImpulse;	///< the non-penetration impulse
-		public float TangentImpulse;	///< the friction impulse
-		public ContactID ID;			///< uniquely identifies a contact point between two shapes
+		public Vec2 LocalPoint
+		{
+			get;
+			set;
+		}
+
+		public float NormalImpulse
+		{
+			get;
+			set;
+		}
+
+		public float TangentImpulse
+		{
+			get;
+			set;
+		}
+
+		public ContactID ID
+		{
+			get;
+			set;
+		}
 	}
 
-	public enum EManifoldType
+	public enum ManifoldType
 	{
-		e_circles,
-		e_faceA,
-		e_faceB
+		Circles,
+		FaceA,
+		FaceB
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct Manifold
+	public struct Manifold
 	{
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
-		public ManifoldPoint[] Points;	///< the points of contact
-		public Vec2 LocalNormal;								///< not use for Type::e_points
-		public Vec2 LocalPoint;								///< usage depends on manifold type
-		public EManifoldType ManifoldType;
-		public int PointCount;								///< the number of manifold points
+		ManifoldPoint[] _points;
+
+		Vec2 _localNormal;
+		Vec2 _localPoint;
+		ManifoldType _manifoldType;
+		int _pointCount;
+
+		public ManifoldPoint[] Points
+		{
+			get { return _points; }
+			set { _points = value; }
+		}
+
+		public Vec2 LocalNormal
+		{
+			get { return _localNormal; }
+			set { _localNormal = value; }
+		}
+
+		public Vec2 LocalPoint
+		{
+			get { return _localPoint; }
+			set { _localPoint = value; }
+		}
+
+		public ManifoldType ManifoldType
+		{
+			get { return _manifoldType; }
+			set { _manifoldType = value; }
+		}
+
+		public int PointCount
+		{
+			get { return _pointCount; }
+			set { _pointCount = value; }
+		}
 	
-		public static void GetPointStates(ref EPointState[] state1, ref EPointState[] state2,
+		public static void GetPointStates(ref PointState[] state1, ref PointState[] state2,
 					  ref Manifold manifold1, ref Manifold manifold2)
 
 		{
 			for (int i = 0; i < Box2DSettings.b2_maxManifoldPoints; ++i)
 			{
-				state1[i] = EPointState.b2_nullState;
-				state2[i] = EPointState.b2_nullState;
+				state1[i] = PointState.Null;
+				state2[i] = PointState.Null;
 			}
 
 			// Detect persists and removes.
@@ -77,13 +162,13 @@ namespace Box2CS
 			{
 				ContactID id = manifold1.Points[i].ID;
 
-				state1[i] = EPointState.b2_removeState;
+				state1[i] = PointState.Remove;
 
 				for (int j = 0; j < manifold2.PointCount; ++j)
 				{
 					if (manifold2.Points[j].ID.Key == id.Key)
 					{
-						state1[i] = EPointState.b2_persistState;
+						state1[i] = PointState.Persist;
 						break;
 					}
 				}
@@ -94,13 +179,13 @@ namespace Box2CS
 			{
 				ContactID id = manifold2.Points[i].ID;
 
-				state2[i] = EPointState.b2_addState;
+				state2[i] = PointState.Add;
 
 				for (int j = 0; j < manifold1.PointCount; ++j)
 				{
 					if (manifold1.Points[j].ID.Key == id.Key)
 					{
-						state2[i] = EPointState.b2_persistState;
+						state2[i] = PointState.Persist;
 						break;
 					}
 				}
@@ -108,21 +193,33 @@ namespace Box2CS
 		}
 	}
 
-	public unsafe struct WorldManifold
+	[StructLayout(LayoutKind.Sequential)]
+	public struct WorldManifold
 	{
-		public Vec2 Normal;						///< world vector pointing from A to B
-
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
-		public Vec2[] Points;	///< world contact point (point of intersection)
+		Vec2[] _points;
+		Vec2 _normal;
+
+		public Vec2[] Points
+		{
+			get { return _points; }
+			set { _points = value; }
+		}
+
+		public Vec2 Normal
+		{
+			get { return _normal; }
+			set { _normal = value; }
+		}
 	}
 
 	/// This is used for determining the state of contact points.
-	public enum EPointState
+	public enum PointState
 	{
-		b2_nullState,		///< point does not exist
-		b2_addState,		///< point was added in the update
-		b2_persistState,	///< point persisted across the update
-		b2_removeState		///< point was removed in the update
+		Null,		///< point does not exist
+		Add,		///< point was added in the update
+		Persist,	///< point persisted across the update
+		Remove		///< point was removed in the update
 	};
 
 	public sealed class Contact

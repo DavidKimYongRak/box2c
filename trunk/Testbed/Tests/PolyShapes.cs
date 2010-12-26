@@ -27,7 +27,7 @@ namespace Testbed.Tests
 
 			switch (fixture.ShapeType)
 			{
-			case EShapeType.e_circle:
+			case ShapeType.Circle:
 				{
 					CircleShape circle = (CircleShape)fixture.Shape;
 
@@ -38,7 +38,7 @@ namespace Testbed.Tests
 				}
 				break;
 
-			case EShapeType.e_polygon:
+			case ShapeType.Polygon:
 				{
 					PolygonShape poly = (PolygonShape)fixture.Shape;
 					int vertexCount = poly.VertexCount;
@@ -64,7 +64,7 @@ namespace Testbed.Tests
 			Body body = fixture.Body;
 			Shape shape = fixture.Shape;
 
-			if (body.BodyType == EBodyType.b2_staticBody)
+			if (body.BodyType == BodyType.Static)
 				return false;
 
 			bool overlap = Box2D.TestOverlap(shape, m_circle, body.Transform, m_transform);
@@ -165,7 +165,7 @@ namespace Testbed.Tests
 			}
 
 			BodyDef bd = new BodyDef();
-			bd.BodyType = EBodyType.b2_dynamicBody;
+			bd.BodyType = BodyType.Dynamic;
 
 			float x = Rand.RandomFloat(-2.0f, 2.0f);
 			bd.Position = new Vec2(x, 10.0f);

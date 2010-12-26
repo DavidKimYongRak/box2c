@@ -12,7 +12,7 @@ namespace Box2CS
 
 		public GearJointDef ()
 		{
-			JointType = EJointType.e_gearJoint;
+			JointType = JointType.Gear;
 			_joint1 = IntPtr.Zero;
 			_joint2 = IntPtr.Zero;
 			_ratio = 1.0f;

@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
+	[StructLayout(LayoutKind.Sequential)]
 	public struct Box2DVersion
 	{
 		static class NativeMethods
@@ -20,9 +21,22 @@ namespace Box2CS
 
 		public static Box2DVersion Version = GetBox2DVersion();
 
-		public int Major;
-		public int Minor;
-		public int Revision;
+		int _major, _minor, _revision;
+
+		public int Major
+		{
+			get { return _major; }
+		}
+
+		public int Minor
+		{
+			get { return _minor; }
+		}
+
+		public int Revision
+		{
+			get { return _revision; }
+		}
 
 		public override string ToString()
 		{

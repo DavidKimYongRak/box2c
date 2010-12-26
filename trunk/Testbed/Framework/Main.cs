@@ -99,7 +99,7 @@ namespace Testbed
 			Vec2 upper = viewCenter + extents;
 
 			// L/R/B/T
-			Glu.gluOrtho2D(lower.x, upper.x, lower.y, upper.y);
+			Glu.gluOrtho2D(lower.X, upper.X, lower.Y, upper.Y);
 		}
 
 		public Vec2 ConvertScreenToWorld(int x, int y)
@@ -115,8 +115,8 @@ namespace Testbed
 			Vec2 upper = viewCenter + extents;
 
 			Vec2 p = new Vec2();
-			p.x = (1.0f - u) * lower.x + u * upper.x;
-			p.y = (1.0f - v) * lower.y + v * upper.y;
+			p.X = (1.0f - u) * lower.X + u * upper.X;
+			p.Y = (1.0f - v) * lower.Y + v * upper.Y;
 			return p;
 		}
 
@@ -252,12 +252,12 @@ namespace Testbed
 
 		void renderWindow_MouseButtonReleased(object sender, MouseButtonEventArgs e)
 		{
-			OnGLMouse(e.Button, EMouseButtonState.Up, e.X, e.Y);
+			OnGLMouse(e.Button, MouseButtonState.Up, e.X, e.Y);
 		}
 
 		void renderWindow_MouseButtonPressed(object sender, MouseButtonEventArgs e)
 		{
-			OnGLMouse(e.Button, EMouseButtonState.Down, e.X, e.Y);
+			OnGLMouse(e.Button, MouseButtonState.Down, e.X, e.Y);
 		}
 
 		void render_Resized(object sender, SizeEventArgs e)
@@ -321,25 +321,25 @@ namespace Testbed
 
 				// Press left to pan left.
 			case KeyCode.Left:
-				viewCenter.x -= 0.5f;
+				viewCenter.X -= 0.5f;
 				OnGLResize(width, height);
 				break;
 
 				// Press right to pan right.
 			case KeyCode.Right:
-				viewCenter.x += 0.5f;
+				viewCenter.X += 0.5f;
 				OnGLResize(width, height);
 				break;
 
 				// Press down to pan down.
 			case KeyCode.Down:
-				viewCenter.y -= 0.5f;
+				viewCenter.Y -= 0.5f;
 				OnGLResize(width, height);
 				break;
 
 				// Press up to pan up.
 			case KeyCode.Up:
-				viewCenter.y += 0.5f;
+				viewCenter.Y += 0.5f;
 				OnGLResize(width, height);
 				break;
 
@@ -357,19 +357,19 @@ namespace Testbed
 			}
 		}
 
-		enum EMouseButtonState
+		enum MouseButtonState
 		{
 			Down,
 			Up
 		}
 
-		void OnGLMouse(MouseButton button, EMouseButtonState state, int x, int y)
+		void OnGLMouse(MouseButton button, MouseButtonState state, int x, int y)
 		{
 			// Use the mouse to move things around.
 			if (button == MouseButton.Left)
 			{
 				Vec2 p = ConvertScreenToWorld(x, y);
-				if (state == EMouseButtonState.Down)
+				if (state == MouseButtonState.Down)
 				{
 					if ((ModifierKeys & Keys.Shift) != 0)
 					{
@@ -381,20 +381,20 @@ namespace Testbed
 					}
 				}
 		
-				if (state == EMouseButtonState.Up)
+				if (state == MouseButtonState.Up)
 				{
 					test.MouseUp(p);
 				}
 			}
 			else if (button == MouseButton.Right)
 			{
-				if (state == EMouseButtonState.Down)
+				if (state == MouseButtonState.Down)
 				{	
 					lastp = ConvertScreenToWorld(x, y);
 					rMouseDown = true;
 				}
 
-				if (state == EMouseButtonState.Up)
+				if (state == MouseButtonState.Up)
 				{
 					rMouseDown = false;
 				}
@@ -409,8 +409,8 @@ namespace Testbed
 			if (rMouseDown)
 			{
 				Vec2 diff = p - lastp;
-				viewCenter.x -= diff.x;
-				viewCenter.y -= diff.y;
+				viewCenter.X -= diff.X;
+				viewCenter.Y -= diff.Y;
 				OnGLResize(width, height);
 				lastp = ConvertScreenToWorld(x, y);
 			}
@@ -435,6 +435,10 @@ namespace Testbed
 			entry = entries.Entries[testIndex];
 			test = entry.Construct();
 			OnGLResize(width, height);
+
+			_min = TimeSpan.MaxValue;
+			_max = TimeSpan.MinValue;
+			NextGameTick = System.Environment.TickCount;
 		}
 
 		void Pause()

@@ -29,7 +29,7 @@ namespace Testbed.Tests
 				for (int i = 0; i < 7; ++i)
 				{
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody; 
+					bd.BodyType = BodyType.Dynamic; 
 					bd.Position = new Vec2(-10.0f + 3.0f * i, 20.0f);
 
 					Body body = m_world.CreateBody(bd);

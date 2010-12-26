@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-	public enum EBodyType
+	public enum BodyType
 	{
-		b2_staticBody = 0,
-		b2_kinematicBody,
-		b2_dynamicBody,
+		Static = 0,
+		Kinematic,
+		Dynamic,
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -28,7 +28,7 @@ namespace Box2CS
 		}
 
 		[MarshalAs(UnmanagedType.I4)]
-		EBodyType _type;
+		BodyType _type;
 
 		Vec2 _position;
 		float _angle;
@@ -56,7 +56,7 @@ namespace Box2CS
 		float _inertiaScale;
 
 		public BodyDef(
-			EBodyType bodyType,
+			BodyType bodyType,
 			Vec2 position,
 			float angle,
 			Vec2 linearVelocity,
@@ -88,7 +88,7 @@ namespace Box2CS
 		}
 
 		public BodyDef(
-			EBodyType bodyType,
+			BodyType bodyType,
 			Vec2 position,
 			float angle = 0,
 			bool bullet = false,
@@ -107,7 +107,7 @@ namespace Box2CS
 		}
 
 		public BodyDef(
-			EBodyType bodyType,
+			BodyType bodyType,
 			Vec2 position,
 			float angle,
 			Vec2 linearVelocity,
@@ -124,7 +124,7 @@ namespace Box2CS
 		}
 
 		public BodyDef() :
-			this(EBodyType.b2_staticBody, Vec2.Empty, 0.0f, Vec2.Empty, 0.0f, 0.0f, 0.0f, false, true, false, true, true, 1.0f, null)
+			this(BodyType.Static, Vec2.Empty, 0.0f, Vec2.Empty, 0.0f, 0.0f, 0.0f, false, true, false, true, true, 1.0f, null)
 		{
 		}
 
@@ -167,6 +167,12 @@ namespace Box2CS
 			set { _linearVelocity = value; }
 		}
 
+		public float AngularVelocity
+		{
+			get { return _angularVelocity; }
+			set { _angularVelocity = value; }
+		}
+
 		public float LinearDamping
 		{
 			get { return _linearDamping; }
@@ -203,7 +209,7 @@ namespace Box2CS
 			set { _bullet = value; }
 		}
 
-		public EBodyType BodyType
+		public BodyType BodyType
 		{
 			get { return _type; }
 			set { _type = value; }
@@ -510,7 +516,7 @@ namespace Box2CS
 			set
 			{
 				var x = MassData;
-				MassData = new MassData(value, x.Value.Center, x.Value.I);
+				MassData = new MassData(value, x.Value.Center, x.Value.Inertia);
 			}
 		}
 
@@ -607,9 +613,9 @@ namespace Box2CS
 			set { NativeMethods.b2body_setangulardamping(_bodyPtr, value); }
 		}
 
-		public EBodyType BodyType
+		public BodyType BodyType
 		{
-			get { return (EBodyType)NativeMethods.b2body_gettype(_bodyPtr); }
+			get { return (BodyType)NativeMethods.b2body_gettype(_bodyPtr); }
 			set { NativeMethods.b2body_settype(_bodyPtr, (int)value); }
 		}
 

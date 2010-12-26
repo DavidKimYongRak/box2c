@@ -51,8 +51,8 @@ namespace Testbed.Tests
 
 			{
 				Transform xf1 = new Transform();
-				xf1.R.Set(0.3524f * (float)Math.PI);
-				xf1.position = (xf1.R * new Vec2(1.0f, 0.0f));
+				xf1.R = new Mat22(0.3524f * (float)Math.PI);
+				xf1.Position = (xf1.R * new Vec2(1.0f, 0.0f));
 
 				Vec2[] vertices = new Vec2[3]
 				{
@@ -68,8 +68,8 @@ namespace Testbed.Tests
 				sd1.Density = 4.0f;
 
 				Transform xf2 = new Transform();
-				xf2.R.Set(-0.3524f * (float)Math.PI);
-				xf2.position = (xf2.R * new Vec2(-1.0f, 0.0f));
+				xf2.R = new Mat22(-0.3524f * (float)Math.PI);
+				xf2.Position = (xf2.R * new Vec2(-1.0f, 0.0f));
 
 				vertices = new Vec2[] 
 				{
@@ -85,7 +85,7 @@ namespace Testbed.Tests
 				sd2.Density = 2.0f;
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.AngularDamping = 5.0f;
 				bd.LinearDamping = 0.1f;
 
@@ -109,7 +109,7 @@ namespace Testbed.Tests
 				for (int i = 0; i < 10; ++i)
 				{
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 
 					bd.Position = new Vec2(0.0f, 5.0f + 1.54f * i);
 					Body body = m_world.CreateBody(bd);

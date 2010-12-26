@@ -26,13 +26,13 @@ namespace Box2CS
 	}
 
 	[Flags]
-	public enum EDebugFlags
+	public enum DebugFlags
 	{
-		e_shapeBit				= 0x0001, ///< draw shapes
-		e_jointBit				= 0x0002, ///< draw joint connections
-		e_aabbBit				= 0x0004, ///< draw axis aligned bounding boxes
-		e_pairBit				= 0x0008, ///< draw broad-phase pairs
-		e_centerOfMassBit		= 0x0010, ///< draw center of mass frame
+		Shapes				= 0x0001, ///< draw shapes
+		Joints				= 0x0002, ///< draw joint connections
+		AABBs				= 0x0004, ///< draw axis aligned bounding boxes
+		Pairs				= 0x0008, ///< draw broad-phase pairs
+		CenterOfMasses		= 0x0010, ///< draw center of mass frame
 	};
 
 	public abstract class DebugDraw : IDisposable
@@ -69,9 +69,9 @@ namespace Box2CS
 			_debugDraw = NativeMethods.cb2debugdraw_create(funcs);
 		}
 
-		public EDebugFlags Flags
+		public DebugFlags Flags
 		{
-			get { return (EDebugFlags)NativeMethods.cb2debugdraw_getflags(_debugDraw); }
+			get { return (DebugFlags)NativeMethods.cb2debugdraw_getflags(_debugDraw); }
 			set { NativeMethods.cb2debugdraw_setflags(_debugDraw, (uint)value); }
 		}
 

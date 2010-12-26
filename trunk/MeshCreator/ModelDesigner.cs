@@ -73,8 +73,8 @@ namespace MeshCreator
 
 					foreach (var b in vecs)
 					{
-						p.x.Add(b.x);
-						p.y.Add(b.y);
+						p.x.Add(b.X);
+						p.y.Add(b.Y);
 					}
 
 					List<ConvexDecomposition.Polygon> results = new List<ConvexDecomposition.Polygon>();
@@ -86,35 +86,35 @@ namespace MeshCreator
 
 						for (int i = 0; i < v.Count; ++i)
 						{
-							e.Graphics.FillRectangle(Brushes.Black, v[i].x - 1, v[i].y - 1, 3, 3);
+							e.Graphics.FillRectangle(Brushes.Black, v[i].X - 1, v[i].Y - 1, 3, 3);
 
 							int nextVec = i + 1;
 							if (nextVec == v.Count)
 								nextVec = 0;
-							e.Graphics.DrawLine(new Pen(Color.Goldenrod, 2), v[i].x, v[i].y, v[nextVec].x, v[nextVec].y);
+							e.Graphics.DrawLine(new Pen(Color.Goldenrod, 2), v[i].X, v[i].Y, v[nextVec].X, v[nextVec].Y);
 						}
 					}
 
 					for (int i = 0; i < vecs.Count; ++i)
 					{
-						e.Graphics.FillRectangle(Brushes.Black, vecs[i].x - 1, vecs[i].y - 1, 3, 3);
+						e.Graphics.FillRectangle(Brushes.Black, vecs[i].X - 1, vecs[i].Y - 1, 3, 3);
 
 						int nextVec = i + 1;
 						if (nextVec == vecs.Count)
 							nextVec = 0;
-						e.Graphics.DrawLine(new Pen(lineColor, 2), vecs[i].x, vecs[i].y, vecs[nextVec].x, vecs[nextVec].y);
+						e.Graphics.DrawLine(new Pen(lineColor, 2), vecs[i].X, vecs[i].Y, vecs[nextVec].X, vecs[nextVec].Y);
 					}
 				}
 				catch
 				{
 					for (int i = 0; i < vecs.Count; ++i)
 					{
-						e.Graphics.FillRectangle((SolidBrush)Brushes.Black, vecs[i].x - 1, vecs[i].y - 1, 3, 3);
+						e.Graphics.FillRectangle((SolidBrush)Brushes.Black, vecs[i].X - 1, vecs[i].Y - 1, 3, 3);
 
 						int nextVec = i + 1;
 						if (nextVec == vecs.Count)
 							nextVec = 0;
-						e.Graphics.DrawLine(new Pen(Color.Red, 2), vecs[i].x, vecs[i].y, vecs[nextVec].x, vecs[nextVec].y);
+						e.Graphics.DrawLine(new Pen(Color.Red, 2), vecs[i].X, vecs[i].Y, vecs[nextVec].X, vecs[nextVec].Y);
 					}
 				}
 			}
@@ -156,7 +156,7 @@ namespace MeshCreator
 				Rectangle b = new Rectangle(e.Location.X - 2, e.Location.Y - 2, 7, 7);
 				for (int i = 0; i < _currentMesh.Vertices.Count; ++i)
 				{
-					if (b.IntersectsWith(new Rectangle((int)_currentMesh.Vertices[i].x, (int)_currentMesh.Vertices[i].y, 1, 1)))
+					if (b.IntersectsWith(new Rectangle((int)_currentMesh.Vertices[i].X, (int)_currentMesh.Vertices[i].Y, 1, 1)))
 					{
 						MovingVertex = i;
 						break;
@@ -168,7 +168,7 @@ namespace MeshCreator
 				Rectangle b = new Rectangle(e.Location.X - 2, e.Location.Y - 2, 7, 7);
 				for (int i = 0; i < _currentMesh.Vertices.Count; ++i)
 				{
-					if (b.IntersectsWith(new Rectangle((int)_currentMesh.Vertices[i].x, (int)_currentMesh.Vertices[i].y, 1, 1)))
+					if (b.IntersectsWith(new Rectangle((int)_currentMesh.Vertices[i].X, (int)_currentMesh.Vertices[i].Y, 1, 1)))
 					{
 						_currentMesh.Vertices.RemoveAt(i);
 						break;
@@ -186,8 +186,8 @@ namespace MeshCreator
 		{
 			if (MovingVertex != -1)
 			{
-				_currentMesh.Vertices[MovingVertex] = new Vec2(_currentMesh.Vertices[MovingVertex].x - (LastMovePos.X - e.Location.X),
-								_currentMesh.Vertices[MovingVertex].y - (LastMovePos.Y - e.Location.Y));
+				_currentMesh.Vertices[MovingVertex] = new Vec2(_currentMesh.Vertices[MovingVertex].X - (LastMovePos.X - e.Location.X),
+								_currentMesh.Vertices[MovingVertex].Y - (LastMovePos.Y - e.Location.Y));
 				LastMovePos = e.Location;
 				pictureBox1.Invalidate();
 			}
@@ -197,7 +197,7 @@ namespace MeshCreator
 		{
 			if (MovingVertex != -1)
 			{
-				_currentMesh.Vertices[MovingVertex] = new Vec2(Snap(_currentMesh.Vertices[MovingVertex].x), Snap(_currentMesh.Vertices[MovingVertex].y));
+				_currentMesh.Vertices[MovingVertex] = new Vec2(Snap(_currentMesh.Vertices[MovingVertex].X), Snap(_currentMesh.Vertices[MovingVertex].Y));
 				MovingVertex = -1;
 				pictureBox1.Invalidate();
 			}
@@ -238,10 +238,10 @@ namespace MeshCreator
 						{
 							for (int i = 0; i < mesh.Vertices.Count; ++i)
 							{
-								if (Math.Abs(mesh.Vertices[i].x) > largestX)
-									largestX = Math.Abs(mesh.Vertices[i].x);
-								if (Math.Abs(mesh.Vertices[i].y) > largestY)
-									largestY = Math.Abs(mesh.Vertices[i].y);
+								if (Math.Abs(mesh.Vertices[i].X) > largestX)
+									largestX = Math.Abs(mesh.Vertices[i].X);
+								if (Math.Abs(mesh.Vertices[i].Y) > largestY)
+									largestY = Math.Abs(mesh.Vertices[i].Y);
 							}
 
 							if (largestY > largestX)
@@ -255,14 +255,14 @@ namespace MeshCreator
 							ConvexDecomposition.Polygon p = new ConvexDecomposition.Polygon();
 							foreach (var b in mesh.Vertices)
 							{
-								p.x.Add(b.x);
-								p.y.Add(b.y);
+								p.x.Add(b.X);
+								p.y.Add(b.Y);
 							}
 
 							List<Vec2> newVecs = new List<Vec2>();
 
 							for (int i = 0; i < mesh.Vertices.Count; ++i)
-								newVecs.Add(new Vec2(mesh.Vertices[i].x / largestX, mesh.Vertices[i].y / largestY));
+								newVecs.Add(new Vec2(mesh.Vertices[i].X / largestX, mesh.Vertices[i].Y / largestY));
 
 							List<ConvexDecomposition.Polygon> results = new List<ConvexDecomposition.Polygon>();
 							ConvexDecomposition.Statics.DecomposeConvex(p, results, 24);
@@ -283,7 +283,7 @@ namespace MeshCreator
 								//	"{");
 
 								//for (int i = 0; i < v.Count; ++i)
-								//	sw.WriteLine("\t" + v[i].x.ToString() + " " + v[i].y.ToString());
+								//	sw.WriteLine("\t" + v[i].X.ToString() + " " + v[i].Y.ToString());
 
 								//sw.WriteLine("}");
 

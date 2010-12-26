@@ -64,11 +64,11 @@ namespace Box2CS
 
 				for (int i = 0; i < count; ++i)
 				{
-					EShapeType type = (EShapeType)reader.ReadByte();
+					ShapeType type = (ShapeType)reader.ReadByte();
 
 					switch (type)
 					{
-					case EShapeType.e_circle:
+					case ShapeType.Circle:
 						{
 							CircleShape shape = new CircleShape();
 							shape.Position = new Vec2(reader.ReadSingle(), reader.ReadSingle());
@@ -76,7 +76,7 @@ namespace Box2CS
 							_shapes.Add(shape);
 							continue;
 						}
-					case EShapeType.e_polygon:
+					case ShapeType.Polygon:
 						{
 							PolygonShape shape = new PolygonShape();
 							shape.AutoReverse = true;
@@ -132,29 +132,29 @@ namespace Box2CS
 
 					switch (shape.ShapeType)
 					{
-					case EShapeType.e_circle:
+					case ShapeType.Circle:
 						{
 							CircleShape cshape = (CircleShape)shape;
-							writer.Write(cshape.Position.x);
-							writer.Write(cshape.Position.y);
+							writer.Write(cshape.Position.X);
+							writer.Write(cshape.Position.Y);
 							writer.Write(cshape.Radius);
 							continue;
 						}
-					case EShapeType.e_polygon:
+					case ShapeType.Polygon:
 						{
 							PolygonShape cshape = (PolygonShape)shape;
-							writer.Write(cshape.Centroid.x);
-							writer.Write(cshape.Centroid.y);
+							writer.Write(cshape.Centroid.X);
+							writer.Write(cshape.Centroid.Y);
 							writer.Write(cshape.Radius);
 
 							writer.Write((byte)cshape.VertexCount);
 
 							for (byte x = 0; x < cshape.VertexCount; ++x)
 							{
-								writer.Write(cshape.Vertices[x].x);
-								writer.Write(cshape.Vertices[x].y);
-								writer.Write(cshape.Normals[x].x);
-								writer.Write(cshape.Normals[x].y);
+								writer.Write(cshape.Vertices[x].X);
+								writer.Write(cshape.Vertices[x].Y);
+								writer.Write(cshape.Normals[x].X);
+								writer.Write(cshape.Normals[x].Y);
 							}
 						}
 						break;

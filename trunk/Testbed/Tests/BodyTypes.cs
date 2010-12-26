@@ -32,7 +32,7 @@ namespace Testbed.Tests
 			// Define attachment
 			{
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(0.0f, 3.0f);
 				m_attachment = m_world.CreateBody(bd);
 
@@ -44,7 +44,7 @@ namespace Testbed.Tests
 			// Define platform
 			{
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(-4.0f, 5.0f);
 				m_platform = m_world.CreateBody(bd);
 
@@ -80,7 +80,7 @@ namespace Testbed.Tests
 			// Create a payload
 			{
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(0.0f, 8.0f);
 				Body body = m_world.CreateBody(bd);
 
@@ -101,15 +101,15 @@ namespace Testbed.Tests
 			switch (char.ToLower((char)key))
 			{
 			case 'd':
-				m_platform.BodyType = EBodyType.b2_dynamicBody;
+				m_platform.BodyType = BodyType.Dynamic;
 				break;
 
 			case 's':
-				m_platform.BodyType = EBodyType.b2_staticBody;
+				m_platform.BodyType = BodyType.Static;
 				break;
 
 			case 'k':
-				m_platform.BodyType = EBodyType.b2_kinematicBody;
+				m_platform.BodyType = BodyType.Kinematic;
 				m_platform.LinearVelocity = new Vec2(-m_speed, 0.0f);
 				m_platform.AngularVelocity = 0.0f;
 				break;
@@ -119,15 +119,15 @@ namespace Testbed.Tests
 		public override void Step()
 		{
 			// Drive the kinematic body.
-			if (m_platform.BodyType == EBodyType.b2_kinematicBody)
+			if (m_platform.BodyType == BodyType.Kinematic)
 			{
-				Vec2 p = m_platform.Transform.position;
+				Vec2 p = m_platform.Transform.Position;
 				Vec2 v = m_platform.LinearVelocity;
 
-				if ((p.x < -10.0f && v.x < 0.0f) ||
-					(p.x > 10.0f && v.x > 0.0f))
+				if ((p.X < -10.0f && v.X < 0.0f) ||
+					(p.X > 10.0f && v.X > 0.0f))
 				{
-					v.x = -v.x;
+					v.X = -v.X;
 					m_platform.LinearVelocity = v;
 				}
 			}

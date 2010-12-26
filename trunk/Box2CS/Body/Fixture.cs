@@ -4,74 +4,71 @@ using System.Runtime.InteropServices;
 namespace Box2CS
 {
 	[StructLayout(LayoutKind.Sequential)]
-	public struct FilterData
+	public class FilterData
 	{
-		public static FilterData Default = new FilterData(0x0001, 0xFFFF, 0);
-
-		ushort _categoryBits, _maskBits;
-		short _groupIndex;
+		public const ushort DefaultCategoryBits = 0x0001;
+		public const ushort DefaultMaskBits = 0xFFFF;
 
 		public ushort CategoryBits
 		{
-			get { return _categoryBits; }
-			set { _categoryBits = value; }
+			get;
+			set;
 		}
 
 		public ushort MaskBits
 		{
-			get { return _maskBits; }
-			set { _maskBits = value; }
+			get;
+			set;
 		}
 
 		public short GroupIndex
 		{
-			get { return _groupIndex; }
-			set { _groupIndex = value; }
+			get;
+			set;
+		}
+
+		public FilterData()
+		{
+			CategoryBits = DefaultCategoryBits;
+			MaskBits = DefaultMaskBits;
+			GroupIndex = 0;
 		}
 
 		public FilterData(ushort categoryBits, ushort maskBits, short groupIndex)
 		{
-			_categoryBits = categoryBits;
-			_maskBits = maskBits;
-			_groupIndex = groupIndex;
+			CategoryBits = categoryBits;
+			MaskBits = maskBits;
+			GroupIndex = groupIndex;
 		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct MassData
 	{
-		/// The mass of the shape, usually in kilograms.
-		float _mass;
-
-		/// The position of the shape's centroid relative to the shape's origin.
-		Vec2 _center;
-
-		/// The rotational inertia of the shape about the local origin.
-		float _I;
-
-		public MassData(float mass, Vec2 center, float inertia)
-		{
-			_mass = mass;
-			_center = center;
-			_I = inertia;
-		}
-
 		public float Mass
 		{
-			get { return _mass; }
-			set { _mass = value; }
+			get;
+			set;
 		}
 
 		public Vec2 Center
 		{
-			get { return _center; }
-			set { _center = value; }
+			get;
+			set;
 		}
 
-		public float I
+		public float Inertia
 		{
-			get { return _I; }
-			set { _I = value; }
+			get;
+			set;
+		}
+
+		public MassData(float mass, Vec2 center, float inertia) :
+			this()
+		{
+			Mass = mass;
+			Center = center;
+			Inertia = inertia;
 		}
 	};
 
@@ -128,7 +125,7 @@ namespace Box2CS
 		}
 
 		public FixtureDef(Shape shape, float density = 0.0f, float restitution = 0.0f, float friction = 0.2f, bool isSensor = false, object userData = null) :
-			this(shape, density, restitution, friction, FilterData.Default, isSensor, userData)
+			this(shape, density, restitution, friction, new FilterData(), isSensor, userData)
 		{
 		}
 
@@ -328,9 +325,9 @@ namespace Box2CS
 			return new Fixture(ptr);
 		}
 
-		public EShapeType ShapeType
+		public ShapeType ShapeType
 		{
-			get { return (EShapeType)NativeMethods.b2fixture_gettype(_fixturePtr); }
+			get { return (ShapeType)NativeMethods.b2fixture_gettype(_fixturePtr); }
 		}
 
 		public Shape Shape
@@ -339,7 +336,7 @@ namespace Box2CS
 			{
 				switch (ShapeType)
 				{
-				case EShapeType.e_circle:
+				case ShapeType.Circle:
 					{
 						cb2circleshapeportable shape = new cb2circleshapeportable();
 
@@ -351,7 +348,7 @@ namespace Box2CS
 
 						return new CircleShape(shape);
 					}
-				case EShapeType.e_polygon:
+				case ShapeType.Polygon:
 					{
 						cb2polygonshapeportable shape = new cb2polygonshapeportable();
 

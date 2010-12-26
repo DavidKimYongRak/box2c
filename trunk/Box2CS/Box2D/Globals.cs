@@ -5,25 +5,23 @@ namespace Box2CS
 {
 	public struct ClipVertex
 	{
-		Vec2 _v;
-		ContactID _id;
-
 		public Vec2 V
 		{
-			get { return _v; }
-			set { _v = value; }
+			get;
+			set;
 		}
 
 		public ContactID ID
 		{
-			get { return _id; }
-			set { _id = value; }
+			get;
+			set;
 		}
 
-		public ClipVertex(Vec2 v, ContactID id)
+		public ClipVertex(Vec2 v, ContactID id) :
+			this()
 		{
-			_v = v;
-			_id = id;
+			V = v;
+			ID = id;
 		}
 	};
 

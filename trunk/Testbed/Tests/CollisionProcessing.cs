@@ -41,7 +41,7 @@ namespace Testbed.Tests
 			triangleShapeDef.Density = 1.0f;
 
 			BodyDef triangleBodyDef = new BodyDef();
-			triangleBodyDef.BodyType = EBodyType.b2_dynamicBody;
+			triangleBodyDef.BodyType = BodyType.Dynamic;
 			triangleBodyDef.Position = new Vec2(Rand.RandomFloat(xLo, xHi), Rand.RandomFloat(yLo, yHi));
 
 			Body body1 = m_world.CreateBody(triangleBodyDef);
@@ -66,7 +66,7 @@ namespace Testbed.Tests
 			boxShapeDef.Density = 1.0f;
 
 			BodyDef boxBodyDef = new BodyDef();
-			boxBodyDef.BodyType = EBodyType.b2_dynamicBody;
+			boxBodyDef.BodyType = BodyType.Dynamic;
 			boxBodyDef.Position = new Vec2(Rand.RandomFloat(xLo, xHi), Rand.RandomFloat(yLo, yHi));
 
 			Body body3 = m_world.CreateBody(boxBodyDef);
@@ -88,7 +88,7 @@ namespace Testbed.Tests
 			circleShapeDef.Density = 1.0f;
 
 			BodyDef circleBodyDef = new BodyDef();
-			circleBodyDef.BodyType = EBodyType.b2_dynamicBody;
+			circleBodyDef.BodyType = BodyType.Dynamic;
 			circleBodyDef.Position = new Vec2(Rand.RandomFloat(xLo, xHi), Rand.RandomFloat(yLo, yHi));
 
 			Body body5 = m_world.CreateBody(circleBodyDef);

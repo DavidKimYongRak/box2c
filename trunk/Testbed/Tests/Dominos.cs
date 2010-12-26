@@ -17,34 +17,34 @@ namespace Testbed.Tests
 			b1.UserData = 1;
 
 			{
-				Body ground = m_world.CreateBody(new BodyDef(EBodyType.b2_staticBody, new Vec2(-1.5f, 10.0f)));
+				Body ground = m_world.CreateBody(new BodyDef(BodyType.Static, new Vec2(-1.5f, 10.0f)));
 				ground.CreateFixture(new PolygonShape(6.0f, 0.25f), 0.0f);
 				ground.UserData = "ground";
 			}
 
 			for (int i = 0; i < 10; ++i)
 			{
-				Body body = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, new Vec2(-6.0f + 1.0f * i, 11.25f), 0));
+				Body body = m_world.CreateBody(new BodyDef(BodyType.Dynamic, new Vec2(-6.0f + 1.0f * i, 11.25f), 0));
 				body.CreateFixture(new FixtureDef(new PolygonShape(0.1f, 1.0f), 20.0f, 0.0f, 0.1f));
 				body.UserData = "domino " + i.ToString();
 			}
 
 			{
-				Body ground = m_world.CreateBody(new BodyDef(EBodyType.b2_staticBody, new Vec2(1.0f, 6.0f)));
+				Body ground = m_world.CreateBody(new BodyDef(BodyType.Static, new Vec2(1.0f, 6.0f)));
 				ground.CreateFixture(new PolygonShape(7.0f, 0.25f, Vec2.Empty, 0.3f), 0.0f);
 				ground.UserData = "ground";
 			}
 
 			Body b2;
 			{
-				b2 = m_world.CreateBody(new BodyDef(EBodyType.b2_staticBody, new Vec2(-7.0f, 4.0f)));
+				b2 = m_world.CreateBody(new BodyDef(BodyType.Static, new Vec2(-7.0f, 4.0f)));
 				b2.CreateFixture(new PolygonShape(0.25f, 1.5f), 0.0f);
 				b2.UserData = b2;
 			}
 
 			Body b3;
 			{
-				b3 = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, new Vec2(-0.9f, 1.0f), -0.15f));
+				b3 = m_world.CreateBody(new BodyDef(BodyType.Dynamic, new Vec2(-0.9f, 1.0f), -0.15f));
 				b3.CreateFixture(new PolygonShape(6.0f, 0.125f), 10.0f);
 				b3.UserData = 3;
 			}
@@ -57,7 +57,7 @@ namespace Testbed.Tests
 
 			Body b4;
 			{
-				b4 = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, new Vec2(-10.0f, 15.0f)));
+				b4 = m_world.CreateBody(new BodyDef(BodyType.Dynamic, new Vec2(-10.0f, 15.0f)));
 				b4.CreateFixture(new PolygonShape(0.25f, 0.25f), 10.0f);
 				b4.UserData = 4;
 			}
@@ -68,7 +68,7 @@ namespace Testbed.Tests
 
 			Body b5;
 			{
-				b5 = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, new Vec2(6.5f, 3.0f)));
+				b5 = m_world.CreateBody(new BodyDef(BodyType.Dynamic, new Vec2(6.5f, 3.0f)));
 
 				b5.CreateFixture(new FixtureDef(new PolygonShape(1.0f, 0.1f, new Vec2(0.0f, -0.9f), 0.0f), 10.0f, 0.0f, 0.1f));
 				b5.CreateFixture(new FixtureDef(new PolygonShape(0.1f, 1.0f, new Vec2(-0.9f, 0.0f), 0.0f), 10.0f, 0.0f, 0.1f));
@@ -87,7 +87,7 @@ namespace Testbed.Tests
 				shape.SetAsBox(1.0f, 0.1f);
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(6.5f, 4.1f);
 				b6 = m_world.CreateBody(bd);
 				b6.CreateFixture(shape, 30.0f);
@@ -104,7 +104,7 @@ namespace Testbed.Tests
 				shape.SetAsBox(0.1f, 1.0f);
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(7.4f, 1.0f);
 
 				b7 = m_world.CreateBody(bd);
@@ -130,7 +130,7 @@ namespace Testbed.Tests
 				for (int i = 0; i < 4; ++i)
 				{
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(5.9f + 2.0f * radius * i, 2.4f);
 					Body body = m_world.CreateBody(bd);
 					body.CreateFixture(shape, 10.0f);

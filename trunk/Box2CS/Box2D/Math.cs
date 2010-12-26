@@ -25,7 +25,7 @@ namespace Box2CS
 
 		public static Vec2 b2Cross(float s, Vec2 a)
 		{
-			return new Vec2(-s * a.y, s * a.x);
+			return new Vec2(-s * a.Y, s * a.X);
 		}
 	}
 
@@ -34,43 +34,55 @@ namespace Box2CS
 	{
 		public static Vec2 Min(Vec2 a, Vec2 b)
 		{
-			return new Vec2(Math.Min(a.x, b.x), Math.Min(a.y, b.y));
+			return new Vec2(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
 		}
 
 		public static Vec2 Max(Vec2 a, Vec2 b)
 		{
-			return new Vec2(Math.Max(a.x, b.x), Math.Max(a.y, b.y));
+			return new Vec2(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
 		}
 
 		public static Vec2 Empty = new Vec2(0, 0);
 
-		public float x;
-		public float y;
-
-		public Vec2(float _x, float _y)
+		[System.Xml.Serialization.XmlAttribute()]
+		public float X
 		{
-			x = _x;
-			y = _y;
+			get;
+			set;
+		}
+
+		[System.Xml.Serialization.XmlAttribute()]
+		public float Y
+		{
+			get;
+			set;
+		}
+
+		public Vec2(float x, float y) :
+			this()
+		{
+			X = x;
+			Y = y;
 		}
 
 		public static Vec2 operator-(Vec2 l, Vec2 r)
 		{
-			return new Vec2(l.x - r.x, l.y - r.y);
+			return new Vec2(l.X - r.X, l.Y - r.Y);
 		}
 
 		public static Vec2 operator+(Vec2 l, Vec2 r)
 		{
-			return new Vec2(l.x + r.x, l.y + r.y);
+			return new Vec2(l.X + r.X, l.Y + r.Y);
 		}
 
 		public static Vec2 operator *(Vec2 l, float v)
 		{
-			return new Vec2(l.x * v, l.y * v);
+			return new Vec2(l.X * v, l.Y * v);
 		}
 
 		public static Vec2 operator *(Vec2 l, Vec2 v)
 		{
-			return new Vec2(l.x * v.x, l.y * v.y);
+			return new Vec2(l.X * v.X, l.Y * v.Y);
 		}
 
 		public static Vec2 operator*(float v, Vec2 l)
@@ -80,12 +92,12 @@ namespace Box2CS
 
 		public static Vec2 operator-(Vec2 l)
 		{
-			return new Vec2(-l.x, -l.y);
+			return new Vec2(-l.X, -l.Y);
 		}
 
 		public static bool operator==(Vec2 l, Vec2 r)
 		{
-			return (l.x == r.x && l.y == r.y);
+			return (l.X == r.X && l.Y == r.Y);
 		}
 
 		public override bool Equals(object obj)
@@ -109,37 +121,37 @@ namespace Box2CS
 		/// Perform the dot product on two vectors.
 		public float Dot(Vec2 b)
 		{
-			return x * b.x + y * b.y;
+			return X * b.X + Y * b.Y;
 		}
 
 		/// Perform the cross product on two vectors. In 2D this produces a scalar.
 		public float Cross(Vec2 b)
 		{
-			return x * b.y - y * b.x;
+			return X * b.Y - Y * b.X;
 		}
 
 		/// Perform the cross product on a vector and a scalar. In 2D this produces
 		/// a vector.
 		public Vec2 Cross(float s)
 		{
-			return new Vec2(s * y, -s * x);
+			return new Vec2(s * Y, -s * X);
 		}
 
 		/// Perform the cross product on a scalar and a vector. In 2D this produces
 		/// a vector.
 		public static Vec2 b2Cross(float s, Vec2 a)
 		{
-			return new Vec2(-s * a.y, s * a.x);
+			return new Vec2(-s * a.Y, s * a.X);
 		}
 
 		public bool IsValid()
 		{
-			return b2Math.IsValid(x) && b2Math.IsValid(y);
+			return b2Math.IsValid(X) && b2Math.IsValid(Y);
 		}
 
 		public float Length()
 		{
-			return (float)Math.Sqrt(x * x + y * y);
+			return (float)Math.Sqrt(X * X + Y * Y);
 		}
 
 		public float Normalize()
@@ -150,8 +162,8 @@ namespace Box2CS
 				return 0.0f;
 
 			float invLength = 1.0f / length;
-			x *= invLength;
-			y *= invLength;
+			X *= invLength;
+			Y *= invLength;
 
 			return length;
 		}
@@ -165,7 +177,7 @@ namespace Box2CS
 
 		public float LengthSquared()
 		{
-			return x * x + y * y;
+			return X * X + Y * Y;
 		}
 	}
 
@@ -173,24 +185,37 @@ namespace Box2CS
 	public struct Mat22
 	{
 		public static Mat22 Identity = new Mat22(new Vec2(1.0f, 0.0f), new Vec2(0.0f, 1.0f));
-		public Vec2 col1, col2;
 
-		public void Set(float angle)
+		public Vec2 Col1
 		{
-			float c = (float)Math.Cos(angle), s = (float)Math.Sin(angle);
-			col1.x = c; col2.x = -s;
-			col1.y = s; col2.y = c;
+			get;
+			set;
+		}
+
+		public Vec2 Col2
+		{
+			get;
+			set;
 		}
 
 		public static Vec2 operator*(Mat22 A, Vec2 v)
 		{
-			return new Vec2(A.col1.x * v.x + A.col2.x * v.y, A.col1.y * v.x + A.col2.y * v.y);
+			return new Vec2(A.Col1.X * v.X + A.Col2.X * v.Y, A.Col1.Y * v.X + A.Col2.Y * v.Y);
 		}
 
-		public Mat22 (Vec2 ncol1, Vec2 ncol2)
+		public Mat22 (Vec2 ncol1, Vec2 ncol2) :
+			this()
 		{
-			col1 = ncol1;
-			col2 = ncol2;
+			Col1 = ncol1;
+			Col2 = ncol2;
+		}
+
+		public Mat22(float angle) :
+			this()
+		{
+			float c = (float)Math.Cos(angle), s = (float)Math.Sin(angle);
+			Col1 = new Vec2(c, s);
+			Col2 = new Vec2(-s, c);
 		}
 	}
 
@@ -198,59 +223,70 @@ namespace Box2CS
 	public struct Transform
 	{
 		public static Transform Identity = new Transform(Vec2.Empty, Mat22.Identity);
-		public Vec2 position;
-		public Mat22 R;
+
+
+		public Vec2 Position
+		{
+			get;
+			set;
+		}
+
+		public Mat22 R
+		{
+			get;
+			set;
+		}
 
 		public static Vec2 operator*(Transform T, Vec2 v)
 		{
-			float x = T.position.x + T.R.col1.x * v.x + T.R.col2.x * v.y;
-			float y = T.position.y + T.R.col1.y * v.x + T.R.col2.y * v.y;
+			float x = T.Position.X + T.R.Col1.X * v.X + T.R.Col2.X * v.Y;
+			float y = T.Position.Y + T.R.Col1.Y * v.X + T.R.Col2.Y * v.Y;
 
 			return new Vec2(x, y);
 		}
 
-		public Transform (Vec2 nposition, Mat22 nR)
+		public Transform (Vec2 position, Mat22 r) :
+			this()
 		{
-			position = nposition;
-			R = nR;
+			Position = position;
+			R = r;
 		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct ColorF
 	{
-		float _r, _g, _b, _a;
-
 		public float R
 		{
-			get { return _r; }
-			set { _r = value; }
+			get;
+			set;
 		}
 
 		public float G
 		{
-			get { return _g; }
-			set { _g = value; }
+			get;
+			set;
 		}
 
 		public float B
 		{
-			get { return _b; }
-			set { _b = value; }
+			get;
+			set;
 		}
 
 		public float A
 		{
-			get { return _a; }
-			set { _a = value; }
+			get;
+			set;
 		}
 
-		public ColorF(float r, float g, float b, float a)
+		public ColorF(float r, float g, float b, float a) :
+			this()
 		{
-			_r = r;
-			_g = g;
-			_b = b;
-			_a = a;
+			R = r;
+			G = g;
+			B = b;
+			A = a;
 		}
 
 		public ColorF(float r, float g, float b) :
@@ -258,12 +294,14 @@ namespace Box2CS
 		{
 		}
 
-		public ColorF(System.Drawing.Color color)
+		public ColorF(System.Drawing.Color color) :
+			this(
+				I2F(color.R, 255),
+				I2F(color.G, 255),
+				I2F(color.B, 255),
+				I2F(color.A, 255)
+			)
 		{
-			_r = I2F(color.R, 255);
-			_g = I2F(color.G, 255);
-			_b = I2F(color.B, 255);
-			_a = I2F(color.A, 255);
 		}
 
 		static int F2I(float f, int multiplier)
@@ -279,73 +317,71 @@ namespace Box2CS
 		public System.Drawing.Color ToGDIColor()
 		{
 			return System.Drawing.Color.FromArgb(
-				F2I(_r, 255), 
-				F2I(_g, 255),
-				F2I(_b, 255),
-				F2I(_a, 255));
+				F2I(R, 255), 
+				F2I(G, 255),
+				F2I(B, 255),
+				F2I(A, 255));
 		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct AABB
 	{
-		Vec2 _lowerBound;	///< the lower vertex
-		Vec2 _upperBound;	///< the upper vertex
-
-		public AABB(Vec2 lowerBound, Vec2 upperBound)
-		{
-			_lowerBound = lowerBound;
-			_upperBound = upperBound;
-		}
-
 		public Vec2 LowerBound
 		{
-			get { return _lowerBound; }
-			set { _lowerBound = value; }
+			get;
+			set;
 		}
 
 		public Vec2 UpperBound
 		{
-			get { return _upperBound; }
-			set { _upperBound = value; }
+			get;
+			set;
+		}
+
+		public AABB(Vec2 lowerBound, Vec2 upperBound) :
+			this()
+		{
+			LowerBound = lowerBound;
+			UpperBound = upperBound;
 		}
 
 		/// Verify that the bounds are sorted.
 		public bool IsValid()
 		{
-			Vec2 d = _upperBound - _lowerBound;
-			bool valid = d.x >= 0.0f && d.y >= 0.0f;
-			valid = valid && _lowerBound.IsValid() && _upperBound.IsValid();
+			Vec2 d = UpperBound - LowerBound;
+			bool valid = d.X >= 0.0f && d.Y >= 0.0f;
+			valid = valid && LowerBound.IsValid() && UpperBound.IsValid();
 			return valid;
 		}
 
 		/// Get the center of the AABB.
 		public Vec2 GetCenter()
 		{
-			return 0.5f * (_lowerBound + _upperBound);
+			return 0.5f * (LowerBound + UpperBound);
 		}
 
 		/// Get the extents of the AABB (half-widths).
 		public Vec2 GetExtents()
 		{
-			return 0.5f * (_upperBound - _lowerBound);
+			return 0.5f * (UpperBound - LowerBound);
 		}
 
 		/// Combine two AABBs into this one.
 		public void Combine(AABB aabb1, AABB aabb2)
 		{
-			_lowerBound = Vec2.Min(aabb1._lowerBound, aabb2._lowerBound);
-			_upperBound = Vec2.Min(aabb1._upperBound, aabb2._upperBound);
+			LowerBound = Vec2.Min(aabb1.LowerBound, aabb2.LowerBound);
+			UpperBound = Vec2.Min(aabb1.UpperBound, aabb2.UpperBound);
 		}
 
 		/// Does this aabb contain the provided AABB.
 		public bool Contains(AABB aabb)
 		{
 			bool result = true;
-			result = result && _lowerBound.x <= aabb._lowerBound.x;
-			result = result && _lowerBound.y <= aabb._lowerBound.y;
-			result = result && aabb._upperBound.x <= _upperBound.x;
-			result = result && aabb._upperBound.y <= _upperBound.y;
+			result = result && LowerBound.X <= aabb.LowerBound.X;
+			result = result && LowerBound.Y <= aabb.LowerBound.Y;
+			result = result && aabb.UpperBound.X <= UpperBound.X;
+			result = result && aabb.UpperBound.Y <= UpperBound.Y;
 			return result;
 		}
 
@@ -354,10 +390,10 @@ namespace Box2CS
 			var d1 = b.LowerBound - a.UpperBound;
 			var d2 = a.LowerBound - b.UpperBound;
 
-			if (d1.x > 0.0f || d1.y > 0.0f)
+			if (d1.X > 0.0f || d1.Y > 0.0f)
 				return false;
 
-			if (d2.x > 0.0f || d2.y > 0.0f)
+			if (d2.X > 0.0f || d2.Y > 0.0f)
 				return false;
 
 			return true;

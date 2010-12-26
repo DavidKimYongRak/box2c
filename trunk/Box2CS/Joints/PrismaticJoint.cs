@@ -21,7 +21,7 @@ namespace Box2CS
 
 		public PrismaticJointDef()
 		{
-			JointType = EJointType.e_prismaticJoint;
+			JointType = JointType.Prismatic;
 			_localAnchorA = Vec2.Empty;
 			_localAnchorB = Vec2.Empty;
 			_localAxis1 = new Vec2(1.0f, 0.0f);

@@ -39,7 +39,7 @@ namespace Testbed.Tests
 					float x = Rand.RandomFloat(-0.1f, 0.1f);
 					BodyDef bd = new BodyDef();
 					{
-						bd.BodyType = EBodyType.b2_dynamicBody;
+						bd.BodyType = BodyType.Dynamic;
 						bd.Position = new Vec2(x + 5.0f, 1.05f + 2.5f * i);
 						bd.Angle = Rand.RandomFloat(-(float)Math.PI, (float)Math.PI);
 						Body body = m_world.CreateBody(bd);
@@ -58,7 +58,7 @@ namespace Testbed.Tests
 					float x = Rand.RandomFloat(-0.1f, 0.1f);
 					BodyDef bd = new BodyDef();
 					{
-						bd.BodyType = EBodyType.b2_dynamicBody;
+						bd.BodyType = BodyType.Dynamic;
 						bd.Position = new Vec2(x - 5.0f, 1.05f + 2.5f * i);
 						bd.Angle = Rand.RandomFloat((float)-Math.PI, (float)Math.PI);
 						Body body = m_world.CreateBody(bd);
@@ -70,8 +70,8 @@ namespace Testbed.Tests
 
 			{
 				Transform xf1 = new Transform();
-				xf1.R.Set(0.3524f * (float)Math.PI);
-				xf1.position = xf1.R * new Vec2(1.0f, 0.0f);
+				xf1.R = new Mat22(0.3524f * (float)Math.PI);
+				xf1.Position = xf1.R * new Vec2(1.0f, 0.0f);
 
 				Vec2[] vertices = new Vec2[3];
 
@@ -82,8 +82,8 @@ namespace Testbed.Tests
 				triangle1.Vertices = vertices;
 
 				Transform xf2 = new Transform();
-				xf2.R.Set(-0.3524f * (float)Math.PI);
-				xf2.position = xf2.R * new Vec2(-1.0f, 0.0f);
+				xf2.R = new Mat22(-0.3524f * (float)Math.PI);
+				xf2.Position = xf2.R * new Vec2(-1.0f, 0.0f);
 
 				PolygonShape triangle2 = new PolygonShape();
 				vertices[0] = xf2 * new Vec2(-1.0f, 0.0f);
@@ -96,7 +96,7 @@ namespace Testbed.Tests
 					float x = Rand.RandomFloat(-0.1f, 0.1f);
 					BodyDef bd = new BodyDef();
 					{
-						bd.BodyType = EBodyType.b2_dynamicBody;
+						bd.BodyType = BodyType.Dynamic;
 						bd.Position = new Vec2(x, 2.05f + 2.5f * i);
 						bd.Angle = 0.0f;
 						Body body = m_world.CreateBody(bd);
@@ -118,7 +118,7 @@ namespace Testbed.Tests
 				right.SetAsBox(0.15f, 2.7f, new Vec2(1.45f, 2.35f), -0.2f);
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(0.0f, 2.0f);
 				Body body = m_world.CreateBody(bd);
 				body.CreateFixture(bottom, 4.0f);

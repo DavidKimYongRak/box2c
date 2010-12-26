@@ -40,7 +40,7 @@ namespace Testbed.Tests
 					shape.Radius = Rand.RandomFloat(0.85f, 1.0f);
 
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(-10.0f + 3.0f * i, 20.0f);
 					bd.UserData = i;
 

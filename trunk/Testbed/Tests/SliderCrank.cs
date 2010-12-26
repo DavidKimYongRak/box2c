@@ -26,7 +26,7 @@ namespace Testbed.Tests
 					shape.SetAsBox(0.5f, 2.0f);
 
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(0.0f, 7.0f);
 					Body body = m_world.CreateBody(bd);
 					body.CreateFixture(shape, 2.0f);
@@ -47,7 +47,7 @@ namespace Testbed.Tests
 					shape.SetAsBox(0.5f, 4.0f);
 
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(0.0f, 13.0f);
 					Body body = m_world.CreateBody(bd);
 					body.CreateFixture(shape, 2.0f);
@@ -66,7 +66,7 @@ namespace Testbed.Tests
 					shape.SetAsBox(1.5f, 1.5f);
 
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(0.0f, 17.0f);
 					Body body = m_world.CreateBody(bd);
 					body.CreateFixture(shape, 2.0f);
@@ -90,7 +90,7 @@ namespace Testbed.Tests
 					shape.SetAsBox(1.5f, 1.5f);
 
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(0.0f, 23.0f);
 					Body body = m_world.CreateBody(bd);
 					body.CreateFixture(shape, 2.0f);

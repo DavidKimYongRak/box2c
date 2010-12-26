@@ -20,7 +20,7 @@ namespace Box2CS
 
 		public RevoluteJointDef()
 		{
-			JointType = EJointType.e_revoluteJoint;
+			JointType = JointType.Revolute;
 			_localAnchorA = Vec2.Empty;
 			_localAnchorB = Vec2.Empty;
 			_referenceAngle = 0.0f;

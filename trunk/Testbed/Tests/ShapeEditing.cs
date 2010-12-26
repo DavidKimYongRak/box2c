@@ -18,7 +18,7 @@ namespace Testbed.Tests
 
 			{
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(0.0f, 10.0f);
 				m_body = m_world.CreateBody(bd);
 

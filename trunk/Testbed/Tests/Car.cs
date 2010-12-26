@@ -37,7 +37,7 @@ namespace Testbed.Tests
 
 				FixtureDef fixture1 = new FixtureDef();
 
-				fixture1.Filter = new FilterData(FilterData.Default.CategoryBits, FilterData.Default.MaskBits, -1);
+				fixture1.Filter.GroupIndex = -1;
 				fixture1.Shape = poly1;
 				fixture1.Density		= 20.0f;
 				fixture1.Friction		= 0.68f;
@@ -53,13 +53,13 @@ namespace Testbed.Tests
 
 				FixtureDef fixture2 = new FixtureDef();
 
-				fixture2.Filter = new FilterData(FilterData.Default.CategoryBits, FilterData.Default.MaskBits, -1);
+				fixture2.Filter.GroupIndex = -1;
 				fixture2.Shape = poly2;
 				fixture2.Density		= 5.0f;
 				fixture2.Friction		= 0.68f;
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(-35.0f, 2.8f);
 
 				m_vehicle = m_world.CreateBody(bd);
@@ -75,10 +75,10 @@ namespace Testbed.Tests
 				wheelFix.Shape = circ;
 				wheelFix.Density = 40.0f;
 				wheelFix.Friction = 0.8f;
-				wheelFix.Filter = new FilterData(FilterData.Default.CategoryBits, FilterData.Default.MaskBits, -1);
+				wheelFix.Filter.GroupIndex = -1;
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.AllowSleep = false;
 				bd.Position = new Vec2(-33.8f, 2.0f);
 

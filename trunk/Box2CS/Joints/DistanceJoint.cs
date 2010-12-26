@@ -14,7 +14,7 @@ namespace Box2CS
 
 		public DistanceJointDef()
 		{
-			JointType = EJointType.e_distanceJoint;
+			JointType = JointType.Distance;
 			_localAnchorA = Vec2.Empty;
 			_localAnchorB = Vec2.Empty;
 			_length = 1.0f;

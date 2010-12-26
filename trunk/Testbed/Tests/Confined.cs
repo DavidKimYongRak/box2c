@@ -47,7 +47,7 @@ namespace Testbed.Tests
 
 			Vec2 p = new Vec2(Rand.RandomFloat(), 3.0f + Rand.RandomFloat());
 			BodyDef bd = new BodyDef();
-			bd.BodyType = EBodyType.b2_dynamicBody;
+			bd.BodyType = BodyType.Dynamic;
 			bd.Position = p;
 			//bd.allowSleep = false;
 			Body body = m_world.CreateBody(bd);

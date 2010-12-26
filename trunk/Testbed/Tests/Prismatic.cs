@@ -22,7 +22,7 @@ namespace Testbed.Tests
 				shape.SetAsBox(2.0f, 0.5f);
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(-10.0f, 10.0f);
 				bd.Angle = 0.5f * (float)Math.PI;
 				bd.AllowSleep = false;

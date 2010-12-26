@@ -17,7 +17,7 @@ namespace Testbed
 			for (int i = 0; i < k_segments; ++i)
 			{
 				Vec2 v = center + radius * new Vec2((float)Math.Cos(theta), (float)Math.Sin(theta));
-				Gl.glVertex2f(v.x, v.y);
+				Gl.glVertex2f(v.X, v.Y);
 				theta += k_increment;
 			}
 			Gl.glEnd();
@@ -29,7 +29,7 @@ namespace Testbed
 			Gl.glBegin(Gl.GL_LINE_LOOP);
 			for (int i = 0; i < vertexCount; ++i)
 			{
-				Gl.glVertex2f(vertices[i].x, vertices[i].y);
+				Gl.glVertex2f(vertices[i].X, vertices[i].Y);
 			}
 			Gl.glEnd();
 		}
@@ -38,8 +38,8 @@ namespace Testbed
 		{
 			Gl.glColor3f(color.R, color.G, color.B);
 			Gl.glBegin(Gl.GL_LINES);
-			Gl.glVertex2f(p1.x, p1.y);
-			Gl.glVertex2f(p2.x, p2.y);
+			Gl.glVertex2f(p1.X, p1.Y);
+			Gl.glVertex2f(p2.X, p2.Y);
 			Gl.glEnd();
 		}
 
@@ -55,7 +55,7 @@ namespace Testbed
 			for (int i = 0; i < k_segments; ++i)
 			{
 				Vec2 v = center + radius * new Vec2((float)Math.Cos(theta), (float)Math.Sin(theta));
-				Gl.glVertex2f(v.x, v.y);
+				Gl.glVertex2f(v.X, v.Y);
 				theta += k_increment;
 			}
 			Gl.glEnd();
@@ -67,15 +67,15 @@ namespace Testbed
 			for (int i = 0; i < k_segments; ++i)
 			{
 				Vec2 v = center + radius * new Vec2((float)Math.Cos(theta), (float)Math.Sin(theta));
-				Gl.glVertex2f(v.x, v.y);
+				Gl.glVertex2f(v.X, v.Y);
 				theta += k_increment;
 			}
 			Gl.glEnd();
 
 			Vec2 p = center + radius * axis;
 			Gl.glBegin(Gl.GL_LINES);
-			Gl.glVertex2f(center.x, center.y);
-			Gl.glVertex2f(p.x, p.y);
+			Gl.glVertex2f(center.X, center.Y);
+			Gl.glVertex2f(p.X, p.Y);
 			Gl.glEnd();
 		}
 
@@ -87,7 +87,7 @@ namespace Testbed
 			Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 			for (int i = 0; i < vertexCount; ++i)
 			{
-				Gl.glVertex2f(vertices[i].x, vertices[i].y);
+				Gl.glVertex2f(vertices[i].X, vertices[i].Y);
 			}
 			Gl.glEnd();
 			Gl.glDisable(Gl.GL_BLEND);
@@ -96,26 +96,26 @@ namespace Testbed
 			Gl.glBegin(Gl.GL_LINE_LOOP);
 			for (int i = 0; i < vertexCount; ++i)
 			{
-				Gl.glVertex2f(vertices[i].x, vertices[i].y);
+				Gl.glVertex2f(vertices[i].X, vertices[i].Y);
 			}
 			Gl.glEnd();
 		}
 
 		public override void DrawTransform(Transform xf)
 		{
-			Vec2 p1 = xf.position, p2;
+			Vec2 p1 = xf.Position, p2;
 			const float k_axisScale = 0.4f;
 			Gl.glBegin(Gl.GL_LINES);
 
 			Gl.glColor3f(1.0f, 0.0f, 0.0f);
-			Gl.glVertex2f(p1.x, p1.y);
-			p2 = p1 + k_axisScale * xf.R.col1;
-			Gl.glVertex2f(p2.x, p2.y);
+			Gl.glVertex2f(p1.X, p1.Y);
+			p2 = p1 + k_axisScale * xf.R.Col1;
+			Gl.glVertex2f(p2.X, p2.Y);
 
 			Gl.glColor3f(0.0f, 1.0f, 0.0f);
-			Gl.glVertex2f(p1.x, p1.y);
-			p2 = p1 + k_axisScale * xf.R.col2;
-			Gl.glVertex2f(p2.x, p2.y);
+			Gl.glVertex2f(p1.X, p1.Y);
+			p2 = p1 + k_axisScale * xf.R.Col2;
+			Gl.glVertex2f(p2.X, p2.Y);
 
 			Gl.glEnd();
 		}
@@ -125,7 +125,7 @@ namespace Testbed
 			Gl.glPointSize(size);
 			Gl.glBegin(Gl.GL_POINTS);
 			Gl.glColor3f(color.R, color.G, color.B);
-			Gl.glVertex2f(p.x, p.y);
+			Gl.glVertex2f(p.X, p.Y);
 			Gl.glEnd();
 			Gl.glPointSize(1.0f);
 		}
@@ -158,10 +158,10 @@ namespace Testbed
 		{
 			Gl.glColor3f(c.R, c.G, c.B);
 			Gl.glBegin(Gl.GL_LINE_LOOP);
-			Gl.glVertex2f(aabb.LowerBound.x, aabb.LowerBound.y);
-			Gl.glVertex2f(aabb.UpperBound.x, aabb.LowerBound.y);
-			Gl.glVertex2f(aabb.UpperBound.x, aabb.UpperBound.y);
-			Gl.glVertex2f(aabb.LowerBound.x, aabb.UpperBound.y);
+			Gl.glVertex2f(aabb.LowerBound.X, aabb.LowerBound.Y);
+			Gl.glVertex2f(aabb.UpperBound.X, aabb.LowerBound.Y);
+			Gl.glVertex2f(aabb.UpperBound.X, aabb.UpperBound.Y);
+			Gl.glVertex2f(aabb.LowerBound.X, aabb.UpperBound.Y);
 			Gl.glEnd();
 		}
 	}

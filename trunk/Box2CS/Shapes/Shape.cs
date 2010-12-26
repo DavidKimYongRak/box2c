@@ -3,19 +3,20 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-	public enum EShapeType
+	public enum ShapeType
 	{
-		e_unknown= -1,
-		e_circle = 0,
-		e_polygon = 1,
-		e_typeCount = 2,
+		Unknown = -1,
+
+		Circle,
+		Polygon,
+		Count,
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal class cb2shapeportable
 	{
 		[MarshalAs(UnmanagedType.I4)]
-		public EShapeType m_type;
+		public ShapeType m_type;
 		public float m_radius;
 	}
 
@@ -97,7 +98,7 @@ namespace Box2CS
 			return Clone();
 		}
 
-		public EShapeType ShapeType
+		public ShapeType ShapeType
 		{
 			get { return _internalShape.m_type; }
 			internal set { _internalShape.m_type = value; }

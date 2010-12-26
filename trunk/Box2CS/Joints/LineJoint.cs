@@ -19,7 +19,7 @@ namespace Box2CS
 
 		public LineJointDef()
 		{
-			JointType = EJointType.e_lineJoint;
+			JointType = JointType.Line;
 			_localAnchorA = Vec2.Empty;
 			_localAnchorB = Vec2.Empty;
 			_localAxisA = new Vec2(1.0f, 0.0f);

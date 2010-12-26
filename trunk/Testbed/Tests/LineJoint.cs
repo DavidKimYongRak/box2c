@@ -23,7 +23,7 @@ namespace Testbed.Tests
 				shape.SetAsBox(0.5f, 2.0f);
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(0.0f, 7.0f);
 				Body body = m_world.CreateBody(bd);
 				body.CreateFixture(shape, 1.0f);

@@ -125,7 +125,7 @@ namespace Testbed.Tests
 			float y = Rand.RandomFloat(10.0f, 20.0f);
 			bd.Position = new Vec2(x, y);
 			bd.Angle = Rand.RandomFloat((float)-Math.PI, (float)Math.PI);
-			bd.BodyType = EBodyType.b2_dynamicBody;
+			bd.BodyType = BodyType.Dynamic;
 
 			if (index == 4)
 				bd.AngularDamping = 0.02f;
