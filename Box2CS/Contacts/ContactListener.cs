@@ -26,10 +26,22 @@ namespace Box2CS
 	public struct ContactImpulse
 	{
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
-		public float[] normalImpulses;
+		float[] _normalImpulses;
+
+		public float[] normalImpulses
+		{
+			get { return _normalImpulses; }
+			//set { _normalImpulses = value; }
+		}
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
-		public float[] tangentImpulses;
+		float[] _tangentImpulses;
+
+		public float[] tangentImpulses
+		{
+			get { return _tangentImpulses; }
+			//set { _tangentImpulses = value; }
+		}
 	};
 
 	public abstract class ContactListener : IDisposable

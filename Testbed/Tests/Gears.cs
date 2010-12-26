@@ -28,7 +28,7 @@ namespace Testbed.Tests
 				box.SetAsBox(0.5f, 5.0f);
 
 				BodyDef bd1 = new BodyDef();
-				bd1.BodyType = EBodyType.b2_dynamicBody;
+				bd1.BodyType = BodyType.Dynamic;
 				bd1.Position = new Vec2(-3.0f, 12.0f);
 				Body body1 = m_world.CreateBody(bd1);
 				body1.CreateFixture(circle1, 5.0f);
@@ -42,7 +42,7 @@ namespace Testbed.Tests
 				m_joint1 = (RevoluteJoint)m_world.CreateJoint(jd1);
 
 				BodyDef bd2 = new BodyDef();
-				bd2.BodyType = EBodyType.b2_dynamicBody;
+				bd2.BodyType = BodyType.Dynamic;
 				bd2.Position = new Vec2(0.0f, 12.0f);
 				Body body2 = m_world.CreateBody(bd2);
 				body2.CreateFixture(circle2, 5.0f);
@@ -52,7 +52,7 @@ namespace Testbed.Tests
 				m_joint2 = (RevoluteJoint)m_world.CreateJoint(jd2);
 
 				BodyDef bd3 = new BodyDef();
-				bd3.BodyType = EBodyType.b2_dynamicBody;
+				bd3.BodyType = BodyType.Dynamic;
 				bd3.Position = new Vec2(2.5f, 12.0f);
 				Body body3 = m_world.CreateBody(bd3);
 				body3.CreateFixture(box, 5.0f);

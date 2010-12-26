@@ -105,8 +105,8 @@ namespace MeshCreator
 			{
 				for (int i = 0; i < v.Count; ++i)
 				{
-					x.Add(v[i].x);
-					y.Add(v[i].y);
+					x.Add(v[i].X);
+					y.Add(v[i].Y);
 				}
 			}
 			public Polygon()
@@ -319,7 +319,7 @@ namespace MeshCreator
 
 					// Shifting the edge inward by b2_toiSlop should
 					// not cause the plane to pass the centroid.
-					if ((d.x < 0.0f)||(d.y < 0.0f))
+					if ((d.X < 0.0f)||(d.Y < 0.0f))
 					{
 						noError = false;
 						error = 6;
@@ -401,8 +401,8 @@ namespace MeshCreator
                
 						//Omit identical neighbors (including wraparound)
 						ind = i - offset;
-						if (vecs[i].x==vecs[remainder(i+1,nVertices)].x &&
-								vecs[i].y==vecs[remainder(i+1,nVertices)].y){
+						if (vecs[i].X==vecs[remainder(i+1,nVertices)].X &&
+								vecs[i].Y==vecs[remainder(i+1,nVertices)].Y){
 										offset++;
 										continue;
 						}
@@ -689,10 +689,10 @@ namespace MeshCreator
 			{
 
 				if (a0 == b0 || a0 == b1 || a1 == b0 || a1 == b1) return false;
-				float x1 = a0.x; float y1 = a0.y;
-				float x2 = a1.x; float y2 = a1.y;
-				float x3 = b0.x; float y3 = b0.y;
-				float x4 = b1.x; float y4 = b1.y;
+				float x1 = a0.X; float y1 = a0.Y;
+				float x2 = a1.X; float y2 = a1.Y;
+				float x3 = b0.X; float y3 = b0.Y;
+				float x4 = b1.X; float y4 = b1.Y;
 
 				//AABB early exit
 				if (Math.Max(x1, x2) < Math.Min(x3, x4) || Math.Max(x3, x4) < Math.Min(x1, x2)) return false;
@@ -712,8 +712,8 @@ namespace MeshCreator
 				if ((0 < ua) && (ua < 1) && (0 < ub) && (ub < 1))
 				{
 					//if (intersectionPoint){
-					intersectionPoint.x = (x1 + ua * (x2 - x1));
-					intersectionPoint.y = (y1 + ua * (y2 - y1));
+					intersectionPoint.X = (x1 + ua * (x2 - x1));
+					intersectionPoint.Y = (y1 + ua * (y2 - y1));
 					//}
 					//printf("%f, %f -> %f, %f crosses %f, %f -> %f, %f\n",x1,y1,x2,y2,x3,y3,x4,y4);
 					return true;
@@ -793,7 +793,7 @@ namespace MeshCreator
 						{
 							pinchIndexA = i;
 							pinchIndexB = j;
-							//printf("pinch: %f, %f == %f, %f\n",pin.x[i],pin.y[i],pin.x[j],pin.y[j]);
+							//printf("pinch: %f, %f == %f, %f\n",pin.X[i],pin.Y[i],pin.X[j],pin.Y[j]);
 							//printf("at indexes %d, %d\n",i,j);
 							hasPinchPoint = true;
 							break;
@@ -923,7 +923,7 @@ namespace MeshCreator
 							}
 
 							/*//This bit chooses the ear with greatest volume first
-							float testVol = b2Abs( d1.x*d2.y-d2.x*d1.y );
+							float testVol = b2Abs( d1.X*d2.Y-d2.X*d1.Y );
 							if (testVol > earVolume){
 									earIndex = i;
 									earVolume = testVol;
@@ -1262,8 +1262,8 @@ namespace MeshCreator
 																int lower = (j == 0) ? (curr.nVertices - 1) : (j - 1);
 																int middle = j;
 																int upper = (j == curr.nVertices - 1) ? (0) : (j + 1);
-																float dx0 = curr.x[middle] - curr.x[lower]; float dy0 = curr.y[middle] - curr.y[lower];
-																float dx1 = curr.x[upper] - curr.x[middle]; float dy1 = curr.y[upper] - curr.y[middle];
+																float dx0 = curr.X[middle] - curr.X[lower]; float dy0 = curr.Y[middle] - curr.Y[lower];
+																float dx1 = curr.X[upper] - curr.X[middle]; float dy1 = curr.Y[upper] - curr.Y[middle];
 																float norm0 = sqrtf(dx0*dx0+dy0*dy0); float norm1 = sqrtf(dx1*dx1+dy1*dy1);
 																if ( !(norm0 > 0.0f && norm1 > 0.0f) ) {
 																		//Identical points, don't do anything!
@@ -1277,7 +1277,7 @@ namespace MeshCreator
 																		//Angle too close, split the triangle across from this point.
 																		//This is guaranteed to result in two triangles that satify
 																		//the tolerance (one of the angles is 90 degrees)
-																		float dx2 = curr.x[lower] - curr.x[upper]; float dy2 = curr.y[lower] - curr.y[upper];
+																		float dx2 = curr.X[lower] - curr.X[upper]; float dy2 = curr.Y[lower] - curr.Y[upper];
 																		float norm2 = sqrtf(dx2*dx2+dy2*dy2);
 																		if (norm2 == 0.0f) {
 																				goto Skip;
@@ -1289,10 +1289,10 @@ namespace MeshCreator
 																		dx2 = dy2; dy2 = -buffer2;
 																		//Make two new polygons
 																		//printf("dx2: %f, dy2: %f, thisHeight: %f, middle: %d\n",dx2,dy2,thisHeight,middle);
-																		float newX1[3] = { curr.x[middle]+dx2*thisHeight, curr.x[lower], curr.x[middle] };
-																		float newY1[3] = { curr.y[middle]+dy2*thisHeight, curr.y[lower], curr.y[middle] };
-																		float newX2[3] = { newX1[0], curr.x[middle], curr.x[upper] };
-																		float newY2[3] = { newY1[0], curr.y[middle], curr.y[upper] };
+																		float newX1[3] = { curr.X[middle]+dx2*thisHeight, curr.X[lower], curr.X[middle] };
+																		float newY1[3] = { curr.Y[middle]+dy2*thisHeight, curr.Y[lower], curr.Y[middle] };
+																		float newX2[3] = { newX1[0], curr.X[middle], curr.X[upper] };
+																		float newY2[3] = { newY1[0], curr.Y[middle], curr.Y[upper] };
 																		b2Polygon p1(newX1,newY1,3);
 																		b2Polygon p2(newX2,newY2,3);
 																		if (p1.IsUsable()){
@@ -1365,8 +1365,8 @@ namespace MeshCreator
 				float[] cloudY = new float[v.Count];
 				for (int i = 0; i < v.Count; ++i)
 				{
-					cloudX[i] = v[i].x;
-					cloudY[i] = v[i].y;
+					cloudX[i] = v[i].X;
+					cloudY[i] = v[i].Y;
 				}
 				return ConvexHull(cloudX, cloudY);
 			}
@@ -1536,12 +1536,12 @@ namespace MeshCreator
 									if (crosses)
 									{
 										/*if (counter > 100) {
-												printf("Found crossing at %f, %f\n",intersectPt.x, intersectPt.y);
+												printf("Found crossing at %f, %f\n",intersectPt.X, intersectPt.Y);
 												printf("Locations: %f,%f - %f,%f | %f,%f - %f,%f\n",
-																				nodes[i].position.x, nodes[i].position.y,
-																				nodes[i].connected[j]->position.x, nodes[i].connected[j]->position.y,
-																				nodes[k].position.x,nodes[k].position.y,
-																				nodes[k].connected[l]->position.x,nodes[k].connected[l]->position.y);
+																				nodes[i].position.X, nodes[i].position.Y,
+																				nodes[i].connected[j]->position.X, nodes[i].connected[j]->position.Y,
+																				nodes[k].position.X,nodes[k].position.Y,
+																				nodes[k].connected[l]->position.X,nodes[k].connected[l]->position.Y);
 												printf("Memory addresses: %d, %d, %d, %d\n",(int)&nodes[i],(int)nodes[i].connected[j],(int)&nodes[k],(int)nodes[k].connected[l]);
 										}*/
 										dirty = true;
@@ -1669,16 +1669,16 @@ namespace MeshCreator
 				int minYIndex = -1;
 				for (int i = 0; i < nodes.Count; ++i)
 				{
-					if (nodes[i].position.y < minY && nodes[i].nConnected > 1)
+					if (nodes[i].position.Y < minY && nodes[i].nConnected > 1)
 					{
-						minY = nodes[i].position.y;
+						minY = nodes[i].position.Y;
 						minYIndex = i;
-						maxX = nodes[i].position.x;
+						maxX = nodes[i].position.X;
 					}
-					else if (nodes[i].position.y == minY && nodes[i].position.x > maxX && nodes[i].nConnected > 1)
+					else if (nodes[i].position.Y == minY && nodes[i].position.X > maxX && nodes[i].nConnected > 1)
 					{
 						minYIndex = i;
-						maxX = nodes[i].position.x;
+						maxX = nodes[i].position.X;
 					}
 				}
 
@@ -1708,8 +1708,8 @@ namespace MeshCreator
 				float[] yres = new float[resultVecs.Count];
 				for (int i=0; i<resultVecs.Count; ++i)
 				{
-					xres[i] = resultVecs[i].x;
-					yres[i] = resultVecs[i].y;
+					xres[i] = resultVecs[i].X;
+					yres[i] = resultVecs[i].Y;
 				}
 				return new Polygon(xres.ToList<float>(), yres.ToList<float>());
 			}

@@ -127,7 +127,7 @@ namespace Testbed
 		public Fixture fixtureB;
 		public Vec2 normal;
 		public Vec2 position;
-		public EPointState state;
+		public PointState state;
 	};
 
 	public abstract class Test : ContactListener, IDisposable
@@ -195,12 +195,12 @@ namespace Testbed
 				}
 			}
 
-			EDebugFlags flags = 0;
-			if (TestSettings.drawShapes) flags |= EDebugFlags.e_shapeBit;
-			if (TestSettings.drawJoints) flags |= EDebugFlags.e_jointBit;
-			if (TestSettings.drawAABBs) flags |= EDebugFlags.e_aabbBit;
-			if (TestSettings.drawPairs) flags |= EDebugFlags.e_pairBit;
-			if (TestSettings.drawCOMs) flags |= EDebugFlags.e_centerOfMassBit;
+			DebugFlags flags = 0;
+			if (TestSettings.drawShapes) flags |= DebugFlags.Shapes;
+			if (TestSettings.drawJoints) flags |= DebugFlags.Joints;
+			if (TestSettings.drawAABBs) flags |= DebugFlags.AABBs;
+			if (TestSettings.drawPairs) flags |= DebugFlags.Pairs;
+			if (TestSettings.drawCOMs) flags |= DebugFlags.CenterOfMasses;
 			m_debugDraw.Flags = flags;
 
 			m_world.WarmStarting = TestSettings.enableWarmStarting;
@@ -231,7 +231,7 @@ namespace Testbed
 				delegate(Fixture fixture)
 				{
 					Body body = fixture.Body;
-					if (body.BodyType == EBodyType.b2_dynamicBody)
+					if (body.BodyType == BodyType.Dynamic)
 					{
 						bool inside = fixture.TestPoint(p);
 						if (inside)
@@ -280,7 +280,7 @@ namespace Testbed
 			delegate(Fixture fixture)
 			{
 				Body body = fixture.Body;
-				if (body.BodyType == EBodyType.b2_dynamicBody)
+				if (body.BodyType == BodyType.Dynamic)
 				{
 					bool inside = fixture.TestPoint(p);
 					if (inside)
@@ -344,7 +344,7 @@ namespace Testbed
 				m_bomb = null;
 			}
 
-			m_bomb = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, position, 0.0f, velocity, true));
+			m_bomb = m_world.CreateBody(new BodyDef(BodyType.Dynamic, position, 0.0f, velocity, true));
 			m_bomb.Mass = 5;
 
 			m_bomb.CreateFixture(new FixtureDef(new CircleShape(0.3f), 20.0f));
@@ -393,8 +393,8 @@ namespace Testbed
 			Fixture fixtureA = contact.FixtureA;
 			Fixture fixtureB = contact.FixtureB;
 
-			EPointState[] state1 = new EPointState[Box2DSettings.b2_maxManifoldPoints],
-				state2 = new EPointState[Box2DSettings.b2_maxManifoldPoints];
+			PointState[] state1 = new PointState[Box2DSettings.b2_maxManifoldPoints],
+				state2 = new PointState[Box2DSettings.b2_maxManifoldPoints];
 			Manifold.GetPointStates(ref state1, ref state2, ref oldManifold, ref manifold);
 
 			WorldManifold worldManifold = contact.WorldManifold;
@@ -448,15 +448,15 @@ namespace Testbed
 				Gl.glPointSize(4.0f);
 				Gl.glColor3f(0.0f, 1.0f, 0.0f);
 				Gl.glBegin(Gl.GL_POINTS);
-				Gl.glVertex2f(p1.x, p1.y);
-				Gl.glVertex2f(p2.x, p2.y);
+				Gl.glVertex2f(p1.X, p1.Y);
+				Gl.glVertex2f(p2.X, p2.Y);
 				Gl.glEnd();
 				Gl.glPointSize(1.0f);
 
 				Gl.glColor3f(0.8f, 0.8f, 0.8f);
 				Gl.glBegin(Gl.GL_LINES);
-				Gl.glVertex2f(p1.x, p1.y);
-				Gl.glVertex2f(p2.x, p2.y);
+				Gl.glVertex2f(p1.X, p1.Y);
+				Gl.glVertex2f(p2.X, p2.Y);
 				Gl.glEnd();
 			}
 
@@ -466,13 +466,13 @@ namespace Testbed
 				Gl.glColor3f(0.0f, 0.0f, 1.0f);
 				Gl.glBegin(Gl.GL_POINTS);
 				Gl.glColor3f(0.0f, 0.0f, 1.0f);
-				Gl.glVertex2f(m_bombSpawnPoint.x, m_bombSpawnPoint.y);
+				Gl.glVertex2f(m_bombSpawnPoint.X, m_bombSpawnPoint.Y);
 				Gl.glEnd();
 
 				Gl.glColor3f(0.8f, 0.8f, 0.8f);
 				Gl.glBegin(Gl.GL_LINES);
-				Gl.glVertex2f(m_mouseWorld.x, m_mouseWorld.y);
-				Gl.glVertex2f(m_bombSpawnPoint.x, m_bombSpawnPoint.y);
+				Gl.glVertex2f(m_mouseWorld.X, m_mouseWorld.Y);
+				Gl.glVertex2f(m_bombSpawnPoint.X, m_bombSpawnPoint.Y);
 				Gl.glEnd();
 			}
 
@@ -500,12 +500,12 @@ namespace Testbed
 
 				for (int i = 0; i < m_pointCount; ++i)
 				{
-					if (m_points[i].state == EPointState.b2_addState)
+					if (m_points[i].state == PointState.Add)
 					{
 						// Add
 						m_debugDraw.DrawPoint(m_points[i].position, 10.0f, new ColorF(0.3f, 0.95f, 0.3f));
 					}
-					else if (m_points[i].state == EPointState.b2_persistState)
+					else if (m_points[i].state == PointState.Persist)
 					{
 						// Persist
 						m_debugDraw.DrawPoint(m_points[i].position, 5.0f, new ColorF(0.3f, 0.3f, 0.95f));

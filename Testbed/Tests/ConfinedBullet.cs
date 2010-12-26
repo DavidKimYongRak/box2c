@@ -51,7 +51,7 @@ namespace Testbed.Tests
 
 				bd = new BodyDef();
 				{
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(0, 10.0f);
 					{
 						PolygonShape bottom = new PolygonShape(1.5f, 0.15f);

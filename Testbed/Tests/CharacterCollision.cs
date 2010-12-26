@@ -71,7 +71,7 @@ namespace Testbed.Tests
 			{
 				BodyDef bd = new BodyDef();
 				bd.Position = new Vec2(-3.0f, 5.0f);
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.FixedRotation = true;
 				bd.AllowSleep = false;
 
@@ -90,7 +90,7 @@ namespace Testbed.Tests
 			{
 				BodyDef bd = new BodyDef();
 				bd.Position = new Vec2(-5.0f, 5.0f);
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.FixedRotation = true;
 				bd.AllowSleep = false;
 
@@ -119,7 +119,7 @@ namespace Testbed.Tests
 			{
 				BodyDef bd = new BodyDef();
 				bd.Position = new Vec2(3.0f, 5.0f);
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.FixedRotation = true;
 				bd.AllowSleep = false;
 

@@ -6,44 +6,38 @@ namespace Box2CS
 	[StructLayout(LayoutKind.Sequential)]
 	public struct RayCastInput
 	{
-		Vec2 p1, p2;
-		float maxFraction;
-
 		public Vec2 Point1
 		{
-			get { return p1; }
-			set { p1 = value; }
+			get;
+			set;
 		}
 
 		public Vec2 Point3
 		{
-			get { return p2; }
-			set { p2 = value; }
+			get;
+			set;
 		}
 
 		public float MaxFraction
 		{
-			get { return maxFraction; }
-			set { maxFraction = value; }
+			get;
+			set;
 		}
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct RayCastOutput
 	{
-		Vec2 normal;
-		float fraction;
-
 		public Vec2 Normal
 		{
-			get { return normal; }
-			set { normal = value; }
+			get;
+			set;
 		}
 
 		public float Fraction
 		{
-			get { return fraction; }
-			set { fraction = value; }
+			get;
+			set;
 		}
 	};
 }

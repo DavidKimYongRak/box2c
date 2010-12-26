@@ -87,7 +87,7 @@ namespace Testbed.Tests
 				for (int i = 0; i < 5; ++i)
 				{
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(-15.0f + 4.0f * i, 28.0f);
 					Body body = m_world.CreateBody(bd);
 

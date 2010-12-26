@@ -50,7 +50,7 @@ namespace Testbed.Tests
 			// Breakable dynamic body
 			/*{
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(0.0f, 40.0f);
 				bd.Angle = (float)(0.25 * Math.PI);
 				var m_body1 = m_world.CreateBody(bd);
@@ -77,7 +77,7 @@ namespace Testbed.Tests
 				right.SetAsBox(0.15f, 2.7f, new Vec2(1.45f, 2.35f), -0.2f);
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(0.0f, y += 3.5f);
 				Body bottom_body = m_world.CreateBody(bd);
 				var bf = bottom_body.CreateFixture(bottom, 4.0f);
@@ -164,7 +164,7 @@ namespace Testbed.Tests
 			base.Step();
 		}
 
-		enum EBreakableState
+		enum BreakableState
 		{
 			Welded,
 			Breaking,

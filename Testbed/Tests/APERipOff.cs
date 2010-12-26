@@ -16,21 +16,21 @@ namespace Testbed.Tests
 
 		public Capsule(World world, Vec2 pos, float width, float height, float density)
 		{
-			BodyDef bd = new BodyDef(EBodyType.b2_dynamicBody, Vec2.Empty);
+			BodyDef bd = new BodyDef(BodyType.Dynamic, Vec2.Empty);
 			_body = world.CreateBody(bd);
 
 			{
-				PolygonShape poly = APERipOff.MakeShape(pos.x, pos.y, width, height, 0);
+				PolygonShape poly = APERipOff.MakeShape(pos.X, pos.Y, width, height, 0);
 				_body.CreateFixture(new FixtureDef(poly, density));
 			}
 
 			{
 				var p = pos + new Vec2(width / 2, 0);
-				CircleShape circle = APERipOff.MakeCircle(p.x, p.y, height / 2);
+				CircleShape circle = APERipOff.MakeCircle(p.X, p.Y, height / 2);
 				_body.CreateFixture(new FixtureDef(circle, density));
 
 				p = pos - new Vec2(width / 2, 0);
-				circle = APERipOff.MakeCircle(p.x, p.y, height / 2);
+				circle = APERipOff.MakeCircle(p.X, p.Y, height / 2);
 				_body.CreateFixture(new FixtureDef(circle, density));
 			}
 		}
@@ -55,8 +55,6 @@ namespace Testbed.Tests
 
 		public APERipOff()
 		{
-			TestSettings.pause = true;
-
 			Body ground = m_world.CreateBody(new BodyDef());
 
 			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26, 40), new Vec2(32, 40)), 0.0f, 0.0f, 0.65f));
@@ -84,7 +82,7 @@ namespace Testbed.Tests
 
 				for (int i = 0; i < 5; ++i)
 				{
-					Body thing = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, new Vec2(-26 + 15 + 2 + (4.0f * i), 40 - 6 + 0.75f)));
+					Body thing = m_world.CreateBody(new BodyDef(BodyType.Dynamic, new Vec2(-26 + 15 + 2 + (4.0f * i), 40 - 6 + 0.75f)));
 					var fix = thing.CreateFixture(new PolygonShape(2, 0.25f), 8.0f);
 
 					if (i == 0)
@@ -112,23 +110,23 @@ namespace Testbed.Tests
 			}
 			//Capsule cantilever = new Capsule(m_world, new Vec2(-26 + 52.8f, 40 - 5 - (1.40f / 2)), 8.8f, 1.40f, 1.0f);
 
-			BodyDef bd = new BodyDef(EBodyType.b2_dynamicBody, Vec2.Empty);
+			BodyDef bd = new BodyDef(BodyType.Dynamic, Vec2.Empty);
 			var cantilever = m_world.CreateBody(bd);
 			var cantpos = new Vec2(-26 + 52.8f, 40 - 5 - (1.40f / 2));
 
 			{
-				PolygonShape poly = APERipOff.MakeShape(cantpos.x, cantpos.y, 8.8f, 1.40f, 0);
+				PolygonShape poly = APERipOff.MakeShape(cantpos.X, cantpos.Y, 8.8f, 1.40f, 0);
 				cantilever.CreateFixture(new FixtureDef(poly, 0.05f));
 			}
 
 			{
 				var p = cantpos + new Vec2(8.8f / 2, 0);
-				CircleShape circle = APERipOff.MakeCircle(p.x, p.y, 1.40f / 2);
+				CircleShape circle = APERipOff.MakeCircle(p.X, p.Y, 1.40f / 2);
 				var tempbody = m_world.CreateBody(bd);
 				tempbody.CreateFixture(new FixtureDef(circle, 0.05f));
 
 				p = cantpos - new Vec2(8.8f / 2, 0);
-				circle = APERipOff.MakeCircle(p.x, p.y, 1.40f / 2);
+				circle = APERipOff.MakeCircle(p.X, p.Y, 1.40f / 2);
 				cantilever.CreateFixture(new FixtureDef(circle, 0.05f));
 
 				WeldJointDef wjd = new WeldJointDef();
@@ -146,7 +144,12 @@ namespace Testbed.Tests
 
 			{
 				Body squareThing;
-				bd = new BodyDef(EBodyType.b2_kinematicBody, new Vec2(23, 17));
+				bd = new BodyDef(BodyType.Kinematic, new Vec2(23, 17));
+
+				bd.UserData = new Vec2(5, 5);
+				Box2CS.Serialize.Serializer sr = new Box2CS.Serialize.Serializer();
+				sr.BodyDefs.Add(bd);
+				sr.Save("test.xml");
 
 				squareThing = m_world.CreateBody(bd);
 
@@ -162,10 +165,10 @@ namespace Testbed.Tests
 
 				squareThing.AngularVelocity = -0.50f;
 
-				m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, new Vec2(23, 19)))
+				m_world.CreateBody(new BodyDef(BodyType.Dynamic, new Vec2(23, 19)))
 					.CreateFixture(new FixtureDef(new CircleShape(0.625f), 1));
 
-				Body squareOne = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, squareThing.WorldCenter + new Vec2(1, 8.0f)));
+				Body squareOne = m_world.CreateBody(new BodyDef(BodyType.Dynamic, squareThing.WorldCenter + new Vec2(1, 8.0f)));
 				squareOne.CreateFixture(new PolygonShape(0.50f, 0.50f), 500);
 
 				RevoluteJointDef rjd = new RevoluteJointDef();
@@ -173,7 +176,7 @@ namespace Testbed.Tests
 				rjd.CollideConnected = true;
 				m_world.CreateJoint(rjd);
 
-				Body squareTwo = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, squareThing.WorldCenter + new Vec2(-1, -8.5f)));
+				Body squareTwo = m_world.CreateBody(new BodyDef(BodyType.Dynamic, squareThing.WorldCenter + new Vec2(-1, -8.5f)));
 				squareTwo.CreateFixture(new PolygonShape(0.50f, 0.50f), 500);
 
 				rjd = new RevoluteJointDef();
@@ -185,14 +188,14 @@ namespace Testbed.Tests
 			{
 				Vec2 carPos = new Vec2(-11.5f, 37.5f);
 				var bodyShape = new PolygonShape(3.5f, 0.6f);
-				bd = new BodyDef(EBodyType.b2_dynamicBody, carPos);
+				bd = new BodyDef(BodyType.Dynamic, carPos);
 
 				var body = m_world.CreateBody(bd);
 				body.CreateFixture(bodyShape, 20.0f);
 
 				{
 					var wheel = new CircleShape(2.0f);
-					var leftWheel = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, carPos - new Vec2(3.5f, 0)));
+					var leftWheel = m_world.CreateBody(new BodyDef(BodyType.Dynamic, carPos - new Vec2(3.5f, 0)));
 					leftWheel.CreateFixture(new FixtureDef(wheel, 20.0f, 0.0f, 0.65f));
 
 					RevoluteJointDef rjd = new RevoluteJointDef();
@@ -202,7 +205,7 @@ namespace Testbed.Tests
 
 				{
 					var wheel = new CircleShape(2.0f);
-					var leftWheel = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, carPos + new Vec2(3.5f, 0)));
+					var leftWheel = m_world.CreateBody(new BodyDef(BodyType.Dynamic, carPos + new Vec2(3.5f, 0)));
 					leftWheel.CreateFixture(new FixtureDef(wheel, 20.0f, 0.0f, 0.65f));
 
 					RevoluteJointDef rjd = new RevoluteJointDef();
@@ -230,6 +233,14 @@ namespace Testbed.Tests
 				wheelL.IsMotorEnabled = wheelR.IsMotorEnabled = false;
 				break;
 			}
+		}
+
+		public override void Draw()
+		{
+			base.Draw();
+
+			m_debugDraw.DrawString(5, m_textLine, "Keys: (a) left, (s) break, (d) right");
+			m_textLine += 15;
 		}
 
 		RevoluteJoint wheelL, wheelR;

@@ -33,7 +33,7 @@ namespace Testbed.Tests
 				{
 					shape.Radius = Rand.RandomFloat(0.5f, 0.5f);
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(0.0f, 4.0f + 3.0f * i);
 
 					m_bodies[i] = m_world.CreateBody(bd);
@@ -49,12 +49,12 @@ namespace Testbed.Tests
 
 			//for (int32 i = 0; i < e_count; ++i)
 			//{
-			//	printf("%g ", m_bodies[i].GetWorldCenter().y);
+			//	printf("%g ", m_bodies[i].GetWorldCenter().Y);
 			//}
 
 			//for (int32 i = 0; i < e_count; ++i)
 			//{
-			//	printf("%g ", m_bodies[i].GetLinearVelocity().y);
+			//	printf("%g ", m_bodies[i].GetLinearVelocity().Y);
 			//}
 
 			//printf("\n");

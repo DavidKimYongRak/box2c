@@ -36,7 +36,7 @@ namespace Box2CS
 		{
 			_internalCircleShape = new cb2circleshapeportable();
 			_internalCircleShape.m_shape = base.InternalShape;
-			InternalShape.m_type = EShapeType.e_circle;
+			InternalShape.m_type = ShapeType.Circle;
 			InternalShape.m_radius = radius;
 			_internalCircleShape.m_p = position;
 		}
@@ -61,9 +61,9 @@ namespace Box2CS
 
 		public override void ComputeAABB(out AABB aabb, Transform xf)
 		{
-			Vec2 p = xf.position + (xf.R * Position);
-			aabb = new AABB(new Vec2(p.x - Radius, p.y - Radius),
-				new Vec2(p.x + Radius, p.y + Radius));
+			Vec2 p = xf.Position + (xf.R * Position);
+			aabb = new AABB(new Vec2(p.X - Radius, p.Y - Radius),
+				new Vec2(p.X + Radius, p.Y + Radius));
 		}
 
 		public override void ComputeMass(out MassData massData, float density)

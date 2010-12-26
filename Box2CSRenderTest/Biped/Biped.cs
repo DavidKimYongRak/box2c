@@ -5,10 +5,10 @@ namespace Box2DSharpRenderTest
 {
 	public struct BipedBodyDescriptor
 	{
-		public EBipedFixtureIndex FixtureIndex;
+		public BipedFixtureIndex FixtureIndex;
 		public Biped Biped;
 
-		public BipedBodyDescriptor(EBipedFixtureIndex index, Biped biped)
+		public BipedBodyDescriptor(BipedFixtureIndex index, Biped biped)
 		{
 			FixtureIndex = index;
 			Biped = biped;
@@ -24,7 +24,7 @@ namespace Box2DSharpRenderTest
 			get { return _ownedPlayer; }
 		}
 
-		static void BodyFromFixture (EBipedFixtureIndex type,
+		static void BodyFromFixture (BipedFixtureIndex type,
 			Biped biped, BipedDef def, Vec2 position, World world)
 		{
 			var bd = def.Bodies[(int)type];
@@ -43,60 +43,60 @@ namespace Box2DSharpRenderTest
 			BodyDef bd = new BodyDef();
 
 			// create body parts
-			for (EBipedFixtureIndex i = 0; i < EBipedFixtureIndex.Max; ++i)
+			for (BipedFixtureIndex i = 0; i < BipedFixtureIndex.Max; ++i)
 				BodyFromFixture(i, this, def, position, world);
 
 			// link body parts
-			def.Joints[(int)EBipedJointIndex.LAnkle].BodyA = Bodies[(int)EBipedFixtureIndex.LFoot];
-			def.Joints[(int)EBipedJointIndex.LAnkle].BodyB = Bodies[(int)EBipedFixtureIndex.LCalf];
-			def.Joints[(int)EBipedJointIndex.RAnkle].BodyA = Bodies[(int)EBipedFixtureIndex.RFoot];
-			def.Joints[(int)EBipedJointIndex.RAnkle].BodyB = Bodies[(int)EBipedFixtureIndex.RCalf];
-			def.Joints[(int)EBipedJointIndex.LKnee].BodyA = Bodies[(int)EBipedFixtureIndex.LCalf];
-			def.Joints[(int)EBipedJointIndex.LKnee].BodyB = Bodies[(int)EBipedFixtureIndex.LThigh];
-			def.Joints[(int)EBipedJointIndex.RKnee].BodyA = Bodies[(int)EBipedFixtureIndex.RCalf];
-			def.Joints[(int)EBipedJointIndex.RKnee].BodyB = Bodies[(int)EBipedFixtureIndex.RThigh];
-			def.Joints[(int)EBipedJointIndex.LHip].BodyA = Bodies[(int)EBipedFixtureIndex.LThigh];
-			def.Joints[(int)EBipedJointIndex.LHip].BodyB = Bodies[(int)EBipedFixtureIndex.Pelvis];
-			def.Joints[(int)EBipedJointIndex.RHip].BodyA = Bodies[(int)EBipedFixtureIndex.RThigh];
-			def.Joints[(int)EBipedJointIndex.RHip].BodyB = Bodies[(int)EBipedFixtureIndex.Pelvis];
-			def.Joints[(int)EBipedJointIndex.LowerAbs].BodyA = Bodies[(int)EBipedFixtureIndex.Pelvis];
-			def.Joints[(int)EBipedJointIndex.LowerAbs].BodyB = Bodies[(int)EBipedFixtureIndex.Stomach];
-			def.Joints[(int)EBipedJointIndex.UpperAbs].BodyA = Bodies[(int)EBipedFixtureIndex.Stomach];
-			def.Joints[(int)EBipedJointIndex.UpperAbs].BodyB = Bodies[(int)EBipedFixtureIndex.Chest];
-			def.Joints[(int)EBipedJointIndex.LowerNeck].BodyA = Bodies[(int)EBipedFixtureIndex.Chest];
-			def.Joints[(int)EBipedJointIndex.LowerNeck].BodyB = Bodies[(int)EBipedFixtureIndex.Neck];
-			def.Joints[(int)EBipedJointIndex.UpperNeck].BodyA = Bodies[(int)EBipedFixtureIndex.Chest];
-			def.Joints[(int)EBipedJointIndex.UpperNeck].BodyB = Bodies[(int)EBipedFixtureIndex.Head];
-			def.Joints[(int)EBipedJointIndex.LShoulder].BodyA = Bodies[(int)EBipedFixtureIndex.Chest];
-			def.Joints[(int)EBipedJointIndex.LShoulder].BodyB = Bodies[(int)EBipedFixtureIndex.LUpperArm];
-			def.Joints[(int)EBipedJointIndex.RShoulder].BodyA = Bodies[(int)EBipedFixtureIndex.Chest];
-			def.Joints[(int)EBipedJointIndex.RShoulder].BodyB = Bodies[(int)EBipedFixtureIndex.RUpperArm];
-			def.Joints[(int)EBipedJointIndex.LElbow].BodyA = Bodies[(int)EBipedFixtureIndex.LForearm];
-			def.Joints[(int)EBipedJointIndex.LElbow].BodyB = Bodies[(int)EBipedFixtureIndex.LUpperArm];
-			def.Joints[(int)EBipedJointIndex.RElbow].BodyA = Bodies[(int)EBipedFixtureIndex.RForearm];
-			def.Joints[(int)EBipedJointIndex.RElbow].BodyB = Bodies[(int)EBipedFixtureIndex.RUpperArm];
-			def.Joints[(int)EBipedJointIndex.LWrist].BodyA = Bodies[(int)EBipedFixtureIndex.LHand];
-			def.Joints[(int)EBipedJointIndex.LWrist].BodyB = Bodies[(int)EBipedFixtureIndex.LForearm];
-			def.Joints[(int)EBipedJointIndex.RWrist].BodyA = Bodies[(int)EBipedFixtureIndex.RHand];
-			def.Joints[(int)EBipedJointIndex.RWrist].BodyB = Bodies[(int)EBipedFixtureIndex.RForearm];
+			def.Joints[(int)BipedJointIndex.LAnkle].BodyA = Bodies[(int)BipedFixtureIndex.LFoot];
+			def.Joints[(int)BipedJointIndex.LAnkle].BodyB = Bodies[(int)BipedFixtureIndex.LCalf];
+			def.Joints[(int)BipedJointIndex.RAnkle].BodyA = Bodies[(int)BipedFixtureIndex.RFoot];
+			def.Joints[(int)BipedJointIndex.RAnkle].BodyB = Bodies[(int)BipedFixtureIndex.RCalf];
+			def.Joints[(int)BipedJointIndex.LKnee].BodyA = Bodies[(int)BipedFixtureIndex.LCalf];
+			def.Joints[(int)BipedJointIndex.LKnee].BodyB = Bodies[(int)BipedFixtureIndex.LThigh];
+			def.Joints[(int)BipedJointIndex.RKnee].BodyA = Bodies[(int)BipedFixtureIndex.RCalf];
+			def.Joints[(int)BipedJointIndex.RKnee].BodyB = Bodies[(int)BipedFixtureIndex.RThigh];
+			def.Joints[(int)BipedJointIndex.LHip].BodyA = Bodies[(int)BipedFixtureIndex.LThigh];
+			def.Joints[(int)BipedJointIndex.LHip].BodyB = Bodies[(int)BipedFixtureIndex.Pelvis];
+			def.Joints[(int)BipedJointIndex.RHip].BodyA = Bodies[(int)BipedFixtureIndex.RThigh];
+			def.Joints[(int)BipedJointIndex.RHip].BodyB = Bodies[(int)BipedFixtureIndex.Pelvis];
+			def.Joints[(int)BipedJointIndex.LowerAbs].BodyA = Bodies[(int)BipedFixtureIndex.Pelvis];
+			def.Joints[(int)BipedJointIndex.LowerAbs].BodyB = Bodies[(int)BipedFixtureIndex.Stomach];
+			def.Joints[(int)BipedJointIndex.UpperAbs].BodyA = Bodies[(int)BipedFixtureIndex.Stomach];
+			def.Joints[(int)BipedJointIndex.UpperAbs].BodyB = Bodies[(int)BipedFixtureIndex.Chest];
+			def.Joints[(int)BipedJointIndex.LowerNeck].BodyA = Bodies[(int)BipedFixtureIndex.Chest];
+			def.Joints[(int)BipedJointIndex.LowerNeck].BodyB = Bodies[(int)BipedFixtureIndex.Neck];
+			def.Joints[(int)BipedJointIndex.UpperNeck].BodyA = Bodies[(int)BipedFixtureIndex.Chest];
+			def.Joints[(int)BipedJointIndex.UpperNeck].BodyB = Bodies[(int)BipedFixtureIndex.Head];
+			def.Joints[(int)BipedJointIndex.LShoulder].BodyA = Bodies[(int)BipedFixtureIndex.Chest];
+			def.Joints[(int)BipedJointIndex.LShoulder].BodyB = Bodies[(int)BipedFixtureIndex.LUpperArm];
+			def.Joints[(int)BipedJointIndex.RShoulder].BodyA = Bodies[(int)BipedFixtureIndex.Chest];
+			def.Joints[(int)BipedJointIndex.RShoulder].BodyB = Bodies[(int)BipedFixtureIndex.RUpperArm];
+			def.Joints[(int)BipedJointIndex.LElbow].BodyA = Bodies[(int)BipedFixtureIndex.LForearm];
+			def.Joints[(int)BipedJointIndex.LElbow].BodyB = Bodies[(int)BipedFixtureIndex.LUpperArm];
+			def.Joints[(int)BipedJointIndex.RElbow].BodyA = Bodies[(int)BipedFixtureIndex.RForearm];
+			def.Joints[(int)BipedJointIndex.RElbow].BodyB = Bodies[(int)BipedFixtureIndex.RUpperArm];
+			def.Joints[(int)BipedJointIndex.LWrist].BodyA = Bodies[(int)BipedFixtureIndex.LHand];
+			def.Joints[(int)BipedJointIndex.LWrist].BodyB = Bodies[(int)BipedFixtureIndex.LForearm];
+			def.Joints[(int)BipedJointIndex.RWrist].BodyA = Bodies[(int)BipedFixtureIndex.RHand];
+			def.Joints[(int)BipedJointIndex.RWrist].BodyB = Bodies[(int)BipedFixtureIndex.RForearm];
 
 			// create joints
-			Joints[(int)EBipedJointIndex.LAnkle] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.LAnkle]);
-			Joints[(int)EBipedJointIndex.RAnkle] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.RAnkle]);
-			Joints[(int)EBipedJointIndex.LKnee] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.LKnee]);
-			Joints[(int)EBipedJointIndex.RKnee] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.RKnee]);
-			Joints[(int)EBipedJointIndex.LHip] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.LHip]);
-			Joints[(int)EBipedJointIndex.RHip] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.RHip]);
-			Joints[(int)EBipedJointIndex.LowerAbs] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.LowerAbs]);
-			Joints[(int)EBipedJointIndex.UpperAbs] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.UpperAbs]);
-			Joints[(int)EBipedJointIndex.LowerNeck] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.LowerNeck]);
-			Joints[(int)EBipedJointIndex.UpperNeck] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.UpperNeck]);
-			Joints[(int)EBipedJointIndex.LShoulder] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.LShoulder]);
-			Joints[(int)EBipedJointIndex.RShoulder] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.RShoulder]);
-			Joints[(int)EBipedJointIndex.LElbow] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.LElbow]);
-			Joints[(int)EBipedJointIndex.RElbow] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.RElbow]);
-			Joints[(int)EBipedJointIndex.LWrist] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.LWrist]);
-			Joints[(int)EBipedJointIndex.RWrist] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)EBipedJointIndex.RWrist]);
+			Joints[(int)BipedJointIndex.LAnkle] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.LAnkle]);
+			Joints[(int)BipedJointIndex.RAnkle] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.RAnkle]);
+			Joints[(int)BipedJointIndex.LKnee] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.LKnee]);
+			Joints[(int)BipedJointIndex.RKnee] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.RKnee]);
+			Joints[(int)BipedJointIndex.LHip] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.LHip]);
+			Joints[(int)BipedJointIndex.RHip] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.RHip]);
+			Joints[(int)BipedJointIndex.LowerAbs] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.LowerAbs]);
+			Joints[(int)BipedJointIndex.UpperAbs] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.UpperAbs]);
+			Joints[(int)BipedJointIndex.LowerNeck] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.LowerNeck]);
+			Joints[(int)BipedJointIndex.UpperNeck] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.UpperNeck]);
+			Joints[(int)BipedJointIndex.LShoulder] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.LShoulder]);
+			Joints[(int)BipedJointIndex.RShoulder] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.RShoulder]);
+			Joints[(int)BipedJointIndex.LElbow] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.LElbow]);
+			Joints[(int)BipedJointIndex.RElbow] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.RElbow]);
+			Joints[(int)BipedJointIndex.LWrist] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.LWrist]);
+			Joints[(int)BipedJointIndex.RWrist] = (RevoluteJoint)world.CreateJoint(def.Joints[(int)BipedJointIndex.RWrist]);
 		}
 
 		public void Disable()
@@ -122,8 +122,8 @@ namespace Box2DSharpRenderTest
 
 		World m_world;
 
-		public Body[] Bodies = new Body[(int)EBipedFixtureIndex.Max]; 
-		public RevoluteJoint[] Joints = new RevoluteJoint[(int)EBipedJointIndex.Max];
+		public Body[] Bodies = new Body[(int)BipedFixtureIndex.Max]; 
+		public RevoluteJoint[] Joints = new RevoluteJoint[(int)BipedJointIndex.Max];
 		bool stuck;
 
 		public void StickBody()

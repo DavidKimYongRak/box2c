@@ -13,7 +13,7 @@ namespace Box2CS
 
 		public MouseJointDef()
 		{
-			JointType = EJointType.e_mouseJoint;
+			JointType = JointType.Mouse;
 			_target = Vec2.Empty;
 			_maxForce = 0.0f;
 			_frequencyHz = 5.0f;

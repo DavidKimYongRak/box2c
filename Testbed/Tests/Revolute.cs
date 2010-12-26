@@ -22,7 +22,7 @@ namespace Testbed.Tests
 				shape.Radius = 0.5f;
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 
 				RevoluteJointDef rjd = new RevoluteJointDef();
 

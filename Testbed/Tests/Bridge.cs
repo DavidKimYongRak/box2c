@@ -37,7 +37,7 @@ namespace Testbed.Tests
 				for (int i = 0; i < e_count; ++i)
 				{
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(-14.5f + 1.0f * i, 5.0f);
 					Body body = m_world.CreateBody(bd);
 					body.CreateFixture(fd);
@@ -71,7 +71,7 @@ namespace Testbed.Tests
 				fd.Density = 1.0f;
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(-8.0f + 8.0f * i, 12.0f);
 				Body body = m_world.CreateBody(bd);
 				body.CreateFixture(fd);
@@ -87,7 +87,7 @@ namespace Testbed.Tests
 				fd.Density = 1.0f;
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(-6.0f + 6.0f * i, 10.0f);
 				Body body = m_world.CreateBody(bd);
 				body.CreateFixture(fd);

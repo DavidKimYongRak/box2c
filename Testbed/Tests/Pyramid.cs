@@ -10,7 +10,7 @@ namespace Testbed.Tests
 			get { return "Pyramid"; }
 		}
 
-		const int e_count = 24;
+		const int e_count = 20;
 
 		public Pyramid()
 		{
@@ -47,7 +47,7 @@ namespace Testbed.Tests
 
 							for (int j = i; j < e_count; ++j)
 							{
-								bd.BodyType = EBodyType.b2_dynamicBody;
+								bd.BodyType = BodyType.Dynamic;
 								bd.Position = y;
 
 								Body body = m_world.CreateBody(bd);

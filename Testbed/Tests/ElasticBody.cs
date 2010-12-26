@@ -47,11 +47,11 @@ namespace Testbed.Tests
 				FixtureDef sdf = new FixtureDef();
 				sdf.Density    = 1.5f;
 				sdf.Friction   = 0.01f;
-				sdf.Filter = new FilterData(FilterData.Default.CategoryBits, FilterData.Default.MaskBits, -1);
+				sdf.Filter.GroupIndex = -1;
 				sdf.Shape = sd;
 				Vec2 startpoint = new Vec2(0, 0);
 				BodyDef    bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Bullet = false;
   	 			//bd.AllowSleep = false;
 				for (int i = 0; i < BodyCountY; ++i) 
@@ -144,7 +144,7 @@ namespace Testbed.Tests
 			Vec2 vB = bB.LinearVelocity - (bB.GetWorldVector(localB).Cross(bB.AngularVelocity));
 			Vec2 vdiff = vB-vA;
 			float dx = diff.Normalize(); //normalizes diff and puts length into dx
-			float vrel = vdiff.x*diff.x + vdiff.y*diff.y;
+			float vrel = vdiff.X*diff.X + vdiff.Y*diff.Y;
 			float forceMag = -k*(dx-desiredDist) - friction*vrel;
 			diff *= forceMag; // diff *= forceMag
 			bB.ApplyForce(diff, bA.GetWorldPoint(localA));

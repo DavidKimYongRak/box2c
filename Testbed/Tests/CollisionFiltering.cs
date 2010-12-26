@@ -54,7 +54,7 @@ namespace Testbed.Tests
 			triangleShapeDef.Filter = new FilterData(k_triangleCategory, k_triangleMask, k_smallGroup);
 
 			BodyDef triangleBodyDef = new BodyDef();
-			triangleBodyDef.BodyType = EBodyType.b2_dynamicBody;
+			triangleBodyDef.BodyType = BodyType.Dynamic;
 			triangleBodyDef.Position = new Vec2(-5.0f, 2.0f);
 
 			Body body1 = m_world.CreateBody(triangleBodyDef);
@@ -74,7 +74,7 @@ namespace Testbed.Tests
 
 			{
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(-5.0f, 10.0f);
 				Body body = m_world.CreateBody(bd);
 
@@ -105,7 +105,7 @@ namespace Testbed.Tests
 			boxShapeDef.Filter = new FilterData(k_boxCategory, k_boxMask, k_smallGroup);
 
 			BodyDef boxBodyDef = new BodyDef();
-			boxBodyDef.BodyType = EBodyType.b2_dynamicBody;
+			boxBodyDef.BodyType = BodyType.Dynamic;
 			boxBodyDef.Position = new Vec2(0.0f, 2.0f);
 
 			Body body3 = m_world.CreateBody(boxBodyDef);
@@ -130,7 +130,7 @@ namespace Testbed.Tests
 			circleShapeDef.Filter = new FilterData(k_circleCategory, k_circleMask, k_smallGroup);
 
 			BodyDef circleBodyDef = new BodyDef();
-			circleBodyDef.BodyType = EBodyType.b2_dynamicBody;
+			circleBodyDef.BodyType = BodyType.Dynamic;
 			circleBodyDef.Position = new Vec2(5.0f, 2.0f);
 		
 			Body body5 = m_world.CreateBody(circleBodyDef);

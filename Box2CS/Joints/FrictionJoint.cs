@@ -13,7 +13,7 @@ namespace Box2CS
 
 		public FrictionJointDef()
 		{
-			JointType = EJointType.e_frictionJoint;
+			JointType = JointType.Friction;
 			_localAnchorA = Vec2.Empty;
 			_localAnchorB = Vec2.Empty;
 			_maxForce = 0.0f;

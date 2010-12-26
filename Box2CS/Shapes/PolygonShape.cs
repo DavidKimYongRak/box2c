@@ -31,7 +31,7 @@ namespace Box2CS
 			_internalPolyShape = new cb2polygonshapeportable();
 			InternalShape.m_radius = Box2DSettings.b2_polygonRadius;
 			_internalPolyShape.m_shape = base.InternalShape;
-			InternalShape.m_type = EShapeType.e_polygon;
+			InternalShape.m_type = ShapeType.Polygon;
 		}
 
 		bool _autoReverse;
@@ -115,8 +115,8 @@ namespace Box2CS
 			};
 
 			Transform xf = new Transform();
-			xf.position = center;
-			xf.R.Set(angle);
+			xf.Position = center;
+			xf.R = new Mat22(angle);
 
 			// Transform vertices and normals.
 			for (int i = 0; i < tempVertices.Length; ++i)
@@ -389,9 +389,9 @@ _internalPolyShape.m_vertices[0];
 				// Area weighted centroid
 				center += triangleArea * k_inv3 * (p1 + p2 + p3);
 
-				float px = p1.x, py = p1.y;
-				float ex1 = e1.x, ey1 = e1.y;
-				float ex2 = e2.x, ey2 = e2.y;
+				float px = p1.X, py = p1.Y;
+				float ex1 = e1.X, ey1 = e1.Y;
+				float ex2 = e2.X, ey2 = e2.Y;
 
 				float intx2 = k_inv3 * (0.25f * (ex1*ex1 + ex2*ex1 + ex2*ex2) + (px*ex1 + px*ex2)) + 0.5f*px*px;
 				float inty2 = k_inv3 * (0.25f * (ey1*ey1 + ey2*ey1 + ey2*ey2) + (py*ey1 + py*ey2)) + 0.5f*py*py;

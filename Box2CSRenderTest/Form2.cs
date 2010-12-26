@@ -29,7 +29,7 @@ namespace Box2DSharpRenderTest
 				Gl.glBegin(Gl.GL_LINE_LOOP);
 				for (int i = 0; i < vertexCount; ++i)
 				{
-					Gl.glVertex2f(vertices[i].x, vertices[i].y);
+					Gl.glVertex2f(vertices[i].X, vertices[i].Y);
 				}
 				Gl.glEnd();
 			}
@@ -40,7 +40,7 @@ namespace Box2DSharpRenderTest
 				Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 				for (int i = 0; i < vertexCount; ++i)
 				{
-					Gl.glVertex2f(vertices[i].x, vertices[i].y);
+					Gl.glVertex2f(vertices[i].X, vertices[i].Y);
 				}
 				Gl.glEnd();
 
@@ -48,7 +48,7 @@ namespace Box2DSharpRenderTest
 				Gl.glBegin(Gl.GL_LINE_LOOP);
 				for (int i = 0; i < vertexCount; ++i)
 				{
-					Gl.glVertex2f(vertices[i].x, vertices[i].y);
+					Gl.glVertex2f(vertices[i].X, vertices[i].Y);
 				}
 				Gl.glEnd();
 			}
@@ -63,7 +63,7 @@ namespace Box2DSharpRenderTest
 				for (int i = 0; i < k_segments; ++i)
 				{
 					Vec2 v = center + radius * new Vec2((float)System.Math.Cos(theta), (float)System.Math.Sin(theta));
-					Gl.glVertex2f(v.x, v.y);
+					Gl.glVertex2f(v.X, v.Y);
 					theta += k_increment;
 				}
 				Gl.glEnd();
@@ -79,7 +79,7 @@ namespace Box2DSharpRenderTest
 				for (int i = 0; i < k_segments; ++i)
 				{
 					Vec2 v = center + radius * new Vec2((float)System.Math.Cos(theta), (float)System.Math.Sin(theta));
-					Gl.glVertex2f(v.x, v.y);
+					Gl.glVertex2f(v.X, v.Y);
 					theta += k_increment;
 				}
 				Gl.glEnd();
@@ -90,15 +90,15 @@ namespace Box2DSharpRenderTest
 				for (int i = 0; i < k_segments; ++i)
 				{
 					Vec2 v = center + radius * new Vec2((float)System.Math.Cos(theta), (float)System.Math.Sin(theta));
-					Gl.glVertex2f(v.x, v.y);
+					Gl.glVertex2f(v.X, v.Y);
 					theta += k_increment;
 				}
 				Gl.glEnd();
 
 				Vec2 p = center + radius * axis;
 				Gl.glBegin(Gl.GL_LINES);
-				Gl.glVertex2f(center.x, center.y);
-				Gl.glVertex2f(p.x, p.y);
+				Gl.glVertex2f(center.X, center.Y);
+				Gl.glVertex2f(p.X, p.Y);
 				Gl.glEnd();
 			}
 
@@ -106,26 +106,26 @@ namespace Box2DSharpRenderTest
 			{
 				Gl.glColor3f(color.R, color.G, color.B);
 				Gl.glBegin(Gl.GL_LINES);
-				Gl.glVertex2f(p1.x, p1.y);
-				Gl.glVertex2f(p2.x, p2.y);
+				Gl.glVertex2f(p1.X, p1.Y);
+				Gl.glVertex2f(p2.X, p2.Y);
 				Gl.glEnd();
 			}
 
 			public override void DrawTransform(Transform xf)
 			{
-				Vec2 p1 = xf.position, p2;
+				Vec2 p1 = xf.Position, p2;
 				const float k_axisScale = 0.4f;
 				Gl.glBegin(Gl.GL_LINES);
 
 				Gl.glColor3f(1.0f, 0.0f, 0.0f);
-				Gl.glVertex2f(p1.x, p1.y);
-				p2 = p1 + k_axisScale * xf.R.col1;
-				Gl.glVertex2f(p2.x, p2.y);
+				Gl.glVertex2f(p1.X, p1.Y);
+				p2 = p1 + k_axisScale * xf.R.Col1;
+				Gl.glVertex2f(p2.X, p2.Y);
 
 				Gl.glColor3f(0.0f, 1.0f, 0.0f);
-				Gl.glVertex2f(p1.x, p1.y);
-				p2 = p1 + k_axisScale * xf.R.col2;
-				Gl.glVertex2f(p2.x, p2.y);
+				Gl.glVertex2f(p1.X, p1.Y);
+				p2 = p1 + k_axisScale * xf.R.Col2;
+				Gl.glVertex2f(p2.X, p2.Y);
 
 				Gl.glEnd();
 			}
@@ -135,7 +135,7 @@ namespace Box2DSharpRenderTest
 				Gl.glPointSize(size);
 				Gl.glBegin(Gl.GL_POINTS);
 				Gl.glColor3f(color.R, color.G, color.B);
-				Gl.glVertex2f(p.x, p.y);
+				Gl.glVertex2f(p.X, p.Y);
 				Gl.glEnd();
 				Gl.glPointSize(1.0f);
 			}
@@ -144,10 +144,10 @@ namespace Box2DSharpRenderTest
 			{
 				Gl.glColor3f(c.R, c.G, c.B);
 				Gl.glBegin(Gl.GL_LINE_LOOP);
-				Gl.glVertex2f(aabb.LowerBound.x, aabb.LowerBound.y);
-				Gl.glVertex2f(aabb.UpperBound.x, aabb.LowerBound.y);
-				Gl.glVertex2f(aabb.UpperBound.x, aabb.UpperBound.y);
-				Gl.glVertex2f(aabb.LowerBound.x, aabb.UpperBound.y);
+				Gl.glVertex2f(aabb.LowerBound.X, aabb.LowerBound.Y);
+				Gl.glVertex2f(aabb.UpperBound.X, aabb.LowerBound.Y);
+				Gl.glVertex2f(aabb.UpperBound.X, aabb.UpperBound.Y);
+				Gl.glVertex2f(aabb.LowerBound.X, aabb.UpperBound.Y);
 				Gl.glEnd();
 			}
 		}
@@ -159,7 +159,7 @@ namespace Box2DSharpRenderTest
 			// Define the dynamic body. We set its position and call the body factory.
 			BodyDef bodyDef = new BodyDef();
 			{
-				bodyDef.BodyType = EBodyType.b2_dynamicBody;
+				bodyDef.BodyType = BodyType.Dynamic;
 				bodyDef.Position = pos;
 				var body = world.CreateBody(bodyDef);
 
@@ -198,7 +198,7 @@ namespace Box2DSharpRenderTest
 			// Define the dynamic body. We set its position and call the body factory.
 			BodyDef bodyDef = new BodyDef();
 			{
-				bodyDef.BodyType = EBodyType.b2_dynamicBody;
+				bodyDef.BodyType = BodyType.Dynamic;
 				bodyDef.Position = pos;
 				var body = world.CreateBody(bodyDef);
 
@@ -289,7 +289,7 @@ namespace Box2DSharpRenderTest
 
 				BodyDef bd = new BodyDef();
 				{
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = position;
 					bd.UserData = 1;
 
@@ -353,20 +353,20 @@ namespace Box2DSharpRenderTest
 
 							const float y = 0;
 							Body prevBody = ground;
-							float _x = position.x;
+							float _x = position.X;
 							for (int i = 0; i < count; ++i)
 							{
 								BodyDef bd = new BodyDef();
 								{
-									bd.BodyType = EBodyType.b2_dynamicBody;
-									bd.Position = new Vec2(_x + w, position.y + y);
+									bd.BodyType = BodyType.Dynamic;
+									bd.Position = new Vec2(_x + w, position.Y + y);
 									bd.UserData = 2;
 									Body body = world.CreateBody(bd);
 									body.CreateFixture(fd);
 
 									_bodies.Add(body);
 
-									Vec2 anchor = new Vec2(_x, position.y + y);
+									Vec2 anchor = new Vec2(_x, position.Y + y);
 									jd.Initialize(prevBody, body, anchor);
 
 									world.CreateJoint(jd);
@@ -376,12 +376,12 @@ namespace Box2DSharpRenderTest
 								}
 							}
 
-							_wrecker = MakeCircle(new Vec2(_x + 1, position.y), 1);
-							_wrecker.MassData = new MassData(50, _wrecker.MassData.Value.Center, _wrecker.MassData.Value.I);
+							_wrecker = MakeCircle(new Vec2(_x + 1, position.Y), 1);
+							_wrecker.Mass = 50;
 
 							WeldJointDef wd = new WeldJointDef();
 							{
-								wd.Initialize(prevBody, _wrecker, new Vec2(_x, position.y));
+								wd.Initialize(prevBody, _wrecker, new Vec2(_x, position.Y));
 
 								world.CreateJoint(wd);
 							}
@@ -419,25 +419,25 @@ namespace Box2DSharpRenderTest
 
 			public Bullet(Biped biped)
 			{
-				var gunHand = biped.Bodies[(int)EBipedFixtureIndex.LHand];
+				var gunHand = biped.Bodies[(int)BipedFixtureIndex.LHand];
 
 				//var pos = gunHand.WorldCenter + new Vec2((float)(cos * 0.5f), (float)(-sin * 0.5f)) + new Vec2((float)(sin * 2), (float)(-cos * 2));
 				Vec2 test = gunHand.WorldCenter;
 				Vec2 Vel = new Vec2((float)Math.Sin(gunHand.Angle), (float)-Math.Cos(gunHand.Angle));
 				Vec2 ShootPoint = new Vec2(2.0f, -0.17f);
 
-				test.x += (0.5f + ShootPoint.y) * (float)Math.Sin(gunHand.Angle + (90.0f).ToRad());
-				test.y += (0.5f + ShootPoint.y) * (float)-Math.Cos(gunHand.Angle + (90.0f).ToRad());
+				test.X += (0.5f + ShootPoint.Y) * (float)Math.Sin(gunHand.Angle + (90.0f).ToRad());
+				test.Y += (0.5f + ShootPoint.Y) * (float)-Math.Cos(gunHand.Angle + (90.0f).ToRad());
 
-				test.x += (ShootPoint.x) * (float)Math.Sin(gunHand.Angle);
-				test.y += (ShootPoint.x) * (float)-Math.Cos(gunHand.Angle);
+				test.X += (ShootPoint.X) * (float)Math.Sin(gunHand.Angle);
+				test.Y += (ShootPoint.X) * (float)-Math.Cos(gunHand.Angle);
 
-				var bulletBodyDef = new BodyDef(EBodyType.b2_dynamicBody, test);
+				var bulletBodyDef = new BodyDef(BodyType.Dynamic, test);
 				var bulletBodyShape = new PolygonShape(0.5f, 0.15f, gunHand.Angle + ((float)Math.PI / 2));
 				_body = world.CreateBody(bulletBodyDef);
 				_body.CreateFixture(new FixtureDef(bulletBodyShape, 0.01f, 0.0f, 0.2f, gunHand.FixtureList.FilterData));
 				_body.IsBullet = true;
-				_body.LinearVelocity = new Vec2((float)(Vel.x * 45), (float)(Vel.y * 45));
+				_body.LinearVelocity = new Vec2((float)(Vel.X * 45), (float)(Vel.Y * 45));
 				_body.UserData = (biped == player1.Biped) ? 4 : 5;
 			}
 		}
@@ -478,7 +478,7 @@ namespace Box2DSharpRenderTest
 
 					switch (biped.FixtureIndex)
 					{
-					case EBipedFixtureIndex.LFoot:
+					case BipedFixtureIndex.LFoot:
 						if (biped.Biped.OwnedPlayer.StickingLegs &&
 							biped.Biped.OwnedPlayer.Welds[0] == null &&
 							biped.Biped.OwnedPlayer.WeldDefs[0] == null)
@@ -496,7 +496,7 @@ namespace Box2DSharpRenderTest
 							biped.Biped.OwnedPlayer.WeldDefs[0] = jd;
 						}
 						break;
-					case EBipedFixtureIndex.RFoot:
+					case BipedFixtureIndex.RFoot:
 						if (biped.Biped.OwnedPlayer.StickingLegs && 
 							biped.Biped.OwnedPlayer.Welds[1] == null &&
 							biped.Biped.OwnedPlayer.WeldDefs[1] == null)
@@ -514,7 +514,7 @@ namespace Box2DSharpRenderTest
 							biped.Biped.OwnedPlayer.WeldDefs[1] = jd;
 						}
 						break;
-					/*case EBipedFixtureIndex.LHand:
+					/*case BipedFixtureIndex.LHand:
 						if (biped.Biped.OwnedPlayer.StickingHands &&
 							biped.Biped.OwnedPlayer.Welds[2] == null &&
 							biped.Biped.OwnedPlayer.WeldDefs[2] == null)
@@ -532,7 +532,7 @@ namespace Box2DSharpRenderTest
 							biped.Biped.OwnedPlayer.WeldDefs[2] = jd;
 						}
 						break;*/
-					case EBipedFixtureIndex.RHand:
+					case BipedFixtureIndex.RHand:
 						if (biped.Biped.OwnedPlayer.StickingHands && 
 							biped.Biped.OwnedPlayer.Welds[3] == null &&
 							biped.Biped.OwnedPlayer.WeldDefs[3] == null)
@@ -699,7 +699,7 @@ namespace Box2DSharpRenderTest
 			}
 
 			_debugDraw = new GDIDebugThing();
-			_debugDraw.Flags = EDebugFlags.e_shapeBit;
+			_debugDraw.Flags = DebugFlags.Shapes;
 			world.DebugDraw = _debugDraw;
 
 			_filterer = new Filterer();
@@ -728,33 +728,33 @@ namespace Box2DSharpRenderTest
 			player1 = new Player(world, new Vec2(-24, 0), 9, 9);
 
 			var gun = new MeshShape("gun.bmesh", 3, true);
-			var gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player1.Biped.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(1.5f, 1.7f), 4.71238898f));
+			var gunBody = world.CreateBody(new BodyDef(BodyType.Dynamic, player1.Biped.Bodies[(int)BipedFixtureIndex.LHand].WorldCenter + new Vec2(1.5f, 1.7f), 4.71238898f));
 			gun.AddToBody(gunBody, 2);
 			foreach (var f in gunBody.Fixtures)
-				f.FilterData = player1.Biped.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
+				f.FilterData = player1.Biped.Bodies[(int)BipedFixtureIndex.LHand].FixtureList.FilterData;
 
 			var weld = new WeldJointDef();
 			{
-				weld.Initialize(gunBody, player1.Biped.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
+				weld.Initialize(gunBody, player1.Biped.Bodies[(int)BipedFixtureIndex.LHand], new Vec2(0, 0));
 				world.CreateJoint(weld);
 
 				player2 = new Player(world, new Vec2(24, 0), -9, 9);
 
 				gun = new MeshShape("gun.bmesh", 3, false);
-				gunBody = world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, player2.Biped.Bodies[(int)EBipedFixtureIndex.LHand].WorldCenter + new Vec2(-1.5f, 1.7f), 4.71238898f));
+				gunBody = world.CreateBody(new BodyDef(BodyType.Dynamic, player2.Biped.Bodies[(int)BipedFixtureIndex.LHand].WorldCenter + new Vec2(-1.5f, 1.7f), 4.71238898f));
 				gun.AddToBody(gunBody, 2);
 				foreach (var f in gunBody.Fixtures)
-					f.FilterData = player2.Biped.Bodies[(int)EBipedFixtureIndex.LHand].FixtureList.FilterData;
+					f.FilterData = player2.Biped.Bodies[(int)BipedFixtureIndex.LHand].FixtureList.FilterData;
 			}
 			weld = new WeldJointDef();
 			{
-				weld.Initialize(gunBody, player2.Biped.Bodies[(int)EBipedFixtureIndex.LHand], new Vec2(0, 0));
+				weld.Initialize(gunBody, player2.Biped.Bodies[(int)BipedFixtureIndex.LHand], new Vec2(0, 0));
 				world.CreateJoint(weld);
 			}
 		}
 
 		[Flags]
-		public enum EGameKeys
+		public enum GameKeys
 		{
 			Up = 1,
 			Right = 2,
@@ -763,7 +763,7 @@ namespace Box2DSharpRenderTest
 			Legs = 16,
 			Hands = 32,
 		}
-		EGameKeys _gameKeys = 0;
+		GameKeys _gameKeys = 0;
 
 		Point _downPos;
 		void sogc_MouseUp(object sender, MouseEventArgs e)
@@ -800,7 +800,7 @@ namespace Box2DSharpRenderTest
 				delegate(Fixture fixture)
 				{
 					Body body = fixture.Body;
-					if (body.BodyType == EBodyType.b2_dynamicBody)
+					if (body.BodyType == BodyType.Dynamic)
 					{
 						bool inside = fixture.TestPoint(p);
 						if (inside)
@@ -863,22 +863,22 @@ namespace Box2DSharpRenderTest
 				_drawDebug = !_drawDebug;
 				break;
 			case Keys.W:
-				_gameKeys |= EGameKeys.Up;
+				_gameKeys |= GameKeys.Up;
 				break;
 			case Keys.S:
-				_gameKeys |= EGameKeys.Down;
+				_gameKeys |= GameKeys.Down;
 				break;
 			case Keys.A:
-				_gameKeys |= EGameKeys.Left;
+				_gameKeys |= GameKeys.Left;
 				break;
 			case Keys.D:
-				_gameKeys |= EGameKeys.Right;
+				_gameKeys |= GameKeys.Right;
 				break;
 			case Keys.L:
-				_gameKeys |= EGameKeys.Hands;
+				_gameKeys |= GameKeys.Hands;
 				break;
 			case Keys.K:
-				_gameKeys |= EGameKeys.Legs;
+				_gameKeys |= GameKeys.Legs;
 				break;
 			case Keys.H:
 				new Bullet(player1.Biped);
@@ -905,22 +905,22 @@ namespace Box2DSharpRenderTest
 			switch (e.KeyCode)
 			{
 			case Keys.W:
-				_gameKeys &= ~EGameKeys.Up;
+				_gameKeys &= ~GameKeys.Up;
 				break;
 			case Keys.S:
-				_gameKeys &= ~EGameKeys.Down;
+				_gameKeys &= ~GameKeys.Down;
 				break;
 			case Keys.A:
-				_gameKeys &= ~EGameKeys.Left;
+				_gameKeys &= ~GameKeys.Left;
 				break;
 			case Keys.D:
-				_gameKeys &= ~EGameKeys.Right;
+				_gameKeys &= ~GameKeys.Right;
 				break;
 			case Keys.L:
-				_gameKeys &= ~EGameKeys.Hands;
+				_gameKeys &= ~GameKeys.Hands;
 				break;
 			case Keys.K:
-				_gameKeys &= ~EGameKeys.Legs;
+				_gameKeys &= ~GameKeys.Legs;
 				break;
 			case Keys.M:
 				player1.StickingLegs = false;
@@ -988,38 +988,38 @@ namespace Box2DSharpRenderTest
 
 			const int MoveSpeed = 450 * 9;
 
-			EBipedFixtureIndex[] fixturesToMove;
+			BipedFixtureIndex[] fixturesToMove;
 			float speedMultiplier = 1;
 
-			if ((_gameKeys & EGameKeys.Legs) != 0)
+			if ((_gameKeys & GameKeys.Legs) != 0)
 			{
-				fixturesToMove = new EBipedFixtureIndex[] { EBipedFixtureIndex.LFoot, EBipedFixtureIndex.RFoot };
+				fixturesToMove = new BipedFixtureIndex[] { BipedFixtureIndex.LFoot, BipedFixtureIndex.RFoot };
 				speedMultiplier = 0.25f;
 			}
-			else if ((_gameKeys & EGameKeys.Hands) != 0)
+			else if ((_gameKeys & GameKeys.Hands) != 0)
 			{
-				fixturesToMove = new EBipedFixtureIndex[] { EBipedFixtureIndex.LHand, EBipedFixtureIndex.RHand };
+				fixturesToMove = new BipedFixtureIndex[] { BipedFixtureIndex.LHand, BipedFixtureIndex.RHand };
 				speedMultiplier = 0.25f;
 			}
 			else
-				fixturesToMove = new EBipedFixtureIndex[] { EBipedFixtureIndex.Chest };
+				fixturesToMove = new BipedFixtureIndex[] { BipedFixtureIndex.Chest };
 
-			if ((_gameKeys & EGameKeys.Up) != 0)
+			if ((_gameKeys & GameKeys.Up) != 0)
 			{
 				foreach (var x in fixturesToMove)
 					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2(0, MoveSpeed * speedMultiplier), player1.Biped.Bodies[(int)x].WorldCenter);
 			}
-			if ((_gameKeys & EGameKeys.Down) != 0)
+			if ((_gameKeys & GameKeys.Down) != 0)
 			{
 				foreach (var x in fixturesToMove)
 					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2(0, (-MoveSpeed / 2) * speedMultiplier), player1.Biped.Bodies[(int)x].WorldCenter);
 			}
-			if ((_gameKeys & EGameKeys.Left) != 0)
+			if ((_gameKeys & GameKeys.Left) != 0)
 			{
 				foreach (var x in fixturesToMove)
 					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2((-MoveSpeed / 2) * speedMultiplier, 0), player1.Biped.Bodies[(int)x].WorldCenter);
 			}
-			if ((_gameKeys & EGameKeys.Right) != 0)
+			if ((_gameKeys & GameKeys.Right) != 0)
 			{
 				foreach (var x in fixturesToMove)
 					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2((MoveSpeed / 2) * speedMultiplier, 0), player1.Biped.Bodies[(int)x].WorldCenter);
@@ -1135,7 +1135,7 @@ namespace Box2DSharpRenderTest
 			foreach (var c in _crates)
 			{
 				Gl.glPushMatrix();
-				Gl.glTranslatef(c.Body.Position.x, c.Body.Position.y, 0);
+				Gl.glTranslatef(c.Body.Position.X, c.Body.Position.Y, 0);
 				Gl.glRotatef((float)(c.Body.Angle * 180 / Math.PI), 0, 0, 1);
 				Gl.glBegin(Gl.GL_QUADS);
 				Gl.glTexCoord2f(0, 0);
@@ -1163,7 +1163,7 @@ namespace Box2DSharpRenderTest
 					_top = !_top;
 
 					Gl.glPushMatrix();
-					Gl.glTranslatef(b.Position.x, b.Position.y, 0);
+					Gl.glTranslatef(b.Position.X, b.Position.Y, 0);
 					Gl.glRotatef((float)(b.Angle * 180 / Math.PI), 0, 0, 1);
 					Gl.glBegin(Gl.GL_QUADS);
 					Gl.glTexCoord2f(0, 0);
@@ -1180,7 +1180,7 @@ namespace Box2DSharpRenderTest
 
 				Gl.glBindTexture(Gl.GL_TEXTURE_2D, _glidChainball);
 				Gl.glPushMatrix();
-				Gl.glTranslatef(c.Wrecker.Position.x, c.Wrecker.Position.y, 0);
+				Gl.glTranslatef(c.Wrecker.Position.X, c.Wrecker.Position.Y, 0);
 				Gl.glRotatef((float)(c.Wrecker.Angle * 180 / Math.PI), 0, 0, 1);
 				Gl.glBegin(Gl.GL_QUADS);
 				Gl.glTexCoord2f(0, 0);

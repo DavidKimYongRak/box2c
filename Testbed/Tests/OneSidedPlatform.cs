@@ -40,7 +40,7 @@ namespace Testbed.Tests
 			// Actor
 			{
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(0.0f, 12.0f);
 				Body body = m_world.CreateBody(bd);
 
@@ -68,7 +68,7 @@ namespace Testbed.Tests
 
 			Vec2 position = m_character.Body.Position;
 
-			if (position.y < m_top + m_radius - 3.0f * Box2DSettings.b2_linearSlop)
+			if (position.Y < m_top + m_radius - 3.0f * Box2DSettings.b2_linearSlop)
 				contact.Enabled = false;
 		}
 

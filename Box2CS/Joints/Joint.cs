@@ -3,24 +3,24 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-	public enum EJointType
+	public enum JointType
 	{
-		e_unknownJoint,
-		e_revoluteJoint,
-		e_prismaticJoint,
-		e_distanceJoint,
-		e_pulleyJoint,
-		e_mouseJoint,
-		e_gearJoint,
-		e_lineJoint,
-		e_weldJoint,
-		e_frictionJoint,
+		Unknown,
+		Revolute,
+		Prismatic,
+		Distance,
+		Pulley,
+		Mouse,
+		Gear,
+		Line,
+		Weld,
+		Friction,
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
 	public abstract class JointDef : IFixedSize
 	{
-		EJointType _type;
+		JointType _type;
 		IntPtr _userData;
 		IntPtr _bodyA;
 		IntPtr _bodyB;
@@ -40,14 +40,14 @@ namespace Box2CS
 			if (GetType().StructLayoutAttribute.Value != LayoutKind.Sequential)
 				throw new TypeLoadException("Derived joint type \""+ GetType().Name+"\" does not have StructLayout set to sequential.\n\nDerived joint defs MUST use StructLayout(LayoutKind.Sequential).");
 
-			_type = EJointType.e_unknownJoint;
+			_type = JointType.Unknown;
 			_userData = IntPtr.Zero;
 			_bodyA = IntPtr.Zero;
 			_bodyB = IntPtr.Zero;
 			_collideConnected = false;
 		}
 
-		public EJointType JointType
+		public JointType JointType
 		{
 			get { return _type; }
 			protected set { _type = value; }
@@ -152,25 +152,25 @@ namespace Box2CS
 			if (ptr == IntPtr.Zero)
 				throw new ArgumentNullException("Invalid joint ptr (locked world?)");
 
-			switch ((EJointType)NativeMethods.b2joint_gettype(ptr))
+			switch ((JointType)NativeMethods.b2joint_gettype(ptr))
 			{
-			case EJointType.e_distanceJoint:
+			case JointType.Distance:
 				return new DistanceJoint(ptr);
-			case EJointType.e_frictionJoint:
+			case JointType.Friction:
 				return new FrictionJoint(ptr);
-			case EJointType.e_gearJoint:
+			case JointType.Gear:
 				return new GearJoint(ptr);
-			case EJointType.e_lineJoint:
+			case JointType.Line:
 				return new LineJoint(ptr);
-			case EJointType.e_mouseJoint:
+			case JointType.Mouse:
 				return new MouseJoint(ptr);
-			case EJointType.e_prismaticJoint:
+			case JointType.Prismatic:
 				return new PrismaticJoint(ptr);
-			case EJointType.e_pulleyJoint:
+			case JointType.Pulley:
 				return new PulleyJoint(ptr);
-			case EJointType.e_revoluteJoint:
+			case JointType.Revolute:
 				return new RevoluteJoint(ptr);
-			case EJointType.e_weldJoint:
+			case JointType.Weld:
 				return new WeldJoint(ptr);
 			}
 
@@ -189,9 +189,9 @@ namespace Box2CS
 			return NativeMethods.b2joint_getreactiontorque(_jointPtr, invDt);
 		}
 
-		public EJointType JointType
+		public JointType JointType
 		{
-			get { return (EJointType)NativeMethods.b2joint_gettype(_jointPtr); }
+			get { return (JointType)NativeMethods.b2joint_gettype(_jointPtr); }
 		}
 
 		public Body BodyA

@@ -15,7 +15,7 @@ namespace Testbed.Tests
 			Vec2 p6 = new Vec2(2.5f * s, 3.7f);
 
 			FixtureDef fd1 = new FixtureDef(), fd2 = new FixtureDef();
-			fd1.Filter = fd2.Filter = new FilterData(FilterData.Default.CategoryBits, FilterData.Default.MaskBits, -1);
+			fd1.Filter.GroupIndex = fd2.Filter.GroupIndex = -1;
 			fd1.Density = 1.0f;
 			fd2.Density = 1.0f;
 
@@ -54,8 +54,8 @@ namespace Testbed.Tests
 			fd2.Shape = poly2;
 
 			BodyDef bd1 = new BodyDef(), bd2 = new BodyDef();
-			bd1.BodyType = EBodyType.b2_dynamicBody;
-			bd2.BodyType = EBodyType.b2_dynamicBody;
+			bd1.BodyType = BodyType.Dynamic;
+			bd2.BodyType = BodyType.Dynamic;
 			bd1.Position = m_offset;
 			bd2.Position = p4 + m_offset;
 
@@ -142,7 +142,7 @@ namespace Testbed.Tests
 				shape.Radius = 0.25f;
 
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(-40.0f + 2.0f * i, 3f);
 
 				Body body = m_world.CreateBody(bd);
@@ -157,9 +157,9 @@ namespace Testbed.Tests
 				FixtureDef sd = new FixtureDef();
 				sd.Density = 1.0f;
 				sd.Shape = shape;
-				sd.Filter = new FilterData(FilterData.Default.CategoryBits, FilterData.Default.MaskBits, -1);
+				sd.Filter.GroupIndex = -1;
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = pivot + m_offset;
 				m_chassis = m_world.CreateBody(bd);
 				m_chassis.CreateFixture(sd);
@@ -172,9 +172,9 @@ namespace Testbed.Tests
 				FixtureDef sd = new FixtureDef();
 				sd.Density = 1.0f;
 				sd.Shape = shape;
-				sd.Filter = new FilterData(FilterData.Default.CategoryBits, FilterData.Default.MaskBits, -1);
+				sd.Filter.GroupIndex = -1;
 				BodyDef bd = new BodyDef();
-				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.BodyType = BodyType.Dynamic;
 				bd.Position = pivot + m_offset;
 				m_wheel = m_world.CreateBody(bd);
 				m_wheel.CreateFixture(sd);

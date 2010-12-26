@@ -34,7 +34,7 @@ namespace Testbed.Tests
 				for (int i = 0; i < 30; ++i)
 				{
 					BodyDef bd = new BodyDef();
-					bd.BodyType = EBodyType.b2_dynamicBody;
+					bd.BodyType = BodyType.Dynamic;
 					bd.Position = new Vec2(0.5f + i, y);
 					Body body = m_world.CreateBody(bd);
 					body.CreateFixture(fd);

@@ -12,7 +12,7 @@ namespace Box2CS
 
 		public WeldJointDef()
 		{
-			JointType = EJointType.e_weldJoint;
+			JointType = JointType.Weld;
 			_localAnchorA = Vec2.Empty;
 			_localAnchorB = Vec2.Empty;
 			_referenceAngle = 0.0f;
