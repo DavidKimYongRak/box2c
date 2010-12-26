@@ -329,33 +329,38 @@ namespace Box2CS
 			public static extern int b2body_gettype(IntPtr body);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2body_setbullet(IntPtr body, bool vec);
+			public static extern void b2body_setbullet(IntPtr body, [MarshalAs(UnmanagedType.U1)] bool vec);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2body_getbullet(IntPtr body);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2body_setissleepingallowed(IntPtr body, bool vec);
+			public static extern void b2body_setissleepingallowed(IntPtr body, [MarshalAs(UnmanagedType.U1)] bool vec);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2body_getissleepingallowed(IntPtr body);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2body_setawake(IntPtr body, bool vec);
+			public static extern void b2body_setawake(IntPtr body, [MarshalAs(UnmanagedType.U1)] bool vec);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2body_getawake(IntPtr body);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2body_setactive(IntPtr body, bool vec);
+			public static extern void b2body_setactive(IntPtr body, [MarshalAs(UnmanagedType.U1)] bool vec);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2body_getactive(IntPtr body);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2body_setfixedrotation(IntPtr body, bool vec);
+			public static extern void b2body_setfixedrotation(IntPtr body, [MarshalAs(UnmanagedType.U1)] bool vec);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2body_getfixedrotation(IntPtr body);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]

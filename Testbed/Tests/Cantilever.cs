@@ -13,18 +13,6 @@ namespace Testbed.Tests
 			get { return "Cantilever"; }
 		}
 
-		public override void BeginContact(Contact contact)
-		{
-		}
-
-		public override void EndContact(Contact contact)
-		{
-		}
-
-		public override void PostSolve(Contact contact, ContactImpulse impulse)
-		{
-		}
-
 		public const int e_count = 8;
 
 		public Cantilever()

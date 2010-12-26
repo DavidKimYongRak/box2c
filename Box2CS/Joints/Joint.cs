@@ -24,6 +24,7 @@ namespace Box2CS
 		IntPtr _userData;
 		IntPtr _bodyA;
 		IntPtr _bodyB;
+		[MarshalAs(UnmanagedType.U1)]
 		bool _collideConnected;
 
 		int IFixedSize.FixedSize()
@@ -130,6 +131,7 @@ namespace Box2CS
 			public static extern void b2joint_setuserdata(IntPtr joint, IntPtr data);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2joint_getisactive(IntPtr joint);
 		}
 

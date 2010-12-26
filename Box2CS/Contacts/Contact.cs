@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security;
+using System.Security.Permissions;
 using System.Runtime.InteropServices;
 
 namespace Box2CS
@@ -134,12 +136,14 @@ namespace Box2CS
 			public static extern IntPtr b2contact_getworldmanifold(IntPtr contact, out WorldManifold worldManifold);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2contact_istouching(IntPtr contact);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2contact_setenabled(IntPtr contact, bool flag);
+			public static extern void b2contact_setenabled(IntPtr contact, [MarshalAs(UnmanagedType.U1)] bool flag);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2contact_getenabled(IntPtr contact);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
@@ -170,12 +174,15 @@ namespace Box2CS
 			return new Contact(ptr);
 		}
 
+		[EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted=true)]
+		internal Manifold ManifoldFromThing()
+		{
+			return (Manifold)Marshal.PtrToStructure(NativeMethods.b2contact_getmanifold(_contactPtr), typeof(Manifold));
+		}
+
 		public Manifold Manifold
 		{
-			get
-			{
-				return (Manifold)Marshal.PtrToStructure(NativeMethods.b2contact_getmanifold(_contactPtr), typeof(Manifold));
-			}
+			get { return ManifoldFromThing(); }
 		}
 
 		public WorldManifold WorldManifold

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Security.Permissions;
 
 namespace Box2CS
 {
@@ -20,6 +22,7 @@ namespace Box2CS
 			get { return _ptr; }
 		}
 
+		[EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted=true)]
 		public StructToPtrMarshaller(IFixedSize val)
 		{
 			_storedVal = val;
@@ -28,11 +31,13 @@ namespace Box2CS
 			Marshal.StructureToPtr(val, _ptr, false);	
 		}
 
+		[EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted=true)]
 		public object GetValue(Type type)
 		{
 			return Marshal.PtrToStructure(_ptr, type);
 		}
 
+		[EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted=true)]
 		public void Free()
 		{
 			disposed = true;

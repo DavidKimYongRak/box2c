@@ -1303,13 +1303,23 @@ QUICK_GETTER(
 	float,
 	GetJointSpeed());
 
-QUICK_GET_SETTER_FUNC(
+/*QUICK_GET_SETTER_FUNC(
 	b2prismaticjoint_getenablelimit,
 	b2prismaticjoint_setenablelimit,
 	cb2prismaticjoint,
 	bool,
 	IsLimitEnabled,
-	EnableLimit);
+	EnableLimit);*/
+
+bool b2prismaticjoint_getenablelimit (cb2prismaticjoint *j)
+{
+	return j->IsLimitEnabled();
+}
+
+void b2prismaticjoint_setenablelimit (cb2prismaticjoint *j, bool v)
+{
+	j->EnableLimit(v);
+}
 
 QUICK_GETTER(
 	b2prismaticjoint_getlowerlimit,

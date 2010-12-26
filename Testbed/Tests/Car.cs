@@ -12,18 +12,6 @@ namespace Testbed.Tests
 			get { return "Car"; }
 		}
 
-		public override void BeginContact(Contact contact)
-		{
-		}
-
-		public override void EndContact(Contact contact)
-		{
-		}
-
-		public override void PostSolve(Contact contact, ContactImpulse impulse)
-		{
-		}
-
 		List<Vec2> _points = new List<Vec2>();
 
 		public Car()

@@ -9,7 +9,7 @@ namespace Box2CS
 	/// Mesh shapes are a saved collection of shapes
 	/// for use as fixtures.
 	/// </summary>
-	public class MeshShape : IDisposable
+	public class MeshShape
 	{
 		List<Shape> _shapes = new List<Shape>();
 		float _scale = 1;
@@ -176,21 +176,5 @@ namespace Box2CS
 
 			return fixtures;
 		}
-
-		#region IDisposable
-		bool _disposed = false;
-		public void Dispose()
-		{
-			if (_disposed)
-				return;
-
-			_disposed = true;
-		}
-
-		~MeshShape()
-		{
-			Dispose();
-		}
-		#endregion
 	}
 }

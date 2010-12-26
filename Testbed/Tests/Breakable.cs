@@ -164,14 +164,6 @@ namespace Testbed.Tests
 			base.Step();
 		}
 
-		public override void BeginContact(Contact contact)
-		{
-		}
-
-		public override void EndContact(Contact contact)
-		{
-		}
-
 		enum EBreakableState
 		{
 			Welded,

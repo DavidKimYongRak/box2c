@@ -9,9 +9,11 @@ namespace Box2CS
 		Vec2 _localAnchorA;
 		Vec2 _localAnchorB;
 		float _referenceAngle;
+		[MarshalAs(UnmanagedType.U1)]
 		bool _enableLimit;
 		float _lowerAngle;
 		float _upperAngle;
+		[MarshalAs(UnmanagedType.U1)]
 		bool _enableMotor;
 		float _motorSpeed;
 		float _maxMotorTorque;
@@ -105,10 +107,11 @@ namespace Box2CS
 			public static extern float b2revolutejoint_getjointspeed(IntPtr joint);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2revolutejoint_getenablelimit(IntPtr joint);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejoint_setenablelimit(IntPtr joint, bool val);
+			public static extern void b2revolutejoint_setenablelimit(IntPtr joint, [MarshalAs(UnmanagedType.U1)] bool val);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern float b2revolutejoint_getlowerlimit(IntPtr joint);
@@ -120,10 +123,11 @@ namespace Box2CS
 			public static extern void b2revolutejoint_setlimits(IntPtr joint, float lower, float upper);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2revolutejoint_getenablemotor(IntPtr joint);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2revolutejoint_setenablemotor(IntPtr joint, bool val);
+			public static extern void b2revolutejoint_setenablemotor(IntPtr joint, [MarshalAs(UnmanagedType.U1)] bool val);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern float b2revolutejoint_getmotorspeed(IntPtr joint);

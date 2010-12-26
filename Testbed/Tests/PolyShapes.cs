@@ -94,18 +94,6 @@ namespace Testbed.Tests
 			get { return "PolyShapes"; }
 		}
 
-		public override void BeginContact(Contact contact)
-		{
-		}
-
-		public override void EndContact(Contact contact)
-		{
-		}
-
-		public override void PostSolve(Contact contact, ContactImpulse impulse)
-		{
-		}
-
 		public PolyShapes()
 		{
 			// Ground body
