@@ -1,5 +1,7 @@
 ﻿using System;
 using Box2CS;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace Testbed.Tests
 {
@@ -57,24 +59,57 @@ namespace Testbed.Tests
 
 			Body ground = m_world.CreateBody(new BodyDef());
 
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26, 40), new Vec2(32, 40))));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26, 40), new Vec2(-26 - 5, 40 - 4))));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 - 5, 40 - 4), new Vec2(-26 - 5, 40 - 44))));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(32, 40), new Vec2(32, 40 - 44))));
-			ground.CreateFixture(new FixtureDef(new CircleShape(new Vec2(27, 40 - 58), 25)));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(24, 2), new Vec2(-3 - 5, 19))));
-			ground.CreateFixture(new FixtureDef(new CircleShape(new Vec2(-7.25f - 5, 14.75f), 6)));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26, 40), new Vec2(32, 40)), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26, 40), new Vec2(-26 - 5, 40 - 4)), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 - 5, 40 - 4), new Vec2(-26 - 5, 40 - 44)), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(32, 40), new Vec2(32, 40 - 44)), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new CircleShape(new Vec2(27, 40 - 58), 25), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(24, 2), new Vec2(-3 - 5, 19)), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new CircleShape(new Vec2(-7.25f - 5, 14.75f), 6), 0.0f, 0.0f, 0.65f));
 
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-12 - 5, 18), new Vec2(-26 - 5 + 5, 11))));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 - 5 + 5, 11), new Vec2(-26 - 5 + 5, 40 - 44))));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 - 5, 40 - 44), new Vec2(-26 - 5 + 5, 40 - 44)), 0.0f, 2.0f));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-12 - 5, 18), new Vec2(-26 - 5 + 5, 11)), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 - 5 + 5, 11), new Vec2(-26 - 5 + 5, 40 - 44)), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 - 5, 40 - 44), new Vec2(-26 - 5 + 5, 40 - 44)), 0.0f, 2.0f, 0.65f));
 
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 5, 40 - 5), new Vec2(-26 - 5 + 5, 40 - 4 - 5))));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 - 5 + 5, 40 - 4 - 5), new Vec2(-26 - 5 + 5, 40 - 22))));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-12 - 5, 18 + 7), new Vec2(-26 - 5 + 5, 11 + 7))));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 5, 40 - 5), new Vec2(-26 + 15, 40 - 5))));
-			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 35, 40 - 5), new Vec2(-26 + 35 + 12, 40 - 5))));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 5, 40 - 5), new Vec2(-26 - 5 + 5, 40 - 4 - 5)), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 - 5 + 5, 40 - 4 - 5), new Vec2(-26 - 5 + 5, 40 - 22)), 0.0f, 0.0f, 0.65f));
+		//	ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-12 - 5, 18 + 7), new Vec2(-26 - 5 + 5, 11 + 7))));
 
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 5, 40 - 5), new Vec2(-26 + 15, 40 - 5)), 0.0f, 0.0f, 0.65f));
+			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 35, 40 - 5), new Vec2(-26 + 35 + 12, 40 - 5)), 0.0f, 0.0f, 0.65f));
+
+			//ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 15, 40 - 6), new Vec2(-26 + 35, 40 - 6))));
+			{
+				Body _oldBody = null;
+
+				for (int i = 0; i < 5; ++i)
+				{
+					Body thing = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, new Vec2(-26 + 15 + 2 + (4.0f * i), 40 - 6 + 0.75f)));
+					var fix = thing.CreateFixture(new PolygonShape(2, 0.25f), 8.0f);
+
+					if (i == 0)
+					{
+						RevoluteJointDef rjd = new RevoluteJointDef();
+						rjd.Initialize(thing, ground, thing.WorldCenter - new Vec2(2, 0));
+						m_world.CreateJoint(rjd);
+					}
+					else if (i == 4)
+					{
+						RevoluteJointDef rjd = new RevoluteJointDef();
+						rjd.Initialize(thing, ground, thing.WorldCenter + new Vec2(2, 0));
+						m_world.CreateJoint(rjd);
+					}
+
+					if (_oldBody != null)
+					{
+						RevoluteJointDef rjd = new RevoluteJointDef();
+						rjd.Initialize(_oldBody, thing, _oldBody.WorldCenter + new Vec2(2, 0));
+						m_world.CreateJoint(rjd);
+					}
+
+					_oldBody = thing;
+				}
+			}
 			//Capsule cantilever = new Capsule(m_world, new Vec2(-26 + 52.8f, 40 - 5 - (1.40f / 2)), 8.8f, 1.40f, 1.0f);
 
 			BodyDef bd = new BodyDef(EBodyType.b2_dynamicBody, Vec2.Empty);
@@ -107,7 +142,7 @@ namespace Testbed.Tests
 				m_world.CreateJoint(rjd);
 			}
 
-			new Capsule(m_world, new Vec2(0, 24), 5, 4, 0.2f);
+			new Capsule(m_world, new Vec2(1.5f, 37.5f), 5, 4, 0.35f);
 
 			{
 				Body squareThing;
@@ -146,6 +181,57 @@ namespace Testbed.Tests
 				rjd.CollideConnected = true;
 				m_world.CreateJoint(rjd);
 			}
+
+			{
+				Vec2 carPos = new Vec2(-11.5f, 37.5f);
+				var bodyShape = new PolygonShape(3.5f, 0.6f);
+				bd = new BodyDef(EBodyType.b2_dynamicBody, carPos);
+
+				var body = m_world.CreateBody(bd);
+				body.CreateFixture(bodyShape, 20.0f);
+
+				{
+					var wheel = new CircleShape(2.0f);
+					var leftWheel = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, carPos - new Vec2(3.5f, 0)));
+					leftWheel.CreateFixture(new FixtureDef(wheel, 20.0f, 0.0f, 0.65f));
+
+					RevoluteJointDef rjd = new RevoluteJointDef();
+					rjd.Initialize(leftWheel, body, leftWheel.WorldCenter);
+					wheelL = (RevoluteJoint)m_world.CreateJoint(rjd);
+				}
+
+				{
+					var wheel = new CircleShape(2.0f);
+					var leftWheel = m_world.CreateBody(new BodyDef(EBodyType.b2_dynamicBody, carPos + new Vec2(3.5f, 0)));
+					leftWheel.CreateFixture(new FixtureDef(wheel, 20.0f, 0.0f, 0.65f));
+
+					RevoluteJointDef rjd = new RevoluteJointDef();
+					rjd.Initialize(leftWheel, body, leftWheel.WorldCenter);
+					wheelR = (RevoluteJoint)m_world.CreateJoint(rjd);
+				}
+			}
 		}
+
+		public override void Keyboard(SFML.Window.KeyCode key)
+		{
+			switch (char.ToLower((char)key))
+			{
+			case 'd':
+				wheelL.IsMotorEnabled = wheelR.IsMotorEnabled = true;
+				wheelL.MaxMotorTorque = wheelR.MaxMotorTorque = 2500;
+				wheelL.MotorSpeed = wheelR.MotorSpeed = 750;
+				break;
+			case 'a':
+				wheelL.IsMotorEnabled = wheelR.IsMotorEnabled = true;
+				wheelL.MaxMotorTorque = wheelR.MaxMotorTorque = 2500;
+				wheelL.MotorSpeed = wheelR.MotorSpeed = -750;
+				break;
+			case 's':
+				wheelL.IsMotorEnabled = wheelR.IsMotorEnabled = false;
+				break;
+			}
+		}
+
+		RevoluteJoint wheelL, wheelR;
 	}
 }
