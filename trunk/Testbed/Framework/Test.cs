@@ -78,10 +78,15 @@ namespace Testbed
 				{
 					TestEntry newEntry = new TestEntry();
 					newEntry.Type = type;
-					newEntry.Name = (string)type.GetMethod("get_Name", BindingFlags.Public | BindingFlags.Static).Invoke(null, null);
+					newEntry.Name = type.Name;
 					_entries.Add(newEntry);
 				}
 			}
+
+			_entries.Sort(delegate(TestEntry t1, TestEntry t2)
+			{
+				return t1.Name.CompareTo(t2.Name);
+			});
 		}
 
 		public IList<TestEntry> Entries
@@ -365,6 +370,18 @@ namespace Testbed
 
 		// Let derived tests know that a joint was destroyed.
 		public virtual void JointDestroyed(Joint joint) { }
+
+		public override void BeginContact(Contact contact)
+		{
+		}
+
+		public override void EndContact(Contact contact)
+		{
+		}
+
+		public override void PostSolve(Contact contact, ContactImpulse impulse)
+		{
+		}
 
 		public override void PreSolve(Contact contact, Manifold oldManifold)
 		{

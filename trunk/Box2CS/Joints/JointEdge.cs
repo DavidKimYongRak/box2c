@@ -20,7 +20,7 @@ namespace Box2CS
 			public static extern IntPtr b2jointedge_getnext(IntPtr jointEdge);
 		}
 
-		public IntPtr _jointEdgePtr;
+		IntPtr _jointEdgePtr;
 
 		internal JointEdge(IntPtr ptr)
 		{

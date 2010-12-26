@@ -10,9 +10,11 @@ namespace Box2CS
 		Vec2 _localAnchorB;
 		Vec2 _localAxis1;
 		float _referenceAngle;
+		[MarshalAs(UnmanagedType.U1)]
 		bool _enableLimit;
 		float _lowerTranslation;
 		float _upperTranslation;
+		[MarshalAs(UnmanagedType.U1)]
 		bool _enableMotor;
 		float _maxMotorForce;
 		float _motorSpeed;
@@ -40,6 +42,12 @@ namespace Box2CS
 			_localAnchorB = bodyB.GetLocalPoint(anchor);
 			_localAxis1 = bodyA.GetLocalVector(axis);
 			_referenceAngle = bodyB.Angle - bodyA.Angle;
+		}
+
+		public Vec2 LocalAxis
+		{
+			get { return _localAxis1; }
+			set { _localAxis1 = value; }
 		}
 
 		public Vec2 LocalAnchorA
@@ -108,10 +116,11 @@ namespace Box2CS
 			public static extern float b2prismaticjoint_getjointspeed(IntPtr joint);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2prismaticjoint_getenablelimit(IntPtr joint);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2prismaticjoint_setenablelimit(IntPtr joint, bool val);
+			public static extern void b2prismaticjoint_setenablelimit(IntPtr joint, [MarshalAs(UnmanagedType.U1)] bool val);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern float b2prismaticjoint_getlowerlimit(IntPtr joint);
@@ -123,10 +132,11 @@ namespace Box2CS
 			public static extern void b2prismaticjoint_setlimits(IntPtr joint, float lower, float upper);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2prismaticjoint_getenablemotor(IntPtr joint);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2prismaticjoint_setenablemotor(IntPtr joint, bool val);
+			public static extern void b2prismaticjoint_setenablemotor(IntPtr joint, [MarshalAs(UnmanagedType.U1)] bool val);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern float b2prismaticjoint_getmotorspeed(IntPtr joint);

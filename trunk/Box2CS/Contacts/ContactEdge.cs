@@ -20,7 +20,7 @@ namespace Box2CS
 			public static extern IntPtr b2contactedge_getnext(IntPtr contactEdge);
 		}
 
-		public IntPtr _contactEdgePtr;
+		IntPtr _contactEdgePtr;
 
 		internal ContactEdge(IntPtr ptr)
 		{

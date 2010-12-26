@@ -9,18 +9,20 @@ namespace Box2CS
 		static class NativeMethods
 		{
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern IntPtr b2world_constructor(Vec2 gravity, bool doSleep);
+			public static extern IntPtr b2world_constructor(Vec2 gravity, [MarshalAs(UnmanagedType.U1)] bool doSleep);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern void b2world_destroy(IntPtr world);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2world_setautoclearforces(IntPtr world, bool flag);
+			public static extern void b2world_setautoclearforces(IntPtr world, [MarshalAs(UnmanagedType.U1)] bool flag);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2world_getautoclearforces(IntPtr world);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2world_islocked(IntPtr world);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
@@ -51,10 +53,10 @@ namespace Box2CS
 			public static extern IntPtr b2world_getcontactlist(IntPtr world);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2world_setcontinuousphysics(IntPtr world, bool flag);
+			public static extern void b2world_setcontinuousphysics(IntPtr world, [MarshalAs(UnmanagedType.U1)] bool flag);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2world_setwarmstarting(IntPtr world, bool flag);
+			public static extern void b2world_setwarmstarting(IntPtr world, [MarshalAs(UnmanagedType.U1)] bool flag);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern void b2world_step(IntPtr world, float hz, int velocityIterations, int positionIteations);

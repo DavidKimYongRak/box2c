@@ -16,18 +16,6 @@ namespace Testbed.Tests
 			get { return "ElasticBody"; }
 		}
 
-		public override void BeginContact(Contact contact)
-		{
-		}
-
-		public override void EndContact(Contact contact)
-		{
-		}
-
-		public override void PostSolve(Contact contact, ContactImpulse impulse)
-		{
-		}
-
 		const int BodyCountX = 4;
 		const int BodyCountY = 4;
 		const int TotalBodies = (BodyCountX * BodyCountY);

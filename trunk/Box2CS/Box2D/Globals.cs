@@ -44,6 +44,7 @@ namespace Box2CS
 			public static extern int cb2_clipsegmenttoline([MarshalAs(UnmanagedType.LPArray, SizeConst=2)]out ClipVertex[] vOut, ClipVertex[] vIn, Vec2 normal, float offset);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool cb2_testoverlap(IntPtr shapeA, IntPtr shapeB, Transform xfA, Transform xfB);
 		}
 

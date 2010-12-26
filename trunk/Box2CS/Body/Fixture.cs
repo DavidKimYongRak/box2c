@@ -251,9 +251,10 @@ namespace Box2CS
 			public static extern void b2fixture_getshape(IntPtr fixture, IntPtr shape);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2fixture_setsensor(IntPtr fixture, bool val);
+			public static extern void b2fixture_setsensor(IntPtr fixture, [MarshalAs(UnmanagedType.U1)] bool val);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2fixture_getsensor(IntPtr fixture);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
@@ -269,9 +270,11 @@ namespace Box2CS
 			public static extern IntPtr b2fixture_getnext(IntPtr fixture);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2fixture_testpoint(IntPtr fixture, Vec2 point);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
+			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2fixture_raycast(IntPtr fixture, out RayCastOutput output, RayCastInput input);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]

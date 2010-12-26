@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Box2CS;
+
+namespace Testbed.Tests
+{
+	public class BodyTypes : Test
+	{
+		public static string Name
+		{
+			get { return "BodyTypes"; }
+		}
+
+		public BodyTypes()
+		{
+			Body ground = null;
+			{
+				BodyDef bd = new BodyDef();
+				ground = m_world.CreateBody(bd);
+
+				PolygonShape shape = new PolygonShape();
+				shape.SetAsEdge(new Vec2(-20.0f, 0.0f), new Vec2(20.0f, 0.0f));
+
+				FixtureDef fd = new FixtureDef();
+				fd.Shape = shape;
+
+				ground.CreateFixture(fd);
+			}
+
+			// Define attachment
+			{
+				BodyDef bd = new BodyDef();
+				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.Position = new Vec2(0.0f, 3.0f);
+				m_attachment = m_world.CreateBody(bd);
+
+				PolygonShape shape = new PolygonShape();
+				shape.SetAsBox(0.5f, 2.0f);
+				m_attachment.CreateFixture(shape, 2.0f);
+			}
+
+			// Define platform
+			{
+				BodyDef bd = new BodyDef();
+				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.Position = new Vec2(-4.0f, 5.0f);
+				m_platform = m_world.CreateBody(bd);
+
+				PolygonShape shape = new PolygonShape();
+				shape.SetAsBox(0.5f, 4.0f, new Vec2(4.0f, 0.0f), 0.5f * (float)Math.PI);
+
+				FixtureDef fd = new FixtureDef();
+				fd.Shape = shape;
+				fd.Friction = 0.6f;
+				fd.Density = 2.0f;
+				m_platform.CreateFixture(fd);
+
+				RevoluteJointDef rjd = new RevoluteJointDef();
+				rjd.Initialize(m_attachment, m_platform, new Vec2(0.0f, 5.0f));
+				rjd.MaxMotorTorque = 50.0f;
+				rjd.EnableMotor = true;
+				m_world.CreateJoint(rjd);
+
+				PrismaticJointDef pjd = new PrismaticJointDef();
+				pjd.Initialize(ground, m_platform, new Vec2(0.0f, 5.0f), new Vec2(1.0f, 0.0f));
+
+				pjd.MaxMotorForce = 1000.0f;
+				pjd.EnableMotor = true;
+				pjd.LowerTranslation = -10.0f;
+				pjd.UpperTranslation = 10.0f;
+				pjd.EnableLimit = true;
+
+				m_world.CreateJoint(pjd);
+
+				m_speed = 3.0f;
+			}
+
+			// Create a payload
+			{
+				BodyDef bd = new BodyDef();
+				bd.BodyType = EBodyType.b2_dynamicBody;
+				bd.Position = new Vec2(0.0f, 8.0f);
+				Body body = m_world.CreateBody(bd);
+
+				PolygonShape shape = new PolygonShape();
+				shape.SetAsBox(0.75f, 0.75f);
+
+				FixtureDef fd = new FixtureDef();
+				fd.Shape = shape;
+				fd.Friction = 0.6f;
+				fd.Density = 2.0f;
+
+				body.CreateFixture(fd);
+			}
+		}
+
+		public override void  Keyboard(SFML.Window.KeyCode key)
+		{
+			switch (char.ToLower((char)key))
+			{
+			case 'd':
+				m_platform.BodyType = EBodyType.b2_dynamicBody;
+				break;
+
+			case 's':
+				m_platform.BodyType = EBodyType.b2_staticBody;
+				break;
+
+			case 'k':
+				m_platform.BodyType = EBodyType.b2_kinematicBody;
+				m_platform.LinearVelocity = new Vec2(-m_speed, 0.0f);
+				m_platform.AngularVelocity = 0.0f;
+				break;
+			}
+		}
+
+		public override void Step()
+		{
+			// Drive the kinematic body.
+			if (m_platform.BodyType == EBodyType.b2_kinematicBody)
+			{
+				Vec2 p = m_platform.Transform.position;
+				Vec2 v = m_platform.LinearVelocity;
+
+				if ((p.x < -10.0f && v.x < 0.0f) ||
+					(p.x > 10.0f && v.x > 0.0f))
+				{
+					v.x = -v.x;
+					m_platform.LinearVelocity = v;
+				}
+			}
+
+			base.Step();
+		}
+
+		public override void Draw()
+		{
+			base.Draw();
+
+			m_debugDraw.DrawString(5, m_textLine, "Keys: (d) dynamic, (s) static, (k) kinematic");
+			m_textLine += 15;
+		}
+
+		Body m_attachment;
+		Body m_platform;
+		float m_speed;
+	}
+}
