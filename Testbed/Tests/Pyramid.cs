@@ -10,7 +10,7 @@ namespace Testbed.Tests
 			get { return "Pyramid"; }
 		}
 
-		const int e_count = 20;
+		const int e_count = 35;
 
 		public Pyramid()
 		{

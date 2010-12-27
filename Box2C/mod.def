@@ -39,6 +39,10 @@ EXPORTS
 	b2world_queryaabb
 	b2world_raycast
 
+	b2world_getelapsed
+	b2world_getmin
+	b2world_getmax
+
 	cb2raycastcallback_create
 	cb2raycastcallback_destroy
 

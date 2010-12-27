@@ -9,29 +9,32 @@ namespace Box2CS
 		public const ushort DefaultCategoryBits = 0x0001;
 		public const ushort DefaultMaskBits = 0xFFFF;
 
+		ushort _categoryBits = DefaultCategoryBits, 
+			_maskBits = DefaultMaskBits;
+		short _groupIndex = 0;
+
+		public static readonly FilterData Default = new FilterData();
+
 		public ushort CategoryBits
 		{
-			get;
-			set;
+			get { return _categoryBits; }
+			set { _categoryBits = value; }
 		}
 
 		public ushort MaskBits
 		{
-			get;
-			set;
+			get { return _maskBits; }
+			set { _maskBits = value; }
 		}
 
 		public short GroupIndex
 		{
-			get;
-			set;
+			get { return _groupIndex; }
+			set { _groupIndex = value; }
 		}
 
 		public FilterData()
 		{
-			CategoryBits = DefaultCategoryBits;
-			MaskBits = DefaultMaskBits;
-			GroupIndex = 0;
 		}
 
 		public FilterData(ushort categoryBits, ushort maskBits, short groupIndex)
@@ -39,6 +42,35 @@ namespace Box2CS
 			CategoryBits = categoryBits;
 			MaskBits = maskBits;
 			GroupIndex = groupIndex;
+		}
+
+		public static bool operator ==(FilterData l, FilterData r)
+		{
+			if ((object)l == null && (object)r == null)
+				return true;
+			else if ((object)l == null && (object)r != null ||
+				(object)l != null && (object)r == null)
+				return false;
+
+			return (l.CategoryBits == r.CategoryBits && l.MaskBits == r.MaskBits && l.GroupIndex == r.GroupIndex);
+		}
+
+		public static bool operator !=(FilterData l, FilterData r)
+		{
+			return !(l == r);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is FilterData)
+				return (obj as FilterData) == this;
+
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return CategoryBits.GetHashCode() + MaskBits.GetHashCode() + GroupIndex.GetHashCode();
 		}
 	}
 
@@ -97,7 +129,7 @@ namespace Box2CS
 		public FilterData _filter;
 	}
 
-	public sealed class FixtureDef
+	public sealed class FixtureDef : ICompare<FixtureDef>
 	{
 		FixtureDefInternal _internalFixture = new FixtureDefInternal();
 		// private, unrelated data
@@ -235,6 +267,17 @@ namespace Box2CS
 		{
 			_internalFixture._shape = intPtr;
 		}
+
+		public bool CompareWith(FixtureDef fixture)
+		{
+			return (this.Density == fixture.Density &&
+				this.Filter == fixture.Filter &&
+				this.Friction == fixture.Friction &&
+				this.IsSensor == fixture.IsSensor &&
+				this.Restitution == fixture.Restitution && 
+				this.Shape.CompareWith(fixture.Shape) &&
+				this.UserData == fixture.UserData);
+		}
 	}
 
 	public sealed class Fixture
@@ -258,7 +301,7 @@ namespace Box2CS
 			public static extern void b2fixture_setfilterdata(IntPtr fixture, FilterData val);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2fixture_getfilterdata(IntPtr fixture, out FilterData filterData);
+			public static extern void b2fixture_getfilterdata(IntPtr fixture, [Out] [In] FilterData filterData);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern IntPtr b2fixture_getbody(IntPtr fixture);
@@ -398,7 +441,7 @@ namespace Box2CS
 
 		public FilterData FilterData
 		{
-			get { FilterData temp; NativeMethods.b2fixture_getfilterdata(_fixturePtr, out temp); return temp; }
+			get { FilterData temp = new FilterData(); NativeMethods.b2fixture_getfilterdata(_fixturePtr, temp); return temp; }
 			set { NativeMethods.b2fixture_setfilterdata(_fixturePtr, value); }
 		}
 
@@ -486,6 +529,7 @@ namespace Box2CS
 		{
 			return FixturePtr.GetHashCode();
 		}
+
 	}
 
 }

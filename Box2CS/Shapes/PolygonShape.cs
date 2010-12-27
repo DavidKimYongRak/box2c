@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-	public sealed class PolygonShape : Shape
+	public sealed class PolygonShape : Shape, ICompare<PolygonShape>
 	{
 		cb2polygonshapeportable _internalPolyShape;
 
@@ -405,6 +405,15 @@ _internalPolyShape.m_vertices[0];
 			massData = new MassData(density * area,
 				center * (1.0f / area),
 				density * I);
+		}
+
+		public bool CompareWith(PolygonShape shape)
+		{
+			return (this.Radius == shape.Radius && 
+				this.Centroid == shape.Centroid &&
+				this.Vertices == shape.Vertices &&
+				this.Normals == shape.Normals &&
+				this.VertexCount == shape.VertexCount);
 		}
 	}
 }

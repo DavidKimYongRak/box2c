@@ -70,7 +70,7 @@ namespace Box2CS
 		}
 	}
 
-	public abstract class Shape : ICloneable
+	public abstract class Shape : ICloneable, ICompare<Shape>
 	{
 		cb2shapeportable _internalShape;
 
@@ -108,6 +108,16 @@ namespace Box2CS
 		{
 			get { return _internalShape.m_radius; }
 			set { _internalShape.m_radius = value; }
+		}
+
+		public bool CompareWith(Shape shape)
+		{
+			if (shape is PolygonShape && this is PolygonShape)
+				return ((PolygonShape)this).CompareWith((PolygonShape)shape);
+			else if (shape is CircleShape && this is CircleShape)
+				return ((CircleShape)this).CompareWith((CircleShape)shape);
+
+			return false;
 		}
 	}
 }
