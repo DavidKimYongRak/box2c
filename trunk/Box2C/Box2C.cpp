@@ -267,9 +267,75 @@ void b2world_destroyjoint (cb2world *world, cb2joint *joint)
 	world->DestroyJoint(joint);
 }
 
+
+long _elapsed, _min = LONG_MAX, _max = LONG_MIN;
+#include <Windows.h>
+#include <iostream>
+#include <mmsystem.h>
+
+LARGE_INTEGER timerFreq_;
+LARGE_INTEGER counterAtStart_;
+
+void startTime()
+{
+  QueryPerformanceFrequency(&timerFreq_);
+  QueryPerformanceCounter(&counterAtStart_);
+  //cout<<"timerFreq_ = "<<timerFreq_.QuadPart<<endl;
+  //cout<<"counterAtStart_ = "<<counterAtStart_.QuadPart<<endl;
+  TIMECAPS ptc;
+  UINT cbtc = 8;
+  MMRESULT result = timeGetDevCaps(&ptc, cbtc);
+  if (result == TIMERR_NOERROR)
+  {
+    //cout<<"Minimum resolution = "<<ptc.wPeriodMin<<endl;
+    //cout<<"Maximum resolution = "<<ptc.wPeriodMax<<endl;
+  }
+  else
+  {
+    //cout<<"result = TIMER ERROR"<<endl;
+  }
+}
+
+unsigned int calculateElapsedTime()
+{
+  if (timerFreq_.QuadPart == 0)
+  {
+    return -1;
+  }
+  else
+  {
+    LARGE_INTEGER c;
+    QueryPerformanceCounter(&c);
+    return static_cast<unsigned int>( (c.QuadPart - counterAtStart_.QuadPart) * 1000 / timerFreq_.QuadPart );
+  }
+}
+
+
 void b2world_step (cb2world *world, float timeStep, int velocityIterations, int positionIterations)
 {
+	startTime();
 	world->Step(timeStep, velocityIterations, positionIterations);
+	_elapsed = calculateElapsedTime();
+
+	if (_elapsed < _min)
+		_min = _elapsed;
+	if (_elapsed > _max)
+		_max = _elapsed;
+}
+
+long b2world_getelapsed ()
+{
+	return _elapsed;
+}
+
+long b2world_getmin ()
+{
+	return _min;
+}
+
+long b2world_getmax ()
+{
+	return _max;
 }
 
 void b2world_clearforces (cb2world *world)

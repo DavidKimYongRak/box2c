@@ -120,6 +120,15 @@ namespace Testbed
 			return p;
 		}
 
+		long _ts_b2, _ts_min_, _ts_max_;
+
+		[System.Runtime.InteropServices.DllImport(Box2DSettings.Box2CDLLName)]
+		extern static uint b2world_getelapsed();
+		[System.Runtime.InteropServices.DllImport(Box2DSettings.Box2CDLLName)]
+		extern static uint b2world_getmax();
+		[System.Runtime.InteropServices.DllImport(Box2DSettings.Box2CDLLName)]
+		extern static uint b2world_getmin();
+
 		void Simulate()
 		{
 			if (test != null)
@@ -135,12 +144,16 @@ namespace Testbed
 				TestSettings.hz = settingsHz;
 				test.Step();
 				sw.Stop();
-				_ts = sw.ElapsedTicks;
+				_ts = sw.ElapsedMilliseconds;
 
 				if (_ts < _min)
 					_min = _ts;
 				if (_ts > _max)
 					_max= _ts;
+
+				_ts_b2 = b2world_getelapsed();
+				_ts_max_ = b2world_getmax();
+				_ts_min_ = b2world_getmin();
 
 				if (testSelection != testIndex)
 				{
@@ -161,9 +174,9 @@ namespace Testbed
 			{
 				test.SetTextLine(30);
 				test.DrawTitle(5, 15, entry.Name);
-				test.m_debugDraw.DrawString(5, 100, "Time: "+_ts.ToString());
-				test.m_debugDraw.DrawString(5, 115, "MinTime: " + _min.ToString());
-				test.m_debugDraw.DrawString(5, 130, "MaxTime: " + _max.ToString());
+				test.m_debugDraw.DrawString(5, 100, "Time: "+_ts.ToString()+" (B2: "+_ts_b2.ToString()+")");
+				test.m_debugDraw.DrawString(5, 115, "MinTime: " + _min.ToString()+" (B2: "+_ts_min_.ToString()+")");
+				test.m_debugDraw.DrawString(5, 130, "MaxTime: " + _max.ToString()+" (B2: "+_ts_max_.ToString()+")");
 				test.Draw();
 			}
 		}
@@ -205,6 +218,10 @@ namespace Testbed
 
 				Gl.glMatrixMode(Gl.GL_MODELVIEW);
 				Gl.glLoadIdentity();
+
+				Gl.glEnable(Gl.GL_LINE_SMOOTH);
+				Gl.glHint(Gl.GL_LINE_SMOOTH_HINT, Gl.GL_NICEST);
+				Gl.glLineWidth(1.0f);
 
 				CursorPos = new System.Drawing.Point(renderWindow.Input.GetMouseX(), renderWindow.Input.GetMouseY());
 

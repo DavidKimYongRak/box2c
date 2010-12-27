@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Box2CS
 {
-	public sealed class CircleShape : Shape
+	public sealed class CircleShape : Shape, ICompare<CircleShape>
 	{
 		cb2circleshapeportable _internalCircleShape;
 
@@ -78,6 +78,12 @@ namespace Box2CS
 		{
 			get { return _internalCircleShape.m_p; }
 			set { _internalCircleShape.m_p = value; }
+		}
+
+		public bool CompareWith(CircleShape shape)
+		{
+			return (Radius == shape.Radius &&
+				Position == shape.Position);
 		}
 	}
 }

@@ -5,6 +5,11 @@ using System.Security.Permissions;
 
 namespace Box2CS
 {
+	public interface ICompare<T>
+	{
+		bool CompareWith(T v);
+	}
+
 	internal interface IFixedSize
 	{
 		int FixedSize();
