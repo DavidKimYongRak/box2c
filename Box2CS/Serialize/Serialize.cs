@@ -63,30 +63,23 @@ namespace Box2CS.Serialize
 			set;
 		}
 
-		public int BodyAIndex
+		public int JointAIndex
 		{
 			get;
 			set;
 		}
 
-		public int BodyBIndex
+		public int JointBIndex
 		{
 			get;
 			set;
 		}
 
-		public Joint DerivedJoint
+		public JointDefSerialized(JointDef joint, int jointA, int jointB)
 		{
-			get;
-			set;
-		}
-
-		public JointDefSerialized(Joint derivedJoint, JointDef joint, int bodyA, int bodyB)
-		{
-			DerivedJoint = derivedJoint;
 			Joint = joint;
-			BodyAIndex = bodyA;
-			BodyBIndex = bodyB;
+			JointAIndex = jointA;
+			JointBIndex = jointB;
 		}
 	}
 
@@ -198,10 +191,11 @@ namespace Box2CS.Serialize
 
 		void WriteElement(string name, Vec2 vec)
 		{
-			writer.WriteStartElement(name);
+			/*writer.WriteStartElement(name);
 			writer.WriteAttributeString("X", vec.X.ToString());
 			writer.WriteAttributeString("Y", vec.Y.ToString());
-			WriteEndElement();
+			WriteEndElement();*/
+			writer.WriteElementString(name, vec.X.ToString() + " " + vec.Y.ToString());
 		}
 
 		public void Open(Stream stream, IWorldSerializationProvider provider)
@@ -393,16 +387,25 @@ namespace Box2CS.Serialize
 			writer.WriteEndElement();
 		}
 
+		static DistanceJointDef _defaultDistanceJoint = new DistanceJointDef();
+		static FrictionJointDef _defaultFrictionJoint = new FrictionJointDef();
+		static LineJointDef _defaultLineJoint = new LineJointDef();
+		static PrismaticJointDef _defaultPrismaticJoint = new PrismaticJointDef();
+		static PulleyJointDef _defaultPulleyJoint = new PulleyJointDef();
+		static RevoluteJointDef _defaultRevoluteJoint = new RevoluteJointDef();
+		static WeldJointDef _defaultWeldJoint = new WeldJointDef();
+
 		public void SerializeJoint(JointDefSerialized def)
 		{
 			writer.WriteStartElement("Joint");
 
 			writer.WriteAttributeString("Type", def.Joint.JointType.ToString());
 
-			WriteElement("BodyA", def.BodyAIndex);
-			WriteElement("BodyB", def.BodyBIndex);
+			WriteElement("JointA", def.JointAIndex);
+			WriteElement("JointB", def.JointBIndex);
 
-			WriteElement("CollideConnected", def.Joint.CollideConnected);
+			if (def.Joint.CollideConnected != false)
+				WriteElement("CollideConnected", def.Joint.CollideConnected);
 
 			if (def.Joint.UserData != null)
 			{
@@ -417,26 +420,34 @@ namespace Box2CS.Serialize
 				{
 					DistanceJointDef djd = (DistanceJointDef)def.Joint;
 
-					WriteElement("DampingRatio", djd.DampingRatio);
-					WriteElement("FrequencyHz", djd.FrequencyHz);
-					WriteElement("Length", djd.Length);
-					WriteElement("LocalAnchorA", djd.LocalAnchorA);
-					WriteElement("LocalAnchorB", djd.LocalAnchorB);
+					if (djd.DampingRatio != _defaultDistanceJoint.DampingRatio)
+						WriteElement("DampingRatio", djd.DampingRatio);
+					if (djd.FrequencyHz != _defaultDistanceJoint.FrequencyHz)
+						WriteElement("FrequencyHz", djd.FrequencyHz);
+					if (djd.Length != _defaultDistanceJoint.Length)
+						WriteElement("Length", djd.Length);
+					if (djd.LocalAnchorA != _defaultDistanceJoint.LocalAnchorA)
+						WriteElement("LocalAnchorA", djd.LocalAnchorA);
+					if (djd.LocalAnchorB != _defaultDistanceJoint.LocalAnchorB)
+						WriteElement("LocalAnchorB", djd.LocalAnchorB);
 				}
 				break;
 			case JointType.Friction:
 				{
 					FrictionJointDef fjd = (FrictionJointDef)def.Joint;
 
-					WriteElement("LocalAnchorA", fjd.LocalAnchorA);
-					WriteElement("LocalAnchorB", fjd.LocalAnchorB);
-					WriteElement("MaxForce", fjd.MaxForce);
-					WriteElement("MaxTorque", fjd.MaxTorque);
+					if (fjd.LocalAnchorA != _defaultFrictionJoint.LocalAnchorA)
+						WriteElement("LocalAnchorA", fjd.LocalAnchorA);
+					if (fjd.LocalAnchorB != _defaultFrictionJoint.LocalAnchorB)
+						WriteElement("LocalAnchorB", fjd.LocalAnchorB);
+					if (fjd.MaxForce != _defaultFrictionJoint.MaxForce)
+						WriteElement("MaxForce", fjd.MaxForce);
+					if (fjd.MaxTorque != _defaultFrictionJoint.MaxTorque)
+						WriteElement("MaxTorque", fjd.MaxTorque);
 				}
 				break;
 			case JointType.Gear:
-				{
-					GearJointDef gjd = (GearJointDef)def.Joint;
+				/*	GearJointDef gjd = (GearJointDef)def.Joint;
 
 					int jointA = -1, jointB = -1;
 
@@ -454,72 +465,114 @@ namespace Box2CS.Serialize
 
 					WriteElement("JointA", jointA);
 					WriteElement("JointB", jointB);
-					WriteElement("Ratio", gjd.Ratio);
-				}
-				break;
+					WriteElement("Ratio", gjd.Ratio);*/
+					throw new Exception("Gear joint not supported by serialization");
 			case JointType.Line:
 				{
 					LineJointDef ljd = (LineJointDef)def.Joint;
 
-					WriteElement("EnableLimit", ljd.EnableLimit);
-					WriteElement("EnableMotor", ljd.EnableMotor);
-					WriteElement("LocalAnchorA", ljd.LocalAnchorA);
-					WriteElement("LocalAnchorB", ljd.LocalAnchorB);
-					WriteElement("LocalAxisA", ljd.LocalAxisA);
-					WriteElement("LowerTranslation", ljd.LowerTranslation);
-					WriteElement("MaxMotorForce", ljd.MaxMotorForce);
-					WriteElement("MotorSpeed", ljd.MotorSpeed);
-					WriteElement("UpperTranslation", ljd.UpperTranslation);
+					if (ljd.EnableLimit != _defaultLineJoint.EnableLimit)
+						WriteElement("EnableLimit", ljd.EnableLimit);
+					if (ljd.EnableMotor != _defaultLineJoint.EnableMotor)
+						WriteElement("EnableMotor", ljd.EnableMotor);
+					if (ljd.LocalAnchorA != _defaultLineJoint.LocalAnchorA)
+						WriteElement("LocalAnchorA", ljd.LocalAnchorA);
+					if (ljd.LocalAnchorB != _defaultLineJoint.LocalAnchorB)
+						WriteElement("LocalAnchorB", ljd.LocalAnchorB);
+					if (ljd.LocalAxisA != _defaultLineJoint.LocalAxisA)
+						WriteElement("LocalAxisA", ljd.LocalAxisA);
+					if (ljd.LowerTranslation != _defaultLineJoint.LowerTranslation)
+						WriteElement("LowerTranslation", ljd.LowerTranslation);
+					if (ljd.MaxMotorForce != _defaultLineJoint.MaxMotorForce)
+						WriteElement("MaxMotorForce", ljd.MaxMotorForce);
+					if (ljd.MotorSpeed != _defaultLineJoint.MotorSpeed)
+						WriteElement("MotorSpeed", ljd.MotorSpeed);
+					if (ljd.UpperTranslation != _defaultLineJoint.UpperTranslation)
+						WriteElement("UpperTranslation", ljd.UpperTranslation);
 				}
 				break;
 			case JointType.Prismatic:
 				{
 					PrismaticJointDef pjd = (PrismaticJointDef)def.Joint;
 
-					WriteElement("EnableLimit", pjd.EnableLimit);
-					WriteElement("EnableMotor", pjd.EnableMotor);
-					WriteElement("LocalAnchorA", pjd.LocalAnchorA);
-					WriteElement("LocalAnchorB", pjd.LocalAnchorB);
-					WriteElement("LocalAxisA", pjd.LocalAxis);
-					WriteElement("LowerTranslation", pjd.LowerTranslation);
-					WriteElement("MaxMotorForce", pjd.MaxMotorForce);
-					WriteElement("MotorSpeed", pjd.MotorSpeed);
-					WriteElement("UpperTranslation", pjd.UpperTranslation);
-					WriteElement("ReferenceAngle", pjd.ReferenceAngle);
+					if (pjd.EnableLimit != _defaultPrismaticJoint.EnableLimit)
+						WriteElement("EnableLimit", pjd.EnableLimit);
+					if (pjd.EnableMotor != _defaultPrismaticJoint.EnableMotor)
+						WriteElement("EnableMotor", pjd.EnableMotor);
+					if (pjd.LocalAnchorA != _defaultPrismaticJoint.LocalAnchorA)
+						WriteElement("LocalAnchorA", pjd.LocalAnchorA);
+					if (pjd.LocalAnchorB != _defaultPrismaticJoint.LocalAnchorB)
+						WriteElement("LocalAnchorB", pjd.LocalAnchorB);
+					if (pjd.LocalAxis != _defaultPrismaticJoint.LocalAxis)
+						WriteElement("LocalAxisA", pjd.LocalAxis);
+					if (pjd.LowerTranslation != _defaultPrismaticJoint.LowerTranslation)
+						WriteElement("LowerTranslation", pjd.LowerTranslation);
+					if (pjd.MaxMotorForce != _defaultPrismaticJoint.MaxMotorForce)
+						WriteElement("MaxMotorForce", pjd.MaxMotorForce);
+					if (pjd.MotorSpeed != _defaultPrismaticJoint.MotorSpeed)
+						WriteElement("MotorSpeed", pjd.MotorSpeed);
+					if (pjd.UpperTranslation != _defaultPrismaticJoint.UpperTranslation)
+						WriteElement("UpperTranslation", pjd.UpperTranslation);
+					if (pjd.ReferenceAngle != _defaultPrismaticJoint.ReferenceAngle)
+						WriteElement("ReferenceAngle", pjd.ReferenceAngle);
 				}
 				break;
 			case JointType.Pulley:
 				{
 					PulleyJointDef pjd = (PulleyJointDef)def.Joint;
 
-					WriteElement("GroundAnchorA", pjd.GroundAnchorA);
-					WriteElement("GroundAnchorB", pjd.GroundAnchorB);
-					WriteElement("LengthA", pjd.LengthA);
-					WriteElement("LengthB", pjd.LengthB);
-					WriteElement("LocalAnchorA", pjd.LocalAnchorA);
-					WriteElement("LocalAnchorB", pjd.LocalAnchorB);
-					WriteElement("MaxLengthA", pjd.MaxLengthA);
-					WriteElement("MaxLengthB", pjd.MaxLengthB);
-					WriteElement("Ratio", pjd.Ratio);
+					if (pjd.GroundAnchorA != _defaultPulleyJoint.GroundAnchorA)
+						WriteElement("GroundAnchorA", pjd.GroundAnchorA);
+					if (pjd.GroundAnchorB != _defaultPulleyJoint.GroundAnchorB)
+						WriteElement("GroundAnchorB", pjd.GroundAnchorB);
+					if (pjd.LengthA != _defaultPulleyJoint.LengthA)
+						WriteElement("LengthA", pjd.LengthA);
+					if (pjd.LengthB != _defaultPulleyJoint.LengthB)
+						WriteElement("LengthB", pjd.LengthB);
+					if (pjd.LocalAnchorA != _defaultPulleyJoint.LocalAnchorA)
+						WriteElement("LocalAnchorA", pjd.LocalAnchorA);
+					if (pjd.LocalAnchorB != _defaultPulleyJoint.LocalAnchorB)
+						WriteElement("LocalAnchorB", pjd.LocalAnchorB);
+					if (pjd.MaxLengthA != _defaultPulleyJoint.MaxLengthA)
+						WriteElement("MaxLengthA", pjd.MaxLengthA);
+					if (pjd.MaxLengthB != _defaultPulleyJoint.MaxLengthB)
+						WriteElement("MaxLengthB", pjd.MaxLengthB);
+					if (pjd.Ratio != _defaultPulleyJoint.Ratio)
+						WriteElement("Ratio", pjd.Ratio);
 				}
 				break;
 			case JointType.Revolute:
 				{
 					RevoluteJointDef rjd = (RevoluteJointDef)def.Joint;
 
-					WriteElement("EnableLimit", rjd.EnableLimit);
-					WriteElement("EnableMotor", rjd.EnableMotor);
-					WriteElement("LocalAnchorA", rjd.LocalAnchorA);
-					WriteElement("LocalAnchorB", rjd.LocalAnchorB);
-					WriteElement("LowerAngle", rjd.LowerAngle);
-					WriteElement("MaxMotorTorque", rjd.MaxMotorTorque);
-					WriteElement("MotorSpeed", rjd.MotorSpeed);
-					WriteElement("ReferenceAngle", rjd.ReferenceAngle);
-					WriteElement("UpperAngle", rjd.UpperAngle);
+					if (rjd.EnableLimit != _defaultRevoluteJoint.EnableLimit)
+						WriteElement("EnableLimit", rjd.EnableLimit);
+					if (rjd.EnableMotor != _defaultRevoluteJoint.EnableMotor)
+						WriteElement("EnableMotor", rjd.EnableMotor);
+					if (rjd.LocalAnchorA != _defaultRevoluteJoint.LocalAnchorA)
+						WriteElement("LocalAnchorA", rjd.LocalAnchorA);
+					if (rjd.LocalAnchorB != _defaultRevoluteJoint.LocalAnchorB)
+						WriteElement("LocalAnchorB", rjd.LocalAnchorB);
+					if (rjd.LowerAngle != _defaultRevoluteJoint.LowerAngle)
+						WriteElement("LowerAngle", rjd.LowerAngle);
+					if (rjd.MaxMotorTorque != _defaultRevoluteJoint.MaxMotorTorque)
+						WriteElement("MaxMotorTorque", rjd.MaxMotorTorque);
+					if (rjd.MotorSpeed != _defaultRevoluteJoint.MotorSpeed)
+						WriteElement("MotorSpeed", rjd.MotorSpeed);
+					if (rjd.ReferenceAngle != _defaultRevoluteJoint.ReferenceAngle)
+						WriteElement("ReferenceAngle", rjd.ReferenceAngle);
+					if (rjd.UpperAngle != _defaultRevoluteJoint.UpperAngle)
+						WriteElement("UpperAngle", rjd.UpperAngle);
 				}
 				break;
 			case JointType.Weld:
 				{
+					WeldJointDef wjd = (WeldJointDef)def.Joint;
+
+					if (wjd.LocalAnchorA != _defaultWeldJoint.LocalAnchorA)
+						WriteElement("LocalAnchorA", wjd.LocalAnchorA);
+					if (wjd.LocalAnchorB != _defaultWeldJoint.LocalAnchorB)
+						WriteElement("LocalAnchorB", wjd.LocalAnchorB);
 				}
 				break;
 			default:
@@ -577,40 +630,30 @@ namespace Box2CS.Serialize
 
 		Vec2 ReadVector(XmlNode node)
 		{
-			return new Vec2(
-							float.Parse(node.Attributes["X"].Value),
-							float.Parse(node.Attributes["Y"].Value));
+			return Vec2.Parse(node.FirstChild.Value);
 		}
 
 		object ReadSimpleType(XmlNode node, Type type, bool outer)
 		{
-			try
+			if (type == null)
+				return ReadSimpleType(node.LastChild, Type.GetType(node.FirstChild.FirstChild.Value), outer);
+
+			var serializer = new XmlSerializer(type);
+			XmlSerializerNamespaces xmlnsEmpty = new XmlSerializerNamespaces();
+			xmlnsEmpty.Add("", "");
+
+			using (MemoryStream stream = new MemoryStream())
 			{
-				if (type == null)
-					return ReadSimpleType(node.LastChild, Type.GetType(node.FirstChild.FirstChild.Value), outer);
-
-				var serializer = new XmlSerializer(type);
-				XmlSerializerNamespaces xmlnsEmpty = new XmlSerializerNamespaces();
-				xmlnsEmpty.Add("", "");
-
-				using (MemoryStream stream = new MemoryStream())
+				StreamWriter writer = new StreamWriter(stream);
 				{
-					StreamWriter writer = new StreamWriter(stream);
-					{
-						writer.Write((outer) ? node.OuterXml : node.InnerXml);
-						writer.Flush();
-						stream.Position = 0;
-					}
-					XmlReaderSettings settings = new XmlReaderSettings();
-					settings.ConformanceLevel = ConformanceLevel.Fragment;
-
-					return serializer.Deserialize(XmlReader.Create(stream, settings));
+					writer.Write((outer) ? node.OuterXml : node.InnerXml);
+					writer.Flush();
+					stream.Position = 0;
 				}
-			}
-			catch (Exception e)
-			{
-				e = e;
-				return null;
+				XmlReaderSettings settings = new XmlReaderSettings();
+				settings.ConformanceLevel = ConformanceLevel.Fragment;
+
+				return serializer.Deserialize(XmlReader.Create(stream, settings));
 			}
 		}
 
@@ -799,6 +842,273 @@ namespace Box2CS.Serialize
 						}
 					}
 					break;
+				case "joints":
+					{
+						foreach (XmlNode n in main)
+						{
+							JointDef mainDef = null;
+
+							if (n.Name.ToLower() != "joint")
+								throw new Exception();
+
+							JointType type = (JointType)Enum.Parse(typeof(JointType), n.Attributes[0].Value, true);
+
+							int jointA = -1, jointB = -1;
+							bool collideConnected = false;
+							object userData = null;
+
+							switch (type)
+							{
+							case JointType.Distance:
+								mainDef = new DistanceJointDef();
+								break;
+							case JointType.Friction:
+								mainDef = new FrictionJointDef();
+								break;
+							case JointType.Line:
+								mainDef = new LineJointDef();
+								break;
+							case JointType.Prismatic:
+								mainDef = new PrismaticJointDef();
+								break;
+							case JointType.Pulley:
+								mainDef = new PulleyJointDef();
+								break;
+							case JointType.Revolute:
+								mainDef = new RevoluteJointDef();
+								break;
+							case JointType.Weld:
+								mainDef = new WeldJointDef();
+								break;
+							default:
+								throw new Exception("Invalid or unsupported joint");
+							}
+
+							foreach (XmlNode sn in n)
+							{
+								// check for specific nodes
+								switch (type)
+								{
+								case JointType.Distance:
+									{
+										switch (sn.Name.ToLower())
+										{
+										case "dampingratio":
+											((DistanceJointDef)mainDef).DampingRatio = float.Parse(sn.FirstChild.Value);
+											break;
+										case "frequencyhz":
+											((DistanceJointDef)mainDef).FrequencyHz = float.Parse(sn.FirstChild.Value);
+											break;
+										case "length":
+											((DistanceJointDef)mainDef).Length = float.Parse(sn.FirstChild.Value);
+											break;
+										case "localanchora":
+											((DistanceJointDef)mainDef).LocalAnchorA = ReadVector(sn);
+											break;
+										case "localanchorb":
+											((DistanceJointDef)mainDef).LocalAnchorB = ReadVector(sn);
+											break;
+										}
+									}
+									break;
+								case JointType.Friction:
+									{
+										switch (sn.Name.ToLower())
+										{
+										case "localanchora":
+											((FrictionJointDef)mainDef).LocalAnchorA = ReadVector(sn);
+											break;
+										case "localanchorb":
+											((FrictionJointDef)mainDef).LocalAnchorB = ReadVector(sn);
+											break;
+										case "maxforce":
+											((FrictionJointDef)mainDef).MaxForce = float.Parse(sn.FirstChild.Value);
+											break;
+										case "maxtorque":
+											((FrictionJointDef)mainDef).MaxTorque = float.Parse(sn.FirstChild.Value);
+											break;
+										}
+									}
+									break;
+								case JointType.Line:
+									{
+										switch (sn.Name.ToLower())
+										{
+										case "enablelimit":
+											((LineJointDef)mainDef).EnableLimit = bool.Parse(sn.FirstChild.Value);
+											break;
+										case "enablemotor":
+											((LineJointDef)mainDef).EnableMotor = bool.Parse(sn.FirstChild.Value);
+											break;
+										case "localanchora":
+											((LineJointDef)mainDef).LocalAnchorA = ReadVector(sn);
+											break;
+										case "localanchorb":
+											((LineJointDef)mainDef).LocalAnchorB = ReadVector(sn);
+											break;
+										case "localaxisa":
+											((LineJointDef)mainDef).LocalAxisA = ReadVector(sn);
+											break;
+										case "maxmotorforce":
+											((LineJointDef)mainDef).MaxMotorForce = float.Parse(sn.FirstChild.Value);
+											break;
+										case "motorspeed":
+											((LineJointDef)mainDef).MotorSpeed = float.Parse(sn.FirstChild.Value);
+											break;
+										case "lowertranslation":
+											((LineJointDef)mainDef).LowerTranslation = float.Parse(sn.FirstChild.Value);
+											break;
+										case "uppertranslation":
+											((LineJointDef)mainDef).UpperTranslation = float.Parse(sn.FirstChild.Value);
+											break;
+										}
+									}
+									break;
+								case JointType.Prismatic:
+									{
+										switch (sn.Name.ToLower())
+										{
+										case "enablelimit":
+											((PrismaticJointDef)mainDef).EnableLimit = bool.Parse(sn.FirstChild.Value);
+											break;
+										case "enablemotor":
+											((PrismaticJointDef)mainDef).EnableMotor = bool.Parse(sn.FirstChild.Value);
+											break;
+										case "localanchora":
+											((PrismaticJointDef)mainDef).LocalAnchorA = ReadVector(sn);
+											break;
+										case "localanchorb":
+											((PrismaticJointDef)mainDef).LocalAnchorB = ReadVector(sn);
+											break;
+										case "localaxisa":
+											((PrismaticJointDef)mainDef).LocalAxis = ReadVector(sn);
+											break;
+										case "maxmotorforce":
+											((PrismaticJointDef)mainDef).MaxMotorForce = float.Parse(sn.FirstChild.Value);
+											break;
+										case "motorspeed":
+											((PrismaticJointDef)mainDef).MotorSpeed = float.Parse(sn.FirstChild.Value);
+											break;
+										case "lowertranslation":
+											((PrismaticJointDef)mainDef).LowerTranslation = float.Parse(sn.FirstChild.Value);
+											break;
+										case "uppertranslation":
+											((PrismaticJointDef)mainDef).UpperTranslation = float.Parse(sn.FirstChild.Value);
+											break;
+										case "referenceangle":
+											((PrismaticJointDef)mainDef).ReferenceAngle = float.Parse(sn.FirstChild.Value);
+											break;
+										}
+									}
+									break;
+								case JointType.Pulley:
+									{
+										switch (sn.Name.ToLower())
+										{
+										case "groundanchora":
+											((PulleyJointDef)mainDef).GroundAnchorA = ReadVector(sn);
+											break;
+										case "groundanchorb":
+											((PulleyJointDef)mainDef).GroundAnchorB = ReadVector(sn);
+											break;
+										case "lengtha":
+											((PulleyJointDef)mainDef).LengthA = float.Parse(sn.FirstChild.Value);
+											break;
+										case "lengthb":
+											((PulleyJointDef)mainDef).LengthB = float.Parse(sn.FirstChild.Value);
+											break;
+										case "localanchora":
+											((PulleyJointDef)mainDef).LocalAnchorA = ReadVector(sn);
+											break;
+										case "localanchorb":
+											((PulleyJointDef)mainDef).LocalAnchorB = ReadVector(sn);
+											break;
+										case "maxlengtha":
+											((PulleyJointDef)mainDef).MaxLengthA = float.Parse(sn.FirstChild.Value);
+											break;
+										case "maxlengthb":
+											((PulleyJointDef)mainDef).MaxLengthB = float.Parse(sn.FirstChild.Value);
+											break;
+										case "ratio":
+											((PulleyJointDef)mainDef).Ratio = float.Parse(sn.FirstChild.Value);
+											break;
+										}
+									}
+									break;
+								case JointType.Revolute:
+									{
+										switch (sn.Name.ToLower())
+										{
+										case "enablelimit":
+											((RevoluteJointDef)mainDef).EnableLimit = bool.Parse(sn.FirstChild.Value);
+											break;
+										case "enablemotor":
+											((RevoluteJointDef)mainDef).EnableMotor = bool.Parse(sn.FirstChild.Value);
+											break;
+										case "localanchora":
+											((RevoluteJointDef)mainDef).LocalAnchorA = ReadVector(sn);
+											break;
+										case "localanchorb":
+											((RevoluteJointDef)mainDef).LocalAnchorB = ReadVector(sn);
+											break;
+										case "maxmotortorque":
+											((RevoluteJointDef)mainDef).MaxMotorTorque = float.Parse(sn.FirstChild.Value);
+											break;
+										case "motorspeed":
+											((RevoluteJointDef)mainDef).MotorSpeed = float.Parse(sn.FirstChild.Value);
+											break;
+										case "lowerangle":
+											((RevoluteJointDef)mainDef).LowerAngle = float.Parse(sn.FirstChild.Value);
+											break;
+										case "upperangle":
+											((RevoluteJointDef)mainDef).UpperAngle = float.Parse(sn.FirstChild.Value);
+											break;
+										case "referenceangle":
+											((RevoluteJointDef)mainDef).ReferenceAngle = float.Parse(sn.FirstChild.Value);
+											break;
+										}
+									}
+									break;
+								case JointType.Weld:
+									{
+										switch (sn.Name.ToLower())
+										{
+										case "localanchora":
+											((WeldJointDef)mainDef).LocalAnchorA = ReadVector(sn);
+											break;
+										case "localanchorb":
+											((WeldJointDef)mainDef).LocalAnchorB = ReadVector(sn);
+											break;
+										}
+									}
+									break;
+								case JointType.Gear:
+									throw new Exception("Gear joint is unsupported");
+								}
+
+								switch (sn.Name.ToLower())
+								{
+								case "jointa":
+									jointA = int.Parse(sn.FirstChild.Value);
+									break;
+								case "jointb":
+									jointB = int.Parse(sn.FirstChild.Value);
+									break;
+								case "collideconnected":
+									collideConnected = bool.Parse(sn.FirstChild.Value);
+									break;
+								case "userdata":
+									userData = ReadSimpleType(sn, null, false);
+									break;
+								}
+							}
+
+							mainDef.CollideConnected = collideConnected;
+							mainDef.UserData = userData;
+							_joints.Add(new JointDefSerialized(mainDef, jointA, jointB));
+						}
+					}
+					break;
 				}
 			}
 		}
@@ -867,70 +1177,6 @@ namespace Box2CS.Serialize
 			throw new KeyNotFoundException();
 		}
 
-		static JointDef JointDefFromJoint(Joint j)
-		{
-			JointDef def;
-
-			switch (j.JointType)
-			{
-			case JointType.Distance:
-				{
-					DistanceJoint dj = (DistanceJoint)j;
-					DistanceJointDef djd = new DistanceJointDef();
-					def = djd;
-
-					djd.DampingRatio = dj.DampingRatio;
-					djd.FrequencyHz = dj.Frequency;
-					djd.LocalAnchorA = dj.AnchorA;
-					djd.LocalAnchorB = dj.AnchorB;
-					djd.Length = dj.Length;
-				}
-				break;
-			case JointType.Friction:
-				{
-					FrictionJoint fj = (FrictionJoint)j;
-					FrictionJointDef fjd = new FrictionJointDef();
-					def = fjd;
-
-					fjd.MaxForce = fj.MaxForce;
-					fjd.MaxTorque = fj.MaxTorque;
-				}
-				break;
-			case JointType.Gear:
-				{
-					GearJoint gj = (GearJoint)j;
-					GearJointDef gjd = new GearJointDef();
-					def = gjd;
-
-					gjd.JointA = gj.JointA;
-					gjd.JointB = gj.JointB;
-					gjd.Ratio = gj.Ratio;
-				}
-				break;
-			case JointType.Line:
-				{
-					/*LineJoint lj = (LineJoint)j;
-					LineJointDef ljd = new LineJointDef();
-					def = ljd;
-
-					ljd.EnableLimit = lj.IsLimitEnabled;
-					ljd.EnableMotor = lj.IsMotorEnabled;
-					ljd.LocalAnchorA = lj.AnchorA;
-					ljd.LocalAnchorB = lj.AnchorB;
-					ljd.LocalAxisA = lj.axi*/
-					throw new Exception();
-				}
-				break;
-			}
-
-			def.JointType = j.JointType;
-			def.BodyA = dj.BodyA;
-			def.BodyB = dj.BodyB;
-			def.CollideConnected = dj.CollideConnected;
-
-			return def;
-		}
-
 		public static WorldSerializer SerializeWorld(World world, IWorldSerializer serializer)
 		{
 			WorldSerializer worldSerializer = new WorldSerializer(serializer);
@@ -972,9 +1218,6 @@ namespace Box2CS.Serialize
 
 				worldSerializer.AddBody(body, def, fixtures);
 			}
-
-			foreach (var joint in world.Joints)
-				worldSerializer.AddJoint(joint, JointDefFromJoint(joint));
 
 			return worldSerializer;
 		}
@@ -1047,9 +1290,9 @@ namespace Box2CS.Serialize
 			return -1;
 		}
 
-		public void AddJoint(Joint derivedJoint, JointDef joint)
+		public void AddJoint(JointDef joint)
 		{
-			_joints.Add(new JointDefSerialized(derivedJoint, joint, IndexOfDerivedBody(joint.BodyA), IndexOfDerivedBody(joint.BodyB)));
+			_joints.Add(new JointDefSerialized(joint, IndexOfDerivedBody(joint.BodyA), IndexOfDerivedBody(joint.BodyB)));
 		}
 
 		public void Serialize(Stream stream)
@@ -1070,6 +1313,11 @@ namespace Box2CS.Serialize
 			foreach (var b in _bodyDefinitions)
 				_serializer.SerializeBody(b);
 			_serializer.EndSerializingBodies();
+
+			_serializer.BeginSerializingJoints();
+			foreach (var j in _joints)
+				_serializer.SerializeJoint(j);
+			_serializer.EndSerializingJoints();
 
 			_serializer.Close();
 		}

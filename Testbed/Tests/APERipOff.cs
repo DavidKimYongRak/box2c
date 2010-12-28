@@ -54,7 +54,9 @@ namespace Testbed.Tests
 		}
 
 		public APERipOff()
-		{
+		{			
+			/*System.Collections.Generic.List<JointDef> joints = new System.Collections.Generic.List<JointDef>();
+
 			Body ground = m_world.CreateBody(new BodyDef());
 
 			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26, 40), new Vec2(32, 40)), 0.0f, 0.0f, 0.65f));
@@ -71,12 +73,10 @@ namespace Testbed.Tests
 
 			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 5, 40 - 5), new Vec2(-26 - 5 + 5, 40 - 4 - 5)), 0.0f, 0.0f, 0.65f));
 			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 - 5 + 5, 40 - 4 - 5), new Vec2(-26 - 5 + 5, 40 - 22)), 0.0f, 0.0f, 0.65f));
-		//	ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-12 - 5, 18 + 7), new Vec2(-26 - 5 + 5, 11 + 7))));
 
 			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 5, 40 - 5), new Vec2(-26 + 15, 40 - 5)), 0.0f, 0.0f, 0.65f));
 			ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 35, 40 - 5), new Vec2(-26 + 35 + 12, 40 - 5)), 0.0f, 0.0f, 0.65f));
 
-			//ground.CreateFixture(new FixtureDef(new PolygonShape(new Vec2(-26 + 15, 40 - 6), new Vec2(-26 + 35, 40 - 6))));
 			{
 				Body _oldBody = null;
 
@@ -90,12 +90,14 @@ namespace Testbed.Tests
 						RevoluteJointDef rjd = new RevoluteJointDef();
 						rjd.Initialize(thing, ground, thing.WorldCenter - new Vec2(2, 0));
 						m_world.CreateJoint(rjd);
+						joints.Add(rjd);
 					}
 					else if (i == 4)
 					{
 						RevoluteJointDef rjd = new RevoluteJointDef();
 						rjd.Initialize(thing, ground, thing.WorldCenter + new Vec2(2, 0));
 						m_world.CreateJoint(rjd);
+						joints.Add(rjd);
 					}
 
 					if (_oldBody != null)
@@ -103,12 +105,12 @@ namespace Testbed.Tests
 						RevoluteJointDef rjd = new RevoluteJointDef();
 						rjd.Initialize(_oldBody, thing, _oldBody.WorldCenter + new Vec2(2, 0));
 						m_world.CreateJoint(rjd);
+						joints.Add(rjd);
 					}
 
 					_oldBody = thing;
 				}
 			}
-			//Capsule cantilever = new Capsule(m_world, new Vec2(-26 + 52.8f, 40 - 5 - (1.40f / 2)), 8.8f, 1.40f, 1.0f);
 
 			BodyDef bd = new BodyDef(BodyType.Dynamic, Vec2.Empty);
 			var cantilever = m_world.CreateBody(bd);
@@ -133,11 +135,12 @@ namespace Testbed.Tests
 				wjd.Initialize(tempbody, ground, tempbody.WorldCenter);
 				wjd.CollideConnected = false;
 				m_world.CreateJoint(wjd);
+				joints.Add(wjd);
 
 				WeldJointDef rjd = new WeldJointDef();
 				rjd.Initialize(tempbody, cantilever, tempbody.WorldCenter);
 				rjd.CollideConnected = true;
-				var x = m_world.CreateJoint(rjd).CollideConnected;
+				joints.Add(rjd);
 			}
 
 			new Capsule(m_world, new Vec2(1.5f, 37.5f), 5, 4, 0.35f);
@@ -145,11 +148,6 @@ namespace Testbed.Tests
 			{
 				Body squareThing;
 				bd = new BodyDef(BodyType.Kinematic, new Vec2(23, 17));
-
-				bd.UserData = new Vec2(5, 5);
-				Box2CS.Serialize.Serializer sr = new Box2CS.Serialize.Serializer();
-				sr.BodyDefs.Add(bd);
-				sr.Save("test.xml");
 
 				squareThing = m_world.CreateBody(bd);
 
@@ -175,6 +173,7 @@ namespace Testbed.Tests
 				rjd.Initialize(squareThing, squareOne, squareThing.WorldCenter + new Vec2(1, 4));
 				rjd.CollideConnected = true;
 				m_world.CreateJoint(rjd);
+				joints.Add(rjd);
 
 				Body squareTwo = m_world.CreateBody(new BodyDef(BodyType.Dynamic, squareThing.WorldCenter + new Vec2(-1, -8.5f)));
 				squareTwo.CreateFixture(new PolygonShape(0.50f, 0.50f), 500);
@@ -183,6 +182,7 @@ namespace Testbed.Tests
 				rjd.Initialize(squareThing, squareTwo, squareThing.WorldCenter + new Vec2(-1, -4.5f));
 				rjd.CollideConnected = true;
 				m_world.CreateJoint(rjd);
+				joints.Add(rjd);
 			}
 
 			{
@@ -201,6 +201,8 @@ namespace Testbed.Tests
 					RevoluteJointDef rjd = new RevoluteJointDef();
 					rjd.Initialize(leftWheel, body, leftWheel.WorldCenter);
 					wheelL = (RevoluteJoint)m_world.CreateJoint(rjd);
+					rjd.UserData = "lwheel";
+					joints.Add(rjd);
 				}
 
 				{
@@ -211,11 +213,54 @@ namespace Testbed.Tests
 					RevoluteJointDef rjd = new RevoluteJointDef();
 					rjd.Initialize(leftWheel, body, leftWheel.WorldCenter);
 					wheelR = (RevoluteJoint)m_world.CreateJoint(rjd);
+					rjd.UserData = "rwheel";
+					joints.Add(rjd);
 				}
 			}
 
 			using (var fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Create))
-				Box2CS.Serialize.WorldSerializer.SerializeWorld(m_world, new Box2CS.Serialize.WorldXmlSerializer()).Serialize(fs);
+			{
+				var serializer = Box2CS.Serialize.WorldSerializer.SerializeWorld(m_world, new Box2CS.Serialize.WorldXmlSerializer());
+
+				foreach (var j in joints)
+					serializer.AddJoint(j);
+
+				serializer.Serialize(fs);
+			}
+			*/
+			
+			using (var fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Open))
+			{
+				var serializer = new Box2CS.Serialize.WorldXmlDeserializer();
+				serializer.Deserialize(fs);
+
+				System.Collections.Generic.List<Body> bodies = new System.Collections.Generic.List<Body>();
+
+				foreach (var x in serializer.Bodies)
+				{
+					var body = m_world.CreateBody(x.Body);
+
+					bodies.Add(body);
+					foreach (var f in x.FixtureIDs)
+						body.CreateFixture(serializer.FixtureDefs[f].Fixture);
+				}
+
+				foreach (var j in serializer.Joints)
+				{
+					j.Joint.BodyA = bodies[j.JointAIndex];
+					j.Joint.BodyB = bodies[j.JointBIndex];
+
+					var joint = m_world.CreateJoint(j.Joint);
+
+					if (j.Joint.UserData != null)
+					{
+						if ((string)j.Joint.UserData == "lwheel")
+							wheelL = (RevoluteJoint)joint;
+						if ((string)j.Joint.UserData == "rwheel")
+							wheelR = (RevoluteJoint)joint;
+					}
+				}
+			}
 		}
 
 		public override void Keyboard(SFML.Window.KeyCode key)
