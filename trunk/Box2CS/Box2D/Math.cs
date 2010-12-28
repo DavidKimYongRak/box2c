@@ -179,6 +179,12 @@ namespace Box2CS
 		{
 			return X * X + Y * Y;
 		}
+
+		public static Vec2 Parse(string p)
+		{
+			var parsed = p.Split();
+			return new Vec2(float.Parse(parsed[0]), float.Parse(parsed[1]));
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
