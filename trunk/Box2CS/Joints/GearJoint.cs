@@ -46,11 +46,27 @@ namespace Box2CS
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern float b2gearjoint_getratio(IntPtr joint);
+
+			[DllImport(Box2DSettings.Box2CDLLName)]
+			public static extern IntPtr b2gearjoint_getjointa(IntPtr joint);
+
+			[DllImport(Box2DSettings.Box2CDLLName)]
+			public static extern IntPtr b2gearjoint_getjointb(IntPtr joint);
 		}
 
 		public GearJoint(IntPtr ptr) :
 			base(ptr)
 		{
+		}
+
+		public Joint JointA
+		{
+			get { return Joint.FromPtr(NativeMethods.b2gearjoint_getjointa(JointPtr)); }
+		}
+
+		public Joint JointB
+		{
+			get { return Joint.FromPtr(NativeMethods.b2gearjoint_getjointb(JointPtr)); }
 		}
 
 		public float Ratio

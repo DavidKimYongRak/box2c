@@ -145,7 +145,7 @@ namespace Testbed
 
 			m_destructionListener.test = this;
 			m_world.DestructionListener = m_destructionListener;
-			//m_world.ContactListener = this;
+			m_world.ContactListener = this;
 			m_world.DebugDraw = m_debugDraw;
 
 			m_bombSpawning = false;

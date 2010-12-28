@@ -50,7 +50,7 @@ namespace Box2CS
 		public JointType JointType
 		{
 			get { return _type; }
-			protected set { _type = value; }
+			set { _type = value; }
 		}
 
 		public object UserData
@@ -133,6 +133,9 @@ namespace Box2CS
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2joint_getisactive(IntPtr joint);
+
+			[DllImport(Box2DSettings.Box2CDLLName)]
+			public static extern bool b2joint_getcollideconnected(IntPtr joint);
 		}
 
 		IntPtr _jointPtr;
@@ -187,6 +190,11 @@ namespace Box2CS
 		public float GetReactionTorque(float invDt)
 		{
 			return NativeMethods.b2joint_getreactiontorque(_jointPtr, invDt);
+		}
+
+		public bool CollideConnected
+		{
+			get { return NativeMethods.b2joint_getcollideconnected(_jointPtr); }
 		}
 
 		public JointType JointType
