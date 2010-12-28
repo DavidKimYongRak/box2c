@@ -136,8 +136,8 @@ namespace Testbed.Tests
 
 				WeldJointDef rjd = new WeldJointDef();
 				rjd.Initialize(tempbody, cantilever, tempbody.WorldCenter);
-				rjd.CollideConnected = false;
-				m_world.CreateJoint(rjd);
+				rjd.CollideConnected = true;
+				var x = m_world.CreateJoint(rjd).CollideConnected;
 			}
 
 			new Capsule(m_world, new Vec2(1.5f, 37.5f), 5, 4, 0.35f);
@@ -213,6 +213,9 @@ namespace Testbed.Tests
 					wheelR = (RevoluteJoint)m_world.CreateJoint(rjd);
 				}
 			}
+
+			using (var fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Create))
+				Box2CS.Serialize.WorldSerializer.SerializeWorld(m_world, new Box2CS.Serialize.WorldXmlSerializer()).Serialize(fs);
 		}
 
 		public override void Keyboard(SFML.Window.KeyCode key)

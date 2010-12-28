@@ -82,7 +82,7 @@ namespace Testbed.Tests
 				BodyDef bd = new BodyDef();
 				bd.BodyType = BodyType.Dynamic;
 				bd.Position = new Vec2(0.0f, 8.0f);
-				Body body = m_world.CreateBody(bd);
+				m_payload = m_world.CreateBody(bd);
 
 				PolygonShape shape = new PolygonShape();
 				shape.SetAsBox(0.75f, 0.75f);
@@ -92,7 +92,7 @@ namespace Testbed.Tests
 				fd.Friction = 0.6f;
 				fd.Density = 2.0f;
 
-				body.CreateFixture(fd);
+				m_payload.CreateFixture(fd);
 			}
 		}
 
@@ -112,6 +112,11 @@ namespace Testbed.Tests
 				m_platform.BodyType = BodyType.Kinematic;
 				m_platform.LinearVelocity = new Vec2(-m_speed, 0.0f);
 				m_platform.AngularVelocity = 0.0f;
+				break;
+
+			case 'n':
+				m_payload.BodyType = (m_payload.BodyType == BodyType.Dynamic) ? BodyType.Static : BodyType.Dynamic;
+				m_platform.IsAwake = true;
 				break;
 			}
 		}
@@ -144,7 +149,7 @@ namespace Testbed.Tests
 		}
 
 		Body m_attachment;
-		Body m_platform;
+		Body m_platform, m_payload;
 		float m_speed;
 	}
 }

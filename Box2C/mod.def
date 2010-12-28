@@ -152,12 +152,15 @@ EXPORTS
 	b2joint_getuserdata
 	b2joint_setuserdata
 	b2joint_getisactive
+	b2joint_getcollideconnected
 
 	b2gearjoint_getratio
 	b2gearjoint_setratio
+	b2gearjoint_getjointa
+	b2gearjoint_getjointb
 
-	b2distancejoint_getratio
-	b2distancejoint_setratio
+	b2distancejoint_getlength
+	b2distancejoint_setlength
 	b2distancejoint_getfrequency
 	b2distancejoint_setfrequency
 	b2distancejoint_getdampingratio

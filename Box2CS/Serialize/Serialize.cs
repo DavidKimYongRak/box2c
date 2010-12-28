@@ -41,16 +41,58 @@ namespace Box2CS.Serialize
 			set;
 		}
 
-		public BodyDefSerialized(BodyDef body, List<int> fixtureIDs)
+		public Body DerivedBody
 		{
+			get;
+			set;
+		}
+
+		public BodyDefSerialized(Body derivedBody, BodyDef body, List<int> fixtureIDs)
+		{
+			DerivedBody = derivedBody;
 			Body = body;
 			FixtureIDs = fixtureIDs;
 		}
 	}
 
+	public class JointDefSerialized
+	{
+		public JointDef Joint
+		{
+			get;
+			set;
+		}
+
+		public int BodyAIndex
+		{
+			get;
+			set;
+		}
+
+		public int BodyBIndex
+		{
+			get;
+			set;
+		}
+
+		public Joint DerivedJoint
+		{
+			get;
+			set;
+		}
+
+		public JointDefSerialized(Joint derivedJoint, JointDef joint, int bodyA, int bodyB)
+		{
+			DerivedJoint = derivedJoint;
+			Joint = joint;
+			BodyAIndex = bodyA;
+			BodyBIndex = bodyB;
+		}
+	}
+
 	public interface IWorldSerializer
 	{
-		void Open(Stream stream);
+		void Open(Stream stream, IWorldSerializationProvider provider);
 		void Close();
 
 		void BeginSerializingShapes();
@@ -65,31 +107,49 @@ namespace Box2CS.Serialize
 		void SerializeShape(Shape shape);
 		void SerializeFixture(FixtureDefSerialized fixture);
 		void SerializeBody(BodyDefSerialized body);
+
+		void BeginSerializingJoints();
+		void EndSerializingJoints();
+
+		void SerializeJoint(JointDefSerialized joint);
 	}
 
-	public interface IWorldDeserializer
+	public interface IWorldSerializationProvider
 	{
 		IList<Shape> Shapes
 		{
 			get;
 		}
 
-		IList<FixtureDef> FixtureDefs
+		IList<FixtureDefSerialized> FixtureDefs
 		{
 			get;
 		}
+
+		int IndexOfFixture(FixtureDef def);
 
 		IList<BodyDefSerialized> Bodies
 		{
 			get;
 		}
 
+		int IndexOfBody(BodyDef def);
+
+		IList<JointDefSerialized> Joints
+		{
+			get;
+		}
+	}
+
+	public interface IWorldDeserializer
+	{
 		void Deserialize(Stream stream);
 	}
 
 	public class WorldXmlSerializer : IWorldSerializer
 	{
 		XmlWriter writer;
+		IWorldSerializationProvider _provider;
 
 		void WriteEndElement()
 		{
@@ -116,7 +176,27 @@ namespace Box2CS.Serialize
 			writer.WriteEndElement();
 		}
 
-		void WriteVector(string name, Vec2 vec)
+		void WriteElement(string name, int val)
+		{
+			writer.WriteElementString(name, val.ToString());
+		}
+
+		void WriteElement(string name, float val)
+		{
+			writer.WriteElementString(name, val.ToString());
+		}
+
+		void WriteElement(string name, double val)
+		{
+			writer.WriteElementString(name, val.ToString());
+		}
+
+		void WriteElement(string name, bool val)
+		{
+			writer.WriteElementString(name, val.ToString());
+		}
+
+		void WriteElement(string name, Vec2 vec)
 		{
 			writer.WriteStartElement(name);
 			writer.WriteAttributeString("X", vec.X.ToString());
@@ -124,7 +204,7 @@ namespace Box2CS.Serialize
 			WriteEndElement();
 		}
 
-		public void Open(Stream stream)
+		public void Open(Stream stream, IWorldSerializationProvider provider)
 		{
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Indent = true;
@@ -134,6 +214,8 @@ namespace Box2CS.Serialize
 			writer = XmlWriter.Create(stream, settings);
 
 			writer.WriteStartElement("World");
+
+			_provider = provider;
 		}
 
 		public void Close()
@@ -188,7 +270,7 @@ namespace Box2CS.Serialize
 
 					writer.WriteElementString("Radius", circle.Radius.ToString());
 
-					WriteVector("Position", circle.Position);
+					WriteElement("Position", circle.Position);
 				}
 				break;
 			case ShapeType.Polygon:
@@ -197,10 +279,10 @@ namespace Box2CS.Serialize
 
 					writer.WriteStartElement("Vertices");
 					foreach (var v in poly.Vertices)
-						WriteVector("Vertex", v);
+						WriteElement("Vertex", v);
 					WriteEndElement();
 
-					WriteVector("Centroid", poly.Centroid);
+					WriteElement("Centroid", poly.Centroid);
 				}
 				break;
 			default:
@@ -281,10 +363,10 @@ namespace Box2CS.Serialize
 				writer.WriteElementString("LinearDamping", body.Body.LinearDamping.ToString());
 
 			if (body.Body.LinearVelocity != defaultBodyDefData.LinearVelocity)
-				WriteVector("LinearVelocity", body.Body.LinearVelocity);
+				WriteElement("LinearVelocity", body.Body.LinearVelocity);
 
 			if (body.Body.Position != defaultBodyDefData.Position)
-				WriteVector("Position", body.Body.Position);
+				WriteElement("Position", body.Body.Position);
 
 			if (body.Body.UserData != null)
 			{
@@ -300,20 +382,167 @@ namespace Box2CS.Serialize
 
 			WriteEndElement();
 		}
+
+		public void BeginSerializingJoints()
+		{
+			writer.WriteStartElement("Joints");
+		}
+
+		public void EndSerializingJoints()
+		{
+			writer.WriteEndElement();
+		}
+
+		public void SerializeJoint(JointDefSerialized def)
+		{
+			writer.WriteStartElement("Joint");
+
+			writer.WriteAttributeString("Type", def.Joint.JointType.ToString());
+
+			WriteElement("BodyA", def.BodyAIndex);
+			WriteElement("BodyB", def.BodyBIndex);
+
+			WriteElement("CollideConnected", def.Joint.CollideConnected);
+
+			if (def.Joint.UserData != null)
+			{
+				writer.WriteStartElement("UserData");
+				WriteDynamicType(def.Joint.UserData.GetType(), def.Joint.UserData);
+				WriteEndElement();
+			}
+
+			switch (def.Joint.JointType)
+			{
+			case JointType.Distance:
+				{
+					DistanceJointDef djd = (DistanceJointDef)def.Joint;
+
+					WriteElement("DampingRatio", djd.DampingRatio);
+					WriteElement("FrequencyHz", djd.FrequencyHz);
+					WriteElement("Length", djd.Length);
+					WriteElement("LocalAnchorA", djd.LocalAnchorA);
+					WriteElement("LocalAnchorB", djd.LocalAnchorB);
+				}
+				break;
+			case JointType.Friction:
+				{
+					FrictionJointDef fjd = (FrictionJointDef)def.Joint;
+
+					WriteElement("LocalAnchorA", fjd.LocalAnchorA);
+					WriteElement("LocalAnchorB", fjd.LocalAnchorB);
+					WriteElement("MaxForce", fjd.MaxForce);
+					WriteElement("MaxTorque", fjd.MaxTorque);
+				}
+				break;
+			case JointType.Gear:
+				{
+					GearJointDef gjd = (GearJointDef)def.Joint;
+
+					int jointA = -1, jointB = -1;
+
+					for (int i = 0; i < _provider.Joints.Count; ++i)
+					{
+						if (gjd.JointA == _provider.Joints[i].DerivedJoint)
+							jointA = i;
+
+						if (gjd.JointB == _provider.Joints[i].DerivedJoint)
+							jointB = i;
+
+						if (jointA != -1 && jointB != -1)
+							break;
+					}
+
+					WriteElement("JointA", jointA);
+					WriteElement("JointB", jointB);
+					WriteElement("Ratio", gjd.Ratio);
+				}
+				break;
+			case JointType.Line:
+				{
+					LineJointDef ljd = (LineJointDef)def.Joint;
+
+					WriteElement("EnableLimit", ljd.EnableLimit);
+					WriteElement("EnableMotor", ljd.EnableMotor);
+					WriteElement("LocalAnchorA", ljd.LocalAnchorA);
+					WriteElement("LocalAnchorB", ljd.LocalAnchorB);
+					WriteElement("LocalAxisA", ljd.LocalAxisA);
+					WriteElement("LowerTranslation", ljd.LowerTranslation);
+					WriteElement("MaxMotorForce", ljd.MaxMotorForce);
+					WriteElement("MotorSpeed", ljd.MotorSpeed);
+					WriteElement("UpperTranslation", ljd.UpperTranslation);
+				}
+				break;
+			case JointType.Prismatic:
+				{
+					PrismaticJointDef pjd = (PrismaticJointDef)def.Joint;
+
+					WriteElement("EnableLimit", pjd.EnableLimit);
+					WriteElement("EnableMotor", pjd.EnableMotor);
+					WriteElement("LocalAnchorA", pjd.LocalAnchorA);
+					WriteElement("LocalAnchorB", pjd.LocalAnchorB);
+					WriteElement("LocalAxisA", pjd.LocalAxis);
+					WriteElement("LowerTranslation", pjd.LowerTranslation);
+					WriteElement("MaxMotorForce", pjd.MaxMotorForce);
+					WriteElement("MotorSpeed", pjd.MotorSpeed);
+					WriteElement("UpperTranslation", pjd.UpperTranslation);
+					WriteElement("ReferenceAngle", pjd.ReferenceAngle);
+				}
+				break;
+			case JointType.Pulley:
+				{
+					PulleyJointDef pjd = (PulleyJointDef)def.Joint;
+
+					WriteElement("GroundAnchorA", pjd.GroundAnchorA);
+					WriteElement("GroundAnchorB", pjd.GroundAnchorB);
+					WriteElement("LengthA", pjd.LengthA);
+					WriteElement("LengthB", pjd.LengthB);
+					WriteElement("LocalAnchorA", pjd.LocalAnchorA);
+					WriteElement("LocalAnchorB", pjd.LocalAnchorB);
+					WriteElement("MaxLengthA", pjd.MaxLengthA);
+					WriteElement("MaxLengthB", pjd.MaxLengthB);
+					WriteElement("Ratio", pjd.Ratio);
+				}
+				break;
+			case JointType.Revolute:
+				{
+					RevoluteJointDef rjd = (RevoluteJointDef)def.Joint;
+
+					WriteElement("EnableLimit", rjd.EnableLimit);
+					WriteElement("EnableMotor", rjd.EnableMotor);
+					WriteElement("LocalAnchorA", rjd.LocalAnchorA);
+					WriteElement("LocalAnchorB", rjd.LocalAnchorB);
+					WriteElement("LowerAngle", rjd.LowerAngle);
+					WriteElement("MaxMotorTorque", rjd.MaxMotorTorque);
+					WriteElement("MotorSpeed", rjd.MotorSpeed);
+					WriteElement("ReferenceAngle", rjd.ReferenceAngle);
+					WriteElement("UpperAngle", rjd.UpperAngle);
+				}
+				break;
+			case JointType.Weld:
+				{
+				}
+				break;
+			default:
+				throw new Exception();
+			}
+
+			writer.WriteEndElement();
+		}
 	}
 
-	public class WorldXmlDeserializer : IWorldDeserializer
+	public class WorldXmlDeserializer : IWorldDeserializer, IWorldSerializationProvider
 	{
 		List<Shape> _shapes = new List<Shape>();
-		List<FixtureDef> _fixtures = new List<FixtureDef>();
+		List<FixtureDefSerialized> _fixtures = new List<FixtureDefSerialized>();
 		List<BodyDefSerialized> _bodies = new List<BodyDefSerialized>();
+		List<JointDefSerialized> _joints = new List<JointDefSerialized>();
 
 		public IList<Shape> Shapes
 		{
 			get { return _shapes; }
 		}
 
-		public IList<FixtureDef> FixtureDefs
+		public IList<FixtureDefSerialized> FixtureDefs
 		{
 			get { return _fixtures; }
 		}
@@ -323,7 +552,28 @@ namespace Box2CS.Serialize
 			get { return _bodies; }
 		}
 
-		//XmlReader reader;
+		public IList<JointDefSerialized> Joints
+		{
+			get { return _joints; }
+		}
+
+		public int IndexOfFixture(FixtureDef def)
+		{
+			for (int i = 0; i < _fixtures.Count; ++i)
+				if (_fixtures[i].Fixture == def)
+					return i;
+
+			return -1;
+		}
+
+		public int IndexOfBody(BodyDef def)
+		{
+			for (int i = 0; i < _bodies.Count; ++i)
+				if (_bodies[i].Body == def)
+					return i;
+
+			return -1;
+		}
 
 		Vec2 ReadVector(XmlNode node)
 		{
@@ -477,7 +727,7 @@ namespace Box2CS.Serialize
 								}
 							}
 
-							_fixtures.Add(fixture);
+							_fixtures.Add(new FixtureDefSerialized(fixture, -1));
 						}
 					}
 					break;
@@ -545,7 +795,7 @@ namespace Box2CS.Serialize
 								}
 							}
 
-							_bodies.Add(new BodyDefSerialized(body, fixtures));
+							_bodies.Add(new BodyDefSerialized(null, body, fixtures));
 						}
 					}
 					break;
@@ -554,13 +804,52 @@ namespace Box2CS.Serialize
 		}
 	}
 
-	public class WorldSerializer
+	public class WorldSerializer : IWorldSerializationProvider
 	{
 		IWorldSerializer _serializer;
 
 		List<Shape> _shapeDefinitions = new List<Shape>();
 		List<FixtureDefSerialized> _fixtureDefinitions = new List<FixtureDefSerialized>();
 		List<BodyDefSerialized> _bodyDefinitions = new List<BodyDefSerialized>();
+		List<JointDefSerialized> _joints = new List<JointDefSerialized>();
+
+		public IList<Shape> Shapes
+		{
+			get { return _shapeDefinitions; }
+		}
+
+		public IList<FixtureDefSerialized> FixtureDefs
+		{
+			get { return _fixtureDefinitions; }
+		}
+
+		public IList<BodyDefSerialized> Bodies
+		{
+			get { return _bodyDefinitions; }
+		}
+
+		public IList<JointDefSerialized> Joints
+		{
+			get { return _joints; }
+		}
+
+		public int IndexOfFixture(FixtureDef def)
+		{
+			for (int i = 0; i < _fixtureDefinitions.Count; ++i)
+				if (_fixtureDefinitions[i].Fixture == def)
+					return i;
+
+			return -1;
+		}
+
+		public int IndexOfBody(BodyDef def)
+		{
+			for (int i = 0; i < _bodyDefinitions.Count; ++i)
+				if (_bodyDefinitions[i].Body == def)
+					return i;
+
+			return -1;
+		}
 
 		public WorldSerializer(IWorldSerializer serializer)
 		{
@@ -576,6 +865,70 @@ namespace Box2CS.Serialize
 			}
 
 			throw new KeyNotFoundException();
+		}
+
+		static JointDef JointDefFromJoint(Joint j)
+		{
+			JointDef def;
+
+			switch (j.JointType)
+			{
+			case JointType.Distance:
+				{
+					DistanceJoint dj = (DistanceJoint)j;
+					DistanceJointDef djd = new DistanceJointDef();
+					def = djd;
+
+					djd.DampingRatio = dj.DampingRatio;
+					djd.FrequencyHz = dj.Frequency;
+					djd.LocalAnchorA = dj.AnchorA;
+					djd.LocalAnchorB = dj.AnchorB;
+					djd.Length = dj.Length;
+				}
+				break;
+			case JointType.Friction:
+				{
+					FrictionJoint fj = (FrictionJoint)j;
+					FrictionJointDef fjd = new FrictionJointDef();
+					def = fjd;
+
+					fjd.MaxForce = fj.MaxForce;
+					fjd.MaxTorque = fj.MaxTorque;
+				}
+				break;
+			case JointType.Gear:
+				{
+					GearJoint gj = (GearJoint)j;
+					GearJointDef gjd = new GearJointDef();
+					def = gjd;
+
+					gjd.JointA = gj.JointA;
+					gjd.JointB = gj.JointB;
+					gjd.Ratio = gj.Ratio;
+				}
+				break;
+			case JointType.Line:
+				{
+					/*LineJoint lj = (LineJoint)j;
+					LineJointDef ljd = new LineJointDef();
+					def = ljd;
+
+					ljd.EnableLimit = lj.IsLimitEnabled;
+					ljd.EnableMotor = lj.IsMotorEnabled;
+					ljd.LocalAnchorA = lj.AnchorA;
+					ljd.LocalAnchorB = lj.AnchorB;
+					ljd.LocalAxisA = lj.axi*/
+					throw new Exception();
+				}
+				break;
+			}
+
+			def.JointType = j.JointType;
+			def.BodyA = dj.BodyA;
+			def.BodyB = dj.BodyB;
+			def.CollideConnected = dj.CollideConnected;
+
+			return def;
 		}
 
 		public static WorldSerializer SerializeWorld(World world, IWorldSerializer serializer)
@@ -617,8 +970,11 @@ namespace Box2CS.Serialize
 					fixtures.Add(fixDef);
 				}
 
-				worldSerializer.AddBody(def, fixtures);
+				worldSerializer.AddBody(body, def, fixtures);
 			}
+
+			foreach (var joint in world.Joints)
+				worldSerializer.AddJoint(joint, JointDefFromJoint(joint));
 
 			return worldSerializer;
 		}
@@ -661,7 +1017,7 @@ namespace Box2CS.Serialize
 			_fixtureDefinitions.Add(new FixtureDefSerialized(fixture, shapeID));
 		}
 
-		public void AddBody(BodyDef body, List<FixtureDef> fixtures)
+		public void AddBody(Body derivedBody, BodyDef body, List<FixtureDef> fixtures)
 		{
 			List<int> fixtureIDs = new List<int>();
 
@@ -679,12 +1035,26 @@ namespace Box2CS.Serialize
 				}
 			}
 
-			_bodyDefinitions.Add(new BodyDefSerialized(body, fixtureIDs));
+			_bodyDefinitions.Add(new BodyDefSerialized(derivedBody, body, fixtureIDs));
+		}
+
+		int IndexOfDerivedBody(Body b)
+		{
+			for (int i = 0; i < _bodyDefinitions.Count; ++i)
+				if (_bodyDefinitions[i].DerivedBody == b)
+					return i;
+
+			return -1;
+		}
+
+		public void AddJoint(Joint derivedJoint, JointDef joint)
+		{
+			_joints.Add(new JointDefSerialized(derivedJoint, joint, IndexOfDerivedBody(joint.BodyA), IndexOfDerivedBody(joint.BodyB)));
 		}
 
 		public void Serialize(Stream stream)
 		{
-			_serializer.Open(stream);
+			_serializer.Open(stream, this);
 
 			_serializer.BeginSerializingShapes();
 			foreach (var s in _shapeDefinitions)

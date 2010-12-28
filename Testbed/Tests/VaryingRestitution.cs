@@ -7,7 +7,6 @@ namespace Testbed.Tests
 	{
 		public VaryingRestitution()
 		{
-			/*
 			{
 				BodyDef bd = new BodyDef();
 				Body ground = m_world.CreateBody(bd);
@@ -39,25 +38,7 @@ namespace Testbed.Tests
 					fd.UserData = i;
 					body.CreateFixture(fd);
 				}
-			}
-
-			using (var fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Create))
-				Box2CS.Serialize.WorldSerializer.SerializeWorld(m_world, new Box2CS.Serialize.WorldXmlSerializer()).Serialize(fs);
-			*/
-
-			using (var fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Open))
-			{
-				var x = new Box2CS.Serialize.WorldXmlDeserializer();
-				x.Deserialize(fs);
-
-				foreach (var b in x.Bodies)
-				{
-					var body = m_world.CreateBody(b.Body);
-
-					foreach (var f in b.FixtureIDs)
-						body.CreateFixture(x.FixtureDefs[f]);
-				}
-			}
+			}		
 		}
 	};
 }

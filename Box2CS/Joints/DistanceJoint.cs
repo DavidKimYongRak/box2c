@@ -71,10 +71,10 @@ namespace Box2CS
 		static class NativeMethods
 		{
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2distancejoint_setratio(IntPtr joint, float data);
+			public static extern void b2distancejoint_setlength(IntPtr joint, float data);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern float b2distancejoint_getratio(IntPtr joint);
+			public static extern float b2distancejoint_getlength(IntPtr joint);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern void b2distancejoint_setfrequency(IntPtr joint, float data);
@@ -94,10 +94,10 @@ namespace Box2CS
 		{
 		}
 
-		public float Ratio
+		public float Length
 		{
-			get { return NativeMethods.b2distancejoint_getratio(JointPtr); }
-			set { NativeMethods.b2distancejoint_setratio(JointPtr, value); }
+			get { return NativeMethods.b2distancejoint_getlength(JointPtr); }
+			set { NativeMethods.b2distancejoint_setlength(JointPtr, value); }
 		}
 
 		public float Frequency

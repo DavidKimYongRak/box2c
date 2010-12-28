@@ -1101,6 +1101,36 @@ float b2joint_getreactiontorque (cb2joint *joint, float inv_dt)
 	return joint->GetReactionTorque(inv_dt);
 }
 
+// This is a workaround to get m_collideConnected from b2Joint.
+class b2stupid
+{
+public:
+	virtual ~b2stupid() {}
+
+	b2JointType m_type;
+	b2Joint* m_prev;
+	b2Joint* m_next;
+	b2JointEdge m_edgeA;
+	b2JointEdge m_edgeB;
+	b2Body* m_bodyA;
+	b2Body* m_bodyB;
+
+	bool m_islandFlag;
+	bool m_collideConnected;
+
+	void* m_userData;
+
+	b2Vec2 m_localCenterA, m_localCenterB;
+	float32 m_invMassA, m_invIA;
+	float32 m_invMassB, m_invIB;
+};
+
+bool b2joint_getcollideconnected (cb2joint *joint)
+{
+	b2stupid *stupid = reinterpret_cast<b2stupid*>(joint);
+	return stupid->m_collideConnected;
+}
+
 QUICK_GETTER(
 	b2joint_getnext,
 	cb2joint,
@@ -1130,10 +1160,54 @@ QUICK_GET_SETTER_FUNC(
 	GetRatio,
 	SetRatio);
 
+// FIXME. Another hack.
+class b2stupidgear : public b2Joint
+{
+public:
+	b2Body* m_ground1;
+	b2Body* m_ground2;
+
+	// One of these is NULL.
+	b2RevoluteJoint* m_revolute1;
+	b2PrismaticJoint* m_prismatic1;
+
+	// One of these is NULL.
+	b2RevoluteJoint* m_revolute2;
+	b2PrismaticJoint* m_prismatic2;
+
+	b2Vec2 m_groundAnchor1;
+	b2Vec2 m_groundAnchor2;
+
+	b2Vec2 m_localAnchor1;
+	b2Vec2 m_localAnchor2;
+
+	b2Jacobian m_J;
+
+	float32 m_constant;
+	float32 m_ratio;
+
+	// Effective mass
+	float32 m_mass;
+
+	// Impulse for accumulation/warm starting.
+	float32 m_impulse;
+};
+
+cb2joint *b2gearjoint_getjointa (cb2gearjoint *joint)
+{
+	b2stupidgear *stupid = reinterpret_cast<b2stupidgear*>(joint);
+	return (stupid->m_prismatic1 == NULL) ? (cb2joint*)stupid->m_revolute1 : (cb2joint*)stupid->m_prismatic1;
+}
+
+cb2joint *b2gearjoint_getjointb (cb2gearjoint *joint)
+{
+	b2stupidgear *stupid = reinterpret_cast<b2stupidgear*>(joint);
+	return (stupid->m_prismatic2 == NULL) ? (cb2joint*)stupid->m_revolute2 : (cb2joint*)stupid->m_prismatic2;
+}
 
 QUICK_GET_SETTER_FUNC(
-	b2distancejoint_getratio,
-	b2distancejoint_setratio,
+	b2distancejoint_getlength,
+	b2distancejoint_setlength,
 	cb2distancejoint,
 	float,
 	GetLength,
