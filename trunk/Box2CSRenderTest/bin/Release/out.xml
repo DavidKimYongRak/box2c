@@ -1,4 +1,6 @@
-﻿<World>
+﻿<World
+  Version="1">
+  <Gravity>8.369571E-36 1.001022E-38</Gravity>
   <Shapes>
     <Shape
       Type="Circle">
@@ -498,6 +500,7 @@
     </Body>
     <Body
       Type="Kinematic">
+      <Name>Kinematic test</Name>
       <AngularVelocity>-0.5</AngularVelocity>
       <Position>23 17</Position>
       <Fixtures>
@@ -600,81 +603,81 @@
   <Joints>
     <Joint
       Type="Revolute">
-      <JointA>14</JointA>
-      <JointB>15</JointB>
+      <BodyA>14</BodyA>
+      <BodyB>15</BodyB>
       <LocalAnchorA>-2 0</LocalAnchorA>
       <LocalAnchorB>-11 34.75</LocalAnchorB>
     </Joint>
     <Joint
       Type="Revolute">
-      <JointA>14</JointA>
-      <JointB>13</JointB>
+      <BodyA>14</BodyA>
+      <BodyB>13</BodyB>
       <LocalAnchorA>2 0</LocalAnchorA>
       <LocalAnchorB>-2 0</LocalAnchorB>
     </Joint>
     <Joint
       Type="Revolute">
-      <JointA>13</JointA>
-      <JointB>12</JointB>
+      <BodyA>13</BodyA>
+      <BodyB>12</BodyB>
       <LocalAnchorA>2 0</LocalAnchorA>
       <LocalAnchorB>-2 0</LocalAnchorB>
     </Joint>
     <Joint
       Type="Revolute">
-      <JointA>12</JointA>
-      <JointB>11</JointB>
+      <BodyA>12</BodyA>
+      <BodyB>11</BodyB>
       <LocalAnchorA>2 0</LocalAnchorA>
       <LocalAnchorB>-2 0</LocalAnchorB>
     </Joint>
     <Joint
       Type="Revolute">
-      <JointA>10</JointA>
-      <JointB>15</JointB>
+      <BodyA>10</BodyA>
+      <BodyB>15</BodyB>
       <LocalAnchorA>2 0</LocalAnchorA>
       <LocalAnchorB>9 34.75</LocalAnchorB>
     </Joint>
     <Joint
       Type="Revolute">
-      <JointA>11</JointA>
-      <JointB>10</JointB>
+      <BodyA>11</BodyA>
+      <BodyB>10</BodyB>
       <LocalAnchorA>2 0</LocalAnchorA>
       <LocalAnchorB>-2 0</LocalAnchorB>
     </Joint>
     <Joint
       Type="Weld">
-      <JointA>8</JointA>
-      <JointB>15</JointB>
+      <BodyA>8</BodyA>
+      <BodyB>15</BodyB>
       <LocalAnchorA>31.2 34.3</LocalAnchorA>
       <LocalAnchorB>31.2 34.3</LocalAnchorB>
     </Joint>
     <Joint
       Type="Weld">
-      <JointA>8</JointA>
-      <JointB>9</JointB>
+      <BodyA>8</BodyA>
+      <BodyB>9</BodyB>
       <CollideConnected>True</CollideConnected>
       <LocalAnchorA>31.2 34.3</LocalAnchorA>
       <LocalAnchorB>31.2 34.3</LocalAnchorB>
     </Joint>
     <Joint
       Type="Revolute">
-      <JointA>6</JointA>
-      <JointB>4</JointB>
+      <BodyA>6</BodyA>
+      <BodyB>4</BodyB>
       <CollideConnected>True</CollideConnected>
       <LocalAnchorA>1 4</LocalAnchorA>
       <LocalAnchorB>0 -4</LocalAnchorB>
     </Joint>
     <Joint
       Type="Revolute">
-      <JointA>6</JointA>
-      <JointB>3</JointB>
+      <BodyA>6</BodyA>
+      <BodyB>3</BodyB>
       <CollideConnected>True</CollideConnected>
       <LocalAnchorA>-1 -4.5</LocalAnchorA>
       <LocalAnchorB>0 4</LocalAnchorB>
     </Joint>
     <Joint
       Type="Revolute">
-      <JointA>1</JointA>
-      <JointB>2</JointB>
+      <BodyA>1</BodyA>
+      <BodyB>2</BodyB>
       <UserData>
         <Type>System.String</Type>
         <Value>
@@ -685,8 +688,8 @@
     </Joint>
     <Joint
       Type="Revolute">
-      <JointA>0</JointA>
-      <JointB>2</JointB>
+      <BodyA>0</BodyA>
+      <BodyB>2</BodyB>
       <UserData>
         <Type>System.String</Type>
         <Value>

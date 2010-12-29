@@ -247,8 +247,8 @@ namespace Testbed.Tests
 
 				foreach (var j in serializer.Joints)
 				{
-					j.Joint.BodyA = bodies[j.JointAIndex];
-					j.Joint.BodyB = bodies[j.JointBIndex];
+					j.Joint.BodyA = bodies[j.BodyAIndex];
+					j.Joint.BodyB = bodies[j.BodyBIndex];
 
 					var joint = m_world.CreateJoint(j.Joint);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace Box2CS
@@ -47,12 +48,14 @@ namespace Box2CS
 			_collideConnected = false;
 		}
 
+		[Category("Main")]
 		public JointType JointType
 		{
 			get { return _type; }
-			set { _type = value; }
+			protected set { _type = value; }
 		}
 
+		[Category("Main")]
 		public object UserData
 		{
 			get
@@ -77,18 +80,21 @@ namespace Box2CS
 			}
 		}
 
+		[Browsable(false)]
 		public Body BodyA
 		{
 			get { return Body.FromPtr(_bodyA); }
 			set { _bodyA = value.BodyPtr; }
 		}
 
+		[Browsable(false)]
 		public Body BodyB
 		{
 			get { return Body.FromPtr(_bodyB); }
 			set { _bodyB = value.BodyPtr; }
 		}
 
+		[Category("Main")]
 		public bool CollideConnected
 		{
 			get { return _collideConnected; }
