@@ -26,13 +26,7 @@ namespace Testbed.Tests
 					new Vec2(2.2f,-0.2f),
 					new Vec2(1.0f,0),
 					new Vec2(-2.2f,0),
-					new Vec2(-2.2f,-0.74f),
-
-					//new Vec2(-2.2f,-0.74f),
-					//new Vec2(-2.2f,0),
-					//new Vec2(1.0f,0),
-					//new Vec2(2.2f,-0.2f),
-					//new Vec2(2.2f,-0.74f)
+					new Vec2(-2.2f,-0.74f)
 				};
 
 				FixtureDef fixture1 = new FixtureDef();
@@ -60,7 +54,7 @@ namespace Testbed.Tests
 
 				BodyDef bd = new BodyDef();
 				bd.BodyType = BodyType.Dynamic;
-				bd.Position = new Vec2(-35.0f, 2.8f);
+				bd.Position = new Vec2(0, 0);
 
 				m_vehicle = m_world.CreateBody(bd);
 				m_vehicle.CreateFixture(fixture1);
@@ -80,12 +74,12 @@ namespace Testbed.Tests
 				BodyDef bd = new BodyDef();
 				bd.BodyType = BodyType.Dynamic;
 				bd.AllowSleep = false;
-				bd.Position = new Vec2(-33.8f, 2.0f);
+				bd.Position = new Vec2(1.2f, -0.8f);
 
 				m_rightWheel = m_world.CreateBody(bd);
 				m_rightWheel.CreateFixture(wheelFix);
 
-				bd.Position = new Vec2(-36.2f, 2.0f);
+				bd.Position = new Vec2(-1.2f, -0.8f);
 				m_leftWheel = m_world.CreateBody(bd);
 				m_leftWheel.CreateFixture(wheelFix);
 			}

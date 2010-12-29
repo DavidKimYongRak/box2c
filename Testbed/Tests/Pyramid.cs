@@ -37,8 +37,6 @@ namespace Testbed.Tests
 					Vec2 deltaX = new Vec2(0.5625f, 1.25f);
 					Vec2 deltaY = new Vec2(1.125f, 0.0f);
 
-					System.Collections.Generic.List<Body> bodies = new System.Collections.Generic.List<Body>();
-
 					BodyDef bd = new BodyDef();
 					{
 						for (int i = 0; i < e_count; ++i)
@@ -52,8 +50,6 @@ namespace Testbed.Tests
 
 								Body body = m_world.CreateBody(bd);
 								body.CreateFixture(shape, 5.0f);
-
-								bodies.Add(body);
 
 								y += deltaY;
 							}

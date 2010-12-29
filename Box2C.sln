@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testbed", "Testbed\Testbed.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeshCreator", "MeshCreator\MeshCreator.csproj", "{EA0AACAE-9C4D-449F-9719-FE941CC8AD1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor", "Editor\Editor.csproj", "{5EEA5965-CDCB-4849-841E-57B20F37F929}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{EA0AACAE-9C4D-449F-9719-FE941CC8AD1C}.Release|Win32.ActiveCfg = Release|x86
 		{EA0AACAE-9C4D-449F-9719-FE941CC8AD1C}.Release|x86.ActiveCfg = Release|x86
 		{EA0AACAE-9C4D-449F-9719-FE941CC8AD1C}.Release|x86.Build.0 = Release|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Debug|Win32.ActiveCfg = Debug|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Debug|x86.ActiveCfg = Debug|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Debug|x86.Build.0 = Debug|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Release|Any CPU.ActiveCfg = Release|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Release|Mixed Platforms.Build.0 = Release|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Release|Win32.ActiveCfg = Release|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Release|x86.ActiveCfg = Release|x86
+		{5EEA5965-CDCB-4849-841E-57B20F37F929}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
