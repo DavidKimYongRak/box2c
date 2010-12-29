@@ -196,9 +196,9 @@ namespace Box2CS
 	[StructLayout(LayoutKind.Sequential)]
 	public struct WorldManifold
 	{
+		Vec2 _normal;
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
 		Vec2[] _points;
-		Vec2 _normal;
 
 		public Vec2[] Points
 		{

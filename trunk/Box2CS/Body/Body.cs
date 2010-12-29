@@ -523,6 +523,21 @@ namespace Box2CS
 		public float Inertia
 		{
 			get { return NativeMethods.b2body_getinertia(_bodyPtr); }
+			set
+			{
+				var x = MassData;
+				MassData = new MassData(x.Value.Mass, x.Value.Center, value);
+			}
+		}
+
+		public Vec2 CenterOfGravity
+		{
+			get { return MassData.Value.Center; }
+			set
+			{
+				var x = MassData;
+				MassData = new MassData(x.Value.Mass, value, x.Value.Inertia);
+			}
 		}
 
 		public float InvMass

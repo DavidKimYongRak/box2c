@@ -16,8 +16,8 @@ namespace Testbed.Tests
 			get { return "ElasticBody"; }
 		}
 
-		const int BodyCountX = 4;
-		const int BodyCountY = 4;
+		const int BodyCountX = 6;
+		const int BodyCountY = 6;
 		const int TotalBodies = (BodyCountX * BodyCountY);
 		const float width = 0.55f;
 		const float height = 0.55f;

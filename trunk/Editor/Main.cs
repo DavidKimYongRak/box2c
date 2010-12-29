@@ -2,21 +2,17 @@
 using System.Collections;
 using Box2CS;
 using Tao.OpenGl;
-using Tao.Platform.Windows;
 using System.Windows.Forms;
 using System.Threading;
 using SFML.Window;
 using SFML.Graphics;
+using Tao.FreeGlut;
+using Box2CS.Serialize;
 
-namespace Testbed
+namespace Editor
 {
 	public partial class Main : Form
 	{
-		int testIndex = 0;
-		int testSelection = 0;
-		TestEntries entries = new TestEntries();
-		TestEntry entry;
-		Test test;
 		int width = 640;
 		int height = 480;
 		float settingsHz = 60.0f;
@@ -26,7 +22,8 @@ namespace Testbed
 		bool rMouseDown;
 		Vec2 lastp;
 		Thread simulationThread;
-		long _ts = 0, _min = long.MaxValue, _max = long.MinValue;
+		TestDebugDraw debugDraw;
+		WorldXmlDeserializer deserializer;
 
 		public float ViewZoom
 		{
@@ -38,33 +35,49 @@ namespace Testbed
 			}
 		}
 
+		public void DrawString(int x, int y, string str)
+		{
+			Gl.glMatrixMode(Gl.GL_PROJECTION);
+			Gl.glPushMatrix();
+			Gl.glLoadIdentity();
+			int w = (int)Main.GLWindow.Width;
+			int h = (int)Main.GLWindow.Height;
+			Glu.gluOrtho2D(0, w, h, 0);
+			Gl.glMatrixMode(Gl.GL_MODELVIEW);
+			Gl.glPushMatrix();
+			Gl.glLoadIdentity();
+
+			Gl.glColor3f(0.9f, 0.6f, 0.6f);
+			Gl.glRasterPos2i(x, y);
+
+			foreach (var c in str)
+				Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_HELVETICA_12, c);
+
+			Gl.glPopMatrix();
+			Gl.glMatrixMode(Gl.GL_PROJECTION);
+			Gl.glPopMatrix();
+			Gl.glMatrixMode(Gl.GL_MODELVIEW);
+		}
+
+		public void DrawStringFollow(int x, int y, string str)
+		{
+			Gl.glColor3f(0.9f, 0.6f, 0.6f);
+			Gl.glRasterPos2i(x, y);
+
+			foreach (var c in str)
+				Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_HELVETICA_12, c);
+		}
+
 		public Main()
 		{
 			StartPosition = FormStartPosition.Manual;
 			InitializeComponent();
 
-			Tao.FreeGlut.Glut.glutInit();
 			//OnGLResize(_glcontrol.Width, _glcontrol.Height);
 
 			simulationThread = new Thread(SimulationLoop);
 
-			Text = "Box2CS Testbed - Box2D version " + Box2DVersion.Version.ToString();
-
-			testIndex = b2Math.b2Clamp(testIndex, 0, entries.Entries.Count-1);
-			testSelection = testIndex;
-
-			entry = entries.Entries[testIndex];
-			test = entry.Construct();
-
-			foreach (var e in entries.Entries)
-				comboBox1.Items.Add(e.Name);
-
-			comboBox1.SelectedIndex = 0;
-			comboBox1.SelectedIndexChanged += new EventHandler(comboBox1_SelectedIndexChanged);
-
-			numericUpDown1.Value = TestSettings.velocityIterations;
-			numericUpDown2.Value = TestSettings.positionIterations;
-			numericUpDown3.Value = (decimal)TestSettings.hz;
+			Text = "Box2CS Level Editor - Box2D version " + Box2DVersion.Version.ToString();
 
 			renderWindow = new RenderWindow(panel1.Handle, new ContextSettings(32, 0, 12));
 			renderWindow.Resized += new EventHandler<SizeEventArgs>(render_Resized);
@@ -76,15 +89,17 @@ namespace Testbed
 			renderWindow.Show(true);
 
 			OnGLResize((int)renderWindow.Width, (int)renderWindow.Height);
+			Tao.FreeGlut.Glut.glutInit();
 
 			updateDraw = UpdateDraw;
 
-			simulationThread.Start();
-		}
+			deserializer = new WorldXmlDeserializer();
+			using (System.IO.FileStream fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Open))
+				deserializer.Deserialize(fs);
 
-		void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			testSelection = comboBox1.SelectedIndex;
+			debugDraw = new TestDebugDraw();
+
+			simulationThread.Start();
 		}
 
 		void OnGLResize(int w, int h)
@@ -135,67 +150,6 @@ namespace Testbed
 			return p;
 		}
 
-		long _ts_b2, _ts_min_, _ts_max_;
-
-		[System.Runtime.InteropServices.DllImport(Box2DSettings.Box2CDLLName)]
-		extern static uint b2world_getelapsed();
-		[System.Runtime.InteropServices.DllImport(Box2DSettings.Box2CDLLName)]
-		extern static uint b2world_getmax();
-		[System.Runtime.InteropServices.DllImport(Box2DSettings.Box2CDLLName)]
-		extern static uint b2world_getmin();
-
-		void Simulate()
-		{
-			if (test != null)
-			{
-				if (TestSettings.restart)
-				{
-					OnGLRestart();
-					TestSettings.restart = false;
-				}
-
-				System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-				sw.Start();
-				TestSettings.hz = settingsHz;
-				test.Step();
-				sw.Stop();
-				_ts = sw.ElapsedMilliseconds;
-
-				if (_ts < _min)
-					_min = _ts;
-				if (_ts > _max)
-					_max= _ts;
-
-				_ts_b2 = b2world_getelapsed();
-				_ts_max_ = b2world_getmax();
-				_ts_min_ = b2world_getmin();
-
-				if (testSelection != testIndex)
-				{
-					testIndex = testSelection;
-					entry = entries.Entries[testIndex];
-					test.Dispose();
-					test = entry.Construct();
-					viewZoom = 1.0f;
-					viewCenter = new Vec2(0.0f, 20.0f);
-					OnGLResize(width, height);
-				}
-			}
-		}
-
-		void DrawTest()
-		{
-			if (test != null)
-			{
-				test.SetTextLine(30);
-				test.DrawTitle(5, 15, entry.Name);
-				test.m_debugDraw.DrawString(5, 100, "Time: "+_ts.ToString()+" (B2: "+_ts_b2.ToString()+")");
-				test.m_debugDraw.DrawString(5, 115, "MinTime: " + _min.ToString()+" (B2: "+_ts_min_.ToString()+")");
-				test.m_debugDraw.DrawString(5, 130, "MaxTime: " + _max.ToString()+" (B2: "+_ts_max_.ToString()+")");
-				test.Draw();
-			}
-		}
-
 		// This is used to control the frame rate (60Hz).
 		static long NextGameTick = System.Environment.TickCount;
 		static int gameFrame = 0;
@@ -223,9 +177,32 @@ namespace Testbed
 			Gl.glLoadIdentity();
 
 			// Draw
-			test.m_world.DrawDebugData();
+			//test.m_world.DrawDebugData();
 
-			DrawTest();
+			//DrawTest();
+
+			DrawStringFollow(0, 0, "Test");
+
+			foreach (var x in deserializer.Bodies)
+			{
+				foreach (var y in x.FixtureIDs)
+				{
+					var fixture = deserializer.FixtureDefs[y];
+
+					ColorF color = new ColorF(0.9f, 0.7f, 0.7f);
+
+					if (!x.Body.Active)
+						color = new ColorF(0.5f, 0.5f, 0.3f);
+					else if (x.Body.BodyType == BodyType.Static)
+						color = new ColorF(0.5f, 0.9f, 0.5f);
+					else if (x.Body.BodyType == BodyType.Kinematic)
+						color = new ColorF(0.5f, 0.5f, 0.9f);
+					else if (x.Body.Awake)
+						color = new ColorF(0.6f, 0.6f, 0.6f);
+
+					debugDraw.DrawShape(fixture.Fixture, new Transform(x.Body.Position, new Mat22(x.Body.Angle)), color);
+				}
+			}
 
 			renderWindow.Display();
 		}
@@ -243,7 +220,7 @@ namespace Testbed
 				int loops = 0;
 				while (System.Environment.TickCount > NextGameTick && loops < MAX_FRAMESKIP)
 				{					
-					Simulate();
+					//Simulate();
 
 					NextGameTick += SKIP_TICKS;
 					loops++;
@@ -307,40 +284,6 @@ namespace Testbed
 				OnGLResize(width, height);
 				break;
 
-				// Press 'r' to reset.
-			case KeyCode.R:
-				test.Dispose();
-				test = entry.Construct();
-				break;
-
-				// Press space to launch a bomb.
-			case KeyCode.Space:
-				if (test != null)
-					test.LaunchBomb();
-				break;
-
-			case KeyCode.P:
-				TestSettings.pause = !TestSettings.pause;
-				break;
-
-				// Press [ to prev test.
-			case KeyCode.LBracket:
-				--testSelection;
-				if (testSelection < 0)
-				{
-					testSelection = entries.Entries.Count - 1;
-				}
-				break;
-
-				// Press ] to next test.
-			case KeyCode.RBracket:
-				++testSelection;
-				if (testSelection == entries.Entries.Count)
-				{
-					testSelection = 0;
-				}
-				break;
-
 				// Press left to pan left.
 			case KeyCode.Left:
 				viewCenter.X -= 0.5f;
@@ -371,11 +314,6 @@ namespace Testbed
 				viewCenter = new Vec2(0.0f, 20.0f);
 				OnGLResize(width, height);
 				break;
-		
-			default:
-				if (test != null)
-					test.Keyboard(key);
-				break;
 			}
 		}
 
@@ -395,17 +333,14 @@ namespace Testbed
 				{
 					if ((ModifierKeys & Keys.Shift) != 0)
 					{
-						test.ShiftMouseDown(p);
 					}
 					else
 					{
-						test.MouseDown(p);
 					}
 				}
 		
 				if (state == MouseButtonState.Up)
 				{
-					test.MouseUp(p);
 				}
 			}
 			else if (button == MouseButton.Right)
@@ -426,7 +361,6 @@ namespace Testbed
 		void OnGLMouseMotion(int x, int y)
 		{
 			Vec2 p = ConvertScreenToWorld(x, y);
-			test.MouseMove(p);
 	
 			if (rMouseDown)
 			{
@@ -453,120 +387,8 @@ namespace Testbed
 
 		void OnGLRestart()
 		{
-			test.Dispose();
-			entry = entries.Entries[testIndex];
-			test = entry.Construct();
 			OnGLResize(width, height);
-
-			_min = long.MaxValue;
-			_max = long.MinValue;
 			NextGameTick = System.Environment.TickCount;
-		}
-
-		void Pause()
-		{
-			TestSettings.pause = !TestSettings.pause;
-		}
-
-		void SingleStep()
-		{
-			TestSettings.pause = true;
-			TestSettings.singleStep = true;
-		}
-
-		private void checkBox1_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.enableWarmStarting = checkBox1.Checked;
-		}
-
-		private void checkBox2_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.enableContinuous = checkBox2.Checked;
-		}
-
-		private void checkBox3_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawShapes = checkBox3.Checked;
-		}
-
-		private void checkBox4_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawJoints = checkBox4.Checked;
-		}
-
-		private void checkBox5_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawAABBs = checkBox5.Checked;
-		}
-
-		private void checkBox6_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawPairs = checkBox6.Checked;
-		}
-
-		private void checkBox7_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawContactPoints = checkBox7.Checked;
-		}
-
-		private void checkBox8_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawContactNormals = checkBox8.Checked;
-		}
-
-		private void checkBox9_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawContactForces = checkBox9.Checked;
-		}
-
-		private void checkBox10_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawFrictionForces = checkBox10.Checked;
-		}
-
-		private void checkBox11_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawCOMs = checkBox11.Checked;
-		}
-
-		private void checkBox12_CheckedChanged(object sender, EventArgs e)
-		{
-			TestSettings.drawStats = checkBox12.Checked;
-		}
-
-		private void button1_Click(object sender, EventArgs e)
-		{
-			Pause();
-		}
-
-		private void button2_Click(object sender, EventArgs e)
-		{
-			SingleStep();
-		}
-
-		private void button3_Click(object sender, EventArgs e)
-		{
-			TestSettings.restart = true;
-		}
-
-		private void button4_Click(object sender, EventArgs e)
-		{
-			Application.Exit();
-		}
-
-		private void numericUpDown3_ValueChanged(object sender, EventArgs e)
-		{
-			settingsHz = (float)numericUpDown3.Value;
-		}
-
-		private void numericUpDown2_ValueChanged(object sender, EventArgs e)
-		{
-			TestSettings.positionIterations = (int)numericUpDown2.Value;
-		}
-
-		private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-		{
-			TestSettings.velocityIterations = (int)numericUpDown1.Value;
 		}
 
 		private void Main_Load(object sender, EventArgs e)
@@ -576,15 +398,7 @@ namespace Testbed
 
 		private void Main_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			//simulationTimer.Stop();
-			//simulationTimer.Dispose();
-			//simulationTimer = null;
 			simulationThread.Abort();
-		}
-
-		private void panel1_Click(object sender, EventArgs e)
-		{
-			panel1.Focus();
 		}
 	}
 

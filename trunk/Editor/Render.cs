@@ -3,7 +3,7 @@ using Tao.FreeGlut;
 using Tao.OpenGl;
 using Box2CS;
 
-namespace Testbed
+namespace Editor
 {
 	public class TestDebugDraw : DebugDraw
 	{
@@ -130,30 +130,6 @@ namespace Testbed
 			Gl.glPointSize(1.0f);
 		}
 
-		public void DrawString(int x, int y, string str)
-		{
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glPushMatrix();
-			Gl.glLoadIdentity();
-			int w = (int)Main.GLWindow.Width;
-			int h = (int)Main.GLWindow.Height;
-			Glu.gluOrtho2D(0, w, h, 0);
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-			Gl.glPushMatrix();
-			Gl.glLoadIdentity();
-
-			Gl.glColor3f(0.9f, 0.6f, 0.6f);
-			Gl.glRasterPos2i(x, y);
-
-			foreach (var c in str)
-				Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_HELVETICA_12, c);
-
-			Gl.glPopMatrix();
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glPopMatrix();
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-		}
-
 		public void DrawAABB(AABB aabb, ColorF c)
 		{
 			Gl.glColor3f(c.R, c.G, c.B);
@@ -164,5 +140,40 @@ namespace Testbed
 			Gl.glVertex2f(aabb.LowerBound.X, aabb.UpperBound.Y);
 			Gl.glEnd();
 		}
+
+		public void DrawShape(FixtureDef fixture, Transform xf, ColorF color)
+		{
+			switch (fixture.Shape.ShapeType)
+			{
+			case ShapeType.Circle:
+				{
+					CircleShape circle = (CircleShape)fixture.Shape;
+
+					Vec2 center = (xf * circle.Position);
+					float radius = circle.Radius;
+					Vec2 axis = xf.R.Col1;
+
+					DrawSolidCircle(center, radius, axis, color);
+				}
+				break;
+
+			case ShapeType.Polygon:
+				{
+					PolygonShape poly = (PolygonShape)fixture.Shape;
+					int vertexCount = poly.VertexCount;
+					//b2Assert(vertexCount <= b2_maxPolygonVertices);
+					Vec2[] vertices = new Vec2[Box2DSettings.b2_maxPolygonVertices];
+
+					for (int i = 0; i < vertexCount; ++i)
+					{
+						vertices[i] = (xf * poly.Vertices[i]);
+					}
+
+					DrawSolidPolygon(vertices, vertexCount, color);
+				}
+				break;
+			}
+		}
+
 	}
 }
