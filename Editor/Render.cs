@@ -175,5 +175,41 @@ namespace Editor
 			}
 		}
 
+		public void DrawJoint(Box2CS.Serialize.JointDefSerialized x, Vec2 p1, Vec2 p2, BodyDef bodyA, BodyDef bodyB)
+		{
+			Transform xf1 = new Transform(bodyA.Position, new Mat22(bodyA.Angle));
+			Transform xf2 = new Transform(bodyB.Position, new Mat22(bodyB.Angle));
+			Vec2 x1 = xf1.Position;
+			Vec2 x2 = xf2.Position;
+
+			p1 = xf1 * p1;
+			p2 = xf2 * p2;
+	
+			ColorF color = new ColorF(0.5f, 0.8f, 0.8f);
+
+			switch (x.Joint.JointType)
+			{
+			case JointType.Distance:
+				DrawSegment(p1, p2, color);
+				break;
+
+			case JointType.Pulley:
+				{
+					PulleyJointDef pulley = (PulleyJointDef)x.Joint;
+					Vec2 s1 = pulley.GroundAnchorA;
+					Vec2 s2 = pulley.GroundAnchorB;
+					DrawSegment(s1, p1, color);
+					DrawSegment(s2, p2, color);
+					DrawSegment(s1, s2, color);
+				}
+				break;
+
+			default:
+				DrawSegment(x1, p1, color);
+				DrawSegment(p1, p2, color);
+				DrawSegment(x2, p2, color);
+				break;
+			}
+		}
 	}
 }

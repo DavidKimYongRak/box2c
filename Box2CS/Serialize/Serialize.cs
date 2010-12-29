@@ -20,10 +20,17 @@ namespace Box2CS.Serialize
 			set;
 		}
 
-		public FixtureDefSerialized(FixtureDef fixture, int shapeID)
+		public string Name
+		{
+			get;
+			set;
+		}
+
+		public FixtureDefSerialized(FixtureDef fixture, int shapeID, string name)
 		{
 			Fixture = fixture;
 			ShapeID = shapeID;
+			Name = name;
 		}
 	}
 
@@ -47,11 +54,18 @@ namespace Box2CS.Serialize
 			set;
 		}
 
-		public BodyDefSerialized(Body derivedBody, BodyDef body, List<int> fixtureIDs)
+		public string Name
+		{
+			get;
+			set;
+		}
+
+		public BodyDefSerialized(Body derivedBody, BodyDef body, List<int> fixtureIDs, string name)
 		{
 			DerivedBody = derivedBody;
 			Body = body;
 			FixtureIDs = fixtureIDs;
+			Name = name;
 		}
 	}
 
@@ -63,23 +77,51 @@ namespace Box2CS.Serialize
 			set;
 		}
 
-		public int JointAIndex
+		public int BodyAIndex
 		{
 			get;
 			set;
 		}
 
-		public int JointBIndex
+		public int BodyBIndex
 		{
 			get;
 			set;
 		}
 
-		public JointDefSerialized(JointDef joint, int jointA, int jointB)
+		public string Name
+		{
+			get;
+			set;
+		}
+
+		public JointDefSerialized(JointDef joint, int bodyA, int bodyB, string name)
 		{
 			Joint = joint;
-			JointAIndex = jointA;
-			JointBIndex = jointB;
+			BodyAIndex = bodyA;
+			BodyBIndex = bodyB;
+			Name = name;
+		}
+	}
+
+	public class ShapeSerialized
+	{
+		public Shape Shape
+		{
+			get;
+			set;
+		}
+
+		public string Name
+		{
+			get;
+			set;
+		}
+
+		public ShapeSerialized(Shape shape, string name)
+		{
+			Shape = shape;
+			Name = name;
 		}
 	}
 
@@ -97,7 +139,7 @@ namespace Box2CS.Serialize
 		void BeginSerializingBodies();
 		void EndSerializingBodies();
 
-		void SerializeShape(Shape shape);
+		void SerializeShape(ShapeSerialized shape);
 		void SerializeFixture(FixtureDefSerialized fixture);
 		void SerializeBody(BodyDefSerialized body);
 
@@ -109,7 +151,7 @@ namespace Box2CS.Serialize
 
 	public interface IWorldSerializationProvider
 	{
-		IList<Shape> Shapes
+		IList<ShapeSerialized> Shapes
 		{
 			get;
 		}
@@ -132,17 +174,24 @@ namespace Box2CS.Serialize
 		{
 			get;
 		}
+
+		World World
+		{
+			get;
+		}
 	}
 
 	public interface IWorldDeserializer
 	{
-		void Deserialize(Stream stream);
+		WorldData Deserialize(Stream stream);
 	}
 
 	public class WorldXmlSerializer : IWorldSerializer
 	{
 		XmlWriter writer;
 		IWorldSerializationProvider _provider;
+
+		public const int XmlVersion = 1;
 
 		void WriteEndElement()
 		{
@@ -209,6 +258,10 @@ namespace Box2CS.Serialize
 
 			writer.WriteStartElement("World");
 
+			writer.WriteAttributeString("Version", XmlVersion.ToString());
+
+			WriteElement("Gravity", provider.World.Gravity);
+
 			_provider = provider;
 		}
 
@@ -251,16 +304,19 @@ namespace Box2CS.Serialize
 			WriteEndElement();
 		}
 
-		public void SerializeShape(Shape shape)
+		public void SerializeShape(ShapeSerialized shape)
 		{
 			writer.WriteStartElement("Shape");
-			writer.WriteAttributeString("Type", shape.ShapeType.ToString());
+			writer.WriteAttributeString("Type", shape.Shape.ShapeType.ToString());
 
-			switch (shape.ShapeType)
+			if (!string.IsNullOrEmpty(shape.Name))
+				writer.WriteElementString("Name", shape.Name);
+
+			switch (shape.Shape.ShapeType)
 			{
 			case ShapeType.Circle:
 				{
-					CircleShape circle = (CircleShape)shape;
+					CircleShape circle = (CircleShape)shape.Shape;
 
 					writer.WriteElementString("Radius", circle.Radius.ToString());
 
@@ -269,7 +325,7 @@ namespace Box2CS.Serialize
 				break;
 			case ShapeType.Polygon:
 				{
-					PolygonShape poly = (PolygonShape)shape;
+					PolygonShape poly = (PolygonShape)shape.Shape;
 
 					writer.WriteStartElement("Vertices");
 					foreach (var v in poly.Vertices)
@@ -293,6 +349,9 @@ namespace Box2CS.Serialize
 			writer.WriteStartElement("Fixture");
 
 			writer.WriteElementString("Shape", fixture.ShapeID.ToString());
+
+			if (!string.IsNullOrEmpty(fixture.Name))
+				writer.WriteElementString("Name", fixture.Name);
 
 			if (fixture.Fixture.Density != defaultFixtureDefData.Density)
 				writer.WriteElementString("Density", fixture.Fixture.Density.ToString());
@@ -325,6 +384,9 @@ namespace Box2CS.Serialize
 		{
 			writer.WriteStartElement("Body");
 			writer.WriteAttributeString("Type", body.Body.BodyType.ToString());
+
+			if (!string.IsNullOrEmpty(body.Name))
+				writer.WriteElementString("Name", body.Name);
 
 			if (body.Body.Active != defaultBodyDefData.Active)
 				writer.WriteElementString("Active", body.Body.Active.ToString());
@@ -401,8 +463,11 @@ namespace Box2CS.Serialize
 
 			writer.WriteAttributeString("Type", def.Joint.JointType.ToString());
 
-			WriteElement("JointA", def.JointAIndex);
-			WriteElement("JointB", def.JointBIndex);
+			if (!string.IsNullOrEmpty(def.Name))
+				writer.WriteElementString("Name", def.Name);
+
+			WriteElement("BodyA", def.BodyAIndex);
+			WriteElement("BodyB", def.BodyBIndex);
 
 			if (def.Joint.CollideConnected != false)
 				WriteElement("CollideConnected", def.Joint.CollideConnected);
@@ -583,14 +648,29 @@ namespace Box2CS.Serialize
 		}
 	}
 
+	public struct WorldData
+	{
+		public int Version
+		{
+			get;
+			set;
+		}
+
+		public Vec2 Gravity
+		{
+			get;
+			set;
+		}
+	}
+
 	public class WorldXmlDeserializer : IWorldDeserializer, IWorldSerializationProvider
 	{
-		List<Shape> _shapes = new List<Shape>();
+		List<ShapeSerialized> _shapes = new List<ShapeSerialized>();
 		List<FixtureDefSerialized> _fixtures = new List<FixtureDefSerialized>();
 		List<BodyDefSerialized> _bodies = new List<BodyDefSerialized>();
 		List<JointDefSerialized> _joints = new List<JointDefSerialized>();
 
-		public IList<Shape> Shapes
+		public IList<ShapeSerialized> Shapes
 		{
 			get { return _shapes; }
 		}
@@ -608,6 +688,11 @@ namespace Box2CS.Serialize
 		public IList<JointDefSerialized> Joints
 		{
 			get { return _joints; }
+		}
+
+		public World World
+		{
+			get { return null; }
 		}
 
 		public int IndexOfFixture(FixtureDef def)
@@ -657,7 +742,7 @@ namespace Box2CS.Serialize
 			}
 		}
 
-		public void Deserialize(Stream stream)
+		public WorldData Deserialize(Stream stream)
 		{
 			XmlDocument document = new XmlDocument();
 			document.Load(stream);
@@ -665,10 +750,25 @@ namespace Box2CS.Serialize
 			if (document.FirstChild.Name.ToLower() != "world")
 				throw new Exception();
 
+			WorldData data = new WorldData();
+
+			if (document.FirstChild.Attributes.Count == 0)
+				throw new Exception("No version");
+			else if (int.Parse(document.FirstChild.Attributes[0].Value) != WorldXmlSerializer.XmlVersion)
+				throw new Exception("Wrong version XML file");
+
+			data.Version = int.Parse(document.FirstChild.Attributes[0].Value);
+
 			foreach (XmlNode main in document.FirstChild)
 			{
 				switch (main.Name.ToLower())
 				{
+				case "gravity":
+					{
+						data.Gravity = ReadVector(main);
+					}
+					break;
+
 				case "shapes":
 					{
 						foreach (XmlNode n in main)
@@ -677,6 +777,7 @@ namespace Box2CS.Serialize
 								throw new Exception();
 
 							ShapeType type = (ShapeType)Enum.Parse(typeof(ShapeType), n.Attributes[0].Value, true);
+							string name = "";
 
 							switch (type)
 							{
@@ -688,6 +789,9 @@ namespace Box2CS.Serialize
 									{
 										switch (sn.Name.ToLower())
 										{
+										case "name":
+											name = sn.FirstChild.Value;
+											break;
 										case "radius":
 											shape.Radius = float.Parse(sn.FirstChild.Value);
 											break;
@@ -699,7 +803,7 @@ namespace Box2CS.Serialize
 										}
 									}
 
-									_shapes.Add(shape);
+									_shapes.Add(new ShapeSerialized(shape, name));
 								}
 								break;
 							case ShapeType.Polygon:
@@ -710,6 +814,9 @@ namespace Box2CS.Serialize
 									{
 										switch (sn.Name.ToLower())
 										{
+										case "name":
+											name = sn.FirstChild.Value;
+											break;
 										case "vertices":
 											{
 												List<Vec2> verts = new List<Vec2>();
@@ -726,7 +833,7 @@ namespace Box2CS.Serialize
 										}
 									}
 
-									_shapes.Add(shape);
+									_shapes.Add(new ShapeSerialized(shape, name));
 								}
 								break;
 							}
@@ -741,13 +848,17 @@ namespace Box2CS.Serialize
 
 							if (n.Name.ToLower() != "fixture")
 								throw new Exception();
+							string name = "";
 
 							foreach (XmlNode sn in n)
 							{
 								switch (sn.Name.ToLower())
 								{
+								case "name":
+									name = sn.FirstChild.Value;
+									break;
 								case "shape":
-									fixture.Shape = _shapes[int.Parse(sn.FirstChild.Value)]; // FIXME ordering
+									fixture.Shape = _shapes[int.Parse(sn.FirstChild.Value)].Shape; // FIXME ordering
 									break;
 								case "density":
 									fixture.Density = float.Parse(sn.FirstChild.Value);
@@ -770,7 +881,7 @@ namespace Box2CS.Serialize
 								}
 							}
 
-							_fixtures.Add(new FixtureDefSerialized(fixture, -1));
+							_fixtures.Add(new FixtureDefSerialized(fixture, -1, name));
 						}
 					}
 					break;
@@ -785,11 +896,15 @@ namespace Box2CS.Serialize
 
 							body.BodyType = (BodyType)Enum.Parse(typeof(BodyType), n.Attributes[0].Value, true);
 							List<int> fixtures = new List<int>();
+							string name = "";
 
 							foreach (XmlNode sn in n)
 							{
 								switch (sn.Name.ToLower())
 								{
+								case "name":
+									name = sn.FirstChild.Value;
+									break;
 								case "active":
 									body.Active = bool.Parse(sn.FirstChild.Value);
 									break;
@@ -838,7 +953,7 @@ namespace Box2CS.Serialize
 								}
 							}
 
-							_bodies.Add(new BodyDefSerialized(null, body, fixtures));
+							_bodies.Add(new BodyDefSerialized(null, body, fixtures, name));
 						}
 					}
 					break;
@@ -853,9 +968,10 @@ namespace Box2CS.Serialize
 
 							JointType type = (JointType)Enum.Parse(typeof(JointType), n.Attributes[0].Value, true);
 
-							int jointA = -1, jointB = -1;
+							int bodyA = -1, bodyB = -1;
 							bool collideConnected = false;
 							object userData = null;
+							string name = "";
 
 							switch (type)
 							{
@@ -1088,11 +1204,14 @@ namespace Box2CS.Serialize
 
 								switch (sn.Name.ToLower())
 								{
-								case "jointa":
-									jointA = int.Parse(sn.FirstChild.Value);
+								case "name":
+									name = sn.FirstChild.Value;
 									break;
-								case "jointb":
-									jointB = int.Parse(sn.FirstChild.Value);
+								case "bodya":
+									bodyA = int.Parse(sn.FirstChild.Value);
+									break;
+								case "bodyb":
+									bodyB = int.Parse(sn.FirstChild.Value);
 									break;
 								case "collideconnected":
 									collideConnected = bool.Parse(sn.FirstChild.Value);
@@ -1105,12 +1224,14 @@ namespace Box2CS.Serialize
 
 							mainDef.CollideConnected = collideConnected;
 							mainDef.UserData = userData;
-							_joints.Add(new JointDefSerialized(mainDef, jointA, jointB));
+							_joints.Add(new JointDefSerialized(mainDef, bodyA, bodyB, name));
 						}
 					}
 					break;
 				}
 			}
+
+			return data;
 		}
 	}
 
@@ -1118,12 +1239,18 @@ namespace Box2CS.Serialize
 	{
 		IWorldSerializer _serializer;
 
-		List<Shape> _shapeDefinitions = new List<Shape>();
+		List<ShapeSerialized> _shapeDefinitions = new List<ShapeSerialized>();
 		List<FixtureDefSerialized> _fixtureDefinitions = new List<FixtureDefSerialized>();
 		List<BodyDefSerialized> _bodyDefinitions = new List<BodyDefSerialized>();
 		List<JointDefSerialized> _joints = new List<JointDefSerialized>();
+		World _world;
 
-		public IList<Shape> Shapes
+		public World World
+		{
+			get { return _world; }
+		}
+
+		public IList<ShapeSerialized> Shapes
 		{
 			get { return _shapeDefinitions; }
 		}
@@ -1180,6 +1307,7 @@ namespace Box2CS.Serialize
 		public static WorldSerializer SerializeWorld(World world, IWorldSerializer serializer)
 		{
 			WorldSerializer worldSerializer = new WorldSerializer(serializer);
+			worldSerializer._world = world;
 
 			foreach (var body in world.Bodies)
 			{
@@ -1227,11 +1355,11 @@ namespace Box2CS.Serialize
 			foreach (var s in _shapeDefinitions)
 			{
 				// shape already exists
-				if (s.CompareWith(shape))
+				if (s.Shape.CompareWith(shape))
 					return;
 			}
 
-			_shapeDefinitions.Add(shape);
+			_shapeDefinitions.Add(new ShapeSerialized(shape, null));
 		}
 
 		public void AddFixture(FixtureDef fixture)
@@ -1242,7 +1370,7 @@ namespace Box2CS.Serialize
 			// see if we need to add the shape
 			for (int i = 0; i < _shapeDefinitions.Count; ++i)
 			{
-				if (fixture.Shape == _shapeDefinitions[i])
+				if (fixture.Shape == _shapeDefinitions[i].Shape)
 				{
 					containsShape = true;
 					shapeID = i;
@@ -1257,7 +1385,7 @@ namespace Box2CS.Serialize
 				shapeID = _shapeDefinitions.Count - 1;
 			}
 
-			_fixtureDefinitions.Add(new FixtureDefSerialized(fixture, shapeID));
+			_fixtureDefinitions.Add(new FixtureDefSerialized(fixture, shapeID, null));
 		}
 
 		public void AddBody(Body derivedBody, BodyDef body, List<FixtureDef> fixtures)
@@ -1278,7 +1406,7 @@ namespace Box2CS.Serialize
 				}
 			}
 
-			_bodyDefinitions.Add(new BodyDefSerialized(derivedBody, body, fixtureIDs));
+			_bodyDefinitions.Add(new BodyDefSerialized(derivedBody, body, fixtureIDs, null));
 		}
 
 		int IndexOfDerivedBody(Body b)
@@ -1292,7 +1420,7 @@ namespace Box2CS.Serialize
 
 		public void AddJoint(JointDef joint)
 		{
-			_joints.Add(new JointDefSerialized(joint, IndexOfDerivedBody(joint.BodyA), IndexOfDerivedBody(joint.BodyB)));
+			_joints.Add(new JointDefSerialized(joint, IndexOfDerivedBody(joint.BodyA), IndexOfDerivedBody(joint.BodyB), null));
 		}
 
 		public void Serialize(Stream stream)
@@ -1320,64 +1448,6 @@ namespace Box2CS.Serialize
 			_serializer.EndSerializingJoints();
 
 			_serializer.Close();
-		}
-	}
-
-	public class Serializer
-	{
-		List<BodyDef> _bodyDefinitions = new List<BodyDef>();
-		List<Shape> _shapeDefinitions = new List<Shape>();
-		List<FixtureDef> _fixtureDefinitions = new List<FixtureDef>();
-
-		public List<BodyDef> BodyDefs
-		{
-			get { return _bodyDefinitions; }
-		}
-
-		public List<Shape> Shapes
-		{
-			get { return _shapeDefinitions; }
-		}
-
-		public List<FixtureDef> FixtureDefs
-		{
-			get { return _fixtureDefinitions; }
-		}
-
-		public Serializer()
-		{
-		}
-
-		public void Save(string fileName)
-		{
-			try
-			{
-				using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-				{
-					XmlWriterSettings settings = new XmlWriterSettings();
-					settings.Indent = true;
-
-					using (XmlWriter writer = XmlWriter.Create(fs, settings))
-					{
-						writer.WriteStartElement("Bodies");
-
-						foreach (var b in _bodyDefinitions)
-						{
-							writer.WriteStartElement("BodyDef");
-
-							writer.WriteElementString("BodyType", b.BodyType.ToString());
-
-							writer.WriteEndElement();
-						}
-
-						writer.WriteEndElement();
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				fileName = ex.Message;
-			}
 		}
 	}
 }

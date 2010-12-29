@@ -21,9 +21,13 @@ namespace Editor
 		int tx, ty, tw, th;
 		bool rMouseDown;
 		Vec2 lastp;
+		World _world;
 		Thread simulationThread;
 		TestDebugDraw debugDraw;
 		WorldXmlDeserializer deserializer;
+		BodyDefSerialized HoverBody = null, SelectedBody = null;
+
+		bool _testing = false;
 
 		public float ViewZoom
 		{
@@ -33,6 +37,40 @@ namespace Editor
 				viewZoom = value;
 				OnGLResize(width, height);
 			}
+		}
+
+		void StartTest()
+		{
+			_testing = true;
+			_world = new World(new Vec2(0, -10.0f), true);
+			_world.DebugDraw = debugDraw;
+
+			System.Collections.Generic.List<Body> bodies = new System.Collections.Generic.List<Body>();
+
+			foreach (var x in deserializer.Bodies)
+			{
+				var body = _world.CreateBody(x.Body);
+
+				bodies.Add(body);
+				foreach (var f in x.FixtureIDs)
+					body.CreateFixture(deserializer.FixtureDefs[f].Fixture);
+			}
+
+			foreach (var j in deserializer.Joints)
+			{
+				j.Joint.BodyA = bodies[j.BodyAIndex];
+				j.Joint.BodyB = bodies[j.BodyBIndex];
+
+				var joint = _world.CreateJoint(j.Joint);
+			}
+		}
+
+		void EndTest()
+		{
+			_testing = false;
+			_world = null;
+			//simulationThread.Abort();
+			//simulationThread = null;
 		}
 
 		public void DrawString(int x, int y, string str)
@@ -59,10 +97,10 @@ namespace Editor
 			Gl.glMatrixMode(Gl.GL_MODELVIEW);
 		}
 
-		public void DrawStringFollow(int x, int y, string str)
+		public void DrawStringFollow(float x, float y, string str)
 		{
 			Gl.glColor3f(0.9f, 0.6f, 0.6f);
-			Gl.glRasterPos2i(x, y);
+			Gl.glRasterPos2f(x, y);
 
 			foreach (var c in str)
 				Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_HELVETICA_12, c);
@@ -74,9 +112,6 @@ namespace Editor
 			InitializeComponent();
 
 			//OnGLResize(_glcontrol.Width, _glcontrol.Height);
-
-			simulationThread = new Thread(SimulationLoop);
-
 			Text = "Box2CS Level Editor - Box2D version " + Box2DVersion.Version.ToString();
 
 			renderWindow = new RenderWindow(panel1.Handle, new ContextSettings(32, 0, 12));
@@ -97,8 +132,34 @@ namespace Editor
 			using (System.IO.FileStream fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Open))
 				deserializer.Deserialize(fs);
 
-			debugDraw = new TestDebugDraw();
+			for (int i = 0; i < deserializer.Bodies.Count; ++i)
+			{
+				var x = deserializer.Bodies[i];
+				listBox1.Items.Add("Body "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
+			}
 
+			for (int i = 0; i < deserializer.FixtureDefs.Count; ++i)
+			{
+				var x = deserializer.FixtureDefs[i];
+				listBox2.Items.Add("Fixture "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
+			}
+
+			for (int i = 0; i < deserializer.Shapes.Count; ++i)
+			{
+				var x = deserializer.Shapes[i];
+				listBox3.Items.Add("Shape "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
+			}
+
+			for (int i = 0; i < deserializer.Joints.Count; ++i)
+			{
+				var x = deserializer.Joints[i];
+				listBox4.Items.Add(x.Joint.JointType.ToString() + " Joint "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
+			}
+
+			debugDraw = new TestDebugDraw();
+			debugDraw.Flags = DebugFlags.Shapes | DebugFlags.Joints | DebugFlags.CenterOfMasses;
+
+			simulationThread = new Thread(SimulationLoop);
 			simulationThread.Start();
 		}
 
@@ -181,28 +242,75 @@ namespace Editor
 
 			//DrawTest();
 
-			DrawStringFollow(0, 0, "Test");
-
-			foreach (var x in deserializer.Bodies)
+			if (!_testing)
 			{
-				foreach (var y in x.FixtureIDs)
+				foreach (var x in deserializer.Bodies)
 				{
-					var fixture = deserializer.FixtureDefs[y];
+					var xf = new Transform(x.Body.Position, new Mat22(x.Body.Angle));
 
-					ColorF color = new ColorF(0.9f, 0.7f, 0.7f);
+					foreach (var y in x.FixtureIDs)
+					{
+						var fixture = deserializer.FixtureDefs[y];
 
-					if (!x.Body.Active)
-						color = new ColorF(0.5f, 0.5f, 0.3f);
-					else if (x.Body.BodyType == BodyType.Static)
-						color = new ColorF(0.5f, 0.9f, 0.5f);
-					else if (x.Body.BodyType == BodyType.Kinematic)
-						color = new ColorF(0.5f, 0.5f, 0.9f);
-					else if (x.Body.Awake)
-						color = new ColorF(0.6f, 0.6f, 0.6f);
+						ColorF color = new ColorF(0.9f, 0.7f, 0.7f);
 
-					debugDraw.DrawShape(fixture.Fixture, new Transform(x.Body.Position, new Mat22(x.Body.Angle)), color);
+						if (SelectedBody != null && x.Body == SelectedBody.Body)
+							color = new ColorF(1, 1, 0);
+						else if (HoverBody != null && x.Body == HoverBody.Body)
+							color = new ColorF(1, 0, 0);
+						else if (!x.Body.Active)
+							color = new ColorF(0.5f, 0.5f, 0.3f);
+						else if (x.Body.BodyType == BodyType.Static)
+							color = new ColorF(0.5f, 0.9f, 0.5f);
+						else if (x.Body.BodyType == BodyType.Kinematic)
+							color = new ColorF(0.5f, 0.5f, 0.9f);
+						else if (x.Body.Awake)
+							color = new ColorF(0.6f, 0.6f, 0.6f);
+
+						debugDraw.DrawShape(fixture.Fixture, xf, color);
+					}
+
+					debugDraw.DrawTransform(xf);
+				}
+
+				if (HoverBody != null && !string.IsNullOrEmpty(HoverBody.Name))
+				{
+					Vec2 p = ConvertScreenToWorld(CursorPos.X, CursorPos.Y);
+					DrawStringFollow(p.X, p.Y, HoverBody.Name);
+				}
+
+				foreach (var x in deserializer.Joints)
+				{
+					Vec2 a1 = Vec2.Empty, a2 = Vec2.Empty;
+
+					switch (x.Joint.JointType)
+					{
+					case JointType.Revolute:
+						a1 = ((RevoluteJointDef)x.Joint).LocalAnchorA;
+						a2 = ((RevoluteJointDef)x.Joint).LocalAnchorB;
+						break;
+					case JointType.Friction:
+						a1 = ((FrictionJointDef)x.Joint).LocalAnchorA;
+						a2 = ((FrictionJointDef)x.Joint).LocalAnchorB;
+						break;
+					case JointType.Line:
+						a1 = ((LineJointDef)x.Joint).LocalAnchorA;
+						a2 = ((LineJointDef)x.Joint).LocalAnchorB;
+						break;
+					case JointType.Prismatic:
+						a1 = ((PrismaticJointDef)x.Joint).LocalAnchorA;
+						a2 = ((PrismaticJointDef)x.Joint).LocalAnchorB;
+						break;
+					case JointType.Weld:
+						a1 = ((WeldJointDef)x.Joint).LocalAnchorA;
+						a2 = ((WeldJointDef)x.Joint).LocalAnchorB;
+						break;
+					}
+					debugDraw.DrawJoint(x, a1, a2, deserializer.Bodies[x.BodyAIndex].Body, deserializer.Bodies[x.BodyBIndex].Body);
 				}
 			}
+			else
+				_world.DrawDebugData();
 
 			renderWindow.Display();
 		}
@@ -221,6 +329,8 @@ namespace Editor
 				while (System.Environment.TickCount > NextGameTick && loops < MAX_FRAMESKIP)
 				{					
 					//Simulate();
+					if (_world != null)
+						_world.Step(1.0f / settingsHz, 8, 3);
 
 					NextGameTick += SKIP_TICKS;
 					loops++;
@@ -270,6 +380,13 @@ namespace Editor
 			{
 			case KeyCode.Escape:
 				Application.Exit();
+				break;
+				
+			case KeyCode.T:
+				if (!_testing)
+					StartTest();
+				else
+					EndTest();
 				break;
 
 				// Press 'z' to zoom out.
@@ -328,6 +445,7 @@ namespace Editor
 			// Use the mouse to move things around.
 			if (button == MouseButton.Left)
 			{
+				CheckSelect(x, y);
 				Vec2 p = ConvertScreenToWorld(x, y);
 				if (state == MouseButtonState.Down)
 				{
@@ -358,10 +476,48 @@ namespace Editor
 			}
 		}
 
+		void CheckSelect(int x, int y)
+		{
+			Vec2 p = ConvertScreenToWorld(x, y);
+
+			var aabb = new AABB(p - new Vec2(1, 1), p + new Vec2(1, 1));
+
+			BodyDefSerialized moused = null;
+			foreach (var b in deserializer.Bodies)
+			{
+				foreach (var f in b.FixtureIDs)
+				{
+					var fixture = deserializer.FixtureDefs[f];
+
+					var pos = b.Body.Position;
+
+					if (fixture.Fixture.Shape.ShapeType == ShapeType.Circle)
+						pos += (fixture.Fixture.Shape as CircleShape).Position;
+					else
+						pos += (fixture.Fixture.Shape as PolygonShape).Centroid;
+
+					if (aabb.Contains(pos))
+					{
+						moused = b;
+					}
+				}
+			}
+
+			if (MouseButtons == System.Windows.Forms.MouseButtons.Left)
+				if (moused != null)
+				{
+					SelectedBody = moused;
+					propertyGrid1.SelectedObject = moused.Body;
+					propertyGrid1.Refresh();
+				}
+
+			HoverBody = moused;
+		}
+
 		void OnGLMouseMotion(int x, int y)
 		{
 			Vec2 p = ConvertScreenToWorld(x, y);
-	
+
 			if (rMouseDown)
 			{
 				Vec2 diff = p - lastp;
@@ -370,6 +526,8 @@ namespace Editor
 				OnGLResize(width, height);
 				lastp = ConvertScreenToWorld(x, y);
 			}
+
+			CheckSelect(x, y);
 		}
 
 		void OnGLMouseWheel(int wheel, int direction, int x, int y)
@@ -393,12 +551,46 @@ namespace Editor
 
 		private void Main_Load(object sender, EventArgs e)
 		{
-
 		}
 
 		private void Main_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			simulationThread.Abort();
+		}
+
+		private void panel1_MouseMove(object sender, MouseEventArgs e)
+		{
+		}
+
+		private void panel1_KeyPress(object sender, KeyPressEventArgs e)
+		{
+
+		}
+
+		private void panel1_Click(object sender, EventArgs e)
+		{
+			panel1.Focus();
+		}
+
+		private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			propertyGrid1.SelectedObject = deserializer.Bodies[listBox1.SelectedIndex].Body;
+			SelectedBody = deserializer.Bodies[listBox1.SelectedIndex];
+		}
+
+		private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			propertyGrid2.SelectedObject = deserializer.FixtureDefs[listBox2.SelectedIndex].Fixture;
+		}
+
+		private void listBox3_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			propertyGrid3.SelectedObject = deserializer.Shapes[listBox3.SelectedIndex].Shape;
+		}
+
+		private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			propertyGrid4.SelectedObject = deserializer.Joints[listBox4.SelectedIndex].Joint;
 		}
 	}
 

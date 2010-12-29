@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace Box2CS
 {
@@ -29,7 +31,51 @@ namespace Box2CS
 		}
 	}
 
+	public class Vec2Converter : ExpandableObjectConverter
+	{
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		{
+			if (sourceType == typeof(string))
+			{
+				return true;
+			}
+			return base.CanConvertFrom(context, sourceType);
+		}
+
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			if (value is string)
+			{
+				string[] v = ((string)value).Split(new char[] { ',' });
+				return new Vec2(float.Parse(v[0]), float.Parse(v[1]));
+			}
+			return base.ConvertFrom(context, culture, value);
+		}
+
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		{
+			if (destinationType == typeof(string))
+				return ((Vec2)value).X + "," + ((Vec2)value).Y;
+
+			return base.ConvertTo(context, culture, value, destinationType);
+		}
+
+		public override bool IsValid(ITypeDescriptorContext context, object value)
+		{
+			return base.IsValid(context, value);
+		}
+
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof(string))
+				return true;
+
+			return base.CanConvertTo(context, destinationType);
+		}
+	}
+
 	[StructLayout(LayoutKind.Sequential)]
+	[TypeConverter(typeof(Vec2Converter))]
 	public struct Vec2
 	{
 		public static Vec2 Min(Vec2 a, Vec2 b)
@@ -209,7 +255,7 @@ namespace Box2CS
 			return new Vec2(A.Col1.X * v.X + A.Col2.X * v.Y, A.Col1.Y * v.X + A.Col2.Y * v.Y);
 		}
 
-		public Mat22 (Vec2 ncol1, Vec2 ncol2) :
+		public Mat22(Vec2 ncol1, Vec2 ncol2) :
 			this()
 		{
 			Col1 = ncol1;
@@ -251,7 +297,7 @@ namespace Box2CS
 			return new Vec2(x, y);
 		}
 
-		public Transform (Vec2 position, Mat22 r) :
+		public Transform(Vec2 position, Mat22 r) :
 			this()
 		{
 			Position = position;
@@ -323,7 +369,7 @@ namespace Box2CS
 		public System.Drawing.Color ToGDIColor()
 		{
 			return System.Drawing.Color.FromArgb(
-				F2I(R, 255), 
+				F2I(R, 255),
 				F2I(G, 255),
 				F2I(B, 255),
 				F2I(A, 255));
@@ -388,6 +434,17 @@ namespace Box2CS
 			result = result && LowerBound.Y <= aabb.LowerBound.Y;
 			result = result && aabb.UpperBound.X <= UpperBound.X;
 			result = result && aabb.UpperBound.Y <= UpperBound.Y;
+			return result;
+		}
+
+		/// Does this aabb contain the provided AABB.
+		public bool Contains(Vec2 pt)
+		{
+			bool result = true;
+			result = result && LowerBound.X <= pt.X;
+			result = result && LowerBound.Y <= pt.Y;
+			result = result && pt.X <= UpperBound.X;
+			result = result && pt.Y <= UpperBound.Y;
 			return result;
 		}
 
