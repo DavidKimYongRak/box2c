@@ -29,6 +29,29 @@ namespace Box2CS
 		{
 			return new Vec2(-s * a.Y, s * a.X);
 		}
+	
+		const double Deg2RadConst = Math.PI / 180.0;
+		const double Rad2DegConst = 180.0 / Math.PI;
+
+		public static double Rad2Deg(double angle)
+		{
+			return angle * Rad2DegConst;
+		}
+
+		public static double Deg2Rad(double angle)
+		{
+			return angle * Deg2RadConst;
+		}
+
+		public static float Rad2Deg(float angle)
+		{
+			return (float)Rad2Deg((double)angle);
+		}
+
+		public static float Deg2Rad(float angle)
+		{
+			return (float)Deg2Rad((double)angle);
+		}
 	}
 
 	public class Vec2Converter : ExpandableObjectConverter
@@ -255,6 +278,18 @@ namespace Box2CS
 			return new Vec2(A.Col1.X * v.X + A.Col2.X * v.Y, A.Col1.Y * v.X + A.Col2.Y * v.Y);
 		}
 
+		public Vec2 MulT(Vec2 v)
+		{
+			return new Vec2(v.Dot(Col1), v.Dot(Col2));
+		}
+
+		public Mat22 MulT(Mat22 m)
+		{
+			Vec2 c1 = new Vec2(Col1.Dot(m.Col1), Col2.Dot(m.Col1));
+			Vec2 c2 = new Vec2(Col1.Dot(m.Col2), Col2.Dot(m.Col2));
+			return new Mat22(c1, c2);
+		}
+
 		public Mat22(Vec2 ncol1, Vec2 ncol2) :
 			this()
 		{
@@ -276,7 +311,6 @@ namespace Box2CS
 	{
 		public static Transform Identity = new Transform(Vec2.Empty, Mat22.Identity);
 
-
 		public Vec2 Position
 		{
 			get;
@@ -295,6 +329,11 @@ namespace Box2CS
 			float y = T.Position.Y + T.R.Col1.Y * v.X + T.R.Col2.Y * v.Y;
 
 			return new Vec2(x, y);
+		}
+
+		public Vec2 MulT(Vec2 v)
+		{
+			return R.MulT(v - Position);
 		}
 
 		public Transform(Vec2 position, Mat22 r) :

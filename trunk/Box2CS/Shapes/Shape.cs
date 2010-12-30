@@ -92,6 +92,7 @@ namespace Box2CS
 
 		public abstract void ComputeAABB(out AABB aabb, Transform xf);
 		public abstract void ComputeMass(out MassData massData, float density);
+		public abstract bool TestPoint(Transform xf, Vec2 p);
 
 		object ICloneable.Clone()
 		{
