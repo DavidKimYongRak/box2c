@@ -80,6 +80,13 @@ namespace Box2CS
 			set { _internalCircleShape.m_p = value; }
 		}
 
+		public override bool TestPoint(Transform xf, Vec2 p)
+		{
+			Vec2 center = xf.Position + (xf.R * Position);
+			Vec2 d = p - center;
+			return d.Dot(d) <= Radius * Radius;
+		}
+
 		public bool CompareWith(CircleShape shape)
 		{
 			return (Radius == shape.Radius &&

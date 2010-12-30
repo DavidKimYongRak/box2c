@@ -407,6 +407,21 @@ _internalPolyShape.m_vertices[0];
 				density * I);
 		}
 
+		public override bool TestPoint(Transform xf, Vec2 p)
+		{
+			Vec2 pLocal = xf.R.MulT(p - xf.Position);
+
+			for (int i = 0; i < VertexCount; ++i)
+			{
+				float dot = Normals[i].Dot(pLocal - Vertices[i]);
+
+				if (dot > 0.0f)
+					return false;
+			}
+
+			return true;
+		}
+
 		public bool CompareWith(PolygonShape shape)
 		{
 			return (this.Radius == shape.Radius && 

@@ -251,7 +251,7 @@ namespace Testbed
 				}
 
 				// Sleep it off
-				Thread.Sleep(0);
+				Thread.Sleep(5);
 
 				Invoke(updateDraw);
 			}

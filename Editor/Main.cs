@@ -158,9 +158,6 @@ namespace Editor
 
 			debugDraw = new TestDebugDraw();
 			debugDraw.Flags = DebugFlags.Shapes | DebugFlags.Joints | DebugFlags.CenterOfMasses;
-
-			simulationThread = new Thread(SimulationLoop);
-			simulationThread.Start();
 		}
 
 		void OnGLResize(int w, int h)
@@ -337,10 +334,10 @@ namespace Editor
 					gameFrame++;
 				}
 
-				// Sleep it off
-				Thread.Sleep(0);
-
 				Invoke(updateDraw);
+
+				// Sleep it off
+				Thread.Sleep(5);
 			}
 		}
 
@@ -480,8 +477,6 @@ namespace Editor
 		{
 			Vec2 p = ConvertScreenToWorld(x, y);
 
-			var aabb = new AABB(p - new Vec2(1, 1), p + new Vec2(1, 1));
-
 			BodyDefSerialized moused = null;
 			foreach (var b in deserializer.Bodies)
 			{
@@ -489,17 +484,8 @@ namespace Editor
 				{
 					var fixture = deserializer.FixtureDefs[f];
 
-					var pos = b.Body.Position;
-
-					if (fixture.Fixture.Shape.ShapeType == ShapeType.Circle)
-						pos += (fixture.Fixture.Shape as CircleShape).Position;
-					else
-						pos += (fixture.Fixture.Shape as PolygonShape).Centroid;
-
-					if (aabb.Contains(pos))
-					{
+					if (fixture.Fixture.Shape.TestPoint(new Transform(b.Body.Position, new Mat22(b.Body.Angle)), p))
 						moused = b;
-					}
 				}
 			}
 
@@ -551,6 +537,8 @@ namespace Editor
 
 		private void Main_Load(object sender, EventArgs e)
 		{
+			simulationThread = new Thread(SimulationLoop);
+			simulationThread.Start();
 		}
 
 		private void Main_FormClosing(object sender, FormClosingEventArgs e)

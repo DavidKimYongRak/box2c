@@ -175,6 +175,17 @@ namespace Editor
 			}
 		}
 
+		public void DrawArc(Vec2 pos, float radius, float startAngle, float endAngle)
+		{
+			Gl.glPushMatrix();
+			Gl.glTranslatef(pos.X, pos.Y, 0);
+			var xx = Glu.gluNewQuadric();
+			Glu.gluQuadricDrawStyle(xx, Glu.GLU_SILHOUETTE);
+			Glu.gluPartialDisk(xx, radius, radius, 24, 1, b2Math.Rad2Deg(startAngle), b2Math.Rad2Deg(endAngle - startAngle));
+			Glu.gluDeleteQuadric(xx);
+			Gl.glPopMatrix();
+		}
+
 		public void DrawJoint(Box2CS.Serialize.JointDefSerialized x, Vec2 p1, Vec2 p2, BodyDef bodyA, BodyDef bodyB)
 		{
 			Transform xf1 = new Transform(bodyA.Position, new Mat22(bodyA.Angle));
@@ -204,7 +215,35 @@ namespace Editor
 				}
 				break;
 
+			case JointType.Revolute:
+				{
+					RevoluteJointDef rjd = (RevoluteJointDef)x.Joint;
+
+					if (rjd.EnableLimit)
+					{
+						Vec2 startPos = p1;
+						Vec2 sinCos = new Vec2(-(float)Math.Cos((rjd.UpperAngle + rjd.ReferenceAngle) - (float)Math.PI / 2), -(float)Math.Sin((rjd.UpperAngle + rjd.ReferenceAngle) - (float)Math.PI / 2));
+
+						var end = startPos + (sinCos * 3);
+						DrawSegment(startPos, end, new ColorF(0, 0.65f, 0.65f));
+
+						sinCos = new Vec2(-(float)Math.Cos((rjd.LowerAngle + rjd.ReferenceAngle) - (float)Math.PI / 2), -(float)Math.Sin((rjd.LowerAngle + rjd.ReferenceAngle) - (float)Math.PI / 2));
+
+						end = startPos + (sinCos * 3);
+						DrawSegment(startPos, end, new ColorF(0, 0.65f, 0.65f));
+						DrawArc(startPos, 3, (-rjd.UpperAngle + rjd.ReferenceAngle), (-rjd.LowerAngle + rjd.ReferenceAngle));
+					}
+
+					DrawCircle(p1, 0.75f, new ColorF(0, 0.65f, 0.65f));
+
+					DrawSegment(x1, p1, color);
+					DrawSegment(p1, p2, color);
+					DrawSegment(x2, p2, color);
+				}
+				break;
+
 			default:
+			case JointType.Unknown:
 				DrawSegment(x1, p1, color);
 				DrawSegment(p1, p2, color);
 				DrawSegment(x2, p2, color);
