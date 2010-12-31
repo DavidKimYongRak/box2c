@@ -149,6 +149,11 @@ namespace Box2CS
 			return new Vec2(l.X * v, l.Y * v);
 		}
 
+		public static Vec2 operator /(Vec2 l, float v)
+		{
+			return new Vec2(l.X / v, l.Y / v);
+		}
+
 		public static Vec2 operator *(Vec2 l, Vec2 v)
 		{
 			return new Vec2(l.X * v.X, l.Y * v.Y);
