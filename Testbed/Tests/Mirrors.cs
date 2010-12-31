@@ -45,6 +45,7 @@ namespace Testbed.Tests
 	{
 		float _totalLength;
 		float _length;
+		int _hit;
 		Vec2 _start, _normal;
 		World _world;
 		public List<Vec2> starts = new List<Vec2>(), ends = new List<Vec2>();
@@ -54,6 +55,7 @@ namespace Testbed.Tests
 		{
 			Clear();
 
+			_hit = 0;
 			_totalLength = totalLength;
 			_length = totalLength;
 			_start = start;
@@ -61,6 +63,7 @@ namespace Testbed.Tests
 			_world = world;
 
 			// Send a beam out
+			_callback.m_hit = false;
 			_world.RayCast(_callback, start, start + (normal * _length));
 
 			if (_callback.m_hit)
@@ -78,20 +81,26 @@ namespace Testbed.Tests
 			ends.Clear();
 		}
 
+		Vec2 Reflect(Vec2 start, Vec2 end, Vec2 normal)
+		{
+			var sub = (start - end).Normalized();
+
+			return sub - 2 * (sub.Dot(normal)) * normal;
+		}
+
 		void Report(Vec2 point, Vec2 normal)
 		{
+			_hit++;
 			Vec2 sub = _start - point;
 			float len = sub.Length();
 
-			if (_start == point || len == 0)
-			{
-				starts.Add(_start);
-				ends.Add(_start  + (_normal * _length));
+			if (_hit > 100 || _start == point || len == 0)
 				return;
-			}
 
 			starts.Add(_start);
 			ends.Add(point);
+
+			var reflect = Reflect(_start, point, normal);
 
 			_length -= len;
 			_start = point;
@@ -99,7 +108,14 @@ namespace Testbed.Tests
 
 			if (_length > 0)
 			{
-				_world.RayCast(_callback, _start, _start + (_normal * _length));
+				_world.RayCast(_callback, _start, _start - (reflect * _length));
+
+				if (!_callback.m_hit || (_start == _callback.m_point))
+				{
+					starts.Add(_start);
+					ends.Add(_start - (reflect * _length));
+				}
+
 				Report(_callback.m_point, _callback.m_normal);
 			}
 		}
