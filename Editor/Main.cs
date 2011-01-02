@@ -8,6 +8,9 @@ using SFML.Window;
 using SFML.Graphics;
 using Tao.FreeGlut;
 using Box2CS.Serialize;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.ComponentModel;
 
 namespace Editor
 {
@@ -25,7 +28,73 @@ namespace Editor
 		Thread simulationThread;
 		TestDebugDraw debugDraw;
 		WorldXmlDeserializer deserializer;
-		BodyDefSerialized HoverBody = null, SelectedBody = null;
+		BodyForPropertyGrid HoverBody = null, SelectedBody = null;
+		List<BodyForPropertyGrid> bodies = new List<BodyForPropertyGrid>();
+
+		public class BodyForPropertyGrid
+		{
+			[Description("The actual body.")]
+			public BodyDef Body
+			{
+				get;
+				set;
+			}
+
+			[Description("Name identifier for this body and connected fixtures.")]
+			public string Name
+			{
+				get;
+				set;
+			}
+
+			MassData _mass;
+			[Description("Mass for this body. Empty the properties' contents to recalculate the mass data manually. Will automatically update if AutoMassRecalculate is true.")]
+			public MassData Mass
+			{
+				get { return _mass; }
+				set { if (value == MassData.Recalculate) _mass = Body.ComputeMass(Fixtures); else _mass = value; }
+			}
+
+			bool _autoCalculate = true;
+
+			[DefaultValue(true)]
+			[Description("Automatically recalculate the mass of the body if a fixture or shape is modified.")]
+			public bool AutoMassRecalculate
+			{
+				get { return _autoCalculate; }
+				set { _autoCalculate = value; }
+			}
+
+			FixtureDef[] _fixtures;
+			[Description("List of fixtures attached to this body.")]
+			public FixtureDef[] Fixtures
+			{
+				get { return _fixtures; }
+
+				set
+				{
+					_fixtures = value;
+					_mass = Body.ComputeMass(value);
+				}
+			}
+
+			public BodyForPropertyGrid(WorldXmlDeserializer deserializer, BodyDefSerialized x)
+			{
+				Body = x.Body;
+				Name = x.Name;
+
+				var fixtures = new FixtureDef[x.FixtureIDs.Count];
+
+				// FIXME: name
+				for (int i = 0; i < x.FixtureIDs.Count; ++i)
+				{
+					fixtures[i] = deserializer.FixtureDefs[x.FixtureIDs[i]].Fixture.Clone();
+					fixtures[i].Shape = deserializer.Shapes[deserializer.FixtureDefs[x.FixtureIDs[i]].ShapeID].Shape.Clone();
+				}
+
+				Fixtures = fixtures;
+			}
+		}
 
 		bool _testing = false;
 
@@ -47,13 +116,14 @@ namespace Editor
 
 			System.Collections.Generic.List<Body> bodies = new System.Collections.Generic.List<Body>();
 
-			foreach (var x in deserializer.Bodies)
+			foreach (var x in this.bodies)
 			{
 				var body = _world.CreateBody(x.Body);
 
 				bodies.Add(body);
-				foreach (var f in x.FixtureIDs)
-					body.CreateFixture(deserializer.FixtureDefs[f].Fixture);
+
+				foreach (var f in x.Fixtures)
+					body.CreateFixture(f);
 			}
 
 			foreach (var j in deserializer.Joints)
@@ -136,18 +206,8 @@ namespace Editor
 			{
 				var x = deserializer.Bodies[i];
 				listBox1.Items.Add("Body "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
-			}
 
-			for (int i = 0; i < deserializer.FixtureDefs.Count; ++i)
-			{
-				var x = deserializer.FixtureDefs[i];
-				listBox2.Items.Add("Fixture "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
-			}
-
-			for (int i = 0; i < deserializer.Shapes.Count; ++i)
-			{
-				var x = deserializer.Shapes[i];
-				listBox3.Items.Add("Shape "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
+				bodies.Add(new BodyForPropertyGrid(deserializer, x));
 			}
 
 			for (int i = 0; i < deserializer.Joints.Count; ++i)
@@ -155,6 +215,9 @@ namespace Editor
 				var x = deserializer.Joints[i];
 				listBox4.Items.Add(x.Joint.JointType.ToString() + " Joint "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
 			}
+
+			deserializer.Shapes.Clear();
+			deserializer.FixtureDefs.Clear();
 
 			debugDraw = new TestDebugDraw();
 			debugDraw.Flags = DebugFlags.Shapes | DebugFlags.Joints | DebugFlags.CenterOfMasses;
@@ -241,14 +304,12 @@ namespace Editor
 
 			if (!_testing)
 			{
-				foreach (var x in deserializer.Bodies)
+				foreach (var x in bodies)
 				{
 					var xf = new Transform(x.Body.Position, new Mat22(x.Body.Angle));
 
-					foreach (var y in x.FixtureIDs)
+					foreach (var fixture in x.Fixtures)
 					{
-						var fixture = deserializer.FixtureDefs[y];
-
 						ColorF color = new ColorF(0.9f, 0.7f, 0.7f);
 
 						if (SelectedBody != null && x.Body == SelectedBody.Body)
@@ -264,7 +325,7 @@ namespace Editor
 						else if (x.Body.Awake)
 							color = new ColorF(0.6f, 0.6f, 0.6f);
 
-						debugDraw.DrawShape(fixture.Fixture, xf, color);
+						debugDraw.DrawShape(fixture, xf, color);
 					}
 
 					debugDraw.DrawTransform(xf);
@@ -477,14 +538,12 @@ namespace Editor
 		{
 			Vec2 p = ConvertScreenToWorld(x, y);
 
-			BodyDefSerialized moused = null;
-			foreach (var b in deserializer.Bodies)
+			BodyForPropertyGrid moused = null;
+			foreach (var b in bodies)
 			{
-				foreach (var f in b.FixtureIDs)
+				foreach (var f in b.Fixtures)
 				{
-					var fixture = deserializer.FixtureDefs[f];
-
-					if (fixture.Fixture.Shape.TestPoint(new Transform(b.Body.Position, new Mat22(b.Body.Angle)), p))
+					if (f.Shape.TestPoint(new Transform(b.Body.Position, new Mat22(b.Body.Angle)), p))
 						moused = b;
 				}
 			}
@@ -562,23 +621,38 @@ namespace Editor
 
 		private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			propertyGrid1.SelectedObject = deserializer.Bodies[listBox1.SelectedIndex].Body;
-			SelectedBody = deserializer.Bodies[listBox1.SelectedIndex];
-		}
+			if (listBox1.SelectedIndex == -1)
+				return;
 
-		private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			propertyGrid2.SelectedObject = deserializer.FixtureDefs[listBox2.SelectedIndex].Fixture;
-		}
-
-		private void listBox3_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			propertyGrid3.SelectedObject = deserializer.Shapes[listBox3.SelectedIndex].Shape;
+			propertyGrid1.SelectedObject = bodies[listBox1.SelectedIndex];
+			SelectedBody = bodies[listBox1.SelectedIndex];
 		}
 
 		private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			if (listBox4.SelectedIndex == -1)
+				return;
+
 			propertyGrid4.SelectedObject = deserializer.Joints[listBox4.SelectedIndex].Joint;
+		}
+
+		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+		{
+			BodyForPropertyGrid bpg = (BodyForPropertyGrid)propertyGrid1.SelectedObject;
+
+			if (bpg.AutoMassRecalculate && 
+				e.ChangedItem.PropertyDescriptor.ComponentType.GetProperty(e.ChangedItem.PropertyDescriptor.Name)
+				.GetCustomAttributes(typeof(RecalculateMassAttribute), true)
+				.Length > 0)
+			{
+				var calc = bpg.Body.ComputeMass(bpg.Fixtures);
+
+				if (calc != bpg.Mass)
+				{
+					bpg.Mass = calc;
+					propertyGrid1.Refresh();
+				}
+			}
 		}
 	}
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define SKIP_DEFAULT_CHECKS
+
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
@@ -350,22 +352,34 @@ namespace Box2CS.Serialize
 
 			writer.WriteElementString("Shape", fixture.ShapeID.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (!string.IsNullOrEmpty(fixture.Name))
+#endif
 				writer.WriteElementString("Name", fixture.Name);
 
+#if !SKIP_DEFAULT_CHECKS
 			if (fixture.Fixture.Density != defaultFixtureDefData.Density)
+#endif
 				writer.WriteElementString("Density", fixture.Fixture.Density.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (fixture.Fixture.Filter != defaultFixtureDefData.Filter)
+#endif
 				WriteSimpleType(typeof(FilterData), fixture.Fixture.Filter);
 
+#if !SKIP_DEFAULT_CHECKS
 			if (fixture.Fixture.Friction != defaultFixtureDefData.Friction)
+#endif
 				writer.WriteElementString("Friction", fixture.Fixture.Friction.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (fixture.Fixture.IsSensor != defaultFixtureDefData.IsSensor)
+#endif
 				writer.WriteElementString("IsSensor", fixture.Fixture.IsSensor.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (fixture.Fixture.Restitution != defaultFixtureDefData.Restitution)
+#endif
 				writer.WriteElementString("Restitution", fixture.Fixture.Restitution.ToString());
 
 			if (fixture.Fixture.UserData != null)
@@ -388,40 +402,64 @@ namespace Box2CS.Serialize
 			if (!string.IsNullOrEmpty(body.Name))
 				writer.WriteElementString("Name", body.Name);
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.Active != defaultBodyDefData.Active)
+#endif
 				writer.WriteElementString("Active", body.Body.Active.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.AllowSleep != defaultBodyDefData.AllowSleep)
+#endif
 				writer.WriteElementString("AllowSleep", body.Body.AllowSleep.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.Angle != defaultBodyDefData.Angle)
+#endif
 				writer.WriteElementString("Angle", body.Body.Angle.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.AngularDamping != defaultBodyDefData.AngularDamping)
+#endif
 				writer.WriteElementString("AngularDamping", body.Body.AngularDamping.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.AngularVelocity != defaultBodyDefData.AngularVelocity)
+#endif
 				writer.WriteElementString("AngularVelocity", body.Body.AngularVelocity.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.Awake != defaultBodyDefData.Awake)
+#endif
 				writer.WriteElementString("Awake", body.Body.Awake.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.Bullet != defaultBodyDefData.Bullet)
+#endif
 				writer.WriteElementString("Bullet", body.Body.Bullet.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.FixedRotation != defaultBodyDefData.FixedRotation)
+#endif
 				writer.WriteElementString("FixedRotation", body.Body.FixedRotation.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.InertiaScale != defaultBodyDefData.InertiaScale)
+#endif
 				writer.WriteElementString("InertiaScale", body.Body.InertiaScale.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.LinearDamping != defaultBodyDefData.LinearDamping)
+#endif
 				writer.WriteElementString("LinearDamping", body.Body.LinearDamping.ToString());
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.LinearVelocity != defaultBodyDefData.LinearVelocity)
+#endif
 				WriteElement("LinearVelocity", body.Body.LinearVelocity);
 
+#if !SKIP_DEFAULT_CHECKS
 			if (body.Body.Position != defaultBodyDefData.Position)
+#endif
 				WriteElement("Position", body.Body.Position);
 
 			if (body.Body.UserData != null)
@@ -469,7 +507,9 @@ namespace Box2CS.Serialize
 			WriteElement("BodyA", def.BodyAIndex);
 			WriteElement("BodyB", def.BodyBIndex);
 
+#if !SKIP_DEFAULT_CHECKS
 			if (def.Joint.CollideConnected != false)
+#endif
 				WriteElement("CollideConnected", def.Joint.CollideConnected);
 
 			if (def.Joint.UserData != null)
@@ -485,15 +525,25 @@ namespace Box2CS.Serialize
 				{
 					DistanceJointDef djd = (DistanceJointDef)def.Joint;
 
+#if !SKIP_DEFAULT_CHECKS
 					if (djd.DampingRatio != _defaultDistanceJoint.DampingRatio)
+#endif
 						WriteElement("DampingRatio", djd.DampingRatio);
+#if !SKIP_DEFAULT_CHECKS
 					if (djd.FrequencyHz != _defaultDistanceJoint.FrequencyHz)
+#endif
 						WriteElement("FrequencyHz", djd.FrequencyHz);
+#if !SKIP_DEFAULT_CHECKS
 					if (djd.Length != _defaultDistanceJoint.Length)
+#endif
 						WriteElement("Length", djd.Length);
+#if !SKIP_DEFAULT_CHECKS
 					if (djd.LocalAnchorA != _defaultDistanceJoint.LocalAnchorA)
+#endif
 						WriteElement("LocalAnchorA", djd.LocalAnchorA);
+#if !SKIP_DEFAULT_CHECKS
 					if (djd.LocalAnchorB != _defaultDistanceJoint.LocalAnchorB)
+#endif
 						WriteElement("LocalAnchorB", djd.LocalAnchorB);
 				}
 				break;
@@ -501,13 +551,21 @@ namespace Box2CS.Serialize
 				{
 					FrictionJointDef fjd = (FrictionJointDef)def.Joint;
 
+#if !SKIP_DEFAULT_CHECKS
 					if (fjd.LocalAnchorA != _defaultFrictionJoint.LocalAnchorA)
+#endif
 						WriteElement("LocalAnchorA", fjd.LocalAnchorA);
+#if !SKIP_DEFAULT_CHECKS
 					if (fjd.LocalAnchorB != _defaultFrictionJoint.LocalAnchorB)
+#endif
 						WriteElement("LocalAnchorB", fjd.LocalAnchorB);
+#if !SKIP_DEFAULT_CHECKS
 					if (fjd.MaxForce != _defaultFrictionJoint.MaxForce)
+#endif
 						WriteElement("MaxForce", fjd.MaxForce);
+#if !SKIP_DEFAULT_CHECKS
 					if (fjd.MaxTorque != _defaultFrictionJoint.MaxTorque)
+#endif
 						WriteElement("MaxTorque", fjd.MaxTorque);
 				}
 				break;
@@ -531,28 +589,46 @@ namespace Box2CS.Serialize
 					WriteElement("JointA", jointA);
 					WriteElement("JointB", jointB);
 					WriteElement("Ratio", gjd.Ratio);*/
-					throw new Exception("Gear joint not supported by serialization");
+				throw new Exception("Gear joint not supported by serialization");
 			case JointType.Line:
 				{
 					LineJointDef ljd = (LineJointDef)def.Joint;
 
+#if !SKIP_DEFAULT_CHECKS
 					if (ljd.EnableLimit != _defaultLineJoint.EnableLimit)
+#endif
 						WriteElement("EnableLimit", ljd.EnableLimit);
+#if !SKIP_DEFAULT_CHECKS
 					if (ljd.EnableMotor != _defaultLineJoint.EnableMotor)
+#endif
 						WriteElement("EnableMotor", ljd.EnableMotor);
+#if !SKIP_DEFAULT_CHECKS
 					if (ljd.LocalAnchorA != _defaultLineJoint.LocalAnchorA)
+#endif
 						WriteElement("LocalAnchorA", ljd.LocalAnchorA);
+#if !SKIP_DEFAULT_CHECKS
 					if (ljd.LocalAnchorB != _defaultLineJoint.LocalAnchorB)
+#endif
 						WriteElement("LocalAnchorB", ljd.LocalAnchorB);
+#if !SKIP_DEFAULT_CHECKS
 					if (ljd.LocalAxisA != _defaultLineJoint.LocalAxisA)
+#endif
 						WriteElement("LocalAxisA", ljd.LocalAxisA);
+#if !SKIP_DEFAULT_CHECKS
 					if (ljd.LowerTranslation != _defaultLineJoint.LowerTranslation)
+#endif
 						WriteElement("LowerTranslation", ljd.LowerTranslation);
+#if !SKIP_DEFAULT_CHECKS
 					if (ljd.MaxMotorForce != _defaultLineJoint.MaxMotorForce)
+#endif
 						WriteElement("MaxMotorForce", ljd.MaxMotorForce);
+#if !SKIP_DEFAULT_CHECKS
 					if (ljd.MotorSpeed != _defaultLineJoint.MotorSpeed)
+#endif
 						WriteElement("MotorSpeed", ljd.MotorSpeed);
+#if !SKIP_DEFAULT_CHECKS
 					if (ljd.UpperTranslation != _defaultLineJoint.UpperTranslation)
+#endif
 						WriteElement("UpperTranslation", ljd.UpperTranslation);
 				}
 				break;
@@ -560,25 +636,45 @@ namespace Box2CS.Serialize
 				{
 					PrismaticJointDef pjd = (PrismaticJointDef)def.Joint;
 
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.EnableLimit != _defaultPrismaticJoint.EnableLimit)
+#endif
 						WriteElement("EnableLimit", pjd.EnableLimit);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.EnableMotor != _defaultPrismaticJoint.EnableMotor)
+#endif
 						WriteElement("EnableMotor", pjd.EnableMotor);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.LocalAnchorA != _defaultPrismaticJoint.LocalAnchorA)
+#endif
 						WriteElement("LocalAnchorA", pjd.LocalAnchorA);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.LocalAnchorB != _defaultPrismaticJoint.LocalAnchorB)
+#endif
 						WriteElement("LocalAnchorB", pjd.LocalAnchorB);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.LocalAxis != _defaultPrismaticJoint.LocalAxis)
+#endif
 						WriteElement("LocalAxisA", pjd.LocalAxis);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.LowerTranslation != _defaultPrismaticJoint.LowerTranslation)
+#endif
 						WriteElement("LowerTranslation", pjd.LowerTranslation);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.MaxMotorForce != _defaultPrismaticJoint.MaxMotorForce)
+#endif
 						WriteElement("MaxMotorForce", pjd.MaxMotorForce);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.MotorSpeed != _defaultPrismaticJoint.MotorSpeed)
+#endif
 						WriteElement("MotorSpeed", pjd.MotorSpeed);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.UpperTranslation != _defaultPrismaticJoint.UpperTranslation)
+#endif
 						WriteElement("UpperTranslation", pjd.UpperTranslation);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.ReferenceAngle != _defaultPrismaticJoint.ReferenceAngle)
+#endif
 						WriteElement("ReferenceAngle", pjd.ReferenceAngle);
 				}
 				break;
@@ -586,23 +682,41 @@ namespace Box2CS.Serialize
 				{
 					PulleyJointDef pjd = (PulleyJointDef)def.Joint;
 
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.GroundAnchorA != _defaultPulleyJoint.GroundAnchorA)
+#endif
 						WriteElement("GroundAnchorA", pjd.GroundAnchorA);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.GroundAnchorB != _defaultPulleyJoint.GroundAnchorB)
+#endif
 						WriteElement("GroundAnchorB", pjd.GroundAnchorB);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.LengthA != _defaultPulleyJoint.LengthA)
+#endif
 						WriteElement("LengthA", pjd.LengthA);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.LengthB != _defaultPulleyJoint.LengthB)
+#endif
 						WriteElement("LengthB", pjd.LengthB);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.LocalAnchorA != _defaultPulleyJoint.LocalAnchorA)
+#endif
 						WriteElement("LocalAnchorA", pjd.LocalAnchorA);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.LocalAnchorB != _defaultPulleyJoint.LocalAnchorB)
+#endif
 						WriteElement("LocalAnchorB", pjd.LocalAnchorB);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.MaxLengthA != _defaultPulleyJoint.MaxLengthA)
+#endif
 						WriteElement("MaxLengthA", pjd.MaxLengthA);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.MaxLengthB != _defaultPulleyJoint.MaxLengthB)
+#endif
 						WriteElement("MaxLengthB", pjd.MaxLengthB);
+#if !SKIP_DEFAULT_CHECKS
 					if (pjd.Ratio != _defaultPulleyJoint.Ratio)
+#endif
 						WriteElement("Ratio", pjd.Ratio);
 				}
 				break;
@@ -610,23 +724,41 @@ namespace Box2CS.Serialize
 				{
 					RevoluteJointDef rjd = (RevoluteJointDef)def.Joint;
 
+#if !SKIP_DEFAULT_CHECKS
 					if (rjd.EnableLimit != _defaultRevoluteJoint.EnableLimit)
+#endif
 						WriteElement("EnableLimit", rjd.EnableLimit);
+#if !SKIP_DEFAULT_CHECKS
 					if (rjd.EnableMotor != _defaultRevoluteJoint.EnableMotor)
+#endif
 						WriteElement("EnableMotor", rjd.EnableMotor);
+#if !SKIP_DEFAULT_CHECKS
 					if (rjd.LocalAnchorA != _defaultRevoluteJoint.LocalAnchorA)
+#endif
 						WriteElement("LocalAnchorA", rjd.LocalAnchorA);
+#if !SKIP_DEFAULT_CHECKS
 					if (rjd.LocalAnchorB != _defaultRevoluteJoint.LocalAnchorB)
+#endif
 						WriteElement("LocalAnchorB", rjd.LocalAnchorB);
+#if !SKIP_DEFAULT_CHECKS
 					if (rjd.LowerAngle != _defaultRevoluteJoint.LowerAngle)
+#endif
 						WriteElement("LowerAngle", rjd.LowerAngle);
+#if !SKIP_DEFAULT_CHECKS
 					if (rjd.MaxMotorTorque != _defaultRevoluteJoint.MaxMotorTorque)
+#endif
 						WriteElement("MaxMotorTorque", rjd.MaxMotorTorque);
+#if !SKIP_DEFAULT_CHECKS
 					if (rjd.MotorSpeed != _defaultRevoluteJoint.MotorSpeed)
+#endif
 						WriteElement("MotorSpeed", rjd.MotorSpeed);
+#if !SKIP_DEFAULT_CHECKS
 					if (rjd.ReferenceAngle != _defaultRevoluteJoint.ReferenceAngle)
+#endif
 						WriteElement("ReferenceAngle", rjd.ReferenceAngle);
+#if !SKIP_DEFAULT_CHECKS
 					if (rjd.UpperAngle != _defaultRevoluteJoint.UpperAngle)
+#endif
 						WriteElement("UpperAngle", rjd.UpperAngle);
 				}
 				break;
@@ -634,9 +766,13 @@ namespace Box2CS.Serialize
 				{
 					WeldJointDef wjd = (WeldJointDef)def.Joint;
 
+#if !SKIP_DEFAULT_CHECKS
 					if (wjd.LocalAnchorA != _defaultWeldJoint.LocalAnchorA)
+#endif
 						WriteElement("LocalAnchorA", wjd.LocalAnchorA);
+#if !SKIP_DEFAULT_CHECKS
 					if (wjd.LocalAnchorB != _defaultWeldJoint.LocalAnchorB)
+#endif
 						WriteElement("LocalAnchorB", wjd.LocalAnchorB);
 				}
 				break;
@@ -848,7 +984,9 @@ namespace Box2CS.Serialize
 
 							if (n.Name.ToLower() != "fixture")
 								throw new Exception();
+
 							string name = "";
+							int id = 0;
 
 							foreach (XmlNode sn in n)
 							{
@@ -858,7 +996,7 @@ namespace Box2CS.Serialize
 									name = sn.FirstChild.Value;
 									break;
 								case "shape":
-									fixture.Shape = _shapes[int.Parse(sn.FirstChild.Value)].Shape; // FIXME ordering
+									id = int.Parse(sn.FirstChild.Value);
 									break;
 								case "density":
 									fixture.Density = float.Parse(sn.FirstChild.Value);
@@ -881,7 +1019,9 @@ namespace Box2CS.Serialize
 								}
 							}
 
-							_fixtures.Add(new FixtureDefSerialized(fixture, -1, name));
+							fixture.Shape = _shapes[id].Shape;
+
+							_fixtures.Add(new FixtureDefSerialized(fixture, id, name));
 						}
 					}
 					break;

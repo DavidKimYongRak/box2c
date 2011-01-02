@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace Box2CS
 {
@@ -11,6 +12,7 @@ namespace Box2CS
 		Dynamic,
 	};
 
+	[TypeConverter(typeof(ExpandableObjectConverter))]
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BodyDef : IFixedSize
 	{
@@ -128,6 +130,8 @@ namespace Box2CS
 		{
 		}
 
+		[Category("Other")]
+		[Description("User-specific and application-specific data.")]
 		public object UserData
 		{
 			get { return UserDataStorage.BodyStorage.ObjectFromHandle(UserDataStorage.IntPtrToHandle(_userData)); }
@@ -149,82 +153,154 @@ namespace Box2CS
 			}
 		}
 
+		[Category("Movement")]
+		[Description("The position of the body in the world.")]
 		public Vec2 Position
 		{
 			get { return _position; }
 			set { _position = value; }
 		}
 
+		[Category("Movement")]
+		[Description("The angle of the body.")]
 		public float Angle
 		{
 			get { return _angle; }
 			set { _angle = value; }
 		}
 
+		[Category("Movement")]
+		[Description("The linear velocity of the body.")]
 		public Vec2 LinearVelocity
 		{
 			get { return _linearVelocity; }
 			set { _linearVelocity = value; }
 		}
 
+		[Category("Movement")]
+		[Description("The angular velocity of the body.")]
 		public float AngularVelocity
 		{
 			get { return _angularVelocity; }
 			set { _angularVelocity = value; }
 		}
 
+		[Category("Movement")]
+		[Description("This body's resistance to linear movement.")]
 		public float LinearDamping
 		{
 			get { return _linearDamping; }
 			set { _linearDamping = value; }
 		}
 
+		[Category("Movement")]
+		[Description("This body's resistance to angular movement.")]
 		public float AngularDamping
 		{
 			get { return _angularDamping; }
 			set { _angularDamping = value; }
 		}
 
+		[Category("Flags")]
+		[Description("True if this body is allowed to sleep.")]
 		public bool AllowSleep
 		{
 			get { return _allowSleep; }
 			set { _allowSleep = value; }
 		}
 
+		[Category("Flags")]
+		[Description("True if this body begins awake.")]
 		public bool Awake
 		{
 			get { return _awake; }
 			set { _awake = value; }
 		}
 
+		[Category("Flags")]
+		[Description("True if this body can not rotate.")]
 		public bool FixedRotation
 		{
 			get { return _fixedRotation; }
 			set { _fixedRotation = value; }
 		}
 
+		[Category("Flags")]
+		[Description("True if this body should always be under continuous collision detection.")]
 		public bool Bullet
 		{
 			get { return _bullet; }
 			set { _bullet = value; }
 		}
 
+		[Category("Main")]
+		[Description("The type of body.")]
 		public BodyType BodyType
 		{
 			get { return _type; }
 			set { _type = value; }
 		}
 
+		[Category("Flags")]
+		[Description("True if this body is currently active.")]
 		public bool Active
 		{
 			get { return _active; }  
 			set { _active = value; }
 		}
 
+		[Category("Other")]
+		[Description("???")]
 		public float InertiaScale
 		{
 			get { return _inertiaScale; }
 			set { _inertiaScale = value; }
+		}
+
+		public MassData ComputeMass(FixtureDef[] fixtures)
+		{
+			// Compute mass data from shapes. Each shape has its own density.
+			float m_mass = 0.0f;
+			float m_I = 0.0f;
+
+			// Static and kinematic bodies have zero mass.
+			if (BodyType != Box2CS.BodyType.Dynamic)
+				return MassData.Empty;
+
+			// Accumulate mass over all fixtures.
+			Vec2 center = Vec2.Empty;
+			
+			foreach (var f in fixtures)
+			{
+				if (f.Density == 0.0f)
+					continue;
+
+				MassData massData;
+				f.Shape.ComputeMass(out massData, f.Density);
+				m_mass += massData.Mass;
+				center += massData.Mass * massData.Center;
+				m_I += massData.Inertia;
+			}
+
+			// Compute center of mass.
+			if (m_mass > 0.0f)
+				center *= (1.0f / m_mass);
+			else
+				// Force all dynamic bodies to have a positive mass.
+				m_mass = 1.0f;
+
+			if (m_I > 0.0f && !FixedRotation)
+			{
+				// Center the inertia about the center of mass.
+				m_I -= m_mass * center.Dot(center);
+
+				if (!(m_I > 0.0f))
+					throw new Exception("Negative inertia!");
+			}
+			else
+				m_I = 0.0f;
+
+			return new MassData(m_mass, center, m_I);
 		}
 	}
 
