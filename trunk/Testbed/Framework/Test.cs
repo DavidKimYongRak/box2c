@@ -57,7 +57,7 @@ namespace Testbed
 
 		public Test Construct()
 		{
-			return (Test)Type.GetConstructor(new System.Type[] { }).Invoke(null);
+			return (Test)Activator.CreateInstance(Type);//(Test)Type.GetConstructor(new System.Type[] { }).Invoke(null);
 		}
 	}
 
@@ -323,7 +323,7 @@ namespace Testbed
 			if (m_bombSpawning)
 				CompleteBombSpawn(p);
 		}
-		public void MouseMove(Vec2 p)
+		public virtual void MouseMove(Vec2 p)
 		{
 			m_mouseWorld = p;
 

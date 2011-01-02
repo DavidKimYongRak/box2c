@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace Box2CS
 {
@@ -70,6 +72,58 @@ namespace Box2CS
 		}
 	}
 
+	public class CircleShapeTypeEditor : ExpandableObjectConverter
+	{
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		{
+			if (sourceType == typeof(string))
+				return true;
+			return base.CanConvertFrom(context, sourceType);
+		}
+
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			if (value is string)
+			{
+				SimpleParser parser = new SimpleParser((string)value, true);
+
+				switch ((ShapeType)Enum.Parse(typeof(ShapeType), parser.ValueFromKey("ShapeType")))
+				{
+				case ShapeType.Circle:
+					return CircleShape.Parse((string)value);
+				case ShapeType.Polygon:
+					return PolygonShape.Parse((string)value);
+				default:
+					throw new FormatException("Bad shapetype");
+				}
+			}
+
+			return base.ConvertFrom(context, culture, value);
+		}
+
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		{
+			if (destinationType == typeof(string))
+				return (value as Shape).ToString();
+
+			return base.ConvertTo(context, culture, value, destinationType);
+		}
+
+		public override bool IsValid(ITypeDescriptorContext context, object value)
+		{
+			return base.IsValid(context, value);
+		}
+
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof(string))
+				return true;
+
+			return base.CanConvertTo(context, destinationType);
+		}
+	}
+
+	[TypeConverter(typeof(CircleShapeTypeEditor))]
 	public abstract class Shape : ICloneable, ICompare<Shape>
 	{
 		cb2shapeportable _internalShape;
@@ -99,12 +153,15 @@ namespace Box2CS
 			return Clone();
 		}
 
+		[Browsable(false)]
 		public ShapeType ShapeType
 		{
 			get { return _internalShape.m_type; }
 			internal set { _internalShape.m_type = value; }
 		}
 
+		[RecalculateMassAttribute]
+		[Description("The radius of this shape. This property will cause the mass of the body to be recalculated, if required.")]
 		public float Radius
 		{
 			get { return _internalShape.m_radius; }
@@ -119,6 +176,11 @@ namespace Box2CS
 				return ((CircleShape)this).CompareWith((CircleShape)shape);
 
 			return false;
+		}
+
+		public override string ToString()
+		{
+			return "ShapeType="+ShapeType.ToString();
 		}
 	}
 }

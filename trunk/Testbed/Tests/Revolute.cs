@@ -7,6 +7,8 @@ namespace Testbed.Tests
 	{
 		public Revolute()
 		{
+			System.Collections.Generic.List<JointDef> joints = new System.Collections.Generic.List<JointDef>();
+
 			Body ground = null;
 			{
 				BodyDef bd = new BodyDef();
@@ -44,6 +46,17 @@ namespace Testbed.Tests
 				rjd.CollideConnected = true;
 
 				m_joint = (RevoluteJoint)m_world.CreateJoint(rjd);
+				joints.Add(rjd);
+			}
+
+			using (System.IO.FileStream fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Create))
+			{
+				var serializer = Box2CS.Serialize.WorldSerializer.SerializeWorld(m_world, new Box2CS.Serialize.WorldXmlSerializer());
+
+				foreach (var j in joints)
+					serializer.AddJoint(j);
+
+				serializer.Serialize(fs);
 			}
 		}
 

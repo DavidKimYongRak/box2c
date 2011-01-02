@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace Box2CS
 {
@@ -36,6 +37,7 @@ namespace Box2CS
 
 		bool _autoReverse;
 
+		[Browsable(false)]
 		public bool AutoReverse
 		{
 			get { return _autoReverse; }
@@ -148,30 +150,33 @@ namespace Box2CS
 			};
 		}
 
+		[RecalculateMassAttribute]
+		[Description("The center point of this shape. This property will cause the mass of the body to be recalculated, if required.")]
 		public Vec2 Centroid
 		{
 			get { return _internalPolyShape.m_centroid; }
 			set { _internalPolyShape.m_centroid = value; }
 		}
 
+		[Browsable(false)]
 		public int VertexCount
 		{
 			get { return _internalPolyShape.m_vertexCount; }
 			set { _internalPolyShape.m_vertexCount = value; }
 		}
 
-		Vec2 ComputeCentroid()
+		void ComputeCentroid(out Vec2 centroid, Vec2[] vertices)
 		{
-			if (!(_internalPolyShape.m_vertexCount >= 2))
-				throw new ArgumentOutOfRangeException("Vertice count");
+			if (!(vertices.Length >= 2))
+				throw new ArgumentOutOfRangeException("vertices");
 
-			Vec2 c = Vec2.Empty;
+			centroid = Vec2.Empty;
 			float area = 0.0f;
 
-			if (_internalPolyShape.m_vertexCount == 2)
+			if (vertices.Length == 2)
 			{
-				c = 0.5f * (_internalPolyShape.m_vertices[0] + _internalPolyShape.m_vertices[1]);
-				return c;
+				centroid = 0.5f * (vertices[0] + vertices[1]);
+				return;
 			}
 
 			// pRef is the reference point for forming triangles.
@@ -180,14 +185,12 @@ namespace Box2CS
 
 			const float inv3 = 1.0f / 3.0f;
 
-			for (int i = 0; i < _internalPolyShape.m_vertexCount; ++i)
+			for (int i = 0; i < vertices.Length; ++i)
 			{
 				// Triangle vertices.
 				Vec2 p1 = pRef;
-				Vec2 p2 = _internalPolyShape.m_vertices[i];
-				Vec2 p3 = i + 1 < _internalPolyShape.m_vertexCount ? _internalPolyShape.m_vertices[i + 1] : 
-
-_internalPolyShape.m_vertices[0];
+				Vec2 p2 = vertices[i];
+				Vec2 p3 = i + 1 < vertices.Length ? vertices[i + 1] : vertices[0];
 
 				Vec2 e1 = p2 - p1;
 				Vec2 e2 = p3 - p1;
@@ -198,45 +201,47 @@ _internalPolyShape.m_vertices[0];
 				area += triangleArea;
 
 				// Area weighted centroid
-				c += triangleArea * inv3 * (p1 + p2 + p3);
+				centroid += triangleArea * inv3 * (p1 + p2 + p3);
 			}
 
 			// Centroid
 			if (!(area > float.Epsilon))
 				throw new Exception("Area of polygon is too small");
-			c *= 1.0f / area;
-			return c;
+
+			centroid *= 1.0f / area;
 		}
 
-		void Set()
+		void Set(Vec2[] verts)
 		{
-			if (!(2 <= VertexCount && VertexCount <= Box2DSettings.b2_maxPolygonVertices))
-				throw new ArgumentOutOfRangeException("Vertices", "Vertice count is " + ((2 <= VertexCount) ? "less than 2" : "greater than "+Box2DSettings.b2_maxPolygonVertices.ToString()));
+			Vec2[] normals = new Vec2[verts.Length];
+
+			if (!(2 <= verts.Length && verts.Length <= Box2DSettings.b2_maxPolygonVertices))
+				throw new ArgumentOutOfRangeException("verts", "Vertice count is " + ((2 <= verts.Length) ? "less than 2" : "greater than "+Box2DSettings.b2_maxPolygonVertices.ToString()));
 
 			// Compute normals. Ensure the edges have non-zero length.
-			for (int i = 0; i < VertexCount; ++i)
+			for (int i = 0; i < verts.Length; ++i)
 			{
 				int i1 = i;
-				int i2 = i + 1 < VertexCount ? i + 1 : 0;
-				Vec2 edge = _internalPolyShape.m_vertices[i2] - _internalPolyShape.m_vertices[i1];
+				int i2 = i + 1 < verts.Length ? i + 1 : 0;
+				Vec2 edge = verts[i2] - verts[i1];
 
 				if (!(edge.LengthSquared() > float.Epsilon * float.Epsilon))
 					throw new Exception("Edge has a close-to-zero length (vertices too close?)");
 
-				_internalPolyShape.m_normals[i] = edge.Cross(1.0f);
-				_internalPolyShape.m_normals[i].Normalize();
+				normals[i] = edge.Cross(1.0f);
+				normals[i].Normalize();
 			}
 
 			if (_autoReverse)
 			// Ensure the polygon is convex and the interior
 			// is to the left of each edge.
-			for (int i = 0; i < _internalPolyShape.m_vertexCount; ++i)
+				for (int i = 0; i < verts.Length; ++i)
 			{
 				int i1 = i;
-				int i2 = i + 1 < _internalPolyShape.m_vertexCount ? i + 1 : 0;
-				Vec2 edge = _internalPolyShape.m_vertices[i2] - _internalPolyShape.m_vertices[i1];
+				int i2 = i + 1 < verts.Length ? i + 1 : 0;
+				Vec2 edge = verts[i2] - verts[i1];
 
-				for (int j = 0; j < _internalPolyShape.m_vertexCount; ++j)
+				for (int j = 0; j < verts.Length; ++j)
 				{
 					// Don't check vertices on the current edge.
 					if (j == i1 || j == i2)
@@ -244,7 +249,7 @@ _internalPolyShape.m_vertices[0];
 						continue;
 					}
 
-					Vec2 r = _internalPolyShape.m_vertices[j] - _internalPolyShape.m_vertices[i1];
+					Vec2 r = verts[j] - verts[i1];
 
 					// Your polygon is non-convex (it has an indentation) or
 					// has colinear edges.
@@ -261,9 +266,19 @@ _internalPolyShape.m_vertices[0];
 			}
 
 			// Compute the polygon centroid.
-			_internalPolyShape.m_centroid = ComputeCentroid();
+			ComputeCentroid(out _internalPolyShape.m_centroid, verts);
+
+			for (int i = 0; i < verts.Length; ++i)
+			{
+				_internalPolyShape.m_vertices[i] = verts[i];
+				_internalPolyShape.m_normals[i] = normals[i];
+			}
+
+			VertexCount = verts.Length;
 		}
 
+		[RecalculateMassAttribute]
+		[Description("The vertices that make this shape. This property will cause the mass of the body to be recalculated, if required.")]
 		public Vec2[] Vertices
 		{
 			get
@@ -281,16 +296,12 @@ _internalPolyShape.m_vertices[0];
 				if (value.Length > 8)
 					throw new IndexOutOfRangeException("value");
 
-				for (int i = 0; i < value.Length; ++i)
-					_internalPolyShape.m_vertices[i] = value[i];
-
-				VertexCount = value.Length;
-
 				if (_autoSet)
-					Set();
+					Set(value);
 			}
 		}
 
+		[Browsable(false)]
 		public Vec2[] Normals
 		{
 			get
@@ -429,6 +440,33 @@ _internalPolyShape.m_vertices[0];
 				this.Vertices == shape.Vertices &&
 				this.Normals == shape.Normals &&
 				this.VertexCount == shape.VertexCount);
+		}
+
+		public override string ToString()
+		{
+			string str = base.ToString() + " Centroid=" + Centroid.ToString() + " Vertices={";
+
+			bool _started = false;
+			foreach (var v in Vertices)
+			{
+				if (!_started)
+					_started = true;
+				else
+					str += ' ';
+
+				str += '{'+v.ToString()+'}';
+			}
+
+			str += '}';
+			return str;
+		}
+
+		public static PolygonShape Parse(string p)
+		{
+			SimpleParser parser = new SimpleParser(p, true);
+			Vec2[] vertices = SimpleArrayParser.GenerateArray<Vec2>((parser.ValueFromKey("vertices")), delegate(string input) { return Vec2.Parse(input); });
+
+			return new PolygonShape(vertices, Vec2.Parse(parser.ValueFromKey("Centroid")));
 		}
 	}
 }

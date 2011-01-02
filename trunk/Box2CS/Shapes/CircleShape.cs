@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace Box2CS
 {
@@ -74,6 +76,8 @@ namespace Box2CS
 				(float)mass * (0.5f * Radius * Radius + Position.Dot(Position)));
 		}
 
+		[RecalculateMassAttribute]
+		[Description("The local center of the circle. This property will cause the mass of the body to be recalculated, if required.")]
 		public Vec2 Position
 		{
 			get { return _internalCircleShape.m_p; }
@@ -91,6 +95,18 @@ namespace Box2CS
 		{
 			return (Radius == shape.Radius &&
 				Position == shape.Position);
+		}
+
+		public override string ToString()
+		{
+			return base.ToString() + " Radius="+Radius.ToString() + " Position=" + Position.ToString();
+		}
+
+		public static CircleShape Parse(string p)
+		{
+			SimpleParser parser = new SimpleParser(p, true);
+
+			return new CircleShape(Vec2.Parse(parser.ValueFromKey("Position")), float.Parse(parser.ValueFromKey("Radius")));
 		}
 	}
 }

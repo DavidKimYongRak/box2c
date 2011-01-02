@@ -68,17 +68,15 @@ namespace Box2CS
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			if (value is string)
-			{
-				string[] v = ((string)value).Split(new char[] { ',' });
-				return new Vec2(float.Parse(v[0]), float.Parse(v[1]));
-			}
+				return Vec2.Parse((string)value);
+
 			return base.ConvertFrom(context, culture, value);
 		}
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
 			if (destinationType == typeof(string))
-				return ((Vec2)value).X + "," + ((Vec2)value).Y;
+				return ((Vec2)value).ToString();
 
 			return base.ConvertTo(context, culture, value, destinationType);
 		}
@@ -114,6 +112,7 @@ namespace Box2CS
 		public static Vec2 Empty = new Vec2(0, 0);
 
 		[System.Xml.Serialization.XmlAttribute()]
+		[Description("The value of this vector in the X axis (typically left and right)")]
 		public float X
 		{
 			get;
@@ -121,6 +120,7 @@ namespace Box2CS
 		}
 
 		[System.Xml.Serialization.XmlAttribute()]
+		[Description("The value of this vector in the Y axis (typically up and down)")]
 		public float Y
 		{
 			get;
@@ -256,8 +256,13 @@ namespace Box2CS
 
 		public static Vec2 Parse(string p)
 		{
-			var parsed = p.Split();
+			var parsed = p.Split(' ', ',');
 			return new Vec2(float.Parse(parsed[0]), float.Parse(parsed[1]));
+		}
+
+		public override string ToString()
+		{
+			return X.ToString() + "," + Y.ToString();
 		}
 	}
 

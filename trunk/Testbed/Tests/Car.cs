@@ -164,6 +164,34 @@ namespace Testbed.Tests
 			}
 		}
 
+		bool drawing = false;
+		public override void MouseDown(Vec2 p)
+		{
+			base.MouseDown(p);
+
+			if (TestSettings.pause)
+				drawing = true;
+		}
+
+		public override void MouseUp(Vec2 p)
+		{
+			base.MouseUp(p);
+
+			if (TestSettings.pause)
+				drawing = false;
+		}
+
+		public override void MouseMove(Vec2 p)
+		{
+			base.MouseMove(p);
+
+			if (drawing)
+			{
+				if (_points.Count == 0 || (_points[_points.Count - 1] - p).Length() > 1.0f)
+				_points.Add(p);
+			}
+		}
+
 		Body m_leftWheel;
 		Body m_rightWheel;
 		Body m_vehicle;
