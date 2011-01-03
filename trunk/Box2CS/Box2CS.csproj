@@ -46,6 +46,7 @@
     <Compile Include="Body\Body.cs" />
     <Compile Include="Box2D\Globals.cs" />
     <Compile Include="Box2D\Helpers.cs" />
+    <Compile Include="Box2D\XMLFragmentParser.cs" />
     <Compile Include="Serialize\Serialize.cs" />
     <Compile Include="Shapes\CircleShape.cs" />
     <Compile Include="Contacts\Contact.cs" />

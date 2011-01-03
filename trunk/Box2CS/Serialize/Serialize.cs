@@ -1,10 +1,11 @@
-﻿#define SKIP_DEFAULT_CHECKS
+﻿//#define SKIP_DEFAULT_CHECKS
 
 using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using Box2CS.Parsers;
 
 namespace Box2CS.Serialize
 {
@@ -849,15 +850,15 @@ namespace Box2CS.Serialize
 			return -1;
 		}
 
-		Vec2 ReadVector(XmlNode node)
+		Vec2 ReadVector(XMLFragmentElement node)
 		{
-			return Vec2.Parse(node.FirstChild.Value);
+			return Vec2.Parse(node.Value);
 		}
 
-		object ReadSimpleType(XmlNode node, Type type, bool outer)
+		object ReadSimpleType(XMLFragmentElement node, Type type, bool outer)
 		{
 			if (type == null)
-				return ReadSimpleType(node.LastChild, Type.GetType(node.FirstChild.FirstChild.Value), outer);
+				return ReadSimpleType(node.Elements[1], Type.GetType(node.Elements[0].Value), outer);
 
 			var serializer = new XmlSerializer(type);
 			XmlSerializerNamespaces xmlnsEmpty = new XmlSerializerNamespaces();
@@ -880,22 +881,21 @@ namespace Box2CS.Serialize
 
 		public WorldData Deserialize(Stream stream)
 		{
-			XmlDocument document = new XmlDocument();
-			document.Load(stream);
+			XMLFragmentElement root = XMLFragmentParser.LoadFromStream(stream);
 
-			if (document.FirstChild.Name.ToLower() != "world")
+			if (root.Name.ToLower() != "world")
 				throw new Exception();
 
 			WorldData data = new WorldData();
 
-			if (document.FirstChild.Attributes.Count == 0)
+			if (root.Attributes.Count == 0)
 				throw new Exception("No version");
-			else if (int.Parse(document.FirstChild.Attributes[0].Value) != WorldXmlSerializer.XmlVersion)
+			else if (int.Parse(root.Attributes[0].Value) != WorldXmlSerializer.XmlVersion)
 				throw new Exception("Wrong version XML file");
 
-			data.Version = int.Parse(document.FirstChild.Attributes[0].Value);
+			data.Version = int.Parse(root.Attributes[0].Value);
 
-			foreach (XmlNode main in document.FirstChild)
+			foreach (var main in root.Elements)
 			{
 				switch (main.Name.ToLower())
 				{
@@ -907,7 +907,7 @@ namespace Box2CS.Serialize
 
 				case "shapes":
 					{
-						foreach (XmlNode n in main)
+						foreach (var n in main.Elements)
 						{
 							if (n.Name.ToLower() != "shape")
 								throw new Exception();
@@ -921,15 +921,15 @@ namespace Box2CS.Serialize
 								{
 									CircleShape shape = new CircleShape();
 
-									foreach (XmlNode sn in n)
+									foreach (var sn in n.Elements)
 									{
 										switch (sn.Name.ToLower())
 										{
 										case "name":
-											name = sn.FirstChild.Value;
+											name = sn.Value;
 											break;
 										case "radius":
-											shape.Radius = float.Parse(sn.FirstChild.Value);
+											shape.Radius = float.Parse(sn.Value);
 											break;
 										case "position":
 											shape.Position = ReadVector(sn);
@@ -946,18 +946,18 @@ namespace Box2CS.Serialize
 								{
 									PolygonShape shape = new PolygonShape();
 
-									foreach (XmlNode sn in n)
+									foreach (var sn in n.Elements)
 									{
 										switch (sn.Name.ToLower())
 										{
 										case "name":
-											name = sn.FirstChild.Value;
+											name = sn.Value;
 											break;
 										case "vertices":
 											{
 												List<Vec2> verts = new List<Vec2>();
 
-												foreach (XmlNode vert in sn)
+												foreach (var vert in sn.Elements)
 													verts.Add(ReadVector(vert));
 
 												shape.Vertices = verts.ToArray();
@@ -978,7 +978,7 @@ namespace Box2CS.Serialize
 					break;
 				case "fixtures":
 					{
-						foreach (XmlNode n in main)
+						foreach (var n in main.Elements)
 						{
 							FixtureDef fixture = new FixtureDef();
 
@@ -988,30 +988,30 @@ namespace Box2CS.Serialize
 							string name = "";
 							int id = 0;
 
-							foreach (XmlNode sn in n)
+							foreach (var sn in n.Elements)
 							{
 								switch (sn.Name.ToLower())
 								{
 								case "name":
-									name = sn.FirstChild.Value;
+									name = sn.Value;
 									break;
 								case "shape":
-									id = int.Parse(sn.FirstChild.Value);
+									id = int.Parse(sn.Value);
 									break;
 								case "density":
-									fixture.Density = float.Parse(sn.FirstChild.Value);
+									fixture.Density = float.Parse(sn.Value);
 									break;
 								case "filterdata":
 									fixture.Filter = (FilterData)ReadSimpleType(sn, typeof(FilterData), true);
 									break;
 								case "friction":
-									fixture.Friction = float.Parse(sn.FirstChild.Value);
+									fixture.Friction = float.Parse(sn.Value);
 									break;
 								case "issensor":
-									fixture.IsSensor = bool.Parse(sn.FirstChild.Value);
+									fixture.IsSensor = bool.Parse(sn.Value);
 									break;
 								case "restitution":
-									fixture.Restitution = float.Parse(sn.FirstChild.Value);
+									fixture.Restitution = float.Parse(sn.Value);
 									break;
 								case "userdata":
 									fixture.UserData = ReadSimpleType(sn, null, false);
@@ -1027,7 +1027,7 @@ namespace Box2CS.Serialize
 					break;
 				case "bodies":
 					{
-						foreach (XmlNode n in main)
+						foreach (var n in main.Elements)
 						{
 							BodyDef body = new BodyDef();
 
@@ -1038,42 +1038,42 @@ namespace Box2CS.Serialize
 							List<int> fixtures = new List<int>();
 							string name = "";
 
-							foreach (XmlNode sn in n)
+							foreach (var sn in n.Elements)
 							{
 								switch (sn.Name.ToLower())
 								{
 								case "name":
-									name = sn.FirstChild.Value;
+									name = sn.Value;
 									break;
 								case "active":
-									body.Active = bool.Parse(sn.FirstChild.Value);
+									body.Active = bool.Parse(sn.Value);
 									break;
 								case "allowsleep":
-									body.AllowSleep = bool.Parse(sn.FirstChild.Value);
+									body.AllowSleep = bool.Parse(sn.Value);
 									break;
 								case "angle":
-									body.Angle = float.Parse(sn.FirstChild.Value);
+									body.Angle = float.Parse(sn.Value);
 									break;
 								case "angulardamping":
-									body.AngularDamping = float.Parse(sn.FirstChild.Value);
+									body.AngularDamping = float.Parse(sn.Value);
 									break;
 								case "angularvelocity":
-									body.AngularVelocity = float.Parse(sn.FirstChild.Value);
+									body.AngularVelocity = float.Parse(sn.Value);
 									break;
 								case "awake":
-									body.Awake = bool.Parse(sn.FirstChild.Value);
+									body.Awake = bool.Parse(sn.Value);
 									break;
 								case "bullet":
-									body.Bullet = bool.Parse(sn.FirstChild.Value);
+									body.Bullet = bool.Parse(sn.Value);
 									break;
 								case "fixedrotation":
-									body.FixedRotation = bool.Parse(sn.FirstChild.Value);
+									body.FixedRotation = bool.Parse(sn.Value);
 									break;
 								case "inertiascale":
-									body.InertiaScale = float.Parse(sn.FirstChild.Value);
+									body.InertiaScale = float.Parse(sn.Value);
 									break;
 								case "lineardamping":
-									body.LinearDamping = float.Parse(sn.FirstChild.Value);
+									body.LinearDamping = float.Parse(sn.Value);
 									break;
 								case "linearvelocity":
 									body.LinearVelocity = ReadVector(sn);
@@ -1086,8 +1086,8 @@ namespace Box2CS.Serialize
 									break;
 								case "fixtures":
 									{
-										foreach (XmlNode v in sn)
-											fixtures.Add(int.Parse(v.FirstChild.Value));
+										foreach (var v in sn.Elements)
+											fixtures.Add(int.Parse(v.Value));
 										break;
 									}
 								}
@@ -1099,7 +1099,7 @@ namespace Box2CS.Serialize
 					break;
 				case "joints":
 					{
-						foreach (XmlNode n in main)
+						foreach (var n in main.Elements)
 						{
 							JointDef mainDef = null;
 
@@ -1140,7 +1140,7 @@ namespace Box2CS.Serialize
 								throw new Exception("Invalid or unsupported joint");
 							}
 
-							foreach (XmlNode sn in n)
+							foreach (var sn in n.Elements)
 							{
 								// check for specific nodes
 								switch (type)
@@ -1150,13 +1150,13 @@ namespace Box2CS.Serialize
 										switch (sn.Name.ToLower())
 										{
 										case "dampingratio":
-											((DistanceJointDef)mainDef).DampingRatio = float.Parse(sn.FirstChild.Value);
+											((DistanceJointDef)mainDef).DampingRatio = float.Parse(sn.Value);
 											break;
 										case "frequencyhz":
-											((DistanceJointDef)mainDef).FrequencyHz = float.Parse(sn.FirstChild.Value);
+											((DistanceJointDef)mainDef).FrequencyHz = float.Parse(sn.Value);
 											break;
 										case "length":
-											((DistanceJointDef)mainDef).Length = float.Parse(sn.FirstChild.Value);
+											((DistanceJointDef)mainDef).Length = float.Parse(sn.Value);
 											break;
 										case "localanchora":
 											((DistanceJointDef)mainDef).LocalAnchorA = ReadVector(sn);
@@ -1178,10 +1178,10 @@ namespace Box2CS.Serialize
 											((FrictionJointDef)mainDef).LocalAnchorB = ReadVector(sn);
 											break;
 										case "maxforce":
-											((FrictionJointDef)mainDef).MaxForce = float.Parse(sn.FirstChild.Value);
+											((FrictionJointDef)mainDef).MaxForce = float.Parse(sn.Value);
 											break;
 										case "maxtorque":
-											((FrictionJointDef)mainDef).MaxTorque = float.Parse(sn.FirstChild.Value);
+											((FrictionJointDef)mainDef).MaxTorque = float.Parse(sn.Value);
 											break;
 										}
 									}
@@ -1191,10 +1191,10 @@ namespace Box2CS.Serialize
 										switch (sn.Name.ToLower())
 										{
 										case "enablelimit":
-											((LineJointDef)mainDef).EnableLimit = bool.Parse(sn.FirstChild.Value);
+											((LineJointDef)mainDef).EnableLimit = bool.Parse(sn.Value);
 											break;
 										case "enablemotor":
-											((LineJointDef)mainDef).EnableMotor = bool.Parse(sn.FirstChild.Value);
+											((LineJointDef)mainDef).EnableMotor = bool.Parse(sn.Value);
 											break;
 										case "localanchora":
 											((LineJointDef)mainDef).LocalAnchorA = ReadVector(sn);
@@ -1206,16 +1206,16 @@ namespace Box2CS.Serialize
 											((LineJointDef)mainDef).LocalAxisA = ReadVector(sn);
 											break;
 										case "maxmotorforce":
-											((LineJointDef)mainDef).MaxMotorForce = float.Parse(sn.FirstChild.Value);
+											((LineJointDef)mainDef).MaxMotorForce = float.Parse(sn.Value);
 											break;
 										case "motorspeed":
-											((LineJointDef)mainDef).MotorSpeed = float.Parse(sn.FirstChild.Value);
+											((LineJointDef)mainDef).MotorSpeed = float.Parse(sn.Value);
 											break;
 										case "lowertranslation":
-											((LineJointDef)mainDef).LowerTranslation = float.Parse(sn.FirstChild.Value);
+											((LineJointDef)mainDef).LowerTranslation = float.Parse(sn.Value);
 											break;
 										case "uppertranslation":
-											((LineJointDef)mainDef).UpperTranslation = float.Parse(sn.FirstChild.Value);
+											((LineJointDef)mainDef).UpperTranslation = float.Parse(sn.Value);
 											break;
 										}
 									}
@@ -1225,10 +1225,10 @@ namespace Box2CS.Serialize
 										switch (sn.Name.ToLower())
 										{
 										case "enablelimit":
-											((PrismaticJointDef)mainDef).EnableLimit = bool.Parse(sn.FirstChild.Value);
+											((PrismaticJointDef)mainDef).EnableLimit = bool.Parse(sn.Value);
 											break;
 										case "enablemotor":
-											((PrismaticJointDef)mainDef).EnableMotor = bool.Parse(sn.FirstChild.Value);
+											((PrismaticJointDef)mainDef).EnableMotor = bool.Parse(sn.Value);
 											break;
 										case "localanchora":
 											((PrismaticJointDef)mainDef).LocalAnchorA = ReadVector(sn);
@@ -1240,19 +1240,19 @@ namespace Box2CS.Serialize
 											((PrismaticJointDef)mainDef).LocalAxis = ReadVector(sn);
 											break;
 										case "maxmotorforce":
-											((PrismaticJointDef)mainDef).MaxMotorForce = float.Parse(sn.FirstChild.Value);
+											((PrismaticJointDef)mainDef).MaxMotorForce = float.Parse(sn.Value);
 											break;
 										case "motorspeed":
-											((PrismaticJointDef)mainDef).MotorSpeed = float.Parse(sn.FirstChild.Value);
+											((PrismaticJointDef)mainDef).MotorSpeed = float.Parse(sn.Value);
 											break;
 										case "lowertranslation":
-											((PrismaticJointDef)mainDef).LowerTranslation = float.Parse(sn.FirstChild.Value);
+											((PrismaticJointDef)mainDef).LowerTranslation = float.Parse(sn.Value);
 											break;
 										case "uppertranslation":
-											((PrismaticJointDef)mainDef).UpperTranslation = float.Parse(sn.FirstChild.Value);
+											((PrismaticJointDef)mainDef).UpperTranslation = float.Parse(sn.Value);
 											break;
 										case "referenceangle":
-											((PrismaticJointDef)mainDef).ReferenceAngle = float.Parse(sn.FirstChild.Value);
+											((PrismaticJointDef)mainDef).ReferenceAngle = float.Parse(sn.Value);
 											break;
 										}
 									}
@@ -1268,10 +1268,10 @@ namespace Box2CS.Serialize
 											((PulleyJointDef)mainDef).GroundAnchorB = ReadVector(sn);
 											break;
 										case "lengtha":
-											((PulleyJointDef)mainDef).LengthA = float.Parse(sn.FirstChild.Value);
+											((PulleyJointDef)mainDef).LengthA = float.Parse(sn.Value);
 											break;
 										case "lengthb":
-											((PulleyJointDef)mainDef).LengthB = float.Parse(sn.FirstChild.Value);
+											((PulleyJointDef)mainDef).LengthB = float.Parse(sn.Value);
 											break;
 										case "localanchora":
 											((PulleyJointDef)mainDef).LocalAnchorA = ReadVector(sn);
@@ -1280,13 +1280,13 @@ namespace Box2CS.Serialize
 											((PulleyJointDef)mainDef).LocalAnchorB = ReadVector(sn);
 											break;
 										case "maxlengtha":
-											((PulleyJointDef)mainDef).MaxLengthA = float.Parse(sn.FirstChild.Value);
+											((PulleyJointDef)mainDef).MaxLengthA = float.Parse(sn.Value);
 											break;
 										case "maxlengthb":
-											((PulleyJointDef)mainDef).MaxLengthB = float.Parse(sn.FirstChild.Value);
+											((PulleyJointDef)mainDef).MaxLengthB = float.Parse(sn.Value);
 											break;
 										case "ratio":
-											((PulleyJointDef)mainDef).Ratio = float.Parse(sn.FirstChild.Value);
+											((PulleyJointDef)mainDef).Ratio = float.Parse(sn.Value);
 											break;
 										}
 									}
@@ -1296,10 +1296,10 @@ namespace Box2CS.Serialize
 										switch (sn.Name.ToLower())
 										{
 										case "enablelimit":
-											((RevoluteJointDef)mainDef).EnableLimit = bool.Parse(sn.FirstChild.Value);
+											((RevoluteJointDef)mainDef).EnableLimit = bool.Parse(sn.Value);
 											break;
 										case "enablemotor":
-											((RevoluteJointDef)mainDef).EnableMotor = bool.Parse(sn.FirstChild.Value);
+											((RevoluteJointDef)mainDef).EnableMotor = bool.Parse(sn.Value);
 											break;
 										case "localanchora":
 											((RevoluteJointDef)mainDef).LocalAnchorA = ReadVector(sn);
@@ -1308,19 +1308,19 @@ namespace Box2CS.Serialize
 											((RevoluteJointDef)mainDef).LocalAnchorB = ReadVector(sn);
 											break;
 										case "maxmotortorque":
-											((RevoluteJointDef)mainDef).MaxMotorTorque = float.Parse(sn.FirstChild.Value);
+											((RevoluteJointDef)mainDef).MaxMotorTorque = float.Parse(sn.Value);
 											break;
 										case "motorspeed":
-											((RevoluteJointDef)mainDef).MotorSpeed = float.Parse(sn.FirstChild.Value);
+											((RevoluteJointDef)mainDef).MotorSpeed = float.Parse(sn.Value);
 											break;
 										case "lowerangle":
-											((RevoluteJointDef)mainDef).LowerAngle = float.Parse(sn.FirstChild.Value);
+											((RevoluteJointDef)mainDef).LowerAngle = float.Parse(sn.Value);
 											break;
 										case "upperangle":
-											((RevoluteJointDef)mainDef).UpperAngle = float.Parse(sn.FirstChild.Value);
+											((RevoluteJointDef)mainDef).UpperAngle = float.Parse(sn.Value);
 											break;
 										case "referenceangle":
-											((RevoluteJointDef)mainDef).ReferenceAngle = float.Parse(sn.FirstChild.Value);
+											((RevoluteJointDef)mainDef).ReferenceAngle = float.Parse(sn.Value);
 											break;
 										}
 									}
@@ -1345,16 +1345,16 @@ namespace Box2CS.Serialize
 								switch (sn.Name.ToLower())
 								{
 								case "name":
-									name = sn.FirstChild.Value;
+									name = sn.Value;
 									break;
 								case "bodya":
-									bodyA = int.Parse(sn.FirstChild.Value);
+									bodyA = int.Parse(sn.Value);
 									break;
 								case "bodyb":
-									bodyB = int.Parse(sn.FirstChild.Value);
+									bodyB = int.Parse(sn.Value);
 									break;
 								case "collideconnected":
-									collideConnected = bool.Parse(sn.FirstChild.Value);
+									collideConnected = bool.Parse(sn.Value);
 									break;
 								case "userdata":
 									userData = ReadSimpleType(sn, null, false);
