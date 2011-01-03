@@ -198,6 +198,8 @@ namespace Editor
 
 			updateDraw = UpdateDraw;
 
+			Box2CS.Parsers.XMLFragmentParser.LoadFromFile("out.xml");
+
 			deserializer = new WorldXmlDeserializer();
 			using (System.IO.FileStream fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Open))
 				deserializer.Deserialize(fs);

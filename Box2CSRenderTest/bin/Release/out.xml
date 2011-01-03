@@ -1,6 +1,6 @@
 ﻿<World
   Version="1">
-  <Gravity>8.134473E-36 1.001022E-38</Gravity>
+  <Gravity>7.805334E-36 1.001022E-38</Gravity>
   <Shapes>
     <Shape
       Type="Circle">
@@ -19,44 +19,16 @@
   <Fixtures>
     <Fixture>
       <Shape>0</Shape>
-      <Name />
       <Density>5</Density>
-      <FilterData>
-        <CategoryBits>1</CategoryBits>
-        <MaskBits>65535</MaskBits>
-        <GroupIndex>0</GroupIndex>
-      </FilterData>
-      <Friction>0.2</Friction>
-      <IsSensor>False</IsSensor>
-      <Restitution>0</Restitution>
     </Fixture>
     <Fixture>
       <Shape>1</Shape>
-      <Name />
-      <Density>0</Density>
-      <FilterData>
-        <CategoryBits>1</CategoryBits>
-        <MaskBits>65535</MaskBits>
-        <GroupIndex>0</GroupIndex>
-      </FilterData>
-      <Friction>0.2</Friction>
-      <IsSensor>False</IsSensor>
-      <Restitution>0</Restitution>
     </Fixture>
   </Fixtures>
   <Bodies>
     <Body
       Type="Dynamic">
-      <Active>True</Active>
-      <AllowSleep>True</AllowSleep>
-      <Angle>0</Angle>
-      <AngularDamping>0</AngularDamping>
       <AngularVelocity>100</AngularVelocity>
-      <Awake>True</Awake>
-      <Bullet>False</Bullet>
-      <FixedRotation>False</FixedRotation>
-      <InertiaScale>1</InertiaScale>
-      <LinearDamping>0</LinearDamping>
       <LinearVelocity>-800 0</LinearVelocity>
       <Position>0 20</Position>
       <Fixtures>
@@ -65,36 +37,12 @@
     </Body>
     <Body
       Type="Static">
-      <Active>True</Active>
-      <AllowSleep>True</AllowSleep>
-      <Angle>0</Angle>
-      <AngularDamping>0</AngularDamping>
-      <AngularVelocity>0</AngularVelocity>
-      <Awake>True</Awake>
-      <Bullet>False</Bullet>
-      <FixedRotation>False</FixedRotation>
-      <InertiaScale>1</InertiaScale>
-      <LinearDamping>0</LinearDamping>
-      <LinearVelocity>0 0</LinearVelocity>
-      <Position>0 0</Position>
       <Fixtures>
         <ID>1</ID>
       </Fixtures>
     </Body>
     <Body
       Type="Static">
-      <Active>True</Active>
-      <AllowSleep>True</AllowSleep>
-      <Angle>0</Angle>
-      <AngularDamping>0</AngularDamping>
-      <AngularVelocity>0</AngularVelocity>
-      <Awake>True</Awake>
-      <Bullet>False</Bullet>
-      <FixedRotation>False</FixedRotation>
-      <InertiaScale>1</InertiaScale>
-      <LinearDamping>0</LinearDamping>
-      <LinearVelocity>0 0</LinearVelocity>
-      <Position>0 0</Position>
       <UserData>
         <Type>System.String</Type>
         <Value>
@@ -111,13 +59,11 @@
       <BodyB>0</BodyB>
       <CollideConnected>True</CollideConnected>
       <EnableLimit>True</EnableLimit>
-      <EnableMotor>False</EnableMotor>
       <LocalAnchorA>0 12</LocalAnchorA>
       <LocalAnchorB>0 -8</LocalAnchorB>
       <LowerAngle>-0.7853982</LowerAngle>
       <MaxMotorTorque>10000</MaxMotorTorque>
       <MotorSpeed>3.141593</MotorSpeed>
-      <ReferenceAngle>0</ReferenceAngle>
       <UpperAngle>1.570796</UpperAngle>
     </Joint>
   </Joints>
