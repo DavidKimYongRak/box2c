@@ -124,6 +124,8 @@ namespace Editor
 
 				foreach (var f in x.Fixtures)
 					body.CreateFixture(f);
+
+				body.MassData = x.Mass;
 			}
 
 			foreach (var j in deserializer.Joints)
@@ -551,12 +553,14 @@ namespace Editor
 			}
 
 			if (MouseButtons == System.Windows.Forms.MouseButtons.Left)
+			{
 				if (moused != null)
 				{
 					SelectedBody = moused;
 					propertyGrid1.SelectedObject = moused;
 					propertyGrid1.Refresh();
 				}
+			}
 
 			HoverBody = moused;
 		}
@@ -655,6 +659,12 @@ namespace Editor
 					propertyGrid1.Refresh();
 				}
 			}
+		}
+
+		private void toolStripButton1_Click(object sender, EventArgs e)
+		{
+			bodies.Add(new BodyForPropertyGrid(deserializer, new BodyDefSerialized(null, new BodyDef(), new List<int> { }, null)));
+			listBox1.Items.Add("Body "+(bodies.Count).ToString());
 		}
 	}
 

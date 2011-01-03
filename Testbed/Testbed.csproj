@@ -79,6 +79,7 @@
     <Compile Include="Tests\Car.cs" />
     <Compile Include="Tests\Chain.cs" />
     <Compile Include="Tests\CharacterCollision.cs" />
+    <Compile Include="Tests\Cloth.cs" />
     <Compile Include="Tests\CollisionFiltering.cs" />
     <Compile Include="Tests\CollisionProcessing.cs" />
     <Compile Include="Tests\CompoundShapes.cs" />

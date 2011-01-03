@@ -85,6 +85,16 @@ namespace Box2CS
 		{
 			if (value is string)
 			{
+				var str = (string)value;
+
+				switch (str.ToLower())
+				{
+				case "circle":
+					return new CircleShape();
+				case "polygon":
+					return new PolygonShape();
+				}
+
 				SimpleParser parser = new SimpleParser((string)value, true);
 
 				switch ((ShapeType)Enum.Parse(typeof(ShapeType), parser.ValueFromKey("ShapeType")))
@@ -160,7 +170,7 @@ namespace Box2CS
 			internal set { _internalShape.m_type = value; }
 		}
 
-		[RecalculateMassAttribute]
+		[RecalculateMass]
 		[Description("The radius of this shape. This property will cause the mass of the body to be recalculated, if required.")]
 		public float Radius
 		{

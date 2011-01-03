@@ -428,7 +428,7 @@ namespace Box2CS
 			}
 		}
 
-		[RecalculateMassAttribute]
+		[RecalculateMass]
 		[Category("Main")]
 		[Description("The shape connected to this fixture. This property will cause the mass of the body to be recalculated, if required.")]
 		public Shape Shape
@@ -474,7 +474,7 @@ namespace Box2CS
 			}
 		}
 
-		[RecalculateMassAttribute]
+		[RecalculateMass]
 		[Category("Movement")]
 		[Description("The density of this fixture. This property will cause the mass of the body to be recalculated, if required.")]
 		public float Density

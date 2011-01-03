@@ -150,7 +150,7 @@ namespace Box2CS
 			};
 		}
 
-		[RecalculateMassAttribute]
+		[RecalculateMass]
 		[Description("The center point of this shape. This property will cause the mass of the body to be recalculated, if required.")]
 		public Vec2 Centroid
 		{
@@ -277,7 +277,7 @@ namespace Box2CS
 			VertexCount = verts.Length;
 		}
 
-		[RecalculateMassAttribute]
+		[RecalculateMass]
 		[Description("The vertices that make this shape. This property will cause the mass of the body to be recalculated, if required.")]
 		public Vec2[] Vertices
 		{
