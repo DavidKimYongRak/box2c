@@ -231,7 +231,7 @@ namespace Editor
 
 						end = startPos + (sinCos * 3);
 						DrawSegment(startPos, end, new ColorF(0, 0.65f, 0.65f));
-						DrawArc(startPos, 3, (-rjd.UpperAngle + rjd.ReferenceAngle), (-rjd.LowerAngle + rjd.ReferenceAngle));
+						DrawArc(startPos, 3, (-rjd.LowerAngle - rjd.ReferenceAngle), (-rjd.UpperAngle - rjd.ReferenceAngle));
 					}
 
 					DrawCircle(p1, 0.75f, new ColorF(0, 0.65f, 0.65f));

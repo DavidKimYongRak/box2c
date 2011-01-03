@@ -554,7 +554,7 @@ namespace Editor
 				if (moused != null)
 				{
 					SelectedBody = moused;
-					propertyGrid1.SelectedObject = moused.Body;
+					propertyGrid1.SelectedObject = moused;
 					propertyGrid1.Refresh();
 				}
 
