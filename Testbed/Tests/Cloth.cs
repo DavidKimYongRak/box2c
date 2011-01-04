@@ -8,20 +8,31 @@ namespace Testbed.Tests
 {
 	public class Cloth : Test
 	{
-		const float ClothBodySize = 0.35f;
-		const int ClothSegmentsWidth = 16;
-		const int ClothSegmentsHeight = 20;
-		const float ClothBodySpacingWidth = 0.35f * 2;
+		const float ClothBodySize = 0.22f;
+		const int ClothSegmentsWidth = 18;
+		const int ClothSegmentsHeight = 25;
+		const float ClothBodySpacingWidth = ClothBodySize * 2;
 		const float ClothTotalWidth = (ClothBodySpacingWidth * ClothSegmentsWidth);
 		Body[,] cloth = new Body[ClothSegmentsWidth, ClothSegmentsHeight];
 
 		public Cloth()
 		{
-			FixtureDef boxFix = new FixtureDef(new PolygonShape(ClothBodySize, ClothBodySize), 0.2f);
+			FixtureDef boxFix = new FixtureDef(new CircleShape(ClothBodySize), 0.2f);
 			BodyDef boxBod = new BodyDef(BodyType.Dynamic, Vec2.Empty);
 
-			//boxFix.Filter.GroupIndex = -1;
+			boxFix.Filter.GroupIndex = -1;
 			boxBod.Position = new Vec2(-ClothTotalWidth / 2, 30);
+
+			Body bar;
+			{
+				bar = m_world.CreateBody(new BodyDef(BodyType.Static, new Vec2(-ClothBodySpacingWidth / 2, 30)));
+
+				var fd = new FixtureDef(new PolygonShape((ClothTotalWidth / 2) + ClothBodySpacingWidth, 0.25f));
+				fd.Filter.GroupIndex = -1;
+				bar.CreateFixture(fd);
+
+				bar.Mass = 0.001f;
+			}
 
 			for (int y = 0; y < ClothSegmentsHeight; ++y)
 			{
@@ -35,7 +46,7 @@ namespace Testbed.Tests
 					if (y == 0)
 					{
 						WeldJointDef wjd = new WeldJointDef();
-						wjd.Initialize(body, m_groundBody, body.WorldCenter);
+						wjd.Initialize(body, bar, body.WorldCenter);
 						m_world.CreateJoint(wjd);
 					}
 
@@ -51,16 +62,17 @@ namespace Testbed.Tests
 				{
 					Body leftBody, rightBody;
 
+					DistanceJointDef djd = new DistanceJointDef();
+					djd.FrequencyHz = 15 + Rand.RandomFloat(0, 6);
+					djd.DampingRatio = 0.11f + Rand.RandomFloat(0.01f, 0.15f);
+
 					// connect to right
 					if (x != ClothSegmentsWidth - 1)
 					{
 						leftBody = cloth[x, y];
 						rightBody = cloth[x + 1, y];
 
-						DistanceJointDef djd = new DistanceJointDef();
 						djd.Initialize(leftBody, rightBody, leftBody.WorldCenter, rightBody.WorldCenter);
-						djd.FrequencyHz = 6;
-						djd.DampingRatio = 0.11f;
 						m_world.CreateJoint(djd);
 					}
 
@@ -70,10 +82,7 @@ namespace Testbed.Tests
 						leftBody = cloth[x, y];
 						rightBody = cloth[x, y - 1];
 
-						DistanceJointDef djd = new DistanceJointDef();
 						djd.Initialize(leftBody, rightBody, leftBody.WorldCenter, rightBody.WorldCenter);
-						djd.FrequencyHz = 6;
-						djd.DampingRatio = 0.11f;
 						m_world.CreateJoint(djd);
 					}
 				}
@@ -91,6 +100,60 @@ namespace Testbed.Tests
 			{
 				cloth[x, ClothSegmentsHeight - 1].LinearVelocity += new Vec2(Rand.RandomFloat(1, 1), Rand.RandomFloat(1, 1));
 			}
+
+			for (int y = 0; y < ClothSegmentsHeight; ++y)
+			{
+				for (int x = 0; x < ClothSegmentsWidth; ++x)
+				{
+					if (y != 0)
+					{
+						var l = cloth[x, y];
+						var u = cloth[x, y - 1];
+
+						if ((l.WorldCenter - u.WorldCenter).Length() > ClothBodySpacingWidth * 1.45f)
+						{
+							// find the up joint connecting these two
+							Joint joint = null;
+
+							foreach (var j in l.Joints)
+							{
+								if ((j.Joint.BodyA == l && j.Joint.BodyB == u) || (j.Joint.BodyA == u && j.Joint.BodyB == l))
+								{
+									joint = j.Joint;
+									break;
+								}
+							}
+
+							if (joint != null && (joint is DistanceJoint))
+								m_world.DestroyJoint(joint);
+						}
+					}
+
+					if (x != ClothSegmentsWidth - 1)
+					{
+						var l = cloth[x, y];
+						var u = cloth[x + 1, y];
+
+						if ((l.WorldCenter - u.WorldCenter).Length() > ClothBodySpacingWidth * 1.45f)
+						{
+							// find the up joint connecting these two
+							Joint joint = null;
+
+							foreach (var j in l.Joints)
+							{
+								if ((j.Joint.BodyA == l && j.Joint.BodyB == u) || (j.Joint.BodyA == u && j.Joint.BodyB == l))
+								{
+									joint = j.Joint;
+									break;
+								}
+							}
+
+							if (joint != null && (joint is DistanceJoint))
+								m_world.DestroyJoint(joint);
+						}
+					}
+				}
+			}
 		}
 
 		public override void Draw()
@@ -99,18 +162,6 @@ namespace Testbed.Tests
 
 			m_debugDraw.DrawString(5, m_textLine, "w = wind");
 			m_textLine += 15;
-
-			for (int x = 0; x < ClothSegmentsWidth - 1; ++x)
-			{
-				m_debugDraw.DrawSegment(cloth[x, 0].WorldCenter, cloth[x + 1, 0].WorldCenter, new ColorF(1, 0, 0));
-				m_debugDraw.DrawSegment(cloth[x, ClothSegmentsHeight - 1].WorldCenter, cloth[x + 1, ClothSegmentsHeight - 1].WorldCenter, new ColorF(1, 0, 0));
-			}
-
-			for (int y = 0; y < ClothSegmentsHeight - 1; ++y)
-			{
-				m_debugDraw.DrawSegment(cloth[0, y].WorldCenter, cloth[0, y + 1].WorldCenter, new ColorF(1, 0, 0));
-				m_debugDraw.DrawSegment(cloth[ClothSegmentsWidth - 1, y].WorldCenter, cloth[ClothSegmentsWidth - 1, y + 1].WorldCenter, new ColorF(1, 0, 0));
-			}
 		}
 
 		public override void Keyboard(SFML.Window.KeyCode key)
