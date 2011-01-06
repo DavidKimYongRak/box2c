@@ -30,8 +30,6 @@ namespace Testbed.Tests
 				var fd = new FixtureDef(new PolygonShape((ClothTotalWidth / 2) + ClothBodySpacingWidth, 0.25f));
 				fd.Filter.GroupIndex = -1;
 				bar.CreateFixture(fd);
-
-				bar.Mass = 0.001f;
 			}
 
 			for (int y = 0; y < ClothSegmentsHeight; ++y)

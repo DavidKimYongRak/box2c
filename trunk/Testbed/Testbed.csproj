@@ -89,6 +89,7 @@
     <Compile Include="Tests\EdgeShapes.cs" />
     <Compile Include="Tests\ElasticBody.cs" />
     <Compile Include="Tests\Gears.cs" />
+    <Compile Include="Tests\Gun.cs" />
     <Compile Include="Tests\LineJoint.cs" />
     <Compile Include="Tests\Mirrors.cs" />
     <Compile Include="Tests\OneSidedPlatform.cs" />

@@ -28,20 +28,23 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.panel1 = new Editor.HolyCrapControl();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.listBox1 = new System.Windows.Forms.ListBox();
+			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
 			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
 			this.listBox4 = new System.Windows.Forms.ListBox();
 			this.propertyGrid4 = new System.Windows.Forms.PropertyGrid();
-			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.brahToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.panel1 = new Editor.HolyCrapControl();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -50,11 +53,12 @@
 			this.splitContainer2.Panel1.SuspendLayout();
 			this.splitContainer2.Panel2.SuspendLayout();
 			this.splitContainer2.SuspendLayout();
+			this.toolStrip1.SuspendLayout();
 			this.tabPage5.SuspendLayout();
 			this.splitContainer5.Panel1.SuspendLayout();
 			this.splitContainer5.Panel2.SuspendLayout();
 			this.splitContainer5.SuspendLayout();
-			this.toolStrip1.SuspendLayout();
+			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// splitContainer1
@@ -74,18 +78,6 @@
 			this.splitContainer1.Size = new System.Drawing.Size(822, 531);
 			this.splitContainer1.SplitterDistance = 575;
 			this.splitContainer1.TabIndex = 1;
-			// 
-			// panel1
-			// 
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(575, 531);
-			this.panel1.TabIndex = 0;
-			this.panel1.Text = "holyCrapControl1";
-			this.panel1.Click += new System.EventHandler(this.panel1_Click);
-			this.panel1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.panel1_KeyPress);
-			this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
 			// 
 			// tabControl1
 			// 
@@ -137,6 +129,26 @@
 			this.listBox1.Size = new System.Drawing.Size(229, 204);
 			this.listBox1.TabIndex = 1;
 			this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+			// 
+			// toolStrip1
+			// 
+			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton1});
+			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.Size = new System.Drawing.Size(229, 25);
+			this.toolStrip1.TabIndex = 2;
+			this.toolStrip1.Text = "toolStrip1";
+			// 
+			// toolStripButton1
+			// 
+			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton1.Name = "toolStripButton1";
+			this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+			this.toolStripButton1.Text = "toolStripButton1";
+			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
 			// 
 			// propertyGrid1
 			// 
@@ -196,25 +208,30 @@
 			this.propertyGrid4.Size = new System.Drawing.Size(229, 266);
 			this.propertyGrid4.TabIndex = 0;
 			// 
-			// toolStrip1
+			// contextMenuStrip1
 			// 
-			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(229, 25);
-			this.toolStrip1.TabIndex = 2;
-			this.toolStrip1.Text = "toolStrip1";
+			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.brahToolStripMenuItem});
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(99, 26);
 			// 
-			// toolStripButton1
+			// brahToolStripMenuItem
 			// 
-			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButton1.Text = "toolStripButton1";
-			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+			this.brahToolStripMenuItem.Name = "brahToolStripMenuItem";
+			this.brahToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+			this.brahToolStripMenuItem.Text = "Brah";
+			// 
+			// panel1
+			// 
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(575, 531);
+			this.panel1.TabIndex = 0;
+			this.panel1.Text = "holyCrapControl1";
+			this.panel1.Click += new System.EventHandler(this.panel1_Click);
+			this.panel1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.panel1_KeyPress);
+			this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
 			// 
 			// Main
 			// 
@@ -235,12 +252,13 @@
 			this.splitContainer2.Panel1.PerformLayout();
 			this.splitContainer2.Panel2.ResumeLayout(false);
 			this.splitContainer2.ResumeLayout(false);
+			this.toolStrip1.ResumeLayout(false);
+			this.toolStrip1.PerformLayout();
 			this.tabPage5.ResumeLayout(false);
 			this.splitContainer5.Panel1.ResumeLayout(false);
 			this.splitContainer5.Panel2.ResumeLayout(false);
 			this.splitContainer5.ResumeLayout(false);
-			this.toolStrip1.ResumeLayout(false);
-			this.toolStrip1.PerformLayout();
+			this.contextMenuStrip1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -260,6 +278,8 @@
 		private System.Windows.Forms.PropertyGrid propertyGrid4;
 		private System.Windows.Forms.ToolStrip toolStrip1;
 		private System.Windows.Forms.ToolStripButton toolStripButton1;
+		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+		private System.Windows.Forms.ToolStripMenuItem brahToolStripMenuItem;
 
 	}
 }
