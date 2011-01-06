@@ -328,7 +328,17 @@ namespace Testbed
 			m_mouseWorld = p;
 
 			if (m_mouseJoint != null)
+			{
 				m_mouseJoint.Target = p;
+
+				if ((Control.ModifierKeys & Keys.Shift) != 0)
+				{
+					m_mouseJoint.BodyB.IsFixedRotation = true;
+					m_mouseJoint.BodyB.AngularVelocity = 0;
+				}
+				else
+					m_mouseJoint.BodyB.IsFixedRotation = false;
+			}
 		}
 		public void LaunchBomb()
 		{
@@ -492,6 +502,9 @@ namespace Testbed
 					m_debugDraw.DrawString(5, m_textLine, "Body data: " + body.UserData.ToString());
 					m_textLine += 15;
 				}
+
+				m_debugDraw.DrawString(5, m_textLine, "Position: "+body.Position);
+				m_textLine += 15;
 			}
 
 			if (TestSettings.drawContactPoints)
