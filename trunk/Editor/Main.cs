@@ -28,10 +28,10 @@ namespace Editor
 		Thread simulationThread;
 		TestDebugDraw debugDraw;
 		WorldXmlDeserializer deserializer;
-		BodyForPropertyGrid HoverBody = null, SelectedBody = null;
-		List<BodyForPropertyGrid> bodies = new List<BodyForPropertyGrid>();
+		BodyObject HoverBody = null, SelectedBody = null;
+		List<BodyObject> bodies = new List<BodyObject>();
 
-		public class BodyForPropertyGrid
+		public class BodyObject
 		{
 			[Description("The actual body.")]
 			public BodyDef Body
@@ -78,7 +78,7 @@ namespace Editor
 				}
 			}
 
-			public BodyForPropertyGrid(WorldXmlDeserializer deserializer, BodyDefSerialized x)
+			public BodyObject(WorldXmlDeserializer deserializer, BodyDefSerialized x)
 			{
 				Body = x.Body;
 				Name = x.Name;
@@ -88,8 +88,8 @@ namespace Editor
 				// FIXME: name
 				for (int i = 0; i < x.FixtureIDs.Count; ++i)
 				{
-					fixtures[i] = deserializer.FixtureDefs[x.FixtureIDs[i]].Fixture.Clone();
-					fixtures[i].Shape = deserializer.Shapes[deserializer.FixtureDefs[x.FixtureIDs[i]].ShapeID].Shape.Clone();
+                    fixtures[i] = deserializer.FixtureDefs[x.FixtureIDs[i]].Fixture;
+					fixtures[i].Shape = deserializer.Shapes[deserializer.FixtureDefs[x.FixtureIDs[i]].ShapeID].Shape;
 				}
 
 				Fixtures = fixtures;
@@ -206,22 +206,27 @@ namespace Editor
 			using (System.IO.FileStream fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Open))
 				deserializer.Deserialize(fs);
 
-			for (int i = 0; i < deserializer.Bodies.Count; ++i)
-			{
-				var x = deserializer.Bodies[i];
-				listBox1.Items.Add("Body "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
+            for (int i = 0; i < deserializer.Bodies.Count; ++i)
+            {
+                var x = deserializer.Bodies[i];
+                listBox1.Items.Add("Body " + i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " (" + x.Name + ")"));
 
-				bodies.Add(new BodyForPropertyGrid(deserializer, x));
-			}
+                bodies.Add(new BodyObject(deserializer, x));
+            }
+
+            for (int i = 0; i < deserializer.FixtureDefs.Count; ++i)
+            {
+                var x = deserializer.FixtureDefs[i];
+                listBox2.Items.Add("Fixture " + i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " (" + x.Name + ")"));
+
+                //bodies.Add(new BodyObject(deserializer, x));
+            }
 
 			for (int i = 0; i < deserializer.Joints.Count; ++i)
 			{
 				var x = deserializer.Joints[i];
 				listBox4.Items.Add(x.Joint.JointType.ToString() + " Joint "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
 			}
-
-			deserializer.Shapes.Clear();
-			deserializer.FixtureDefs.Clear();
 
 			debugDraw = new TestDebugDraw();
 			debugDraw.Flags = DebugFlags.Shapes | DebugFlags.Joints | DebugFlags.CenterOfMasses;
@@ -296,7 +301,8 @@ namespace Editor
 			// Clear the window
 			renderWindow.Clear();
 
-			Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
+            Gl.glClearColor((float)BackColor.R / 255.0f, (float)BackColor.G / 255.0f, (float)BackColor.B / 255.0f, 1);
+            Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
 
 			Gl.glMatrixMode(Gl.GL_MODELVIEW);
 			Gl.glLoadIdentity();
@@ -542,7 +548,7 @@ namespace Editor
 		{
 			Vec2 p = ConvertScreenToWorld(x, y);
 
-			BodyForPropertyGrid moused = null;
+			BodyObject moused = null;
 			foreach (var b in bodies)
 			{
 				foreach (var f in b.Fixtures)
@@ -557,8 +563,8 @@ namespace Editor
 				if (moused != null)
 				{
 					SelectedBody = moused;
-					propertyGrid1.SelectedObject = moused;
-					propertyGrid1.Refresh();
+					//propertyGrid1.SelectedObject = moused;
+					//propertyGrid1.Refresh();
 				}
 			}
 
@@ -604,6 +610,7 @@ namespace Editor
 		{
 			simulationThread = new Thread(SimulationLoop);
 			simulationThread.Start();
+            listBox1.SelectedIndex = 0;
 		}
 
 		private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -630,10 +637,37 @@ namespace Editor
 			if (listBox1.SelectedIndex == -1)
 				return;
 
-			propertyGrid1.SelectedObject = bodies[listBox1.SelectedIndex];
+			//propertyGrid1.SelectedObject = bodies[listBox1.SelectedIndex];
 			SelectedBody = bodies[listBox1.SelectedIndex];
+            LoadBodyObjectSettings();
 		}
+        public void LoadBodyObjectSettings()
+        {
+            bodyActive.SelectedIndex = Convert.ToInt32(SelectedBody.Body.Active);
+            bodyAllowSleep.SelectedIndex = Convert.ToInt32(SelectedBody.Body.AllowSleep);
+            bodyAngle.Value = Convert.ToDecimal(SelectedBody.Body.Angle);
+            bodyAngularDamping.Value = Convert.ToDecimal(SelectedBody.Body.AngularDamping);
+            bodyAngularVelocity.Value = Convert.ToDecimal(SelectedBody.Body.AngularVelocity);
+            bodyAwake.SelectedIndex = Convert.ToInt32(SelectedBody.Body.Awake);
+            bodyType.SelectedIndex = (int)SelectedBody.Body.BodyType;
+            bodyBullet.SelectedIndex = Convert.ToInt32(SelectedBody.Body.Bullet);
+            bodyFixedRotation.SelectedIndex = Convert.ToInt32(SelectedBody.Body.FixedRotation);
+            bodyInertiaScale.Value = Convert.ToDecimal(SelectedBody.Body.InertiaScale);
+            bodyLinearDamping.Value = Convert.ToDecimal(SelectedBody.Body.LinearDamping);
+            bodyLinearVelX.Value = Convert.ToDecimal(SelectedBody.Body.LinearVelocity.X);
+            bodyLinearVelY.Value = Convert.ToDecimal(SelectedBody.Body.LinearVelocity.Y);
+            bodyPositionX.Value = Convert.ToDecimal(SelectedBody.Body.Position.X);
+            bodyPositionY.Value = Convert.ToDecimal(SelectedBody.Body.Position.Y);
 
+            bodyName.Text = SelectedBody.Name;
+
+            bodyAutoMassRecalculate.SelectedIndex = Convert.ToInt32(SelectedBody.AutoMassRecalculate);
+
+            bodyCenterX.Value = Convert.ToDecimal(SelectedBody.Mass.Center.X);
+            bodyCenterY.Value = Convert.ToDecimal(SelectedBody.Mass.Center.Y);
+            bodyMass.Value = Convert.ToDecimal(SelectedBody.Mass.Mass);
+            bodyInertia.Value = Convert.ToDecimal(SelectedBody.Mass.Inertia);
+        }
 		private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (listBox4.SelectedIndex == -1)
@@ -644,6 +678,7 @@ namespace Editor
 
 		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
 		{
+            /**
 			BodyForPropertyGrid bpg = (BodyForPropertyGrid)propertyGrid1.SelectedObject;
 
 			if (bpg.AutoMassRecalculate && 
@@ -659,13 +694,179 @@ namespace Editor
 					propertyGrid1.Refresh();
 				}
 			}
+             * */
 		}
 
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
-			bodies.Add(new BodyForPropertyGrid(deserializer, new BodyDefSerialized(null, new BodyDef(), new List<int> { }, null)));
+			bodies.Add(new BodyObject(deserializer, new BodyDefSerialized(null, new BodyDef(), new List<int> { }, null)));
 			listBox1.Items.Add("Body "+(bodies.Count).ToString());
 		}
+
+        private void propertyGrid2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numericUpDown7_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label18_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            SelectedBody.Name = bodyName.Text;
+        }
+
+        private void bodyAutoMassRecalculate_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedBody.AutoMassRecalculate = Convert.ToBoolean(bodyAutoMassRecalculate.SelectedIndex);
+        }
+
+        private void bodyActive_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedBody.Body.Active = Convert.ToBoolean(bodyActive.SelectedIndex);
+        }
+
+        private void bodyAllowSleep_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedBody.Body.AllowSleep = Convert.ToBoolean(bodyAllowSleep.SelectedIndex);
+        }
+
+        private void bodyAngle_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            SelectedBody.Body.Angle = (float)e.NewValue;
+        }
+
+        private void bodyAngularDamping_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            SelectedBody.Body.AngularDamping = (float)e.NewValue;
+        }
+
+        private void bodyAngularVelocity_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            SelectedBody.Body.AngularVelocity = (float)e.NewValue;
+        }
+
+        private void bodyAwake_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedBody.Body.Awake = Convert.ToBoolean(bodyAwake.SelectedIndex);
+        }
+
+        private void bodyType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedBody.Body.BodyType = (BodyType)bodyType.SelectedIndex;
+        }
+
+        private void bodyBullet_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedBody.Body.Bullet = Convert.ToBoolean(bodyBullet.SelectedIndex);
+        }
+
+        private void bodyFixedRotation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedBody.Body.FixedRotation = Convert.ToBoolean(bodyFixedRotation.SelectedIndex);
+        }
+
+        private void bodyInertiaScale_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            SelectedBody.Body.InertiaScale = (float)e.NewValue;
+        }
+
+        private void numericUpDown5_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            SelectedBody.Body.LinearDamping = (float)e.NewValue;
+        }
+
+        private void bodyLinearVelX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            SelectedBody.Body.LinearVelocity = new Vec2((float)e.NewValue, SelectedBody.Body.LinearVelocity.Y);
+        }
+
+        private void bodyLinearVelY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            SelectedBody.Body.LinearVelocity = new Vec2(SelectedBody.Body.LinearVelocity.X, (float)e.NewValue);
+        }
+
+        private void bodyPositionX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            SelectedBody.Body.Position =
+                new Vec2((float)e.NewValue, SelectedBody.Body.Position.Y);
+        }
+
+        private void bodyPositionY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            SelectedBody.Body.Position =
+                new Vec2(SelectedBody.Body.Position.X, (float)e.NewValue);
+        }
+
+        private void bodyMass_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            MassData Mass = SelectedBody.Mass;
+            Mass.Mass = (float)e.NewValue;
+            SelectedBody.Mass = Mass;
+        }
+
+        private void bodyInertia_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            MassData Mass = SelectedBody.Mass;
+            Mass.Inertia = (float)e.NewValue;
+            SelectedBody.Mass = Mass;
+        }
+
+        private void bodyCenterX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            MassData Mass = SelectedBody.Mass;
+            Mass.Center = new Vec2((float)e.NewValue, Mass.Center.Y);
+            SelectedBody.Mass = Mass;
+        }
+
+        private void bodyCenterY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            MassData Mass = SelectedBody.Mass;
+            Mass.Center = new Vec2(Mass.Center.X, (float)e.NewValue);
+            SelectedBody.Mass = Mass;
+        }
+
+        private void textBox1_TextChanged_1(object sender, EventArgs e)
+        {
+            //deserializer.FixtureDefs[0].Fixture.
+        }
 	}
 
 	public class HolyCrapControl : Control

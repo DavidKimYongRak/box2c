@@ -202,7 +202,7 @@ namespace Editor
 					newValue = Minimum;
 			}
 
-			ValueChangedEventArgs<decimal> eventArgs = new ValueChangedEventArgs<decimal>(_value, newValue);
+            DecimalValueChangedEventArgs eventArgs = new DecimalValueChangedEventArgs(_value, newValue);
 
 			if (ValueChanged != null)
 				ValueChanged(this, eventArgs);
@@ -227,7 +227,9 @@ namespace Editor
 			{
 				if (!char.IsDigit(e.KeyChar))
 				{
-					if (e.KeyChar != '.' && e.KeyChar != (char)Keys.Back)
+					if (e.KeyChar != '.' &&
+                        e.KeyChar != (char)Keys.Back 
+                        && e.KeyChar != '-')
 						e.Handled = true;
 				}
 			}
@@ -327,7 +329,7 @@ namespace Editor
 		/// </summary>
 		[Description("Raised when the Value property changes.")]
 		[Category("Property Changed")]
-		public event ValueChangedEventHandler<decimal> ValueChanged;
+        public event DecimalValueChangedEventHandler ValueChanged;
 		#endregion
 	}
 
@@ -611,7 +613,15 @@ namespace Editor
 		}
 	}
 
-	public delegate void ValueChangedEventHandler<T>(object sender, ValueChangedEventArgs<T> e);
+    public class DecimalValueChangedEventArgs : ValueChangedEventArgs<decimal>
+    {
+        public DecimalValueChangedEventArgs(decimal oldValue, decimal newValue) :
+            base(oldValue, newValue)
+        {
+        }
+    }
+
+	public delegate void DecimalValueChangedEventHandler(object sender, DecimalValueChangedEventArgs e);
 
 	public class FloatNumericUpDownAccelerator
 	{
