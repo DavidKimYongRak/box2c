@@ -95,6 +95,13 @@
             this.fixtureListBox = new System.Windows.Forms.ListBox();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.fixtureGroupIndex = new System.Windows.Forms.NumericUpDown();
+            this.fixtureMaskBits = new System.Windows.Forms.NumericUpDown();
+            this.fixtureCategoryBits = new System.Windows.Forms.NumericUpDown();
+            this.label26 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
             this.fixtureName = new System.Windows.Forms.TextBox();
             this.label28 = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
@@ -112,13 +119,6 @@
             this.oneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.twoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.threeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.label26 = new System.Windows.Forms.Label();
-            this.fixtureCategoryBits = new System.Windows.Forms.NumericUpDown();
-            this.fixtureMaskBits = new System.Windows.Forms.NumericUpDown();
-            this.fixtureGroupIndex = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -141,11 +141,11 @@
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.toolStrip2.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureMaskBits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fixtureGroupIndex)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fixtureMaskBits)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -1011,6 +1011,94 @@
             this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton2.Text = "toolStripButton1";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.fixtureGroupIndex);
+            this.groupBox1.Controls.Add(this.fixtureMaskBits);
+            this.groupBox1.Controls.Add(this.fixtureCategoryBits);
+            this.groupBox1.Controls.Add(this.label26);
+            this.groupBox1.Controls.Add(this.label25);
+            this.groupBox1.Controls.Add(this.label24);
+            this.groupBox1.Location = new System.Drawing.Point(10, 181);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(199, 74);
+            this.groupBox1.TabIndex = 41;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Filter";
+            // 
+            // fixtureGroupIndex
+            // 
+            this.fixtureGroupIndex.Location = new System.Drawing.Point(109, 31);
+            this.fixtureGroupIndex.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
+            this.fixtureGroupIndex.Minimum = new decimal(new int[] {
+            32768,
+            0,
+            0,
+            -2147483648});
+            this.fixtureGroupIndex.Name = "fixtureGroupIndex";
+            this.fixtureGroupIndex.Size = new System.Drawing.Size(84, 20);
+            this.fixtureGroupIndex.TabIndex = 18;
+            this.fixtureGroupIndex.ValueChanged += new System.EventHandler(this.fixtureGroupIndex_ValueChanged);
+            // 
+            // fixtureMaskBits
+            // 
+            this.fixtureMaskBits.Hexadecimal = true;
+            this.fixtureMaskBits.Location = new System.Drawing.Point(109, 52);
+            this.fixtureMaskBits.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.fixtureMaskBits.Name = "fixtureMaskBits";
+            this.fixtureMaskBits.Size = new System.Drawing.Size(84, 20);
+            this.fixtureMaskBits.TabIndex = 17;
+            this.fixtureMaskBits.ValueChanged += new System.EventHandler(this.fixtureMaskBits_ValueChanged);
+            // 
+            // fixtureCategoryBits
+            // 
+            this.fixtureCategoryBits.Hexadecimal = true;
+            this.fixtureCategoryBits.Location = new System.Drawing.Point(109, 10);
+            this.fixtureCategoryBits.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.fixtureCategoryBits.Name = "fixtureCategoryBits";
+            this.fixtureCategoryBits.Size = new System.Drawing.Size(84, 20);
+            this.fixtureCategoryBits.TabIndex = 16;
+            this.fixtureCategoryBits.ValueChanged += new System.EventHandler(this.fixtureCategoryBits_ValueChanged);
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(50, 54);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(53, 13);
+            this.label26.TabIndex = 15;
+            this.label26.Text = "MaskBits:";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(36, 34);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(68, 13);
+            this.label25.TabIndex = 13;
+            this.label25.Text = "Group Index:";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(31, 13);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(72, 13);
+            this.label24.TabIndex = 11;
+            this.label24.Text = "Category Bits:";
+            // 
             // fixtureName
             // 
             this.fixtureName.Location = new System.Drawing.Point(78, 23);
@@ -1072,6 +1160,7 @@
             this.fixtureIsSensor.Name = "fixtureIsSensor";
             this.fixtureIsSensor.Size = new System.Drawing.Size(84, 21);
             this.fixtureIsSensor.TabIndex = 13;
+            this.fixtureIsSensor.SelectedIndexChanged += new System.EventHandler(this.fixtureIsSensor_SelectedIndexChanged);
             // 
             // label40
             // 
@@ -1107,6 +1196,7 @@
             this.fixtureRestitution.Name = "fixtureRestitution";
             this.fixtureRestitution.Size = new System.Drawing.Size(84, 20);
             this.fixtureRestitution.TabIndex = 10;
+            this.fixtureRestitution.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureRestitution_ValueChanged);
             // 
             // label42
             // 
@@ -1133,6 +1223,7 @@
             this.fixtureFriction.Name = "fixtureFriction";
             this.fixtureFriction.Size = new System.Drawing.Size(84, 20);
             this.fixtureFriction.TabIndex = 8;
+            this.fixtureFriction.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureFriction_ValueChanged);
             // 
             // label43
             // 
@@ -1159,6 +1250,7 @@
             this.fixtureDensity.Name = "fixtureDensity";
             this.fixtureDensity.Size = new System.Drawing.Size(84, 20);
             this.fixtureDensity.TabIndex = 6;
+            this.fixtureDensity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureDensity_ValueChanged);
             // 
             // contextMenuStrip1
             // 
@@ -1186,91 +1278,6 @@
             this.threeToolStripMenuItem.Name = "threeToolStripMenuItem";
             this.threeToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.threeToolStripMenuItem.Text = "Three";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.fixtureGroupIndex);
-            this.groupBox1.Controls.Add(this.fixtureMaskBits);
-            this.groupBox1.Controls.Add(this.fixtureCategoryBits);
-            this.groupBox1.Controls.Add(this.label26);
-            this.groupBox1.Controls.Add(this.label25);
-            this.groupBox1.Controls.Add(this.label24);
-            this.groupBox1.Location = new System.Drawing.Point(10, 181);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(199, 74);
-            this.groupBox1.TabIndex = 41;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Filter";
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(31, 13);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(72, 13);
-            this.label24.TabIndex = 11;
-            this.label24.Text = "Category Bits:";
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(36, 34);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(68, 13);
-            this.label25.TabIndex = 13;
-            this.label25.Text = "Group Index:";
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(50, 54);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(53, 13);
-            this.label26.TabIndex = 15;
-            this.label26.Text = "MaskBits:";
-            // 
-            // fixtureCategoryBits
-            // 
-            this.fixtureCategoryBits.Hexadecimal = true;
-            this.fixtureCategoryBits.Location = new System.Drawing.Point(109, 10);
-            this.fixtureCategoryBits.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.fixtureCategoryBits.Name = "fixtureCategoryBits";
-            this.fixtureCategoryBits.Size = new System.Drawing.Size(84, 20);
-            this.fixtureCategoryBits.TabIndex = 16;
-            // 
-            // fixtureMaskBits
-            // 
-            this.fixtureMaskBits.Hexadecimal = true;
-            this.fixtureMaskBits.Location = new System.Drawing.Point(109, 52);
-            this.fixtureMaskBits.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.fixtureMaskBits.Name = "fixtureMaskBits";
-            this.fixtureMaskBits.Size = new System.Drawing.Size(84, 20);
-            this.fixtureMaskBits.TabIndex = 17;
-            // 
-            // fixtureGroupIndex
-            // 
-            this.fixtureGroupIndex.Location = new System.Drawing.Point(109, 31);
-            this.fixtureGroupIndex.Maximum = new decimal(new int[] {
-            32767,
-            0,
-            0,
-            0});
-            this.fixtureGroupIndex.Minimum = new decimal(new int[] {
-            32768,
-            0,
-            0,
-            -2147483648});
-            this.fixtureGroupIndex.Name = "fixtureGroupIndex";
-            this.fixtureGroupIndex.Size = new System.Drawing.Size(84, 20);
-            this.fixtureGroupIndex.TabIndex = 18;
             // 
             // Main
             // 
@@ -1310,12 +1317,12 @@
             this.splitContainer3.ResumeLayout(false);
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
-            this.contextMenuStrip1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureMaskBits)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fixtureGroupIndex)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fixtureMaskBits)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
