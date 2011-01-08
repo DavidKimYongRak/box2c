@@ -983,15 +983,28 @@ namespace Editor
 
         private void shapeType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (shapeType.SelectedIndex == 0)
-            {
+            if (shapeType.SelectedIndex == 0 && !(SelectedShape.Shape is CircleShape))
                 SelectedShape.Shape = new CircleShape();
-            }
-            if (shapeType.SelectedIndex == 1)
-            {
+            else if (shapeType.SelectedIndex == 1 && !(SelectedShape.Shape is PolygonShape))
                 SelectedShape.Shape = new PolygonShape();
-            }
+
             LoadShapeObjectSettings();
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            CircleShape shape = new CircleShape();
+            ShapeSerialized newShape = new ShapeSerialized(shape,"");
+            deserializer.Shapes.Add(newShape);
+            shapeListBox.Items.Add("Shape " + (deserializer.Shapes.Count-1).ToString());
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            FixtureDef fixture = new FixtureDef();
+            FixtureDefSerialized newFixture = new FixtureDefSerialized(fixture,0,"");
+            deserializer.FixtureDefs.Add(newFixture);
+            fixtureListBox.Items.Add("Fixture " + (deserializer.FixtureDefs.Count - 1).ToString());
         }
 	}
 
