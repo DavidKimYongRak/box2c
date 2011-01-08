@@ -96,12 +96,15 @@ namespace Editor
 
 				// FIXME: name
 				for (int i = 0; i < x.FixtureIDs.Count; ++i)
-					deserializer.FixtureDefs[x.FixtureIDs[i]].Fixture.Shape = deserializer.Shapes[deserializer.FixtureDefs[x.FixtureIDs[i]].ShapeID].Shape;
+				{
+					var fixture = deserializer.FixtureDefs[x.FixtureIDs[i]];
+					fixture.Fixture.Shape = deserializer.Shapes[deserializer.FixtureDefs[x.FixtureIDs[i]].ShapeID].Shape;
+					_fixtures.Add(fixture);
+				}
 
+				_mass = Body.ComputeMass(OnlyFixtures);
 				_fixtures.ObjectsAdded += new EventHandler(_fixtures_ObjectsAdded);
 				_fixtures.ObjectsRemoved += new EventHandler(_fixtures_ObjectsRemoved);
-
-				_fixtures.AddRange(deserializer.FixtureDefs);
 			}
 		}
 
