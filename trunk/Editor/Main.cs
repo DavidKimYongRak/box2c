@@ -206,7 +206,8 @@ namespace Editor
             for (int i = 0; i < deserializer.Bodies.Count; ++i)
             {
                 var x = deserializer.Bodies[i];
-                bodyListBox.Items.Add("Body " + i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " (" + x.Name + ")"));
+                x.Name = "Body " + i.ToString();
+                bodyListBox.Items.Add(x.Name);
 
                 bodies.Add(new BodyObject(deserializer, x));
             }
@@ -214,20 +215,24 @@ namespace Editor
             for (int i = 0; i < deserializer.FixtureDefs.Count; ++i)
             {
                 var x = deserializer.FixtureDefs[i];
-                fixtureListBox.Items.Add("Fixture " + i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " (" + x.Name + ")"));
-
-                //bodies.Add(new BodyObject(deserializer, x));
+                x.Name = "Fixture " + i.ToString();
+                fixtureListBox.Items.Add(x.Name);
+                
+                bodyFixtureSelect.Items.Add(("Fixture " + i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " (" + x.Name + ")")));
             }
 
 			for (int i = 0; i < deserializer.Joints.Count; ++i)
 			{
 				var x = deserializer.Joints[i];
-				listBox4.Items.Add(x.Joint.JointType.ToString() + " Joint "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
+                x.Name = "Joint " + i.ToString();
+                listBox4.Items.Add(x.Name);
 			}
             for (int i = 0; i < deserializer.Shapes.Count; ++i)
             {
                 var x = deserializer.Shapes[i];
-                shapeListBox.Items.Add("Shape " + i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " (" + x.Name + ")"));
+                x.Name = "Shape " + i.ToString();
+                shapeListBox.Items.Add(x.Name);
+                fixtureShape.Items.Add(x.Name);
             }
 
 			debugDraw = new TestDebugDraw();
@@ -671,6 +676,13 @@ namespace Editor
             bodyCenterY.Value = Convert.ToDecimal(SelectedBody.Mass.Center.Y);
             bodyMass.Value = Convert.ToDecimal(SelectedBody.Mass.Mass);
             bodyInertia.Value = Convert.ToDecimal(SelectedBody.Mass.Inertia);
+
+            bodyFixtureSelect.SelectedIndex = 0;
+        
+            bodyFixtureListBox.Items.Clear();
+            for (int i = 0; i < SelectedBody.Fixtures.Length; i ++) {
+                //bodyFixtureListBox.Items.Add(("Fixture " + i.ToString()));
+            }
         }
 		private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -703,8 +715,8 @@ namespace Editor
 
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
-			bodies.Add(new BodyObject(deserializer, new BodyDefSerialized(null, new BodyDef(), new List<int> { }, null)));
-			bodyListBox.Items.Add("Body "+(bodies.Count).ToString());
+            bodies.Add(new BodyObject(deserializer, new BodyDefSerialized(null, new BodyDef(), new List<int> { }, "Body " + (bodies.Count).ToString())));
+			bodyListBox.Items.Add("Body "+(bodies.Count-1).ToString());
 		}
 
         private void propertyGrid2_Click(object sender, EventArgs e)
@@ -885,7 +897,8 @@ namespace Editor
             fixtureFriction.Value = Convert.ToDecimal(SelectedFixture.Fixture.Friction);
             fixtureIsSensor.SelectedIndex = Convert.ToInt32(SelectedFixture.Fixture.IsSensor);
             fixtureRestitution.Value = Convert.ToDecimal(SelectedFixture.Fixture.Restitution);
-            //fixtureShape.SelectedIndex = deserializer.FixtureDefs.IndexOf(SelectedFixture.Fixture.Shape);
+            ShapeSerialized shape = new ShapeSerialized(SelectedFixture.Fixture.Shape,"");
+            fixtureShape.SelectedIndex = SelectedFixture.ShapeID;
             fixtureCategoryBits.Value = SelectedFixture.Fixture.Filter.CategoryBits;
             fixtureGroupIndex.Value = SelectedFixture.Fixture.Filter.GroupIndex;
             fixtureMaskBits.Value = SelectedFixture.Fixture.Filter.MaskBits;
@@ -928,6 +941,11 @@ namespace Editor
         private void fixtureMaskBits_ValueChanged(object sender, EventArgs e)
         {
             SelectedFixture.Fixture.Filter.MaskBits = (ushort)fixtureMaskBits.Value;
+        }
+
+        private void fixtureShape_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedFixture.ShapeID = fixtureShape.SelectedIndex;
         }
 
         private void shapeListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -994,17 +1012,19 @@ namespace Editor
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
             CircleShape shape = new CircleShape();
-            ShapeSerialized newShape = new ShapeSerialized(shape,"");
+            ShapeSerialized newShape = new ShapeSerialized(shape,"Shape " + (deserializer.Shapes.Count).ToString());
             deserializer.Shapes.Add(newShape);
             shapeListBox.Items.Add("Shape " + (deserializer.Shapes.Count-1).ToString());
+            fixtureShape.Items.Add("Shape " + (deserializer.Shapes.Count - 1).ToString());
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             FixtureDef fixture = new FixtureDef();
-            FixtureDefSerialized newFixture = new FixtureDefSerialized(fixture,0,"");
+            FixtureDefSerialized newFixture = new FixtureDefSerialized(fixture, 0, "Fixture " + (deserializer.FixtureDefs.Count).ToString());
             deserializer.FixtureDefs.Add(newFixture);
             fixtureListBox.Items.Add("Fixture " + (deserializer.FixtureDefs.Count - 1).ToString());
+            bodyFixtureSelect.Items.Add("Fixture " + (deserializer.FixtureDefs.Count - 1).ToString());
         }
 	}
 

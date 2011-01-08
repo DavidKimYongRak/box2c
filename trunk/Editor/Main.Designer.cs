@@ -30,7 +30,6 @@
 		{
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.panel1 = new Editor.HolyCrapControl();
             this.Fixtures = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -38,13 +37,9 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.label22 = new System.Windows.Forms.Label();
-            this.bodyCenterY = new Editor.FloatNumericUpDown();
             this.label23 = new System.Windows.Forms.Label();
-            this.bodyCenterX = new Editor.FloatNumericUpDown();
             this.label21 = new System.Windows.Forms.Label();
-            this.bodyInertia = new Editor.FloatNumericUpDown();
             this.label20 = new System.Windows.Forms.Label();
-            this.bodyMass = new Editor.FloatNumericUpDown();
             this.bodyName = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
@@ -54,17 +49,11 @@
             this.bodyFixtureListBox = new System.Windows.Forms.ListBox();
             this.bodyFixtureSelect = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.bodyPositionY = new Editor.FloatNumericUpDown();
             this.label16 = new System.Windows.Forms.Label();
-            this.bodyPositionX = new Editor.FloatNumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
-            this.bodyLinearVelY = new Editor.FloatNumericUpDown();
             this.label13 = new System.Windows.Forms.Label();
-            this.bodyLinearVelX = new Editor.FloatNumericUpDown();
             this.label12 = new System.Windows.Forms.Label();
-            this.bodyLinearDamping = new Editor.FloatNumericUpDown();
             this.label11 = new System.Windows.Forms.Label();
-            this.bodyInertiaScale = new Editor.FloatNumericUpDown();
             this.bodyFixedRotation = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.bodyBullet = new System.Windows.Forms.ComboBox();
@@ -74,11 +63,8 @@
             this.bodyAwake = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.bodyAngularVelocity = new Editor.FloatNumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
-            this.bodyAngularDamping = new Editor.FloatNumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
-            this.bodyAngle = new Editor.FloatNumericUpDown();
             this.bodyAllowSleep = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.bodyActive = new System.Windows.Forms.ComboBox();
@@ -109,11 +95,8 @@
             this.fixtureIsSensor = new System.Windows.Forms.ComboBox();
             this.label40 = new System.Windows.Forms.Label();
             this.label41 = new System.Windows.Forms.Label();
-            this.fixtureRestitution = new Editor.FloatNumericUpDown();
             this.label42 = new System.Windows.Forms.Label();
-            this.fixtureFriction = new Editor.FloatNumericUpDown();
             this.label43 = new System.Windows.Forms.Label();
-            this.fixtureDensity = new Editor.FloatNumericUpDown();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.shapeListBox = new System.Windows.Forms.ListBox();
@@ -128,6 +111,23 @@
             this.oneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.twoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.threeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panel1 = new Editor.HolyCrapControl();
+            this.bodyCenterY = new Editor.FloatNumericUpDown();
+            this.bodyCenterX = new Editor.FloatNumericUpDown();
+            this.bodyInertia = new Editor.FloatNumericUpDown();
+            this.bodyMass = new Editor.FloatNumericUpDown();
+            this.bodyPositionY = new Editor.FloatNumericUpDown();
+            this.bodyPositionX = new Editor.FloatNumericUpDown();
+            this.bodyLinearVelY = new Editor.FloatNumericUpDown();
+            this.bodyLinearVelX = new Editor.FloatNumericUpDown();
+            this.bodyLinearDamping = new Editor.FloatNumericUpDown();
+            this.bodyInertiaScale = new Editor.FloatNumericUpDown();
+            this.bodyAngularVelocity = new Editor.FloatNumericUpDown();
+            this.bodyAngularDamping = new Editor.FloatNumericUpDown();
+            this.bodyAngle = new Editor.FloatNumericUpDown();
+            this.fixtureRestitution = new Editor.FloatNumericUpDown();
+            this.fixtureFriction = new Editor.FloatNumericUpDown();
+            this.fixtureDensity = new Editor.FloatNumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -180,24 +180,12 @@
             this.splitContainer1.SplitterDistance = 575;
             this.splitContainer1.TabIndex = 1;
             // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(575, 531);
-            this.panel1.TabIndex = 0;
-            this.panel1.Text = "holyCrapControl1";
-            this.panel1.Click += new System.EventHandler(this.panel1_Click);
-            this.panel1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.panel1_KeyPress);
-            this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
-            // 
             // Fixtures
             // 
             this.Fixtures.Controls.Add(this.tabPage1);
-            this.Fixtures.Controls.Add(this.tabPage5);
             this.Fixtures.Controls.Add(this.tabPage2);
             this.Fixtures.Controls.Add(this.tabPage3);
+            this.Fixtures.Controls.Add(this.tabPage5);
             this.Fixtures.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Fixtures.Location = new System.Drawing.Point(0, 0);
             this.Fixtures.Name = "Fixtures";
@@ -316,114 +304,42 @@
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(134, 467);
+            this.label22.Location = new System.Drawing.Point(132, 469);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(17, 13);
             this.label22.TabIndex = 48;
             this.label22.Text = "Y:";
             // 
-            // bodyCenterY
-            // 
-            this.bodyCenterY.Location = new System.Drawing.Point(157, 463);
-            this.bodyCenterY.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyCenterY.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyCenterY.Name = "bodyCenterY";
-            this.bodyCenterY.Size = new System.Drawing.Size(51, 20);
-            this.bodyCenterY.TabIndex = 47;
-            this.bodyCenterY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterY_ValueChanged);
-            // 
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(21, 467);
+            this.label23.Location = new System.Drawing.Point(19, 469);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(51, 13);
             this.label23.TabIndex = 46;
             this.label23.Text = "Center X:";
             // 
-            // bodyCenterX
-            // 
-            this.bodyCenterX.Location = new System.Drawing.Point(78, 463);
-            this.bodyCenterX.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyCenterX.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyCenterX.Name = "bodyCenterX";
-            this.bodyCenterX.Size = new System.Drawing.Size(49, 20);
-            this.bodyCenterX.TabIndex = 45;
-            this.bodyCenterX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterX_ValueChanged);
-            // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(79, 439);
+            this.label21.Location = new System.Drawing.Point(77, 441);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(39, 13);
             this.label21.TabIndex = 44;
             this.label21.Text = "Inertia:";
             // 
-            // bodyInertia
-            // 
-            this.bodyInertia.Location = new System.Drawing.Point(124, 437);
-            this.bodyInertia.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyInertia.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyInertia.Name = "bodyInertia";
-            this.bodyInertia.Size = new System.Drawing.Size(84, 20);
-            this.bodyInertia.TabIndex = 43;
-            this.bodyInertia.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertia_ValueChanged);
-            // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(83, 413);
+            this.label20.Location = new System.Drawing.Point(81, 415);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(35, 13);
             this.label20.TabIndex = 42;
             this.label20.Text = "Mass:";
             // 
-            // bodyMass
-            // 
-            this.bodyMass.Location = new System.Drawing.Point(124, 411);
-            this.bodyMass.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyMass.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyMass.Name = "bodyMass";
-            this.bodyMass.Size = new System.Drawing.Size(84, 20);
-            this.bodyMass.TabIndex = 41;
-            this.bodyMass.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyMass_ValueChanged);
-            // 
             // bodyName
             // 
-            this.bodyName.Location = new System.Drawing.Point(78, 23);
+            this.bodyName.Location = new System.Drawing.Point(76, 25);
             this.bodyName.Name = "bodyName";
             this.bodyName.Size = new System.Drawing.Size(130, 20);
             this.bodyName.TabIndex = 40;
@@ -433,7 +349,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(36, 26);
+            this.label19.Location = new System.Drawing.Point(34, 28);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(38, 13);
             this.label19.TabIndex = 39;
@@ -443,7 +359,7 @@
             // 
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label17.Location = new System.Drawing.Point(7, 3);
+            this.label17.Location = new System.Drawing.Point(5, 5);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(93, 13);
             this.label17.TabIndex = 38;
@@ -451,7 +367,7 @@
             // 
             // bodyFixtureDelete
             // 
-            this.bodyFixtureDelete.Location = new System.Drawing.Point(157, 572);
+            this.bodyFixtureDelete.Location = new System.Drawing.Point(155, 574);
             this.bodyFixtureDelete.Name = "bodyFixtureDelete";
             this.bodyFixtureDelete.Size = new System.Drawing.Size(51, 23);
             this.bodyFixtureDelete.TabIndex = 37;
@@ -460,7 +376,7 @@
             // 
             // bodyFixtureAdd
             // 
-            this.bodyFixtureAdd.Location = new System.Drawing.Point(10, 571);
+            this.bodyFixtureAdd.Location = new System.Drawing.Point(8, 573);
             this.bodyFixtureAdd.Name = "bodyFixtureAdd";
             this.bodyFixtureAdd.Size = new System.Drawing.Size(51, 23);
             this.bodyFixtureAdd.TabIndex = 36;
@@ -472,7 +388,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.Location = new System.Drawing.Point(7, 498);
+            this.label18.Location = new System.Drawing.Point(5, 500);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(51, 13);
             this.label18.TabIndex = 35;
@@ -482,7 +398,7 @@
             // bodyFixtureListBox
             // 
             this.bodyFixtureListBox.FormattingEnabled = true;
-            this.bodyFixtureListBox.Location = new System.Drawing.Point(10, 514);
+            this.bodyFixtureListBox.Location = new System.Drawing.Point(8, 516);
             this.bodyFixtureListBox.Name = "bodyFixtureListBox";
             this.bodyFixtureListBox.Size = new System.Drawing.Size(198, 56);
             this.bodyFixtureListBox.TabIndex = 34;
@@ -491,9 +407,7 @@
             // 
             this.bodyFixtureSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.bodyFixtureSelect.FormattingEnabled = true;
-            this.bodyFixtureSelect.Items.AddRange(new object[] {
-            "Test Fixture"});
-            this.bodyFixtureSelect.Location = new System.Drawing.Point(67, 573);
+            this.bodyFixtureSelect.Location = new System.Drawing.Point(65, 575);
             this.bodyFixtureSelect.Name = "bodyFixtureSelect";
             this.bodyFixtureSelect.Size = new System.Drawing.Size(84, 21);
             this.bodyFixtureSelect.TabIndex = 33;
@@ -501,170 +415,57 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(134, 389);
+            this.label15.Location = new System.Drawing.Point(132, 391);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(17, 13);
             this.label15.TabIndex = 31;
             this.label15.Text = "Y:";
             // 
-            // bodyPositionY
-            // 
-            this.bodyPositionY.Location = new System.Drawing.Point(157, 385);
-            this.bodyPositionY.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyPositionY.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyPositionY.Name = "bodyPositionY";
-            this.bodyPositionY.Size = new System.Drawing.Size(51, 20);
-            this.bodyPositionY.TabIndex = 30;
-            this.bodyPositionY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionY_ValueChanged);
-            // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(15, 389);
+            this.label16.Location = new System.Drawing.Point(13, 391);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(57, 13);
             this.label16.TabIndex = 29;
             this.label16.Text = "Position X:";
             // 
-            // bodyPositionX
-            // 
-            this.bodyPositionX.Location = new System.Drawing.Point(78, 385);
-            this.bodyPositionX.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyPositionX.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyPositionX.Name = "bodyPositionX";
-            this.bodyPositionX.Size = new System.Drawing.Size(49, 20);
-            this.bodyPositionX.TabIndex = 28;
-            this.bodyPositionX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionX_ValueChanged);
-            // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(134, 364);
+            this.label14.Location = new System.Drawing.Point(132, 366);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(17, 13);
             this.label14.TabIndex = 27;
             this.label14.Text = "Y:";
             this.label14.Click += new System.EventHandler(this.label14_Click);
             // 
-            // bodyLinearVelY
-            // 
-            this.bodyLinearVelY.Location = new System.Drawing.Point(157, 360);
-            this.bodyLinearVelY.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyLinearVelY.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyLinearVelY.Name = "bodyLinearVelY";
-            this.bodyLinearVelY.Size = new System.Drawing.Size(51, 20);
-            this.bodyLinearVelY.TabIndex = 26;
-            this.bodyLinearVelY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelY_ValueChanged);
-            // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(7, 362);
+            this.label13.Location = new System.Drawing.Point(5, 364);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(67, 13);
             this.label13.TabIndex = 25;
             this.label13.Text = "Linear Vel X:";
             // 
-            // bodyLinearVelX
-            // 
-            this.bodyLinearVelX.Location = new System.Drawing.Point(78, 360);
-            this.bodyLinearVelX.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyLinearVelX.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyLinearVelX.Name = "bodyLinearVelX";
-            this.bodyLinearVelX.Size = new System.Drawing.Size(49, 20);
-            this.bodyLinearVelX.TabIndex = 24;
-            this.bodyLinearVelX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelX_ValueChanged);
-            // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(34, 337);
+            this.label12.Location = new System.Drawing.Point(32, 339);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(84, 13);
             this.label12.TabIndex = 23;
             this.label12.Text = "Linear Damping:";
             // 
-            // bodyLinearDamping
-            // 
-            this.bodyLinearDamping.Location = new System.Drawing.Point(124, 335);
-            this.bodyLinearDamping.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyLinearDamping.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyLinearDamping.Name = "bodyLinearDamping";
-            this.bodyLinearDamping.Size = new System.Drawing.Size(84, 20);
-            this.bodyLinearDamping.TabIndex = 22;
-            this.bodyLinearDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.numericUpDown5_ValueChanged);
-            // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(48, 313);
+            this.label11.Location = new System.Drawing.Point(46, 315);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(69, 13);
             this.label11.TabIndex = 21;
             this.label11.Text = "Inertia Scale:";
-            // 
-            // bodyInertiaScale
-            // 
-            this.bodyInertiaScale.Location = new System.Drawing.Point(124, 311);
-            this.bodyInertiaScale.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyInertiaScale.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyInertiaScale.Name = "bodyInertiaScale";
-            this.bodyInertiaScale.Size = new System.Drawing.Size(84, 20);
-            this.bodyInertiaScale.TabIndex = 20;
-            this.bodyInertiaScale.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.bodyInertiaScale.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertiaScale_ValueChanged);
             // 
             // bodyFixedRotation
             // 
@@ -673,7 +474,7 @@
             this.bodyFixedRotation.Items.AddRange(new object[] {
             "False",
             "True"});
-            this.bodyFixedRotation.Location = new System.Drawing.Point(124, 286);
+            this.bodyFixedRotation.Location = new System.Drawing.Point(122, 288);
             this.bodyFixedRotation.Name = "bodyFixedRotation";
             this.bodyFixedRotation.Size = new System.Drawing.Size(84, 21);
             this.bodyFixedRotation.TabIndex = 19;
@@ -682,7 +483,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(40, 289);
+            this.label10.Location = new System.Drawing.Point(38, 291);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(78, 13);
             this.label10.TabIndex = 18;
@@ -696,7 +497,7 @@
             this.bodyBullet.Items.AddRange(new object[] {
             "False",
             "True"});
-            this.bodyBullet.Location = new System.Drawing.Point(124, 259);
+            this.bodyBullet.Location = new System.Drawing.Point(122, 261);
             this.bodyBullet.Name = "bodyBullet";
             this.bodyBullet.Size = new System.Drawing.Size(84, 21);
             this.bodyBullet.TabIndex = 17;
@@ -705,7 +506,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(81, 262);
+            this.label9.Location = new System.Drawing.Point(79, 264);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(36, 13);
             this.label9.TabIndex = 16;
@@ -719,7 +520,7 @@
             "Dynamic",
             "Kinematic",
             "Static"});
-            this.bodyType.Location = new System.Drawing.Point(124, 232);
+            this.bodyType.Location = new System.Drawing.Point(122, 234);
             this.bodyType.Name = "bodyType";
             this.bodyType.Size = new System.Drawing.Size(84, 21);
             this.bodyType.TabIndex = 15;
@@ -728,7 +529,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(57, 235);
+            this.label8.Location = new System.Drawing.Point(55, 237);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(61, 13);
             this.label8.TabIndex = 14;
@@ -741,7 +542,7 @@
             this.bodyAwake.Items.AddRange(new object[] {
             "False",
             "True"});
-            this.bodyAwake.Location = new System.Drawing.Point(124, 205);
+            this.bodyAwake.Location = new System.Drawing.Point(122, 207);
             this.bodyAwake.Name = "bodyAwake";
             this.bodyAwake.Size = new System.Drawing.Size(84, 21);
             this.bodyAwake.TabIndex = 13;
@@ -750,7 +551,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(75, 208);
+            this.label7.Location = new System.Drawing.Point(73, 210);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(43, 13);
             this.label7.TabIndex = 12;
@@ -759,83 +560,29 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(32, 181);
+            this.label6.Location = new System.Drawing.Point(30, 183);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(86, 13);
             this.label6.TabIndex = 11;
             this.label6.Text = "Angular Velocity:";
             // 
-            // bodyAngularVelocity
-            // 
-            this.bodyAngularVelocity.Location = new System.Drawing.Point(124, 179);
-            this.bodyAngularVelocity.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyAngularVelocity.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyAngularVelocity.Name = "bodyAngularVelocity";
-            this.bodyAngularVelocity.Size = new System.Drawing.Size(84, 20);
-            this.bodyAngularVelocity.TabIndex = 10;
-            this.bodyAngularVelocity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularVelocity_ValueChanged);
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(27, 155);
+            this.label5.Location = new System.Drawing.Point(25, 157);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(91, 13);
             this.label5.TabIndex = 9;
             this.label5.Text = "Angular Damping:";
             // 
-            // bodyAngularDamping
-            // 
-            this.bodyAngularDamping.Location = new System.Drawing.Point(124, 153);
-            this.bodyAngularDamping.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyAngularDamping.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyAngularDamping.Name = "bodyAngularDamping";
-            this.bodyAngularDamping.Size = new System.Drawing.Size(84, 20);
-            this.bodyAngularDamping.TabIndex = 8;
-            this.bodyAngularDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularDamping_ValueChanged);
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(81, 129);
+            this.label4.Location = new System.Drawing.Point(79, 131);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(37, 13);
             this.label4.TabIndex = 7;
             this.label4.Text = "Angle:";
-            // 
-            // bodyAngle
-            // 
-            this.bodyAngle.Location = new System.Drawing.Point(124, 127);
-            this.bodyAngle.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.bodyAngle.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.bodyAngle.Name = "bodyAngle";
-            this.bodyAngle.Size = new System.Drawing.Size(84, 20);
-            this.bodyAngle.TabIndex = 6;
-            this.bodyAngle.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngle_ValueChanged);
             // 
             // bodyAllowSleep
             // 
@@ -844,7 +591,7 @@
             this.bodyAllowSleep.Items.AddRange(new object[] {
             "False",
             "True"});
-            this.bodyAllowSleep.Location = new System.Drawing.Point(124, 100);
+            this.bodyAllowSleep.Location = new System.Drawing.Point(122, 102);
             this.bodyAllowSleep.Name = "bodyAllowSleep";
             this.bodyAllowSleep.Size = new System.Drawing.Size(84, 21);
             this.bodyAllowSleep.TabIndex = 5;
@@ -853,7 +600,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(53, 103);
+            this.label3.Location = new System.Drawing.Point(51, 105);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 13);
             this.label3.TabIndex = 4;
@@ -867,7 +614,7 @@
             this.bodyActive.Items.AddRange(new object[] {
             "False",
             "True"});
-            this.bodyActive.Location = new System.Drawing.Point(124, 73);
+            this.bodyActive.Location = new System.Drawing.Point(122, 75);
             this.bodyActive.Name = "bodyActive";
             this.bodyActive.Size = new System.Drawing.Size(84, 21);
             this.bodyActive.TabIndex = 3;
@@ -876,7 +623,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(78, 76);
+            this.label2.Location = new System.Drawing.Point(76, 78);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(40, 13);
             this.label2.TabIndex = 2;
@@ -886,7 +633,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 50);
+            this.label1.Location = new System.Drawing.Point(5, 52);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(114, 13);
             this.label1.TabIndex = 1;
@@ -900,7 +647,7 @@
             this.bodyAutoMassRecalculate.Items.AddRange(new object[] {
             "False",
             "True"});
-            this.bodyAutoMassRecalculate.Location = new System.Drawing.Point(124, 47);
+            this.bodyAutoMassRecalculate.Location = new System.Drawing.Point(122, 49);
             this.bodyAutoMassRecalculate.Name = "bodyAutoMassRecalculate";
             this.bodyAutoMassRecalculate.Size = new System.Drawing.Size(84, 21);
             this.bodyAutoMassRecalculate.TabIndex = 0;
@@ -1001,9 +748,9 @@
             // 
             this.fixtureListBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fixtureListBox.FormattingEnabled = true;
-            this.fixtureListBox.Location = new System.Drawing.Point(0, 25);
+            this.fixtureListBox.Location = new System.Drawing.Point(0, 0);
             this.fixtureListBox.Name = "fixtureListBox";
-            this.fixtureListBox.Size = new System.Drawing.Size(229, 204);
+            this.fixtureListBox.Size = new System.Drawing.Size(229, 229);
             this.fixtureListBox.TabIndex = 1;
             this.fixtureListBox.SelectedIndexChanged += new System.EventHandler(this.fixtureListBox_SelectedIndexChanged);
             // 
@@ -1016,6 +763,7 @@
             this.toolStrip2.Size = new System.Drawing.Size(229, 25);
             this.toolStrip2.TabIndex = 2;
             this.toolStrip2.Text = "toolStrip2";
+            this.toolStrip2.Visible = false;
             // 
             // toolStripButton2
             // 
@@ -1147,14 +895,11 @@
             // 
             this.fixtureShape.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.fixtureShape.FormattingEnabled = true;
-            this.fixtureShape.Items.AddRange(new object[] {
-            "Dynamic",
-            "Kinetic",
-            "Static"});
             this.fixtureShape.Location = new System.Drawing.Point(125, 154);
             this.fixtureShape.Name = "fixtureShape";
             this.fixtureShape.Size = new System.Drawing.Size(84, 21);
             this.fixtureShape.TabIndex = 15;
+            this.fixtureShape.SelectedIndexChanged += new System.EventHandler(this.fixtureShape_SelectedIndexChanged);
             // 
             // label39
             // 
@@ -1196,24 +941,6 @@
             this.label41.TabIndex = 11;
             this.label41.Text = "Restitution:";
             // 
-            // fixtureRestitution
-            // 
-            this.fixtureRestitution.Location = new System.Drawing.Point(125, 128);
-            this.fixtureRestitution.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.fixtureRestitution.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.fixtureRestitution.Name = "fixtureRestitution";
-            this.fixtureRestitution.Size = new System.Drawing.Size(84, 20);
-            this.fixtureRestitution.TabIndex = 10;
-            this.fixtureRestitution.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureRestitution_ValueChanged);
-            // 
             // label42
             // 
             this.label42.AutoSize = true;
@@ -1223,24 +950,6 @@
             this.label42.TabIndex = 9;
             this.label42.Text = "Friction:";
             // 
-            // fixtureFriction
-            // 
-            this.fixtureFriction.Location = new System.Drawing.Point(125, 75);
-            this.fixtureFriction.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.fixtureFriction.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.fixtureFriction.Name = "fixtureFriction";
-            this.fixtureFriction.Size = new System.Drawing.Size(84, 20);
-            this.fixtureFriction.TabIndex = 8;
-            this.fixtureFriction.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureFriction_ValueChanged);
-            // 
             // label43
             // 
             this.label43.AutoSize = true;
@@ -1249,24 +958,6 @@
             this.label43.Size = new System.Drawing.Size(45, 13);
             this.label43.TabIndex = 7;
             this.label43.Text = "Density:";
-            // 
-            // fixtureDensity
-            // 
-            this.fixtureDensity.Location = new System.Drawing.Point(125, 49);
-            this.fixtureDensity.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.fixtureDensity.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.fixtureDensity.Name = "fixtureDensity";
-            this.fixtureDensity.Size = new System.Drawing.Size(84, 20);
-            this.fixtureDensity.TabIndex = 6;
-            this.fixtureDensity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureDensity_ValueChanged);
             // 
             // tabPage3
             // 
@@ -1409,6 +1100,311 @@
             this.threeToolStripMenuItem.Name = "threeToolStripMenuItem";
             this.threeToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.threeToolStripMenuItem.Text = "Three";
+            // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(575, 531);
+            this.panel1.TabIndex = 0;
+            this.panel1.Text = "holyCrapControl1";
+            this.panel1.Click += new System.EventHandler(this.panel1_Click);
+            this.panel1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.panel1_KeyPress);
+            this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
+            // 
+            // bodyCenterY
+            // 
+            this.bodyCenterY.Location = new System.Drawing.Point(155, 465);
+            this.bodyCenterY.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyCenterY.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyCenterY.Name = "bodyCenterY";
+            this.bodyCenterY.Size = new System.Drawing.Size(51, 20);
+            this.bodyCenterY.TabIndex = 47;
+            this.bodyCenterY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterY_ValueChanged);
+            // 
+            // bodyCenterX
+            // 
+            this.bodyCenterX.Location = new System.Drawing.Point(76, 465);
+            this.bodyCenterX.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyCenterX.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyCenterX.Name = "bodyCenterX";
+            this.bodyCenterX.Size = new System.Drawing.Size(49, 20);
+            this.bodyCenterX.TabIndex = 45;
+            this.bodyCenterX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterX_ValueChanged);
+            // 
+            // bodyInertia
+            // 
+            this.bodyInertia.Location = new System.Drawing.Point(122, 439);
+            this.bodyInertia.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyInertia.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyInertia.Name = "bodyInertia";
+            this.bodyInertia.Size = new System.Drawing.Size(84, 20);
+            this.bodyInertia.TabIndex = 43;
+            this.bodyInertia.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertia_ValueChanged);
+            // 
+            // bodyMass
+            // 
+            this.bodyMass.Location = new System.Drawing.Point(122, 413);
+            this.bodyMass.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyMass.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyMass.Name = "bodyMass";
+            this.bodyMass.Size = new System.Drawing.Size(84, 20);
+            this.bodyMass.TabIndex = 41;
+            this.bodyMass.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyMass_ValueChanged);
+            // 
+            // bodyPositionY
+            // 
+            this.bodyPositionY.Location = new System.Drawing.Point(155, 387);
+            this.bodyPositionY.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyPositionY.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyPositionY.Name = "bodyPositionY";
+            this.bodyPositionY.Size = new System.Drawing.Size(51, 20);
+            this.bodyPositionY.TabIndex = 30;
+            this.bodyPositionY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionY_ValueChanged);
+            // 
+            // bodyPositionX
+            // 
+            this.bodyPositionX.Location = new System.Drawing.Point(76, 387);
+            this.bodyPositionX.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyPositionX.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyPositionX.Name = "bodyPositionX";
+            this.bodyPositionX.Size = new System.Drawing.Size(49, 20);
+            this.bodyPositionX.TabIndex = 28;
+            this.bodyPositionX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionX_ValueChanged);
+            // 
+            // bodyLinearVelY
+            // 
+            this.bodyLinearVelY.Location = new System.Drawing.Point(155, 362);
+            this.bodyLinearVelY.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyLinearVelY.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyLinearVelY.Name = "bodyLinearVelY";
+            this.bodyLinearVelY.Size = new System.Drawing.Size(51, 20);
+            this.bodyLinearVelY.TabIndex = 26;
+            this.bodyLinearVelY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelY_ValueChanged);
+            // 
+            // bodyLinearVelX
+            // 
+            this.bodyLinearVelX.Location = new System.Drawing.Point(76, 362);
+            this.bodyLinearVelX.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyLinearVelX.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyLinearVelX.Name = "bodyLinearVelX";
+            this.bodyLinearVelX.Size = new System.Drawing.Size(49, 20);
+            this.bodyLinearVelX.TabIndex = 24;
+            this.bodyLinearVelX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelX_ValueChanged);
+            // 
+            // bodyLinearDamping
+            // 
+            this.bodyLinearDamping.Location = new System.Drawing.Point(122, 337);
+            this.bodyLinearDamping.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyLinearDamping.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyLinearDamping.Name = "bodyLinearDamping";
+            this.bodyLinearDamping.Size = new System.Drawing.Size(84, 20);
+            this.bodyLinearDamping.TabIndex = 22;
+            this.bodyLinearDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.numericUpDown5_ValueChanged);
+            // 
+            // bodyInertiaScale
+            // 
+            this.bodyInertiaScale.Location = new System.Drawing.Point(122, 313);
+            this.bodyInertiaScale.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyInertiaScale.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyInertiaScale.Name = "bodyInertiaScale";
+            this.bodyInertiaScale.Size = new System.Drawing.Size(84, 20);
+            this.bodyInertiaScale.TabIndex = 20;
+            this.bodyInertiaScale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.bodyInertiaScale.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertiaScale_ValueChanged);
+            // 
+            // bodyAngularVelocity
+            // 
+            this.bodyAngularVelocity.Location = new System.Drawing.Point(122, 181);
+            this.bodyAngularVelocity.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyAngularVelocity.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyAngularVelocity.Name = "bodyAngularVelocity";
+            this.bodyAngularVelocity.Size = new System.Drawing.Size(84, 20);
+            this.bodyAngularVelocity.TabIndex = 10;
+            this.bodyAngularVelocity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularVelocity_ValueChanged);
+            // 
+            // bodyAngularDamping
+            // 
+            this.bodyAngularDamping.Location = new System.Drawing.Point(122, 155);
+            this.bodyAngularDamping.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyAngularDamping.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyAngularDamping.Name = "bodyAngularDamping";
+            this.bodyAngularDamping.Size = new System.Drawing.Size(84, 20);
+            this.bodyAngularDamping.TabIndex = 8;
+            this.bodyAngularDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularDamping_ValueChanged);
+            // 
+            // bodyAngle
+            // 
+            this.bodyAngle.Location = new System.Drawing.Point(122, 129);
+            this.bodyAngle.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.bodyAngle.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.bodyAngle.Name = "bodyAngle";
+            this.bodyAngle.Size = new System.Drawing.Size(84, 20);
+            this.bodyAngle.TabIndex = 6;
+            this.bodyAngle.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngle_ValueChanged);
+            // 
+            // fixtureRestitution
+            // 
+            this.fixtureRestitution.Location = new System.Drawing.Point(125, 128);
+            this.fixtureRestitution.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.fixtureRestitution.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.fixtureRestitution.Name = "fixtureRestitution";
+            this.fixtureRestitution.Size = new System.Drawing.Size(84, 20);
+            this.fixtureRestitution.TabIndex = 10;
+            this.fixtureRestitution.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureRestitution_ValueChanged);
+            // 
+            // fixtureFriction
+            // 
+            this.fixtureFriction.Location = new System.Drawing.Point(125, 75);
+            this.fixtureFriction.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.fixtureFriction.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.fixtureFriction.Name = "fixtureFriction";
+            this.fixtureFriction.Size = new System.Drawing.Size(84, 20);
+            this.fixtureFriction.TabIndex = 8;
+            this.fixtureFriction.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureFriction_ValueChanged);
+            // 
+            // fixtureDensity
+            // 
+            this.fixtureDensity.Location = new System.Drawing.Point(125, 49);
+            this.fixtureDensity.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.fixtureDensity.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.fixtureDensity.Name = "fixtureDensity";
+            this.fixtureDensity.Size = new System.Drawing.Size(84, 20);
+            this.fixtureDensity.TabIndex = 6;
+            this.fixtureDensity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureDensity_ValueChanged);
             // 
             // Main
             // 
