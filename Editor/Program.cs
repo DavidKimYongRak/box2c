@@ -7,6 +7,12 @@ namespace Editor
 {
 	static class Program
 	{
+        public static Main MainForm
+        {
+            get;
+            set;
+        }
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -15,7 +21,8 @@ namespace Editor
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Main());
+            MainForm = new Main();
+			Application.Run(MainForm);
 		}
 	}
 }

@@ -31,7 +31,8 @@ namespace Editor
 		BodyObject HoverBody = null, SelectedBody = null;
         FixtureDefSerialized SelectedFixture = null;
 		List<BodyObject> bodies = new List<BodyObject>();
-        ShapeSerialized SelectedShape = null;
+        public ShapeSerialized SelectedShape = null;
+        CirclePanel circlePanel = new CirclePanel();
 
 		public class BodyObject
 		{
@@ -941,14 +942,38 @@ namespace Editor
         public void LoadShapeObjectSettings()
         {
             shapeName.Text = SelectedShape.Name;
+            shapePanel.Controls.Clear();
             if (SelectedShape.Shape.ShapeType == ShapeType.Circle)
             {
                 shapeType.SelectedIndex = 0;
+                shapePanel.Controls.Add(circlePanel);
+                CircleShape shape = (CircleShape)SelectedShape.Shape;
+                circlePanel.circleRadius.Value = Convert.ToDecimal(shape.Radius);
+                circlePanel.circlePositionX.Value = Convert.ToDecimal(shape.Position.X);
+                circlePanel.circlePositionY.Value = Convert.ToDecimal(shape.Position.Y);
             }
             if (SelectedShape.Shape.ShapeType == ShapeType.Polygon)
             {
                 shapeType.SelectedIndex = 1;
             }
+        }
+        public void circleRadius_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            CircleShape shape = (CircleShape)SelectedShape.Shape;
+            shape.Radius = (float)e.NewValue;
+            SelectedShape.Shape = shape;
+        }
+        public void circlePositionX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            CircleShape shape = (CircleShape)SelectedShape.Shape;
+            shape.Position = new Vec2( (float)e.NewValue ,shape.Position.Y);
+            SelectedShape.Shape = shape;
+        }
+        public void circlePositionY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+        {
+            CircleShape shape = (CircleShape)SelectedShape.Shape;
+            shape.Position = new Vec2(shape.Position.X, (float)e.NewValue);
+            SelectedShape.Shape = shape;
         }
 
         private void shapeName_TextChanged(object sender, EventArgs e)
@@ -966,6 +991,7 @@ namespace Editor
             {
                 SelectedShape.Shape = new PolygonShape();
             }
+            LoadShapeObjectSettings();
         }
 	}
 
