@@ -28,277 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-<<<<<<< .mine            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.panel1 = new Editor.HolyCrapControl();
-            this.Fixtures = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.bodyListBox = new System.Windows.Forms.ListBox();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.label22 = new System.Windows.Forms.Label();
-            this.bodyCenterY = new Editor.FloatNumericUpDown();
-            this.label23 = new System.Windows.Forms.Label();
-            this.bodyCenterX = new Editor.FloatNumericUpDown();
-            this.label21 = new System.Windows.Forms.Label();
-            this.bodyInertia = new Editor.FloatNumericUpDown();
-            this.label20 = new System.Windows.Forms.Label();
-            this.bodyMass = new Editor.FloatNumericUpDown();
-            this.bodyName = new System.Windows.Forms.TextBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.bodyFixtureDelete = new System.Windows.Forms.Button();
-            this.bodyFixtureAdd = new System.Windows.Forms.Button();
-            this.label18 = new System.Windows.Forms.Label();
-            this.bodyFixtureListBox = new System.Windows.Forms.ListBox();
-            this.bodyFixtureSelect = new System.Windows.Forms.ComboBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.bodyPositionY = new Editor.FloatNumericUpDown();
-            this.label16 = new System.Windows.Forms.Label();
-            this.bodyPositionX = new Editor.FloatNumericUpDown();
-            this.label14 = new System.Windows.Forms.Label();
-            this.bodyLinearVelY = new Editor.FloatNumericUpDown();
-            this.label13 = new System.Windows.Forms.Label();
-            this.bodyLinearVelX = new Editor.FloatNumericUpDown();
-            this.label12 = new System.Windows.Forms.Label();
-            this.bodyLinearDamping = new Editor.FloatNumericUpDown();
-            this.label11 = new System.Windows.Forms.Label();
-            this.bodyInertiaScale = new Editor.FloatNumericUpDown();
-            this.bodyFixedRotation = new System.Windows.Forms.ComboBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.bodyBullet = new System.Windows.Forms.ComboBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.bodyType = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.bodyAwake = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.bodyAngularVelocity = new Editor.FloatNumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
-            this.bodyAngularDamping = new Editor.FloatNumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.bodyAngle = new Editor.FloatNumericUpDown();
-            this.bodyAllowSleep = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.bodyActive = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.bodyAutoMassRecalculate = new System.Windows.Forms.ComboBox();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.listBox4 = new System.Windows.Forms.ListBox();
-            this.propertyGrid4 = new System.Windows.Forms.PropertyGrid();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.fixtureListBox = new System.Windows.Forms.ListBox();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.fixtureGroupIndex = new System.Windows.Forms.NumericUpDown();
-            this.fixtureMaskBits = new System.Windows.Forms.NumericUpDown();
-            this.fixtureCategoryBits = new System.Windows.Forms.NumericUpDown();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.fixtureName = new System.Windows.Forms.TextBox();
-            this.label28 = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.fixtureShape = new System.Windows.Forms.ComboBox();
-            this.label39 = new System.Windows.Forms.Label();
-            this.fixtureIsSensor = new System.Windows.Forms.ComboBox();
-            this.label40 = new System.Windows.Forms.Label();
-            this.label41 = new System.Windows.Forms.Label();
-            this.fixtureRestitution = new Editor.FloatNumericUpDown();
-            this.label42 = new System.Windows.Forms.Label();
-            this.fixtureFriction = new Editor.FloatNumericUpDown();
-            this.label43 = new System.Windows.Forms.Label();
-            this.fixtureDensity = new Editor.FloatNumericUpDown();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.oneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.twoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.threeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.toolStrip3 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label32 = new System.Windows.Forms.Label();
-            this.label33 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.label34 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            this.Fixtures.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
-            this.tabPage5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
-            this.splitContainer5.Panel1.SuspendLayout();
-            this.splitContainer5.Panel2.SuspendLayout();
-            this.splitContainer5.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
-            this.toolStrip2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureGroupIndex)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureMaskBits)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
-            this.splitContainer4.Panel1.SuspendLayout();
-            this.splitContainer4.Panel2.SuspendLayout();
-            this.splitContainer4.SuspendLayout();
-            this.toolStrip3.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.panel1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.Fixtures);
-            this.splitContainer1.Size = new System.Drawing.Size(822, 531);
-            this.splitContainer1.SplitterDistance = 575;
-            this.splitContainer1.TabIndex = 1;
-            // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(575, 531);
-            this.panel1.TabIndex = 0;
-            this.panel1.Text = "holyCrapControl1";
-            this.panel1.Click += new System.EventHandler(this.panel1_Click);
-            this.panel1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.panel1_KeyPress);
-            this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
-            // 
-            // Fixtures
-            // 
-            this.Fixtures.Controls.Add(this.tabPage1);
-            this.Fixtures.Controls.Add(this.tabPage5);
-            this.Fixtures.Controls.Add(this.tabPage2);
-            this.Fixtures.Controls.Add(this.tabPage3);
-            this.Fixtures.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Fixtures.Location = new System.Drawing.Point(0, 0);
-            this.Fixtures.Name = "Fixtures";
-            this.Fixtures.SelectedIndex = 0;
-            this.Fixtures.Size = new System.Drawing.Size(243, 531);
-            this.Fixtures.TabIndex = 2;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.splitContainer2);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(235, 505);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Bodies";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.bodyListBox);
-            this.splitContainer2.Panel1.Controls.Add(this.toolStrip1);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.AutoScroll = true;
-            this.splitContainer2.Panel2.Controls.Add(this.label22);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyCenterY);
-            this.splitContainer2.Panel2.Controls.Add(this.label23);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyCenterX);
-            this.splitContainer2.Panel2.Controls.Add(this.label21);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyInertia);
-            this.splitContainer2.Panel2.Controls.Add(this.label20);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyMass);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyName);
-            this.splitContainer2.Panel2.Controls.Add(this.label19);
-            this.splitContainer2.Panel2.Controls.Add(this.label17);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyFixtureDelete);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyFixtureAdd);
-            this.splitContainer2.Panel2.Controls.Add(this.label18);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyFixtureListBox);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyFixtureSelect);
-            this.splitContainer2.Panel2.Controls.Add(this.label15);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyPositionY);
-            this.splitContainer2.Panel2.Controls.Add(this.label16);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyPositionX);
-            this.splitContainer2.Panel2.Controls.Add(this.label14);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyLinearVelY);
-            this.splitContainer2.Panel2.Controls.Add(this.label13);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyLinearVelX);
-            this.splitContainer2.Panel2.Controls.Add(this.label12);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyLinearDamping);
-            this.splitContainer2.Panel2.Controls.Add(this.label11);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyInertiaScale);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyFixedRotation);
-            this.splitContainer2.Panel2.Controls.Add(this.label10);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyBullet);
-            this.splitContainer2.Panel2.Controls.Add(this.label9);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyType);
-            this.splitContainer2.Panel2.Controls.Add(this.label8);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyAwake);
-            this.splitContainer2.Panel2.Controls.Add(this.label7);
-            this.splitContainer2.Panel2.Controls.Add(this.label6);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyAngularVelocity);
-            this.splitContainer2.Panel2.Controls.Add(this.label5);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyAngularDamping);
-            this.splitContainer2.Panel2.Controls.Add(this.label4);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyAngle);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyAllowSleep);
-            this.splitContainer2.Panel2.Controls.Add(this.label3);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyActive);
-            this.splitContainer2.Panel2.Controls.Add(this.label2);
-            this.splitContainer2.Panel2.Controls.Add(this.label1);
-            this.splitContainer2.Panel2.Controls.Add(this.bodyAutoMassRecalculate);
-            this.splitContainer2.Size = new System.Drawing.Size(229, 499);
-            this.splitContainer2.SplitterDistance = 229;
-            this.splitContainer2.TabIndex = 2;
-            // 
-            // bodyListBox
-            // 
-            this.bodyListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bodyListBox.FormattingEnabled = true;
-            this.bodyListBox.Location = new System.Drawing.Point(0, 25);
-            this.bodyListBox.Name = "bodyListBox";
-            this.bodyListBox.Size = new System.Drawing.Size(229, 204);
-            this.bodyListBox.TabIndex = 1;
-            this.bodyListBox.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-=======			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.panel1 = new Editor.HolyCrapControl();
@@ -385,7 +114,16 @@
 			this.fixtureFriction = new Editor.FloatNumericUpDown();
 			this.label43 = new System.Windows.Forms.Label();
 			this.fixtureDensity = new Editor.FloatNumericUpDown();
-			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+			this.listBox1 = new System.Windows.Forms.ListBox();
+			this.toolStrip3 = new System.Windows.Forms.ToolStrip();
+			this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.label32 = new System.Windows.Forms.Label();
+			this.label33 = new System.Windows.Forms.Label();
+			this.comboBox1 = new System.Windows.Forms.ComboBox();
+			this.label34 = new System.Windows.Forms.Label();
 			this.oneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.twoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.threeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -411,7 +149,11 @@
 			((System.ComponentModel.ISupportInitialize)(this.fixtureGroupIndex)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.fixtureMaskBits)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).BeginInit();
-			this.contextMenuStrip1.SuspendLayout();
+			this.tabPage3.SuspendLayout();
+			this.splitContainer4.Panel1.SuspendLayout();
+			this.splitContainer4.Panel2.SuspendLayout();
+			this.splitContainer4.SuspendLayout();
+			this.toolStrip3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// splitContainer1
@@ -449,6 +191,7 @@
 			this.Fixtures.Controls.Add(this.tabPage1);
 			this.Fixtures.Controls.Add(this.tabPage5);
 			this.Fixtures.Controls.Add(this.tabPage2);
+			this.Fixtures.Controls.Add(this.tabPage3);
 			this.Fixtures.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.Fixtures.Location = new System.Drawing.Point(0, 0);
 			this.Fixtures.Name = "Fixtures";
@@ -547,7 +290,7 @@
 			// toolStrip1
 			// 
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
->>>>>>> .theirs            this.toolStripButton1});
+            this.toolStripButton1});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(229, 25);
@@ -1151,117 +894,7 @@
 			this.bodyAutoMassRecalculate.Items.AddRange(new object[] {
             "False",
             "True"});
-<<<<<<< .mine            this.bodyAutoMassRecalculate.Location = new System.Drawing.Point(124, 47);
-            this.bodyAutoMassRecalculate.Name = "bodyAutoMassRecalculate";
-            this.bodyAutoMassRecalculate.Size = new System.Drawing.Size(84, 21);
-            this.bodyAutoMassRecalculate.TabIndex = 0;
-            this.bodyAutoMassRecalculate.SelectedIndexChanged += new System.EventHandler(this.bodyAutoMassRecalculate_SelectedIndexChanged);
-            // 
-            // tabPage5
-            // 
-            this.tabPage5.Controls.Add(this.splitContainer5);
-            this.tabPage5.Location = new System.Drawing.Point(4, 22);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(235, 505);
-            this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "Joints";
-            this.tabPage5.UseVisualStyleBackColor = true;
-            // 
-            // splitContainer5
-            // 
-            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer5.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer5.Name = "splitContainer5";
-            this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer5.Panel1
-            // 
-            this.splitContainer5.Panel1.Controls.Add(this.listBox4);
-            // 
-            // splitContainer5.Panel2
-            // 
-            this.splitContainer5.Panel2.Controls.Add(this.propertyGrid4);
-            this.splitContainer5.Size = new System.Drawing.Size(229, 499);
-            this.splitContainer5.SplitterDistance = 229;
-            this.splitContainer5.TabIndex = 3;
-            // 
-            // listBox4
-            // 
-            this.listBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox4.FormattingEnabled = true;
-            this.listBox4.Location = new System.Drawing.Point(0, 0);
-            this.listBox4.Name = "listBox4";
-            this.listBox4.Size = new System.Drawing.Size(229, 229);
-            this.listBox4.TabIndex = 1;
-            this.listBox4.SelectedIndexChanged += new System.EventHandler(this.listBox4_SelectedIndexChanged);
-            // 
-            // propertyGrid4
-            // 
-            this.propertyGrid4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid4.Location = new System.Drawing.Point(0, 0);
-            this.propertyGrid4.Name = "propertyGrid4";
-            this.propertyGrid4.Size = new System.Drawing.Size(229, 266);
-            this.propertyGrid4.TabIndex = 0;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.splitContainer3);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(235, 505);
-            this.tabPage2.TabIndex = 5;
-            this.tabPage2.Text = "Fixtures";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // splitContainer3
-            // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer3.Panel1
-            // 
-            this.splitContainer3.Panel1.Controls.Add(this.fixtureListBox);
-            this.splitContainer3.Panel1.Controls.Add(this.toolStrip2);
-            // 
-            // 
-            // 
-            this.splitContainer3.Panel2.AutoScroll = true;
-            this.splitContainer3.Panel2.Controls.Add(this.groupBox1);
-            this.splitContainer3.Panel2.Controls.Add(this.fixtureName);
-            this.splitContainer3.Panel2.Controls.Add(this.label28);
-            this.splitContainer3.Panel2.Controls.Add(this.label29);
-            this.splitContainer3.Panel2.Controls.Add(this.fixtureShape);
-            this.splitContainer3.Panel2.Controls.Add(this.label39);
-            this.splitContainer3.Panel2.Controls.Add(this.fixtureIsSensor);
-            this.splitContainer3.Panel2.Controls.Add(this.label40);
-            this.splitContainer3.Panel2.Controls.Add(this.label41);
-            this.splitContainer3.Panel2.Controls.Add(this.fixtureRestitution);
-            this.splitContainer3.Panel2.Controls.Add(this.label42);
-            this.splitContainer3.Panel2.Controls.Add(this.fixtureFriction);
-            this.splitContainer3.Panel2.Controls.Add(this.label43);
-            this.splitContainer3.Panel2.Controls.Add(this.fixtureDensity);
-            this.splitContainer3.Size = new System.Drawing.Size(229, 499);
-            this.splitContainer3.SplitterDistance = 229;
-            this.splitContainer3.TabIndex = 3;
-            // 
-            // fixtureListBox
-            // 
-            this.fixtureListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fixtureListBox.FormattingEnabled = true;
-            this.fixtureListBox.Location = new System.Drawing.Point(0, 25);
-            this.fixtureListBox.Name = "fixtureListBox";
-            this.fixtureListBox.Size = new System.Drawing.Size(229, 204);
-            this.fixtureListBox.TabIndex = 1;
-            this.fixtureListBox.SelectedIndexChanged += new System.EventHandler(this.fixtureListBox_SelectedIndexChanged);
-            // 
-            // toolStrip2
-            // 
-            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-=======			this.bodyAutoMassRecalculate.Location = new System.Drawing.Point(124, 47);
+			this.bodyAutoMassRecalculate.Location = new System.Drawing.Point(124, 47);
 			this.bodyAutoMassRecalculate.Name = "bodyAutoMassRecalculate";
 			this.bodyAutoMassRecalculate.Size = new System.Drawing.Size(84, 21);
 			this.bodyAutoMassRecalculate.TabIndex = 0;
@@ -1371,7 +1004,7 @@
 			// toolStrip2
 			// 
 			this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
->>>>>>> .theirs            this.toolStripButton2});
+            this.toolStripButton2});
 			this.toolStrip2.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip2.Name = "toolStrip2";
 			this.toolStrip2.Size = new System.Drawing.Size(229, 25);
@@ -1628,200 +1261,116 @@
 			this.fixtureDensity.TabIndex = 6;
 			this.fixtureDensity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureDensity_ValueChanged);
 			// 
-			// contextMenuStrip1
+			// tabPage3
 			// 
-			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.oneToolStripMenuItem,
-            this.twoToolStripMenuItem,
-            this.threeToolStripMenuItem});
-<<<<<<< .mine            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(114, 70);
-            // 
-            // oneToolStripMenuItem
-            // 
-            this.oneToolStripMenuItem.Name = "oneToolStripMenuItem";
-            this.oneToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
-            this.oneToolStripMenuItem.Text = "One";
-            // 
-            // twoToolStripMenuItem
-            // 
-            this.twoToolStripMenuItem.Name = "twoToolStripMenuItem";
-            this.twoToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
-            this.twoToolStripMenuItem.Text = "Two";
-            // 
-            // threeToolStripMenuItem
-            // 
-            this.threeToolStripMenuItem.Name = "threeToolStripMenuItem";
-            this.threeToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
-            this.threeToolStripMenuItem.Text = "Three";
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.splitContainer4);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(235, 505);
-            this.tabPage3.TabIndex = 6;
-            this.tabPage3.Text = "tabPage3";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // splitContainer4
-            // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer4.Name = "splitContainer4";
-            this.splitContainer4.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer4.Panel1
-            // 
-            this.splitContainer4.Panel1.Controls.Add(this.listBox1);
-            this.splitContainer4.Panel1.Controls.Add(this.toolStrip3);
-            // 
-            // splitContainer4.Panel2
-            // 
-            this.splitContainer4.Panel2.AutoScroll = true;
-            this.splitContainer4.Panel2.Controls.Add(this.textBox1);
-            this.splitContainer4.Panel2.Controls.Add(this.label32);
-            this.splitContainer4.Panel2.Controls.Add(this.label33);
-            this.splitContainer4.Panel2.Controls.Add(this.comboBox1);
-            this.splitContainer4.Panel2.Controls.Add(this.label34);
-            this.splitContainer4.Size = new System.Drawing.Size(229, 499);
-            this.splitContainer4.SplitterDistance = 229;
-            this.splitContainer4.TabIndex = 4;
-            // 
-            // listBox1
-            // 
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(0, 25);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(229, 204);
-            this.listBox1.TabIndex = 1;
-            // 
-            // toolStrip3
-            // 
-            this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.tabPage3.Controls.Add(this.splitContainer4);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage3.Size = new System.Drawing.Size(235, 505);
+			this.tabPage3.TabIndex = 6;
+			this.tabPage3.Text = "tabPage3";
+			this.tabPage3.UseVisualStyleBackColor = true;
+			// 
+			// splitContainer4
+			// 
+			this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer4.Location = new System.Drawing.Point(3, 3);
+			this.splitContainer4.Name = "splitContainer4";
+			this.splitContainer4.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// splitContainer4.Panel1
+			// 
+			this.splitContainer4.Panel1.Controls.Add(this.listBox1);
+			this.splitContainer4.Panel1.Controls.Add(this.toolStrip3);
+			// 
+			// splitContainer4.Panel2
+			// 
+			this.splitContainer4.Panel2.AutoScroll = true;
+			this.splitContainer4.Panel2.Controls.Add(this.textBox1);
+			this.splitContainer4.Panel2.Controls.Add(this.label32);
+			this.splitContainer4.Panel2.Controls.Add(this.label33);
+			this.splitContainer4.Panel2.Controls.Add(this.comboBox1);
+			this.splitContainer4.Panel2.Controls.Add(this.label34);
+			this.splitContainer4.Size = new System.Drawing.Size(229, 499);
+			this.splitContainer4.SplitterDistance = 229;
+			this.splitContainer4.TabIndex = 4;
+			// 
+			// listBox1
+			// 
+			this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listBox1.FormattingEnabled = true;
+			this.listBox1.Location = new System.Drawing.Point(0, 25);
+			this.listBox1.Name = "listBox1";
+			this.listBox1.Size = new System.Drawing.Size(229, 204);
+			this.listBox1.TabIndex = 1;
+			// 
+			// toolStrip3
+			// 
+			this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton3});
-            this.toolStrip3.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip3.Name = "toolStrip3";
-            this.toolStrip3.Size = new System.Drawing.Size(229, 25);
-            this.toolStrip3.TabIndex = 2;
-            this.toolStrip3.Text = "toolStrip3";
-            // 
-            // toolStripButton3
-            // 
-            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton3.Text = "toolStripButton1";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(78, 23);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(130, 20);
-            this.textBox1.TabIndex = 40;
-            this.textBox1.Text = "Test Fixture";
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(36, 26);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(38, 13);
-            this.label32.TabIndex = 39;
-            this.label32.Text = "Name:";
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label33.Location = new System.Drawing.Point(7, 3);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(101, 13);
-            this.label33.TabIndex = 38;
-            this.label33.Text = "Shape Attributes";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+			this.toolStrip3.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip3.Name = "toolStrip3";
+			this.toolStrip3.Size = new System.Drawing.Size(229, 25);
+			this.toolStrip3.TabIndex = 2;
+			this.toolStrip3.Text = "toolStrip3";
+			// 
+			// toolStripButton3
+			// 
+			this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
+			this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton3.Name = "toolStripButton3";
+			this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
+			this.toolStripButton3.Text = "toolStripButton1";
+			// 
+			// textBox1
+			// 
+			this.textBox1.Location = new System.Drawing.Point(78, 23);
+			this.textBox1.Name = "textBox1";
+			this.textBox1.Size = new System.Drawing.Size(130, 20);
+			this.textBox1.TabIndex = 40;
+			this.textBox1.Text = "Test Fixture";
+			// 
+			// label32
+			// 
+			this.label32.AutoSize = true;
+			this.label32.Location = new System.Drawing.Point(36, 26);
+			this.label32.Name = "label32";
+			this.label32.Size = new System.Drawing.Size(38, 13);
+			this.label32.TabIndex = 39;
+			this.label32.Text = "Name:";
+			// 
+			// label33
+			// 
+			this.label33.AutoSize = true;
+			this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label33.Location = new System.Drawing.Point(7, 3);
+			this.label33.Name = "label33";
+			this.label33.Size = new System.Drawing.Size(101, 13);
+			this.label33.TabIndex = 38;
+			this.label33.Text = "Shape Attributes";
+			// 
+			// comboBox1
+			// 
+			this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBox1.FormattingEnabled = true;
+			this.comboBox1.Items.AddRange(new object[] {
             "Circle",
             "Polygon"});
-            this.comboBox1.Location = new System.Drawing.Point(93, 49);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(84, 21);
-            this.comboBox1.TabIndex = 15;
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(46, 52);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(34, 13);
-            this.label34.TabIndex = 14;
-            this.label34.Text = "Type:";
-            // 
-            // Main
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(822, 531);
-            this.Controls.Add(this.splitContainer1);
-            this.Name = "Main";
-            this.Text = "Main";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
-            this.Load += new System.EventHandler(this.Main_Load);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.Fixtures.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            this.splitContainer2.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            this.tabPage5.ResumeLayout(false);
-            this.splitContainer5.Panel1.ResumeLayout(false);
-            this.splitContainer5.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
-            this.splitContainer5.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel1.PerformLayout();
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            this.splitContainer3.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureGroupIndex)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureMaskBits)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.splitContainer4.Panel1.ResumeLayout(false);
-            this.splitContainer4.Panel1.PerformLayout();
-            this.splitContainer4.Panel2.ResumeLayout(false);
-            this.splitContainer4.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
-            this.splitContainer4.ResumeLayout(false);
-            this.toolStrip3.ResumeLayout(false);
-            this.toolStrip3.PerformLayout();
-            this.ResumeLayout(false);
-=======			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(114, 70);
+			this.comboBox1.Location = new System.Drawing.Point(93, 49);
+			this.comboBox1.Name = "comboBox1";
+			this.comboBox1.Size = new System.Drawing.Size(84, 21);
+			this.comboBox1.TabIndex = 15;
+			// 
+			// label34
+			// 
+			this.label34.AutoSize = true;
+			this.label34.Location = new System.Drawing.Point(46, 52);
+			this.label34.Name = "label34";
+			this.label34.Size = new System.Drawing.Size(34, 13);
+			this.label34.TabIndex = 14;
+			this.label34.Text = "Type:";
 			// 
 			// oneToolStripMenuItem
 			// 
@@ -1880,16 +1429,22 @@
 			((System.ComponentModel.ISupportInitialize)(this.fixtureGroupIndex)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.fixtureMaskBits)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).EndInit();
-			this.contextMenuStrip1.ResumeLayout(false);
+			this.tabPage3.ResumeLayout(false);
+			this.splitContainer4.Panel1.ResumeLayout(false);
+			this.splitContainer4.Panel1.PerformLayout();
+			this.splitContainer4.Panel2.ResumeLayout(false);
+			this.splitContainer4.Panel2.PerformLayout();
+			this.splitContainer4.ResumeLayout(false);
+			this.toolStrip3.ResumeLayout(false);
+			this.toolStrip3.PerformLayout();
 			this.ResumeLayout(false);
->>>>>>> .theirs
+
 		}
 
 		#endregion
 
 		private HolyCrapControl panel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem oneToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem twoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem threeToolStripMenuItem;
@@ -1985,7 +1540,7 @@
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Label label34;
+		private System.Windows.Forms.Label label34;
 
 	}
 }
