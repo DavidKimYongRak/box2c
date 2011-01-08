@@ -31,6 +31,7 @@ namespace Editor
 		BodyObject HoverBody = null, SelectedBody = null;
         FixtureDefSerialized SelectedFixture = null;
 		List<BodyObject> bodies = new List<BodyObject>();
+        ShapeSerialized SelectedShape = null;
 
 		public class BodyObject
 		{
@@ -222,6 +223,11 @@ namespace Editor
 				var x = deserializer.Joints[i];
 				listBox4.Items.Add(x.Joint.JointType.ToString() + " Joint "+i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " ("+x.Name+")"));
 			}
+            for (int i = 0; i < deserializer.Shapes.Count; ++i)
+            {
+                var x = deserializer.Shapes[i];
+                shapeListBox.Items.Add("Shape " + i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " (" + x.Name + ")"));
+            }
 
 			debugDraw = new TestDebugDraw();
 			debugDraw.Flags = DebugFlags.Shapes | DebugFlags.Joints | DebugFlags.CenterOfMasses;
@@ -607,6 +613,7 @@ namespace Editor
 			simulationThread.Start();
             bodyListBox.SelectedIndex = 0;
             fixtureListBox.SelectedIndex = 0;
+            shapeListBox.SelectedIndex = 0;
 		}
 
 		private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -920,6 +927,45 @@ namespace Editor
         private void fixtureMaskBits_ValueChanged(object sender, EventArgs e)
         {
             SelectedFixture.Fixture.Filter.MaskBits = (ushort)fixtureMaskBits.Value;
+        }
+
+        private void shapeListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (fixtureListBox.SelectedIndex == -1)
+                return;
+
+            SelectedShape = deserializer.Shapes[shapeListBox.SelectedIndex];
+
+            LoadShapeObjectSettings();
+        }
+        public void LoadShapeObjectSettings()
+        {
+            shapeName.Text = SelectedShape.Name;
+            if (SelectedShape.Shape.ShapeType == ShapeType.Circle)
+            {
+                shapeType.SelectedIndex = 0;
+            }
+            if (SelectedShape.Shape.ShapeType == ShapeType.Polygon)
+            {
+                shapeType.SelectedIndex = 1;
+            }
+        }
+
+        private void shapeName_TextChanged(object sender, EventArgs e)
+        {
+            SelectedShape.Name = shapeName.Text;
+        }
+
+        private void shapeType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (shapeType.SelectedIndex == 0)
+            {
+                SelectedShape.Shape = new CircleShape();
+            }
+            if (shapeType.SelectedIndex == 1)
+            {
+                SelectedShape.Shape = new PolygonShape();
+            }
         }
 	}
 
