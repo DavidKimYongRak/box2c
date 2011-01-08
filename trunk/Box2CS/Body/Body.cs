@@ -12,7 +12,6 @@ namespace Box2CS
 		Dynamic,
 	};
 
-	[TypeConverter(typeof(ExpandableObjectConverter))]
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BodyDef : IFixedSize
 	{
@@ -130,8 +129,9 @@ namespace Box2CS
 		{
 		}
 
-		[Category("Other")]
-		[Description("User-specific and application-specific data.")]
+		/// <summary>
+		/// User-specific and application-specific data.
+		/// </summary>
 		public object UserData
 		{
 			get { return UserDataStorage.BodyStorage.ObjectFromHandle(UserDataStorage.IntPtrToHandle(_userData)); }
@@ -153,111 +153,129 @@ namespace Box2CS
 			}
 		}
 
-		[Category("Movement")]
-		[Description("The position of the body in the world.")]
+		/// <summary>
+		/// Get or set the position of the body in the world.
+		/// </summary>
 		public Vec2 Position
 		{
 			get { return _position; }
 			set { _position = value; }
 		}
 
-		[Category("Movement")]
-		[Description("The angle of the body.")]
+		/// <summary>
+		/// Get or set the angle of the body.
+		/// </summary>
 		public float Angle
 		{
 			get { return _angle; }
 			set { _angle = value; }
 		}
 
-		[Category("Movement")]
-		[Description("The linear velocity of the body.")]
+		/// <summary>
+		/// Get or set the linear velocity of the body.
+		/// </summary>
 		public Vec2 LinearVelocity
 		{
 			get { return _linearVelocity; }
 			set { _linearVelocity = value; }
 		}
 
-		[Category("Movement")]
-		[Description("The angular velocity of the body.")]
+		/// <summary>
+		/// Get or set the angular velocity of the body.
+		/// </summary>
 		public float AngularVelocity
 		{
 			get { return _angularVelocity; }
 			set { _angularVelocity = value; }
 		}
 
-		[Category("Movement")]
-		[Description("This body's resistance to linear movement.")]
+		/// <summary>
+		/// Get or set this body's resistance to linear movement.
+		/// </summary>
 		public float LinearDamping
 		{
 			get { return _linearDamping; }
 			set { _linearDamping = value; }
 		}
 
-		[Category("Movement")]
-		[Description("This body's resistance to angular movement.")]
+		/// <summary>
+		/// Get or set this body's resistance to angular movement.
+		/// </summary>
 		public float AngularDamping
 		{
 			get { return _angularDamping; }
 			set { _angularDamping = value; }
 		}
 
-		[Category("Flags")]
-		[Description("True if this body is allowed to sleep.")]
+		/// <summary>
+		/// Get or set whether this body is allowed to sleep or not.
+		/// </summary>
 		public bool AllowSleep
 		{
 			get { return _allowSleep; }
 			set { _allowSleep = value; }
 		}
 
-		[Category("Flags")]
-		[Description("True if this body begins awake.")]
+		/// <summary>
+		/// Get or set whether this body will begin awake or not.
+		/// </summary>
 		public bool Awake
 		{
 			get { return _awake; }
 			set { _awake = value; }
 		}
 
-		[Category("Flags")]
-		[Description("True if this body can not rotate.")]
+		/// <summary>
+		/// Get or set whether this body can rotate or not.
+		/// </summary>
 		public bool FixedRotation
 		{
 			get { return _fixedRotation; }
 			set { _fixedRotation = value; }
 		}
 
-		[Category("Flags")]
-		[Description("True if this body should always be under continuous collision detection.")]
+		/// <summary>
+		/// Get or set whether this body will use continuous collision detection or not.
+		/// </summary>
 		public bool Bullet
 		{
 			get { return _bullet; }
 			set { _bullet = value; }
 		}
 
-		[Category("Main")]
-		[Description("The type of body.")]
+		/// <summary>
+		/// Get or set the type of this body.
+		/// </summary>e
 		public BodyType BodyType
 		{
 			get { return _type; }
 			set { _type = value; }
 		}
 
-		[Category("Flags")]
-		[Description("True if this body is currently active.")]
+		/// <summary>
+		/// Get or set whether this body will be active or not.
+		/// </summary>
 		public bool Active
 		{
 			get { return _active; }  
 			set { _active = value; }
 		}
 
-		[Category("Other")]
-		[Description("???")]
+		/// <summary>
+		/// Get or set the inertia scale of the body.
+		/// </summary>
 		public float InertiaScale
 		{
 			get { return _inertiaScale; }
 			set { _inertiaScale = value; }
 		}
 
-		public MassData ComputeMass(FixtureDef[] fixtures)
+		/// <summary>
+		/// Compute the mass for this body from an array of fixtures.
+		/// </summary>
+		/// <param name="fixtures">The array of fixtures.</param>
+		/// <returns>The calculated mass data.</returns>
+		public MassData ComputeMass(IEnumerable<FixtureDef> fixtures)
 		{
 			// Compute mass data from shapes. Each shape has its own density.
 			float m_mass = 0.0f;
@@ -487,156 +505,124 @@ namespace Box2CS
 			return new Body(ptr);
 		}
 
-		public Fixture CreateFixture(FixtureDef def)
-		{
-			def.SetShape(def.Shape.Lock());
-			Fixture fixture;
-			using (var structPtr = new StructToPtrMarshaller(def.Internal))
-				fixture = Fixture.FromPtr(NativeMethods.b2body_createfixture(_bodyPtr, structPtr.Pointer));
-			def.Shape.Unlock();
-			return fixture;
-		}
-
-		public Fixture CreateFixture(Shape shape, float density)
-		{
-			var ptr = shape.Lock();
-			var fix = Fixture.FromPtr(NativeMethods.b2body_createfixturefromshape(_bodyPtr, ptr, density));
-			shape.Unlock();
-			return fix;
-		}
-
-		public void DestroyFixture(Fixture fixture)
-		{
-			NativeMethods.b2body_destroyfixture(_bodyPtr, fixture.FixturePtr);
-		}
-
-		public void SetTransform(Vec2 position, float angle)
-		{
-			NativeMethods.b2body_settransform(_bodyPtr, position, angle);
-		}
-
+		/// <summary>
+		/// Get the transform of this body.
+		/// </summary>
 		public Transform Transform
 		{
-			get
-			{
-				Transform temp;
-				
-				NativeMethods.b2body_gettransform(_bodyPtr, out temp);
-				
-				return temp;
-			}
+			get { Transform temp; NativeMethods.b2body_gettransform(_bodyPtr, out temp); return temp; }
 		}
 
+		/// <summary>
+		/// Get or set the position of this body.
+		/// </summary>
 		public Vec2 Position
 		{
 			get { Vec2 temp; NativeMethods.b2body_getposition(_bodyPtr, out temp); return temp; }
 			set { SetTransform(value, Angle); }
 		}
 
+		/// <summary>
+		/// Get or set the angle of this body.
+		/// </summary>
 		public float Angle
 		{
 			get { return NativeMethods.b2body_getangle(_bodyPtr); }
 			set { SetTransform(Position, value); }
 		}
 
+		/// <summary>
+		/// Get the center of the body in world coordinates.
+		/// </summary>
 		public Vec2 WorldCenter
 		{
 			get { Vec2 temp; NativeMethods.b2body_getworldcenter(_bodyPtr, out temp); return temp; }
 		}
 
+		/// <summary>
+		/// Get the center of the body in local coordinates.
+		/// </summary>
 		public Vec2 LocalCenter
 		{
 			get { Vec2 temp; NativeMethods.b2body_getlocalcenter(_bodyPtr, out temp); return temp; }
 		}
 
+		/// <summary>
+		/// Get or set the linear velocity of this body.
+		/// </summary>
 		public Vec2 LinearVelocity
 		{
 			get { Vec2 temp; NativeMethods.b2body_getlinearvelocity(_bodyPtr, out temp); return temp; }
 			set { NativeMethods.b2body_setlinearvelocity(_bodyPtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set the angular velocity of this body.
+		/// </summary>
 		public float AngularVelocity
 		{
 			get { return NativeMethods.b2body_getangularvelocity(_bodyPtr); }
 			set { NativeMethods.b2body_setangularvelocity(_bodyPtr, value); }
 		}
 
+		/// <summary>
+		/// Get the next body in the world's body list.
+		/// </summary>
 		public Body Next
 		{
 			get { return Body.FromPtr(NativeMethods.b2body_getnext(_bodyPtr)); }
 		}
 
-		public void ApplyForce(Vec2 force, Vec2 point)
-		{
-			NativeMethods.b2body_applyforce(_bodyPtr, force, point);
-		}
-
-		public void ApplyTorque(float torque)
-		{
-			NativeMethods.b2body_applytorque(_bodyPtr, torque);
-		}
-
-		public void ApplyLinearImpulse(Vec2 force, Vec2 point)
-		{
-			NativeMethods.b2body_applylinearimpulse(_bodyPtr, force, point);
-		}
-
-		public void ApplyAngularImpulse(float impulse)
-		{
-			NativeMethods.b2body_applyangularimpulse(_bodyPtr, impulse);
-		}
-
+		/// <summary>
+		/// Get or set the mass of this body.
+		/// </summary>
 		public float Mass
 		{
 			get { return NativeMethods.b2body_getmass(_bodyPtr); }
-			set
-			{
-				var x = MassData;
-				MassData = new MassData(value, x.Value.Center, x.Value.Inertia);
-			}
+			set { var x = MassData; MassData = new MassData(value, x.Value.Center, x.Value.Inertia); }
 		}
 
+		/// <summary>
+		/// Get or set the rotational inertia of this body.
+		/// </summary>
 		public float Inertia
 		{
 			get { return NativeMethods.b2body_getinertia(_bodyPtr); }
-			set
-			{
-				var x = MassData;
-				MassData = new MassData(x.Value.Mass, x.Value.Center, value);
-			}
+			set { var x = MassData; MassData = new MassData(x.Value.Mass, x.Value.Center, value); }
 		}
 
+		/// <summary>
+		/// Get or set the center of gravity of this body.
+		/// </summary>
 		public Vec2 CenterOfGravity
 		{
 			get { return MassData.Value.Center; }
-			set
-			{
-				var x = MassData;
-				MassData = new MassData(x.Value.Mass, value, x.Value.Inertia);
-			}
+			set { var x = MassData; MassData = new MassData(x.Value.Mass, value, x.Value.Inertia); }
 		}
 
+		/// <summary>
+		/// Get the inverted mass of this body.
+		/// </summary>
 		public float InvMass
 		{
 			get { return 1.0f / Mass; }
 		}
 
+		/// <summary>
+		/// Get the inverted inertia of this body.
+		/// </summary>
 		public float InvInertia
 		{
 			get { return 1.0f / Inertia; }
 		}
 
+		/// <summary>
+		/// Get or set the MassData of this body.
+		/// </summary>
+		/// <remarks>This property is nullable. Setting the value to null will cause the body to reset its mass to default.</remarks>
 		public MassData? MassData
 		{
-			get
-			{
-				MassData returnVal = new MassData();
-
-				NativeMethods.b2body_getmassdata(_bodyPtr, out returnVal);
-
-				return returnVal;
-			}
-
+			get { MassData returnVal = new MassData(); NativeMethods.b2body_getmassdata(_bodyPtr, out returnVal); return returnVal; }
 			set
 			{
 				if (value == null)
@@ -650,101 +636,89 @@ namespace Box2CS
 			}
 		}
 
-		public Vec2 GetWorldPoint(Vec2 localPoint)
-		{
-			Vec2 temp;
-			NativeMethods.b2body_getworldpoint(_bodyPtr, localPoint, out temp);
-			return temp;
-		}
-
-		public Vec2 GetWorldVector(Vec2 localPoint)
-		{
-			Vec2 temp;
-			NativeMethods.b2body_getworldvector(_bodyPtr, localPoint, out temp);
-			return temp;
-		}
-
-		public Vec2 GetLocalPoint(Vec2 worldPoint)
-		{
-			Vec2 temp;
-			NativeMethods.b2body_getlocalpoint(_bodyPtr, worldPoint, out temp);
-			return temp;
-		}
-
-		public Vec2 GetLocalVector(Vec2 worldPoint)
-		{
-			Vec2 temp;
-			NativeMethods.b2body_getlocalvector(_bodyPtr, worldPoint, out temp);
-			return temp;
-		}
-
-		public Vec2 GetLinearVelocityFromWorldVector(Vec2 localPoint)
-		{
-			Vec2 temp;
-			NativeMethods.b2body_getlinearvelocityfromworldvector(_bodyPtr, localPoint, out temp);
-			return temp;
-		}
-
-		public Vec2 GetLinearVelocityFromLocalVector(Vec2 localPoint)
-		{
-			Vec2 temp;
-			NativeMethods.b2body_getlinearvelocityfromlocalvector(_bodyPtr, localPoint, out temp);
-			return temp;
-		}
-
+		/// <summary>
+		/// Get or set the linear damping of this body.
+		/// </summary>
 		public float LinearDamping
 		{
 			get { return NativeMethods.b2body_getlineardamping(_bodyPtr); }
 			set { NativeMethods.b2body_setlineardamping(_bodyPtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set the angular damping of this body.
+		/// </summary>
 		public float AngularDamping
 		{
 			get { return NativeMethods.b2body_getangulardamping(_bodyPtr); }
 			set { NativeMethods.b2body_setangulardamping(_bodyPtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set the bodytype of this body.
+		/// </summary>
 		public BodyType BodyType
 		{
 			get { return (BodyType)NativeMethods.b2body_gettype(_bodyPtr); }
 			set { NativeMethods.b2body_settype(_bodyPtr, (int)value); }
 		}
 
+		/// <summary>
+		/// Get or set whether this body is a bullet (continuous collision).
+		/// </summary>
 		public bool IsBullet
 		{
 			get { return NativeMethods.b2body_getbullet(_bodyPtr); }
 			set { NativeMethods.b2body_setbullet(_bodyPtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set whether this body is allowed to sleep.
+		/// </summary>
 		public bool IsSleepingAllowed
 		{
 			get { return NativeMethods.b2body_getissleepingallowed(_bodyPtr); }
 			set { NativeMethods.b2body_setissleepingallowed(_bodyPtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set whether this body is currently awake.
+		/// </summary>
 		public bool IsAwake
 		{
 			get { return NativeMethods.b2body_getawake(_bodyPtr); }
 			set { NativeMethods.b2body_setawake(_bodyPtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set whether this body is active or not.
+		/// </summary>
 		public bool IsActive
 		{
 			get { return NativeMethods.b2body_getactive(_bodyPtr); }
 			set { NativeMethods.b2body_setactive(_bodyPtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set whether this body is allowed to rotate or not.
+		/// </summary>
 		public bool IsFixedRotation
 		{
 			get { return NativeMethods.b2body_getfixedrotation(_bodyPtr); }
 			set { NativeMethods.b2body_setfixedrotation(_bodyPtr, value); }
 		}
 
+		/// <summary>
+		/// Get the first fixture in the list of fixtures for this body.
+		/// </summary>
 		public Fixture FixtureList
 		{
 			get { return Fixture.FromPtr(NativeMethods.b2body_getfixturelist(_bodyPtr)); }
 		}
 
+		/// <summary>
+		/// Get the enumerated list of fixtures.
+		/// </summary>
 		public IEnumerable<Fixture> Fixtures
 		{
 			get
@@ -754,11 +728,17 @@ namespace Box2CS
 			}
 		}
 
+		/// <summary>
+		/// Get the first joint in the list of joint edges for this body.
+		/// </summary>
 		public JointEdge JointList
 		{
 			get { return JointEdge.FromPtr(NativeMethods.b2body_getjointlist(_bodyPtr)); }
 		}
 
+		/// <summary>
+		/// Get the enumerated list of joints.
+		/// </summary>
 		public IEnumerable<JointEdge> Joints
 		{
 			get
@@ -768,11 +748,17 @@ namespace Box2CS
 			}
 		}
 
+		/// <summary>
+		/// Get the first contact in the list of contact edges for this body.
+		/// </summary>
 		public ContactEdge ContactList
 		{
 			get { return ContactEdge.FromPtr(NativeMethods.b2body_getcontactlist(_bodyPtr)); }
 		}
 
+		/// <summary>
+		/// Get the enumerated list of contacts.
+		/// </summary>
 		public IEnumerable<ContactEdge> Contacts
 		{
 			get
@@ -782,6 +768,9 @@ namespace Box2CS
 			}
 		}
 
+		/// <summary>
+		/// Application-specific and user-specific data for this body.
+		/// </summary>
 		public object UserData
 		{
 			get
@@ -806,9 +795,170 @@ namespace Box2CS
 			}
 		}
 
+		/// <summary>
+		/// Get the world this body is a part of.
+		/// </summary>
 		public World World
 		{
 			get { return World.FromPtr(NativeMethods.b2body_getworld(_bodyPtr)); }
+		}
+
+		/// <summary>
+		/// Attach a fixture to this shape.
+		/// </summary>
+		/// <param name="def">The fixture definition to add.</param>
+		/// <returns>The created Fixture object.</returns>
+		public Fixture CreateFixture(FixtureDef def)
+		{
+			def.SetShape(def.Shape.Lock());
+			Fixture fixture;
+			using (var structPtr = new StructToPtrMarshaller(def.Internal))
+				fixture = Fixture.FromPtr(NativeMethods.b2body_createfixture(_bodyPtr, structPtr.Pointer));
+			def.Shape.Unlock();
+			return fixture;
+		}
+
+		/// <summary>
+		/// Attach a fixture to this shape.
+		/// </summary>
+		/// <param name="shape">The shape to add.</param>
+		/// <param name="density">The density of the fixture.</param>
+		/// <returns>The created Fixture object.</returns>
+		public Fixture CreateFixture(Shape shape, float density)
+		{
+			var ptr = shape.Lock();
+			var fix = Fixture.FromPtr(NativeMethods.b2body_createfixturefromshape(_bodyPtr, ptr, density));
+			shape.Unlock();
+			return fix;
+		}
+
+		/// <summary>
+		/// Destroy a Fixture object attached to this body.
+		/// </summary>
+		/// <param name="fixture">The fixture to destroy.</param>
+		public void DestroyFixture(Fixture fixture)
+		{
+			NativeMethods.b2body_destroyfixture(_bodyPtr, fixture.FixturePtr);
+		}
+
+		/// <summary>
+		/// Set the transform of this body.
+		/// </summary>
+		/// <param name="position">The new position of the body.</param>
+		/// <param name="angle">The new angle of the body</param>
+		public void SetTransform(Vec2 position, float angle)
+		{
+			NativeMethods.b2body_settransform(_bodyPtr, position, angle);
+		}
+
+		/// <summary>
+		/// Apply a force to this body.
+		/// </summary>
+		/// <param name="force">The force direction/magnitude to apply.</param>
+		/// <param name="point">The local point the force originates from.</param>
+		public void ApplyForce(Vec2 force, Vec2 point)
+		{
+			NativeMethods.b2body_applyforce(_bodyPtr, force, point);
+		}
+
+		/// <summary>
+		/// Apply torque to this body.
+		/// </summary>
+		/// <param name="torque">The amount of torque to apply.</param>
+		public void ApplyTorque(float torque)
+		{
+			NativeMethods.b2body_applytorque(_bodyPtr, torque);
+		}
+
+		/// <summary>
+		/// Apply a linear impulse to this body.
+		/// </summary>
+		/// <param name="force">The force direction/magnitude to apply.</param>
+		/// <param name="point">The local point the force originates from.</param>
+		public void ApplyLinearImpulse(Vec2 force, Vec2 point)
+		{
+			NativeMethods.b2body_applylinearimpulse(_bodyPtr, force, point);
+		}
+
+		/// <summary>
+		/// Apply an angular impulse to this body.
+		/// </summary>
+		/// <param name="impulse">The impulse to apply.</param>
+		public void ApplyAngularImpulse(float impulse)
+		{
+			NativeMethods.b2body_applyangularimpulse(_bodyPtr, impulse);
+		}
+
+		/// <summary>
+		/// Get a world point from a local point on the body.
+		/// </summary>
+		/// <param name="localPoint">The local point.</param>
+		/// <returns>The point in world coordinates.</returns>
+		public Vec2 GetWorldPoint(Vec2 localPoint)
+		{
+			Vec2 temp;
+			NativeMethods.b2body_getworldpoint(_bodyPtr, localPoint, out temp);
+			return temp;
+		}
+
+		/// <summary>
+		/// Get a world vector from a local point.
+		/// </summary>
+		/// <param name="localPoint">The local point.</param>
+		/// <returns>The vector in world coordinates.</returns>
+		public Vec2 GetWorldVector(Vec2 localPoint)
+		{
+			Vec2 temp;
+			NativeMethods.b2body_getworldvector(_bodyPtr, localPoint, out temp);
+			return temp;
+		}
+
+		/// <summary>
+		/// Get a local point from a world point.
+		/// </summary>
+		/// <param name="worldPoint">The world point.</param>
+		/// <returns>The point in local coordinates.</returns>
+		public Vec2 GetLocalPoint(Vec2 worldPoint)
+		{
+			Vec2 temp;
+			NativeMethods.b2body_getlocalpoint(_bodyPtr, worldPoint, out temp);
+			return temp;
+		}
+
+		/// <summary>
+		/// Get a local vector from a world point.
+		/// </summary>
+		/// <param name="worldPoint">The world point.</param>
+		/// <returns>The vector in local coordinates.</returns>
+		public Vec2 GetLocalVector(Vec2 worldPoint)
+		{
+			Vec2 temp;
+			NativeMethods.b2body_getlocalvector(_bodyPtr, worldPoint, out temp);
+			return temp;
+		}
+
+		/// <summary>
+		/// Get linear velocity from a world vector.
+		/// </summary>
+		/// <param name="worldVector">The world vector</param>
+		/// <returns>The linear velocity.</returns>
+		public Vec2 GetLinearVelocityFromWorldVector(Vec2 worldVector)
+		{
+			Vec2 temp;
+			NativeMethods.b2body_getlinearvelocityfromworldvector(_bodyPtr, worldVector, out temp);
+			return temp;
+		}
+
+		/// <summary>
+		/// Get linear velocity from a local vector.
+		/// </summary>
+		/// <param name="localVector">The local vector.</param>
+		/// <returns>The linear velocity.</returns>
+		public Vec2 GetLinearVelocityFromLocalVector(Vec2 localVector)
+		{
+			Vec2 temp;
+			NativeMethods.b2body_getlinearvelocityfromlocalvector(_bodyPtr, localVector, out temp);
+			return temp;
 		}
 
 		public static bool operator ==(Body l, Body r)

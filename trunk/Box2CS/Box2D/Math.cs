@@ -54,49 +54,7 @@ namespace Box2CS
 		}
 	}
 
-	public class Vec2Converter : ExpandableObjectConverter
-	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-		{
-			if (sourceType == typeof(string))
-			{
-				return true;
-			}
-			return base.CanConvertFrom(context, sourceType);
-		}
-
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if (value is string)
-				return Vec2.Parse((string)value);
-
-			return base.ConvertFrom(context, culture, value);
-		}
-
-		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-		{
-			if (destinationType == typeof(string))
-				return ((Vec2)value).ToString();
-
-			return base.ConvertTo(context, culture, value, destinationType);
-		}
-
-		public override bool IsValid(ITypeDescriptorContext context, object value)
-		{
-			return base.IsValid(context, value);
-		}
-
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-		{
-			if (destinationType == typeof(string))
-				return true;
-
-			return base.CanConvertTo(context, destinationType);
-		}
-	}
-
 	[StructLayout(LayoutKind.Sequential)]
-	[TypeConverter(typeof(Vec2Converter))]
 	public struct Vec2
 	{
 		public static Vec2 Min(Vec2 a, Vec2 b)
@@ -111,16 +69,18 @@ namespace Box2CS
 
 		public static Vec2 Empty = new Vec2(0, 0);
 
-		[System.Xml.Serialization.XmlAttribute()]
-		[Description("The value of this vector in the X axis (typically left and right)")]
+		/// <summary>
+		/// The value of this vector in the X axis (typically left and right).
+		/// </summary>
 		public float X
 		{
 			get;
 			set;
 		}
 
-		[System.Xml.Serialization.XmlAttribute()]
-		[Description("The value of this vector in the Y axis (typically up and down)")]
+		/// <summary>
+		/// The value of this vector in the Y axis (typically up and down).
+		/// </summary>
 		public float Y
 		{
 			get;

@@ -150,8 +150,9 @@ namespace Box2CS
 			};
 		}
 
-		[RecalculateMass]
-		[Description("The center point of this shape. This property will cause the mass of the body to be recalculated, if required.")]
+		/// <summary>
+		/// Get or set the local center point of this shape
+		/// </summary>
 		public Vec2 Centroid
 		{
 			get { return _internalPolyShape.m_centroid; }
@@ -277,8 +278,9 @@ namespace Box2CS
 			VertexCount = verts.Length;
 		}
 
-		[RecalculateMass]
-		[Description("The vertices that make this shape. This property will cause the mass of the body to be recalculated, if required.")]
+		/// <summary>
+		/// Get or set the vertices that make up this shape.
+		/// </summary>
 		public Vec2[] Vertices
 		{
 			get

@@ -76,8 +76,9 @@ namespace Box2CS
 				(float)mass * (0.5f * Radius * Radius + Position.Dot(Position)));
 		}
 
-		[RecalculateMass]
-		[Description("The local center of the circle. This property will cause the mass of the body to be recalculated, if required.")]
+		/// <summary>
+		/// Get or set the local center of the circle.
+		/// </summary>
 		public Vec2 Position
 		{
 			get { return _internalCircleShape.m_p; }
