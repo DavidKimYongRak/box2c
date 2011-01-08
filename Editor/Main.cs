@@ -64,20 +64,29 @@ namespace Editor
 				set { _autoCalculate = value; }
 			}
 
-			NotifyList<FixtureDef> _fixtures = new NotifyList<FixtureDef>();
-			public NotifyList<FixtureDef> Fixtures
+			NotifyList<FixtureDefSerialized> _fixtures = new NotifyList<FixtureDefSerialized>();
+			public NotifyList<FixtureDefSerialized> Fixtures
 			{
 				get { return _fixtures; }
 			}
 
+			public IEnumerable<FixtureDef> OnlyFixtures
+			{
+				get
+				{
+					foreach (var x in _fixtures)
+						yield return x.Fixture;
+				}
+			}
+
 			void _fixtures_ObjectsRemoved(object sender, EventArgs e)
 			{
-				_mass = Body.ComputeMass(_fixtures);
+				_mass = Body.ComputeMass(OnlyFixtures);
 			}
 
 			void _fixtures_ObjectsAdded(object sender, EventArgs e)
 			{
-				_mass = Body.ComputeMass(_fixtures);
+				_mass = Body.ComputeMass(OnlyFixtures);
 			}
 
 			public BodyObject(WorldXmlDeserializer deserializer, BodyDefSerialized x)
@@ -85,19 +94,14 @@ namespace Editor
 				Body = x.Body;
 				Name = x.Name;
 
-				var fixtures = new FixtureDef[x.FixtureIDs.Count];
-
 				// FIXME: name
 				for (int i = 0; i < x.FixtureIDs.Count; ++i)
-				{
-                    fixtures[i] = deserializer.FixtureDefs[x.FixtureIDs[i]].Fixture;
-					fixtures[i].Shape = deserializer.Shapes[deserializer.FixtureDefs[x.FixtureIDs[i]].ShapeID].Shape;
-				}
+					deserializer.FixtureDefs[x.FixtureIDs[i]].Fixture.Shape = deserializer.Shapes[deserializer.FixtureDefs[x.FixtureIDs[i]].ShapeID].Shape;
 
 				_fixtures.ObjectsAdded += new EventHandler(_fixtures_ObjectsAdded);
 				_fixtures.ObjectsRemoved += new EventHandler(_fixtures_ObjectsRemoved);
 
-				_fixtures.AddRange(fixtures);
+				_fixtures.AddRange(deserializer.FixtureDefs);
 			}
 		}
 
@@ -128,7 +132,7 @@ namespace Editor
 				bodies.Add(body);
 
 				foreach (var f in x.Fixtures)
-					body.CreateFixture(f);
+					body.CreateFixture(f.Fixture);
 
 				body.MassData = x.Mass;
 			}
@@ -350,7 +354,7 @@ namespace Editor
 						else if (x.Body.Awake)
 							color = new ColorF(0.6f, 0.6f, 0.6f);
 
-						debugDraw.DrawShape(fixture, xf, color);
+						debugDraw.DrawShape(fixture.Fixture, xf, color);
 					}
 
 					debugDraw.DrawTransform(xf);
@@ -568,7 +572,7 @@ namespace Editor
 			{
 				foreach (var f in b.Fixtures)
 				{
-					if (f.Shape.TestPoint(new Transform(b.Body.Position, new Mat22(b.Body.Angle)), p))
+					if (f.Fixture.Shape.TestPoint(new Transform(b.Body.Position, new Mat22(b.Body.Angle)), p))
 						moused = b;
 				}
 			}
