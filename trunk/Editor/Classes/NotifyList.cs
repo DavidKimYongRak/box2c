@@ -4,7 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 
-namespace Editor.Classes
+namespace Paril.Collections
 {
 	public class NotifyList<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable
 	{

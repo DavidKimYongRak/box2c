@@ -11,6 +11,7 @@ using Box2CS.Serialize;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.ComponentModel;
+using Paril.Collections;
 
 namespace Editor
 {
@@ -63,16 +64,20 @@ namespace Editor
 				set { _autoCalculate = value; }
 			}
 
-			FixtureDef[] _fixtures;
-			public FixtureDef[] Fixtures
+			NotifyList<FixtureDef> _fixtures = new NotifyList<FixtureDef>();
+			public NotifyList<FixtureDef> Fixtures
 			{
 				get { return _fixtures; }
+			}
 
-				set
-				{
-					_fixtures = value;
-					_mass = Body.ComputeMass(value);
-				}
+			void _fixtures_ObjectsRemoved(object sender, EventArgs e)
+			{
+				_mass = Body.ComputeMass(_fixtures);
+			}
+
+			void _fixtures_ObjectsAdded(object sender, EventArgs e)
+			{
+				_mass = Body.ComputeMass(_fixtures);
 			}
 
 			public BodyObject(WorldXmlDeserializer deserializer, BodyDefSerialized x)
@@ -89,7 +94,10 @@ namespace Editor
 					fixtures[i].Shape = deserializer.Shapes[deserializer.FixtureDefs[x.FixtureIDs[i]].ShapeID].Shape;
 				}
 
-				Fixtures = fixtures;
+				_fixtures.ObjectsAdded += new EventHandler(_fixtures_ObjectsAdded);
+				_fixtures.ObjectsRemoved += new EventHandler(_fixtures_ObjectsRemoved);
+
+				_fixtures.AddRange(fixtures);
 			}
 		}
 
@@ -650,6 +658,7 @@ namespace Editor
 			SelectedBody = bodies[bodyListBox.SelectedIndex];
             LoadBodyObjectSettings();
 		}
+
         public void LoadBodyObjectSettings()
         {
             bodyActive.SelectedIndex = Convert.ToInt32(SelectedBody.Body.Active);
@@ -680,10 +689,11 @@ namespace Editor
             bodyFixtureSelect.SelectedIndex = 0;
         
             bodyFixtureListBox.Items.Clear();
-            for (int i = 0; i < SelectedBody.Fixtures.Length; i ++) {
+            for (int i = 0; i < SelectedBody.Fixtures.Count; i ++) {
                 //bodyFixtureListBox.Items.Add(("Fixture " + i.ToString()));
             }
         }
+
 		private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (listBox4.SelectedIndex == -1)
