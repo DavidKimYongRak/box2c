@@ -7,121 +7,6 @@ using System.Reflection;
 
 namespace Box2CS
 {
-	[AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-	public sealed class RecalculateMassAttribute : Attribute
-	{
-	}
-
-	public class FilterDataTypeEditor : ExpandableObjectConverter
-	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-		{
-			if (sourceType == typeof(string))
-				return true;
-			return base.CanConvertFrom(context, sourceType);
-		}
-
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if (value is string)
-			{
-				try
-				{
-					return FilterData.Parse((string)value);
-				}
-				catch
-				{
-					throw new Exception("FilterData has wrong format");
-				}
-			}
-
-			return base.ConvertFrom(context, culture, value);
-		}
-
-		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-		{
-			if (destinationType == typeof(string))
-			{
-				FilterData data = value as FilterData;
-				return data.ToString();
-			}
-
-			return base.ConvertTo(context, culture, value, destinationType);
-		}
-
-		public override bool IsValid(ITypeDescriptorContext context, object value)
-		{
-			return base.IsValid(context, value);
-		}
-
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-		{
-			if (destinationType == typeof(string))
-				return true;
-
-			return base.CanConvertTo(context, destinationType);
-		}
-	}
-
-	public class UShortHexTypeConverter : TypeConverter
-	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-		{
-			if (sourceType == typeof(string))
-			{
-				return true;
-			}
-			else
-			{
-				return base.CanConvertFrom(context, sourceType);
-			}
-		}
-
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-		{
-			if (destinationType == typeof(string))
-			{
-				return true;
-			}
-			else
-			{
-				return base.CanConvertTo(context, destinationType);
-			}
-		}
-
-		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
-		{
-			if (destinationType == typeof(string) && value.GetType() == typeof(ushort))
-			{
-				return string.Format("0x{0:X4}", value);
-			}
-			else
-			{
-				return base.ConvertTo(context, culture, value, destinationType);
-			}
-		}
-
-		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
-		{
-			if (value.GetType() == typeof(string))
-			{
-				string input = (string)value;
-
-				if (input.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-				{
-					input = input.Substring(2);
-				}
-
-				return ushort.Parse(input, System.Globalization.NumberStyles.HexNumber, culture);
-			}
-			else
-			{
-				return base.ConvertFrom(context, culture, value);
-			}
-		}
-	}
-
-	[TypeConverter(typeof(FilterDataTypeEditor))]
 	[StructLayout(LayoutKind.Sequential)]
 	public class FilterData
 	{
@@ -134,33 +19,47 @@ namespace Box2CS
 
 		public static readonly FilterData Default = new FilterData();
 
-		[Description("The collision category bits. Normally you would just set one bit.")]
-		[TypeConverter(typeof(UShortHexTypeConverter))]
+		/// <summary>
+		/// The collision category bits. Normally you would just set one bit.
+		/// </summary>
 		public ushort CategoryBits
 		{
 			get { return _categoryBits; }
 			set { _categoryBits = value; }
 		}
 
-		[Description("The collision mask bits. This states the categories that this shape would accept for collision.")]
-		[TypeConverter(typeof(UShortHexTypeConverter))]
+		/// <summary>
+		/// The collision mask bits. This states the categories that this shape would accept for collision.
+		/// </summary>
 		public ushort MaskBits
 		{
 			get { return _maskBits; }
 			set { _maskBits = value; }
 		}
 
-		[Description("Collision groups allow a certain group of objects to never collide (negative) or always collide (positive). Zero means no collision group. Non-zero group filtering always wins against the mask bits.")]
+		/// <summary>
+		/// Collision groups allow a certain group of objects to never collide (negative) or always collide (positive).
+		/// Zero means no collision group. Non-zero group filtering always wins against the mask bits.
+		/// </summary>
 		public short GroupIndex
 		{
 			get { return _groupIndex; }
 			set { _groupIndex = value; }
 		}
 
+		/// <summary>
+		/// Default constructor. Initializes this FilterData to FilterData.Default.
+		/// </summary>
 		public FilterData()
 		{
 		}
 
+		/// <summary>
+		/// Constructor. Initializes this FilterData with the data provided.
+		/// </summary>
+		/// <param name="categoryBits">The category bits.</param>
+		/// <param name="maskBits">The mask bits.</param>
+		/// <param name="groupIndex">The group index.</param>
 		public FilterData(ushort categoryBits, ushort maskBits, short groupIndex)
 		{
 			CategoryBits = categoryBits;
@@ -192,6 +91,10 @@ namespace Box2CS
 			return base.Equals(obj);
 		}
 
+		/// <summary>
+		/// Convert this FilterData to a human-readable format.
+		/// </summary>
+		/// <returns>The formatted string</returns>
 		public override string ToString()
 		{
 			return "CategoryBits="+CategoryBits.ToString()+" MaskBits="+MaskBits.ToString()+" GroupIndex="+GroupIndex.ToString();
@@ -202,6 +105,11 @@ namespace Box2CS
 			return CategoryBits.GetHashCode() + MaskBits.GetHashCode() + GroupIndex.GetHashCode();
 		}
 
+		/// <summary>
+		/// Parse a FilterData out from a string.
+		/// </summary>
+		/// <param name="value">The string to parse from.</param>
+		/// <returns>The new FilterData.</returns>
 		public static FilterData Parse(string value)
 		{
 			SimpleParser parser = new SimpleParser(value, true);
@@ -209,85 +117,44 @@ namespace Box2CS
 		}
 	}
 
-	public class MassDataTypeEditor : ExpandableObjectConverter
-	{
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-		{
-			if (sourceType == typeof(string))
-				return true;
-			return base.CanConvertFrom(context, sourceType);
-		}
-
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if (value is string)
-			{
-				try
-				{
-					return MassData.Parse((string)value);
-				}
-				catch
-				{
-					throw new Exception("Invalid format for MassData");
-				}
-			}
-
-			return base.ConvertFrom(context, culture, value);
-		}
-
-		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-		{
-			if (destinationType == typeof(string))
-			{
-				MassData data = (MassData)value;
-				return data.ToString();
-			}
-
-			return base.ConvertTo(context, culture, value, destinationType);
-		}
-
-		public override bool IsValid(ITypeDescriptorContext context, object value)
-		{
-			return base.IsValid(context, value);
-		}
-
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-		{
-			if (destinationType == typeof(string))
-				return true;
-
-			return base.CanConvertTo(context, destinationType);
-		}
-	}
-
-	[TypeConverter(typeof(MassDataTypeEditor))]
 	[StructLayout(LayoutKind.Sequential)]
 	public struct MassData
 	{
 		public readonly static MassData Empty = new MassData(0, Vec2.Empty, 0);
-		public readonly static MassData Recalculate = new MassData(-1, new Vec2(-1, -1), -1);
 
-		[Description("The mass of the body.")]
+		/// <summary>
+		/// The mass of the body.
+		/// </summary>
 		public float Mass
 		{
 			get;
 			set;
 		}
 
-		[Description("The center of gravity for the body")]
+		/// <summary>
+		/// The center of gravity for the body.
+		/// </summary>
 		public Vec2 Center
 		{
 			get;
 			set;
 		}
 
-		[Description("Rotational inertia for the body")]
+		/// <summary>
+		/// Rotational inertia for the body
+		/// </summary>
 		public float Inertia
 		{
 			get;
 			set;
 		}
 
+		/// <summary>
+		/// Initialize a MassData structure from the data provided.
+		/// </summary>
+		/// <param name="mass">Body mass</param>
+		/// <param name="center">Body center of gravity</param>
+		/// <param name="inertia">Body inertia</param>
 		public MassData(float mass, Vec2 center, float inertia) :
 			this()
 		{
@@ -319,15 +186,21 @@ namespace Box2CS
 			return Mass.GetHashCode() + Center.GetHashCode() + Inertia.GetHashCode();
 		}
 
+		/// <summary>
+		/// Parse a MassData from a string.
+		/// </summary>
+		/// <param name="value">The string to parse.</param>
+		/// <returns>The new MassData.</returns>
 		public static MassData Parse(string value)
 		{
-			if (string.IsNullOrEmpty(value))
-				return Recalculate;
-
 			SimpleParser parser = new SimpleParser(value, true);
 			return new MassData(float.Parse(parser.ValueFromKey("Mass")), Vec2.Parse(parser.ValueFromKey("Center")), float.Parse(parser.ValueFromKey("Inertia")));
 		}
 
+		/// <summary>
+		/// Convert this MassData to a human-readable string.
+		/// </summary>
+		/// <returns>The formatted string</returns>
 		public override string ToString()
 		{
 			return "Mass="+Mass.ToString()+" Center="+Center.ToString()+" Inertia="+Inertia.ToString();
@@ -359,7 +232,6 @@ namespace Box2CS
 		public FilterData _filter;
 	}
 
-	[TypeConverter(typeof(ExpandableObjectConverter))]
 	public sealed class FixtureDef : ICompare<FixtureDef>, ICloneable
 	{
 		FixtureDefInternal _internalFixture = new FixtureDefInternal();
@@ -369,6 +241,103 @@ namespace Box2CS
 		internal FixtureDefInternal Internal
 		{
 			get { return _internalFixture; }
+		}
+
+		object ICloneable.Clone()
+		{
+			return Clone();
+		}
+
+		/// <summary>
+		/// Clone this FixtureDef.
+		/// </summary>
+		/// <returns></returns>
+		public FixtureDef Clone()
+		{
+			return new FixtureDef(Shape, Density, Restitution, Friction, Filter, IsSensor, UserData);
+		}
+
+		/// <summary>
+		/// User-specific and application-specific data.
+		/// </summary>
+		public object UserData
+		{
+			get { return UserDataStorage.FixtureStorage.ObjectFromHandle(UserDataStorage.IntPtrToHandle(_internalFixture._userData)); }
+
+			set
+			{
+				var ptr = UserDataStorage.IntPtrToHandle(_internalFixture._userData);
+
+				if (ptr != 0)
+					UserDataStorage.FixtureStorage.UnpinObject(ptr);
+
+				if (value != null)
+				{
+					var handle = UserDataStorage.FixtureStorage.PinDataToHandle(value);
+					_internalFixture._userData = UserDataStorage.HandleToIntPtr(handle);
+				}
+				else
+					_internalFixture._userData = IntPtr.Zero;
+			}
+		}
+
+		/// <summary>
+		/// The shape connected to this fixture.
+		/// </summary>
+		public Shape Shape
+		{
+			get { return _realShape; }
+			set { _realShape = value; }
+		}
+
+		/// <summary>
+		/// The friction of this fixture.
+		/// </summary>
+		public float Friction
+		{
+			get { return _internalFixture._friction; }
+			set { _internalFixture._friction = value; }
+		}
+
+		/// <summary>
+		/// The restitution of this fixture.
+		/// </summary>
+		public float Restitution
+		{
+			get { return _internalFixture._restitution; }
+			set { _internalFixture._restitution = value; }
+		}
+
+		/// <summary>
+		/// The density of this fixture.
+		/// </summary>
+		public float Density
+		{
+			get { return _internalFixture._density; }
+			set { _internalFixture._density = value; }
+		}
+
+		/// <summary>
+		/// True if this fixture is a sensor shape (doesn't generate contacts).
+		/// </summary>
+		public bool IsSensor
+		{
+			get { return _internalFixture._isSensor; }
+			set { _internalFixture._isSensor = value; }
+		}
+
+		/// <summary>
+		/// The filtering data for this fixture.
+		/// </summary>
+		public FilterData Filter
+		{
+			get { return _internalFixture._filter; }
+			set { _internalFixture._filter = value; }
+		}
+
+		internal void SetShape(IntPtr intPtr)
+		{
+			_internalFixture._shape = intPtr;
 		}
 
 		public FixtureDef() :
@@ -392,139 +361,11 @@ namespace Box2CS
 		{
 		}
 
-		object ICloneable.Clone()
-		{
-			return Clone();
-		}
-
-		public FixtureDef Clone()
-		{
-			return new FixtureDef(Shape, Density, Restitution, Friction, Filter, IsSensor, UserData);
-		}
-
-		[Category("Other")]
-		[Description("User-specific and application-specific data.")]
-		public object UserData
-		{
-			get
-			{
-				return UserDataStorage.FixtureStorage.ObjectFromHandle(UserDataStorage.IntPtrToHandle(_internalFixture._userData));
-			}
-
-			set
-			{
-				var ptr = UserDataStorage.IntPtrToHandle(_internalFixture._userData);
-
-				if (ptr != 0)
-					UserDataStorage.FixtureStorage.UnpinObject(ptr);
-
-				if (value != null)
-				{
-					var handle = UserDataStorage.FixtureStorage.PinDataToHandle(value);
-					_internalFixture._userData = UserDataStorage.HandleToIntPtr(handle);
-				}
-				else
-					_internalFixture._userData = IntPtr.Zero;
-			}
-		}
-
-		[RecalculateMass]
-		[Category("Main")]
-		[Description("The shape connected to this fixture. This property will cause the mass of the body to be recalculated, if required.")]
-		public Shape Shape
-		{
-			get
-			{
-				return _realShape;
-			}
-
-			set
-			{
-				_realShape = value;
-			}
-		}
-
-		[Category("Movement")]
-		[Description("The friction of this fixture.")]
-		public float Friction
-		{
-			get
-			{
-				return _internalFixture._friction;
-			}
-
-			set
-			{
-				_internalFixture._friction = value;
-			}
-		}
-
-		[Category("Movement")]
-		[Description("The restitution of this fixture.")]
-		public float Restitution
-		{
-			get
-			{
-				return _internalFixture._restitution;
-			}
-
-			set
-			{
-				_internalFixture._restitution = value;
-			}
-		}
-
-		[RecalculateMass]
-		[Category("Movement")]
-		[Description("The density of this fixture. This property will cause the mass of the body to be recalculated, if required.")]
-		public float Density
-		{
-			get
-			{
-				return _internalFixture._density;
-			}
-
-			set
-			{
-				_internalFixture._density = value;
-			}
-		}
-
-		[Category("Flags")]
-		[Description("True if this fixture is a sensor shape (no contacts).")]
-		public bool IsSensor
-		{
-			get
-			{
-				return _internalFixture._isSensor;
-			}
-
-			set
-			{
-				_internalFixture._isSensor = value;
-			}
-		}
-
-		[Category("Filtering")]
-		[Description("The filtering data for this fixture.")]
-		public FilterData Filter
-		{
-			get
-			{
-				return _internalFixture._filter;
-			}
-
-			set
-			{
-				_internalFixture._filter = value;
-			}
-		}
-
-		internal void SetShape(IntPtr intPtr)
-		{
-			_internalFixture._shape = intPtr;
-		}
-
+		/// <summary>
+		/// Compare this FixtureDef with another.
+		/// </summary>
+		/// <param name="fixture">The fixture to compare to.</param>
+		/// <returns>True if they equal; false if not.</returns>
 		public bool CompareWith(FixtureDef fixture)
 		{
 			return (this.Density == fixture.Density &&
@@ -625,12 +466,17 @@ namespace Box2CS
 			return new Fixture(ptr);
 		}
 
-		[Browsable(false)]
+		/// <summary>
+		/// The type of Shape attached to this fixture.
+		/// </summary>
 		public ShapeType ShapeType
 		{
 			get { return (ShapeType)NativeMethods.b2fixture_gettype(_fixturePtr); }
 		}
 
+		/// <summary>
+		/// Get or set the shape attached to this fixture.
+		/// </summary>
 		public Shape Shape
 		{
 			get
@@ -667,12 +513,12 @@ namespace Box2CS
 			}
 		}
 
+		/// <summary>
+		/// User-specific and application-specific data.
+		/// </summary>
 		public object UserData
 		{
-			get
-			{
-				return UserDataStorage.FixtureStorage.ObjectFromHandle(UserDataStorage.IntPtrToHandle(NativeMethods.b2fixture_getuserdata(_fixturePtr)));
-			}
+			get { return UserDataStorage.FixtureStorage.ObjectFromHandle(UserDataStorage.IntPtrToHandle(NativeMethods.b2fixture_getuserdata(_fixturePtr))); }
 
 			set
 			{
@@ -691,33 +537,56 @@ namespace Box2CS
 			}
 		}
 
+		/// <summary>
+		/// Get or set whether this fixture is a sensor shape or not.
+		/// </summary>
 		public bool IsSensor
 		{
 			get { return NativeMethods.b2fixture_getsensor(_fixturePtr); }
 			set { NativeMethods.b2fixture_setsensor(_fixturePtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set the filter data associated with this fixture.
+		/// </summary>
 		public FilterData FilterData
 		{
 			get { FilterData temp = new FilterData(); NativeMethods.b2fixture_getfilterdata(_fixturePtr, temp); return temp; }
 			set { NativeMethods.b2fixture_setfilterdata(_fixturePtr, value); }
 		}
 
+		/// <summary>
+		/// Get the body this fixture is attached to.
+		/// </summary>
 		public Body Body
 		{
 			get { return Body.FromPtr(NativeMethods.b2fixture_getbody(_fixturePtr)); }
 		}
 
+		/// <summary>
+		/// Get the next fixture in the attached body's fixture list.
+		/// </summary>
 		public Fixture Next
 		{
 			get { return Fixture.FromPtr(NativeMethods.b2fixture_getnext(_fixturePtr)); }
 		}
 
+		/// <summary>
+		/// Test if the point is inside the fixture.
+		/// </summary>
+		/// <param name="Point">Point to test</param>
+		/// <returns>True if inside, false if not.</returns>
 		public bool TestPoint(Vec2 Point)
 		{
 			return NativeMethods.b2fixture_testpoint(_fixturePtr, Point);
 		}
 
+		/// <summary>
+		/// Perform a raycast against this fixture.
+		/// </summary>
+		/// <param name="Output">The output data</param>
+		/// <param name="Input">The input data</param>
+		/// <returns>True if hit, false if not.</returns>
 		public bool RayCast(out RayCastOutput Output, RayCastInput Input)
 		{
 			Output = new RayCastOutput();
@@ -725,35 +594,44 @@ namespace Box2CS
 			return returnVal;
 		}
 
+		/// <summary>
+		/// Get the mass data for this fixture.
+		/// </summary>
 		public MassData MassData
 		{
-			get
-			{
-				MassData returnVal = new MassData();
-				NativeMethods.b2fixture_getmassdata(_fixturePtr, out returnVal);
-
-				return returnVal;
-			}
+			get { MassData returnVal = new MassData(); NativeMethods.b2fixture_getmassdata(_fixturePtr, out returnVal); return returnVal; }
 		}
 
+		/// <summary>
+		/// Get or set the density of this fixture.
+		/// </summary>
 		public float Density
 		{
 			get { return NativeMethods.b2fixture_getdensity(_fixturePtr); }
 			set { NativeMethods.b2fixture_setdensity(_fixturePtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set the friction of this fixture.
+		/// </summary>
 		public float Friction
 		{
 			get { return NativeMethods.b2fixture_getfriction(_fixturePtr); }
 			set { NativeMethods.b2fixture_setfriction(_fixturePtr, value); }
 		}
 
+		/// <summary>
+		/// Get or set the restitution of this fixture.
+		/// </summary>
 		public float Restitution
 		{
 			get { return NativeMethods.b2fixture_getrestitution(_fixturePtr); }
 			set { NativeMethods.b2fixture_setrestitution(_fixturePtr, value); }
 		}
 
+		/// <summary>
+		/// Get the AABB of this fixture.
+		/// </summary>
 		public AABB AABB
 		{
 			get { AABB temp; NativeMethods.b2fixture_getaabb(_fixturePtr, out temp); return temp; }
@@ -787,7 +665,5 @@ namespace Box2CS
 		{
 			return FixturePtr.GetHashCode();
 		}
-
 	}
-
 }

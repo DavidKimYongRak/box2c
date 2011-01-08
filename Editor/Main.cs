@@ -34,14 +34,12 @@ namespace Editor
 
 		public class BodyObject
 		{
-			[Description("The actual body.")]
 			public BodyDef Body
 			{
 				get;
 				set;
 			}
 
-			[Description("Name identifier for this body and connected fixtures.")]
 			public string Name
 			{
 				get;
@@ -49,17 +47,14 @@ namespace Editor
 			}
 
 			MassData _mass;
-			[Description("Mass for this body. Empty the properties' contents to recalculate the mass data manually. Will automatically update if AutoMassRecalculate is true.")]
 			public MassData Mass
 			{
 				get { return _mass; }
-				set { if (value == MassData.Recalculate) _mass = Body.ComputeMass(Fixtures); else _mass = value; }
+				set { _mass = value; }
 			}
 
 			bool _autoCalculate = true;
 
-			[DefaultValue(true)]
-			[Description("Automatically recalculate the mass of the body if a fixture or shape is modified.")]
 			public bool AutoMassRecalculate
 			{
 				get { return _autoCalculate; }
@@ -67,7 +62,6 @@ namespace Editor
 			}
 
 			FixtureDef[] _fixtures;
-			[Description("List of fixtures attached to this body.")]
 			public FixtureDef[] Fixtures
 			{
 				get { return _fixtures; }
