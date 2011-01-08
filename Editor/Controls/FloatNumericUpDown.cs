@@ -114,7 +114,7 @@ namespace Editor
 			floatNumericUpDownButtons1.FillTimerData += new EventHandler<FloatNumericUpDownButtons.TimerEventArgs>(floatNumericUpDownButtons1_FillTimerData);
 			floatNumericUpDownButtons1.ResetTimerData += new EventHandler(floatNumericUpDownButtons1_ResetTimerData);
 
-			EnableLimits = true;
+			EnableUpperLimit = EnableLowerLimit = true;
 			Maximum = 100;
 			Minimum = 0;
 			Interval = 1;
@@ -194,13 +194,10 @@ namespace Editor
 
 		void ModifyValue(decimal newValue)
 		{
-			if (EnableLimits)
-			{
-				if (newValue > Maximum)
-					newValue = Maximum;
-				else if (newValue < Minimum)
-					newValue = Minimum;
-			}
+			if (EnableUpperLimit && (newValue > Maximum))
+				newValue = Maximum;
+			else if (EnableLowerLimit && (newValue < Minimum))
+				newValue = Minimum;
 
             DecimalValueChangedEventArgs eventArgs = new DecimalValueChangedEventArgs(_value, newValue);
 
@@ -261,14 +258,26 @@ namespace Editor
 		{
 			get { return _accelerators; }
 		}
-		
+
 		/// <summary>
-		/// Whether or not Maximum and Minimum are enforced.
+		/// Whether or not the Maximum value is enforced.
 		/// </summary>
-		[Description("Whether or not the Maximum and Minimum values are enforced")]
+		[Description("Whether or not the Maximum value is enforced.")]
 		[DefaultValue(true)]
 		[Category("Data")]
-		public bool EnableLimits
+		public bool EnableUpperLimit
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Whether or not the Minimum value is enforced.
+		/// </summary>
+		[Description("Whether or not the Minimum value is enforced.")]
+		[DefaultValue(true)]
+		[Category("Data")]
+		public bool EnableLowerLimit
 		{
 			get;
 			set;
