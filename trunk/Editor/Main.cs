@@ -1166,6 +1166,11 @@ namespace Editor
 				}
 			}
 		}
+
+        private void label41_Click(object sender, EventArgs e)
+        {
+
+        }
 	}
 
 	public class HolyCrapControl : Control
