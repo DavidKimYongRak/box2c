@@ -1040,7 +1040,7 @@ namespace Editor
 
         private void shapeListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (fixtureListBox.SelectedIndex == -1)
+            if (shapeListBox.SelectedIndex == -1)
                 return;
 
 			SelectedShape = WorldObject.Shapes[shapeListBox.SelectedIndex];
