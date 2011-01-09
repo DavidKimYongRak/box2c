@@ -746,16 +746,19 @@ namespace Editor
 
             bodyFixtureSelect.Items.Clear();
 
-			for (int i = 0; i < WorldObject.Fixtures.Count; i++)
+            if (WorldObject.Fixtures.Count > 0)
             {
-				FixtureDefSerialized fixDefSer = WorldObject.Fixtures[i];
-                bodyFixtureSelect.Items.Add(fixDefSer.Name);
+                for (int i = 0; i < WorldObject.Fixtures.Count; i++)
+                {
+                    FixtureDefSerialized fixDefSer = WorldObject.Fixtures[i];
+                    bodyFixtureSelect.Items.Add(fixDefSer.Name);
+                }
+
+                if (prevIndex < 0 || prevIndex >= WorldObject.Fixtures.Count)
+                    prevIndex = 0;
+
+                bodyFixtureSelect.SelectedIndex = prevIndex;
             }
-
-			if (prevIndex < 0 || prevIndex >= WorldObject.Fixtures.Count)
-                prevIndex = 0;
-
-			bodyFixtureSelect.SelectedIndex = prevIndex;
         }
 
 		private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -981,7 +984,10 @@ namespace Editor
             fixtureIsSensor.SelectedIndex = Convert.ToInt32(SelectedFixture.Fixture.IsSensor);
             fixtureRestitution.Value = Convert.ToDecimal(SelectedFixture.Fixture.Restitution);
             ShapeSerialized shape = new ShapeSerialized(SelectedFixture.Fixture.Shape,"");
-            fixtureShape.SelectedIndex = SelectedFixture.ShapeID;
+            if (WorldObject.Shapes.Count > 0)
+            {
+                fixtureShape.SelectedIndex = SelectedFixture.ShapeID;
+            }
             fixtureCategoryBits.Value = SelectedFixture.Fixture.Filter.CategoryBits;
             fixtureGroupIndex.Value = SelectedFixture.Fixture.Filter.GroupIndex;
             fixtureMaskBits.Value = SelectedFixture.Fixture.Filter.MaskBits;
@@ -1029,6 +1035,7 @@ namespace Editor
         private void fixtureShape_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectedFixture.ShapeID = fixtureShape.SelectedIndex;
+            SelectedFixture.Fixture.Shape = WorldObject.Shapes[fixtureShape.SelectedIndex].Shape;
         }
 
         private void shapeListBox_SelectedIndexChanged(object sender, EventArgs e)
