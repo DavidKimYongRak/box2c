@@ -30,7 +30,6 @@ namespace Editor
 		TestDebugDraw debugDraw;
 		BodyObject HoverBody = null, SelectedBody = null;
         FixtureDefSerialized SelectedFixture = null;
-        public ShapeSerialized SelectedShape = null;
 
         CirclePanel circlePanel = new CirclePanel();
 		public static WorldObjectClass WorldObject = new WorldObjectClass();
@@ -38,18 +37,12 @@ namespace Editor
 		public class WorldObjectClass
 		{
 			List<BodyObject> _bodies = new List<BodyObject>();
-			List<ShapeSerialized> _shapes = new List<ShapeSerialized>();
 			List<FixtureDefSerialized> _fixtures = new List<FixtureDefSerialized>();
 			List<JointDefSerialized> _joints = new List<JointDefSerialized>();
 
 			public List<BodyObject> Bodies
 			{
 				get { return _bodies; }
-			}
-
-			public List<ShapeSerialized> Shapes
-			{
-				get { return _shapes; }
 			}
 
 			public List<FixtureDefSerialized> Fixtures
@@ -65,7 +58,6 @@ namespace Editor
 			public void Clear()
 			{
 				_bodies.Clear();
-				_shapes.Clear();
 				_fixtures.Clear();
 			}
 
@@ -82,7 +74,7 @@ namespace Editor
 					if (string.IsNullOrEmpty(x.Name))
 						x.Name = "Shape "+i.ToString();
 
-					_shapes.Add(x);
+					//_shapes.Add(x);
 				}
 
 				for (int i = 0; i < deserializer.FixtureDefs.Count; ++i)
@@ -179,7 +171,7 @@ namespace Editor
 				for (int i = 0; i < x.FixtureIDs.Count; ++i)
 				{
 					var fixture = world.Fixtures[x.FixtureIDs[i]];
-					fixture.Fixture.Shape = world.Shapes[world.Fixtures[x.FixtureIDs[i]].ShapeID].Shape;
+					//fixture.Fixture.Shape = world.Shapes[world.Fixtures[x.FixtureIDs[i]].ShapeID].Shape;
 					_fixtures.Add(fixture);
 				}
 
@@ -983,14 +975,16 @@ namespace Editor
             fixtureFriction.Value = Convert.ToDecimal(SelectedFixture.Fixture.Friction);
             fixtureIsSensor.SelectedIndex = Convert.ToInt32(SelectedFixture.Fixture.IsSensor);
             fixtureRestitution.Value = Convert.ToDecimal(SelectedFixture.Fixture.Restitution);
-            ShapeSerialized shape = new ShapeSerialized(SelectedFixture.Fixture.Shape,"");
-            if (WorldObject.Shapes.Count > 0)
-            {
-                fixtureShape.SelectedIndex = SelectedFixture.ShapeID;
-            }
+           // ShapeSerialized shape = new ShapeSerialized(SelectedFixture.Fixture.Shape,"");
+            //if (WorldObject.Shapes.Count > 0)
+            //{
+                //fixtureShape.SelectedIndex = SelectedFixture.ShapeID;
+            //}
             fixtureCategoryBits.Value = SelectedFixture.Fixture.Filter.CategoryBits;
             fixtureGroupIndex.Value = SelectedFixture.Fixture.Filter.GroupIndex;
             fixtureMaskBits.Value = SelectedFixture.Fixture.Filter.MaskBits;
+
+            LoadShapeObjectSettings();
         }
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
@@ -1034,10 +1028,11 @@ namespace Editor
 
         private void fixtureShape_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedFixture.ShapeID = fixtureShape.SelectedIndex;
-            SelectedFixture.Fixture.Shape = WorldObject.Shapes[fixtureShape.SelectedIndex].Shape;
+            //SelectedFixture.ShapeID = fixtureShape.SelectedIndex;
+            //SelectedFixture.Fixture.Shape = WorldObject.Shapes[fixtureShape.SelectedIndex].Shape;
         }
-
+        
+        /**
         private void shapeListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (shapeListBox.SelectedIndex == -1)
@@ -1047,67 +1042,52 @@ namespace Editor
 
             LoadShapeObjectSettings();
         }
+         **/
         public void LoadShapeObjectSettings()
         {
-            shapeName.Text = SelectedShape.Name;
             shapePanel.Controls.Clear();
-            if (SelectedShape.Shape.ShapeType == ShapeType.Circle)
+            if (SelectedFixture.Fixture.Shape.ShapeType == ShapeType.Circle)
             {
                 shapeType.SelectedIndex = 0;
                 shapePanel.Controls.Add(circlePanel);
-                CircleShape shape = (CircleShape)SelectedShape.Shape;
+                CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
                 circlePanel.circleRadius.Value = Convert.ToDecimal(shape.Radius);
                 circlePanel.circlePositionX.Value = Convert.ToDecimal(shape.Position.X);
                 circlePanel.circlePositionY.Value = Convert.ToDecimal(shape.Position.Y);
             }
-            if (SelectedShape.Shape.ShapeType == ShapeType.Polygon)
+            if (SelectedFixture.Fixture.Shape.ShapeType == ShapeType.Polygon)
             {
                 shapeType.SelectedIndex = 1;
             }
         }
         public void circleRadius_ValueChanged(object sender, DecimalValueChangedEventArgs e)
         {
-            CircleShape shape = (CircleShape)SelectedShape.Shape;
+            CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
             shape.Radius = (float)e.NewValue;
-            SelectedShape.Shape = shape;
+            SelectedFixture.Fixture.Shape = shape;
         }
         public void circlePositionX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
         {
-            CircleShape shape = (CircleShape)SelectedShape.Shape;
+            CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
             shape.Position = new Vec2( (float)e.NewValue ,shape.Position.Y);
-            SelectedShape.Shape = shape;
+            SelectedFixture.Fixture.Shape = shape;
         }
         public void circlePositionY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
         {
-            CircleShape shape = (CircleShape)SelectedShape.Shape;
+            CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
             shape.Position = new Vec2(shape.Position.X, (float)e.NewValue);
-            SelectedShape.Shape = shape;
-        }
-
-        private void shapeName_TextChanged(object sender, EventArgs e)
-        {
-            SelectedShape.Name = shapeName.Text;
+            SelectedFixture.Fixture.Shape = shape;
         }
 
         private void shapeType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (shapeType.SelectedIndex == 0 && !(SelectedShape.Shape is CircleShape))
-                SelectedShape.Shape = new CircleShape();
-            else if (shapeType.SelectedIndex == 1 && !(SelectedShape.Shape is PolygonShape))
-                SelectedShape.Shape = new PolygonShape();
+            if (shapeType.SelectedIndex == 0 && !(SelectedFixture.Fixture.Shape is CircleShape))
+                SelectedFixture.Fixture.Shape = new CircleShape();
+            else if (shapeType.SelectedIndex == 1 && !(SelectedFixture.Fixture.Shape is PolygonShape))
+                SelectedFixture.Fixture.Shape = new PolygonShape();
 
             LoadShapeObjectSettings();
         }
-
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            CircleShape shape = new CircleShape();
-			ShapeSerialized newShape = new ShapeSerialized(shape, "Shape " + (WorldObject.Shapes.Count).ToString());
-			WorldObject.Shapes.Add(newShape);
-			shapeListBox.Items.Add("Shape " + (WorldObject.Shapes.Count-1).ToString());
-			fixtureShape.Items.Add("Shape " + (WorldObject.Shapes.Count - 1).ToString());
-        }
-
         private void bodyFixtureDelete_Click(object sender, EventArgs e)
         {
             SelectedBody.Fixtures.RemoveAt(bodyFixtureListBox.SelectedIndex);
@@ -1121,6 +1101,7 @@ namespace Editor
 			WorldObject.Fixtures.Add(newFixture);
 			fixtureListBox.Items.Add("Fixture " + (WorldObject.Fixtures.Count - 1).ToString());
 			bodyFixtureSelect.Items.Add("Fixture " + (WorldObject.Fixtures.Count - 1).ToString());
+            newFixture.Fixture.Shape = new CircleShape();
         }
 
 		void ClearListboxes()
@@ -1128,7 +1109,6 @@ namespace Editor
 			bodyListBox.Items.Clear();
 			fixtureListBox.Items.Clear();
 			bodyFixtureListBox.Items.Clear();
-			shapeListBox.Items.Clear();
 			listBox4.Items.Clear();
 		}
 
@@ -1155,7 +1135,7 @@ namespace Editor
 						var fixture = WorldObject.Fixtures[i];
 						fixtureListBox.Items.Add((string.IsNullOrEmpty(fixture.Name)) ? ("Fixture " + i.ToString()) : fixture.Name);
 					}
-
+                    /**
 					for (int i = 0; i < WorldObject.Shapes.Count; ++i)
 					{
 						var shape = WorldObject.Shapes[i];
@@ -1163,6 +1143,7 @@ namespace Editor
 						shapeListBox.Items.Add(name);
 						fixtureShape.Items.Add(name);
 					}
+                     **/
 				}
 			}
 		}
