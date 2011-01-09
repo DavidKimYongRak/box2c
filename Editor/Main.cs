@@ -28,12 +28,94 @@ namespace Editor
 		World _world;
 		Thread simulationThread;
 		TestDebugDraw debugDraw;
-		WorldXmlDeserializer deserializer;
 		BodyObject HoverBody = null, SelectedBody = null;
         FixtureDefSerialized SelectedFixture = null;
-		List<BodyObject> bodies = new List<BodyObject>();
         public ShapeSerialized SelectedShape = null;
+
         CirclePanel circlePanel = new CirclePanel();
+		public static WorldObjectClass WorldObject = new WorldObjectClass();
+
+		public class WorldObjectClass
+		{
+			List<BodyObject> _bodies = new List<BodyObject>();
+			List<ShapeSerialized> _shapes = new List<ShapeSerialized>();
+			List<FixtureDefSerialized> _fixtures = new List<FixtureDefSerialized>();
+			List<JointDefSerialized> _joints = new List<JointDefSerialized>();
+
+			public List<BodyObject> Bodies
+			{
+				get { return _bodies; }
+			}
+
+			public List<ShapeSerialized> Shapes
+			{
+				get { return _shapes; }
+			}
+
+			public List<FixtureDefSerialized> Fixtures
+			{
+				get { return _fixtures; }
+			}
+
+			public List<JointDefSerialized> Joints
+			{
+				get { return _joints; }
+			}
+
+			public void Clear()
+			{
+				_bodies.Clear();
+				_shapes.Clear();
+				_fixtures.Clear();
+			}
+
+			public void LoadFromFile(string fileName)
+			{
+				var deserializer = new WorldXmlDeserializer();
+				using (System.IO.FileStream fs = new System.IO.FileStream(fileName, System.IO.FileMode.Open))
+					deserializer.Deserialize(fs);
+
+				for (int i = 0; i < deserializer.Shapes.Count; ++i)
+				{
+					var x = deserializer.Shapes[i];
+
+					if (string.IsNullOrEmpty(x.Name))
+						x.Name = "Shape "+i.ToString();
+
+					_shapes.Add(x);
+				}
+
+				for (int i = 0; i < deserializer.FixtureDefs.Count; ++i)
+				{
+					var x = deserializer.FixtureDefs[i];
+
+					if (string.IsNullOrEmpty(x.Name))
+						x.Name = "Fixture "+i.ToString();
+
+					_fixtures.Add(x);
+				}
+
+				for (int i = 0; i < deserializer.Bodies.Count; ++i)
+				{
+					var x = deserializer.Bodies[i];
+
+					if (string.IsNullOrEmpty(x.Name))
+						x.Name = "Body "+i.ToString();
+
+					_bodies.Add(new BodyObject(WorldObject, x));
+				}
+
+				for (int i = 0; i < deserializer.Joints.Count; ++i)
+				{
+					var x = deserializer.Joints[i];
+
+					if (string.IsNullOrEmpty(x.Name))
+						x.Name = "Joint "+i.ToString();
+
+					_joints.Add(x);
+				}
+			}
+		}
 
 		public class BodyObject
 		{
@@ -89,20 +171,20 @@ namespace Editor
 				_mass = Body.ComputeMass(OnlyFixtures);
 			}
 
-			public BodyObject(WorldXmlDeserializer deserializer, BodyDefSerialized x)
+			public BodyObject(WorldObjectClass world, BodyDefSerialized x)
 			{
 				Body = x.Body;
 				Name = x.Name;
 
-				// FIXME: name
 				for (int i = 0; i < x.FixtureIDs.Count; ++i)
 				{
-					var fixture = deserializer.FixtureDefs[x.FixtureIDs[i]];
-					fixture.Fixture.Shape = deserializer.Shapes[deserializer.FixtureDefs[x.FixtureIDs[i]].ShapeID].Shape;
+					var fixture = world.Fixtures[x.FixtureIDs[i]];
+					fixture.Fixture.Shape = world.Shapes[world.Fixtures[x.FixtureIDs[i]].ShapeID].Shape;
 					_fixtures.Add(fixture);
 				}
 
 				_mass = Body.ComputeMass(OnlyFixtures);
+
 				_fixtures.ObjectsAdded += new EventHandler(_fixtures_ObjectsAdded);
 				_fixtures.ObjectsRemoved += new EventHandler(_fixtures_ObjectsRemoved);
 			}
@@ -128,7 +210,7 @@ namespace Editor
 
 			System.Collections.Generic.List<Body> bodies = new System.Collections.Generic.List<Body>();
 
-			foreach (var x in this.bodies)
+			foreach (var x in WorldObject.Bodies)
 			{
 				var body = _world.CreateBody(x.Body);
 
@@ -140,7 +222,7 @@ namespace Editor
 				body.MassData = x.Mass;
 			}
 
-			foreach (var j in deserializer.Joints)
+			foreach (var j in WorldObject.Joints)
 			{
 				j.Joint.BodyA = bodies[j.BodyAIndex];
 				j.Joint.BodyB = bodies[j.BodyBIndex];
@@ -211,44 +293,6 @@ namespace Editor
 			Tao.FreeGlut.Glut.glutInit();
 
 			updateDraw = UpdateDraw;
-
-			Box2CS.Parsers.XMLFragmentParser.LoadFromFile("out.xml");
-
-			deserializer = new WorldXmlDeserializer();
-			using (System.IO.FileStream fs = new System.IO.FileStream("out.xml", System.IO.FileMode.Open))
-				deserializer.Deserialize(fs);
-
-            for (int i = 0; i < deserializer.Bodies.Count; ++i)
-            {
-                var x = deserializer.Bodies[i];
-                x.Name = "Body " + i.ToString();
-                bodyListBox.Items.Add(x.Name);
-
-                bodies.Add(new BodyObject(deserializer, x));
-            }
-
-            for (int i = 0; i < deserializer.FixtureDefs.Count; ++i)
-            {
-                var x = deserializer.FixtureDefs[i];
-                x.Name = "Fixture " + i.ToString();
-                fixtureListBox.Items.Add(x.Name);
-                
-                bodyFixtureSelect.Items.Add(("Fixture " + i.ToString() + ((string.IsNullOrEmpty(x.Name)) ? "" : " (" + x.Name + ")")));
-            }
-
-			for (int i = 0; i < deserializer.Joints.Count; ++i)
-			{
-				var x = deserializer.Joints[i];
-                x.Name = "Joint " + i.ToString();
-                listBox4.Items.Add(x.Name);
-			}
-            for (int i = 0; i < deserializer.Shapes.Count; ++i)
-            {
-                var x = deserializer.Shapes[i];
-                x.Name = "Shape " + i.ToString();
-                shapeListBox.Items.Add(x.Name);
-                fixtureShape.Items.Add(x.Name);
-            }
 
 			debugDraw = new TestDebugDraw();
 			debugDraw.Flags = DebugFlags.Shapes | DebugFlags.Joints | DebugFlags.CenterOfMasses;
@@ -336,7 +380,7 @@ namespace Editor
 
 			if (!_testing)
 			{
-				foreach (var x in bodies)
+				foreach (var x in WorldObject.Bodies)
 				{
 					var xf = new Transform(x.Body.Position, new Mat22(x.Body.Angle));
 
@@ -369,7 +413,7 @@ namespace Editor
 					DrawStringFollow(p.X, p.Y, HoverBody.Name);
 				}
 
-				foreach (var x in deserializer.Joints)
+				foreach (var x in WorldObject.Joints)
 				{
 					Vec2 a1 = Vec2.Empty, a2 = Vec2.Empty;
 
@@ -396,7 +440,7 @@ namespace Editor
 						a2 = ((WeldJointDef)x.Joint).LocalAnchorB;
 						break;
 					}
-					debugDraw.DrawJoint(x, a1, a2, deserializer.Bodies[x.BodyAIndex].Body, deserializer.Bodies[x.BodyBIndex].Body);
+					debugDraw.DrawJoint(x, a1, a2, WorldObject.Bodies[x.BodyAIndex].Body, WorldObject.Bodies[x.BodyBIndex].Body);
 				}
 			}
 			else
@@ -571,7 +615,7 @@ namespace Editor
 			Vec2 p = ConvertScreenToWorld(x, y);
 
 			BodyObject moused = null;
-			foreach (var b in bodies)
+			foreach (var b in WorldObject.Bodies)
 			{
 				foreach (var f in b.Fixtures)
 				{
@@ -632,9 +676,6 @@ namespace Editor
 		{
 			simulationThread = new Thread(SimulationLoop);
 			simulationThread.Start();
-            bodyListBox.SelectedIndex = 0;
-            fixtureListBox.SelectedIndex = 0;
-            shapeListBox.SelectedIndex = 0;
 		}
 
 		private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -662,7 +703,7 @@ namespace Editor
 				return;
 
 			//propertyGrid1.SelectedObject = bodies[listBox1.SelectedIndex];
-			SelectedBody = bodies[bodyListBox.SelectedIndex];
+			SelectedBody = WorldObject.Bodies[bodyListBox.SelectedIndex];
             LoadBodyObjectSettings();
 		}
 
@@ -694,7 +735,9 @@ namespace Editor
             bodyInertia.Value = Convert.ToDecimal(SelectedBody.Mass.Inertia);
         
             bodyFixtureListBox.Items.Clear();
-            for (int i = 0; i < SelectedBody.Fixtures.Count; i ++) {
+
+            for (int i = 0; i < SelectedBody.Fixtures.Count; i ++)
+			{
                 FixtureDefSerialized fixDefSer = SelectedBody.Fixtures[i];
                 bodyFixtureListBox.Items.Add(fixDefSer.Name);
             }
@@ -702,16 +745,17 @@ namespace Editor
             int prevIndex = bodyFixtureSelect.SelectedIndex;
 
             bodyFixtureSelect.Items.Clear();
-            for (int i = 0; i < deserializer.FixtureDefs.Count; i++)
+
+			for (int i = 0; i < WorldObject.Fixtures.Count; i++)
             {
-                FixtureDefSerialized fixDefSer = deserializer.FixtureDefs[i];
+				FixtureDefSerialized fixDefSer = WorldObject.Fixtures[i];
                 bodyFixtureSelect.Items.Add(fixDefSer.Name);
             }
-            if (prevIndex < 0 || prevIndex >= deserializer.FixtureDefs.Count)
-            {
+
+			if (prevIndex < 0 || prevIndex >= WorldObject.Fixtures.Count)
                 prevIndex = 0;
-            }
-            bodyFixtureSelect.SelectedIndex = prevIndex;
+
+			bodyFixtureSelect.SelectedIndex = prevIndex;
         }
 
 		private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -719,7 +763,7 @@ namespace Editor
 			if (listBox4.SelectedIndex == -1)
 				return;
 
-			propertyGrid4.SelectedObject = deserializer.Joints[listBox4.SelectedIndex].Joint;
+			propertyGrid4.SelectedObject = WorldObject.Joints[listBox4.SelectedIndex].Joint;
 		}
 
 		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
@@ -745,8 +789,8 @@ namespace Editor
 
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
-            bodies.Add(new BodyObject(deserializer, new BodyDefSerialized(null, new BodyDef(), new List<int> { }, "Body " + (bodies.Count).ToString())));
-			bodyListBox.Items.Add("Body "+(bodies.Count-1).ToString());
+			WorldObject.Bodies.Add(new BodyObject(WorldObject, new BodyDefSerialized(null, new BodyDef(), new List<int> { }, "Body " + (WorldObject.Bodies.Count).ToString())));
+			bodyListBox.Items.Add("Body "+(WorldObject.Bodies.Count-1).ToString());
 		}
 
         private void propertyGrid2_Click(object sender, EventArgs e)
@@ -791,7 +835,7 @@ namespace Editor
 
         private void button1_Click(object sender, EventArgs e)
         {
-            FixtureDefSerialized fixDefSer = deserializer.FixtureDefs[bodyFixtureSelect.SelectedIndex];
+			FixtureDefSerialized fixDefSer = WorldObject.Fixtures[bodyFixtureSelect.SelectedIndex];
             bool addFix = true;
             for (int i = 0; i < SelectedBody.Fixtures.Count; i ++ ) {
                 if (SelectedBody.Fixtures[i] == fixDefSer) {
@@ -926,7 +970,7 @@ namespace Editor
                 return;
 
             //propertyGrid1.SelectedObject = bodies[listBox1.SelectedIndex];
-            SelectedFixture = deserializer.FixtureDefs[fixtureListBox.SelectedIndex];
+			SelectedFixture = WorldObject.Fixtures[fixtureListBox.SelectedIndex];
             LoadFixtureObjectSettings();
         }
         public void LoadFixtureObjectSettings()
@@ -992,7 +1036,7 @@ namespace Editor
             if (fixtureListBox.SelectedIndex == -1)
                 return;
 
-            SelectedShape = deserializer.Shapes[shapeListBox.SelectedIndex];
+			SelectedShape = WorldObject.Shapes[shapeListBox.SelectedIndex];
 
             LoadShapeObjectSettings();
         }
@@ -1051,10 +1095,10 @@ namespace Editor
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
             CircleShape shape = new CircleShape();
-            ShapeSerialized newShape = new ShapeSerialized(shape,"Shape " + (deserializer.Shapes.Count).ToString());
-            deserializer.Shapes.Add(newShape);
-            shapeListBox.Items.Add("Shape " + (deserializer.Shapes.Count-1).ToString());
-            fixtureShape.Items.Add("Shape " + (deserializer.Shapes.Count - 1).ToString());
+			ShapeSerialized newShape = new ShapeSerialized(shape, "Shape " + (WorldObject.Shapes.Count).ToString());
+			WorldObject.Shapes.Add(newShape);
+			shapeListBox.Items.Add("Shape " + (WorldObject.Shapes.Count-1).ToString());
+			fixtureShape.Items.Add("Shape " + (WorldObject.Shapes.Count - 1).ToString());
         }
 
         private void bodyFixtureDelete_Click(object sender, EventArgs e)
@@ -1066,11 +1110,55 @@ namespace Editor
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             FixtureDef fixture = new FixtureDef();
-            FixtureDefSerialized newFixture = new FixtureDefSerialized(fixture, 0, "Fixture " + (deserializer.FixtureDefs.Count).ToString());
-            deserializer.FixtureDefs.Add(newFixture);
-            fixtureListBox.Items.Add("Fixture " + (deserializer.FixtureDefs.Count - 1).ToString());
-            bodyFixtureSelect.Items.Add("Fixture " + (deserializer.FixtureDefs.Count - 1).ToString());
+			FixtureDefSerialized newFixture = new FixtureDefSerialized(fixture, 0, "Fixture " + (WorldObject.Fixtures.Count).ToString());
+			WorldObject.Fixtures.Add(newFixture);
+			fixtureListBox.Items.Add("Fixture " + (WorldObject.Fixtures.Count - 1).ToString());
+			bodyFixtureSelect.Items.Add("Fixture " + (WorldObject.Fixtures.Count - 1).ToString());
         }
+
+		void ClearListboxes()
+		{
+			bodyListBox.Items.Clear();
+			fixtureListBox.Items.Clear();
+			bodyFixtureListBox.Items.Clear();
+			shapeListBox.Items.Clear();
+			listBox4.Items.Clear();
+		}
+
+		private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (var ofd = new OpenFileDialog())
+			{
+				ofd.RestoreDirectory = true;
+				ofd.Filter = "Box2Scene XML Files|*.xml";
+
+				if (ofd.ShowDialog() == DialogResult.OK)
+				{
+					ClearListboxes();
+					WorldObject.LoadFromFile(ofd.FileName);
+
+					for (int i = 0; i < WorldObject.Bodies.Count; ++i)
+					{
+						var body = WorldObject.Bodies[i];
+						bodyListBox.Items.Add((string.IsNullOrEmpty(body.Name)) ? ("Body " + i.ToString()) : body.Name);
+					}
+
+					for (int i = 0; i < WorldObject.Fixtures.Count; ++i)
+					{
+						var fixture = WorldObject.Fixtures[i];
+						fixtureListBox.Items.Add((string.IsNullOrEmpty(fixture.Name)) ? ("Fixture " + i.ToString()) : fixture.Name);
+					}
+
+					for (int i = 0; i < WorldObject.Shapes.Count; ++i)
+					{
+						var shape = WorldObject.Shapes[i];
+						string name = (string.IsNullOrEmpty(shape.Name)) ? ("Shape " + i.ToString()) : shape.Name;
+						shapeListBox.Items.Add(name);
+						fixtureShape.Items.Add(name);
+					}
+				}
+			}
+		}
 	}
 
 	public class HolyCrapControl : Control
