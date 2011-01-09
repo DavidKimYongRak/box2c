@@ -692,13 +692,26 @@ namespace Editor
             bodyCenterY.Value = Convert.ToDecimal(SelectedBody.Mass.Center.Y);
             bodyMass.Value = Convert.ToDecimal(SelectedBody.Mass.Mass);
             bodyInertia.Value = Convert.ToDecimal(SelectedBody.Mass.Inertia);
-
-            bodyFixtureSelect.SelectedIndex = 0;
         
             bodyFixtureListBox.Items.Clear();
             for (int i = 0; i < SelectedBody.Fixtures.Count; i ++) {
-                //bodyFixtureListBox.Items.Add(("Fixture " + i.ToString()));
+                FixtureDefSerialized fixDefSer = SelectedBody.Fixtures[i];
+                bodyFixtureListBox.Items.Add(fixDefSer.Name);
             }
+
+            int prevIndex = bodyFixtureSelect.SelectedIndex;
+
+            bodyFixtureSelect.Items.Clear();
+            for (int i = 0; i < deserializer.FixtureDefs.Count; i++)
+            {
+                FixtureDefSerialized fixDefSer = deserializer.FixtureDefs[i];
+                bodyFixtureSelect.Items.Add(fixDefSer.Name);
+            }
+            if (prevIndex < 0 || prevIndex >= deserializer.FixtureDefs.Count)
+            {
+                prevIndex = 0;
+            }
+            bodyFixtureSelect.SelectedIndex = prevIndex;
         }
 
 		private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -778,7 +791,16 @@ namespace Editor
 
         private void button1_Click(object sender, EventArgs e)
         {
+            FixtureDefSerialized fixDefSer = deserializer.FixtureDefs[bodyFixtureSelect.SelectedIndex];
+            bool addFix = true;
+            for (int i = 0; i < SelectedBody.Fixtures.Count; i ++ ) {
+                if (SelectedBody.Fixtures[i] == fixDefSer) {
+                    addFix = false;
+                }
+            }
+            if (addFix) { SelectedBody.Fixtures.Add(fixDefSer); }
 
+            LoadBodyObjectSettings();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -1042,6 +1064,12 @@ namespace Editor
             deserializer.FixtureDefs.Add(newFixture);
             fixtureListBox.Items.Add("Fixture " + (deserializer.FixtureDefs.Count - 1).ToString());
             bodyFixtureSelect.Items.Add("Fixture " + (deserializer.FixtureDefs.Count - 1).ToString());
+        }
+
+        private void bodyFixtureDelete_Click(object sender, EventArgs e)
+        {
+            SelectedBody.Fixtures.RemoveAt(bodyFixtureListBox.SelectedIndex);
+            LoadBodyObjectSettings();
         }
 	}
 
