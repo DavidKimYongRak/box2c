@@ -1057,6 +1057,12 @@ namespace Editor
             fixtureShape.Items.Add("Shape " + (deserializer.Shapes.Count - 1).ToString());
         }
 
+        private void bodyFixtureDelete_Click(object sender, EventArgs e)
+        {
+            SelectedBody.Fixtures.RemoveAt(bodyFixtureListBox.SelectedIndex);
+            LoadBodyObjectSettings();
+        }
+
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             FixtureDef fixture = new FixtureDef();
@@ -1064,12 +1070,6 @@ namespace Editor
             deserializer.FixtureDefs.Add(newFixture);
             fixtureListBox.Items.Add("Fixture " + (deserializer.FixtureDefs.Count - 1).ToString());
             bodyFixtureSelect.Items.Add("Fixture " + (deserializer.FixtureDefs.Count - 1).ToString());
-        }
-
-        private void bodyFixtureDelete_Click(object sender, EventArgs e)
-        {
-            SelectedBody.Fixtures.RemoveAt(bodyFixtureListBox.SelectedIndex);
-            LoadBodyObjectSettings();
         }
 	}
 
