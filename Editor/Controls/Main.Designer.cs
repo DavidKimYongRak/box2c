@@ -32,15 +32,18 @@
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.Tabbies = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.bodyAutoMassRecalculate = new System.Windows.Forms.ComboBox();
+			this.bodyActive = new System.Windows.Forms.CheckBox();
+			this.bodyAutoMassRecalculate = new System.Windows.Forms.CheckBox();
+			this.bodyAwake = new System.Windows.Forms.CheckBox();
+			this.bodyAllowSleep = new System.Windows.Forms.CheckBox();
+			this.bodyBullet = new System.Windows.Forms.CheckBox();
+			this.bodyFixedRotation = new System.Windows.Forms.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.bodyFixtureDelete = new System.Windows.Forms.Button();
 			this.bodyFixtureAdd = new System.Windows.Forms.Button();
-			this.bodyAwake = new System.Windows.Forms.ComboBox();
 			this.label22 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label18 = new System.Windows.Forms.Label();
-			this.bodyAllowSleep = new System.Windows.Forms.ComboBox();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
@@ -52,16 +55,13 @@
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
-			this.bodyFixedRotation = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
-			this.bodyBullet = new System.Windows.Forms.ComboBox();
 			this.bodyType = new System.Windows.Forms.ComboBox();
 			this.bodyListBox = new System.Windows.Forms.ListBox();
 			this.bodyName = new System.Windows.Forms.TextBox();
 			this.label21 = new System.Windows.Forms.Label();
 			this.label19 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.bodyActive = new System.Windows.Forms.ComboBox();
 			this.label20 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
@@ -72,6 +72,7 @@
 			this.label13 = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.fixtureIsSensor = new System.Windows.Forms.CheckBox();
 			this.toolStrip2 = new System.Windows.Forms.ToolStrip();
 			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
@@ -89,7 +90,6 @@
 			this.fixtureName = new System.Windows.Forms.TextBox();
 			this.label28 = new System.Windows.Forms.Label();
 			this.label41 = new System.Windows.Forms.Label();
-			this.fixtureIsSensor = new System.Windows.Forms.ComboBox();
 			this.label40 = new System.Windows.Forms.Label();
 			this.label43 = new System.Windows.Forms.Label();
 			this.label42 = new System.Windows.Forms.Label();
@@ -165,15 +165,18 @@
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.bodyActive);
 			this.tabPage1.Controls.Add(this.bodyAutoMassRecalculate);
+			this.tabPage1.Controls.Add(this.bodyAwake);
+			this.tabPage1.Controls.Add(this.bodyAllowSleep);
+			this.tabPage1.Controls.Add(this.bodyBullet);
+			this.tabPage1.Controls.Add(this.bodyFixedRotation);
 			this.tabPage1.Controls.Add(this.label1);
 			this.tabPage1.Controls.Add(this.bodyFixtureDelete);
 			this.tabPage1.Controls.Add(this.bodyFixtureAdd);
-			this.tabPage1.Controls.Add(this.bodyAwake);
 			this.tabPage1.Controls.Add(this.label22);
 			this.tabPage1.Controls.Add(this.label7);
 			this.tabPage1.Controls.Add(this.label18);
-			this.tabPage1.Controls.Add(this.bodyAllowSleep);
 			this.tabPage1.Controls.Add(this.toolStrip1);
 			this.tabPage1.Controls.Add(this.label3);
 			this.tabPage1.Controls.Add(this.bodyFixtureListBox);
@@ -184,9 +187,7 @@
 			this.tabPage1.Controls.Add(this.label11);
 			this.tabPage1.Controls.Add(this.label10);
 			this.tabPage1.Controls.Add(this.label9);
-			this.tabPage1.Controls.Add(this.bodyFixedRotation);
 			this.tabPage1.Controls.Add(this.label8);
-			this.tabPage1.Controls.Add(this.bodyBullet);
 			this.tabPage1.Controls.Add(this.bodyType);
 			this.tabPage1.Controls.Add(this.bodyCenterX);
 			this.tabPage1.Controls.Add(this.bodyListBox);
@@ -195,7 +196,6 @@
 			this.tabPage1.Controls.Add(this.label19);
 			this.tabPage1.Controls.Add(this.label2);
 			this.tabPage1.Controls.Add(this.bodyInertia);
-			this.tabPage1.Controls.Add(this.bodyActive);
 			this.tabPage1.Controls.Add(this.bodyLinearVelY);
 			this.tabPage1.Controls.Add(this.bodyAngle);
 			this.tabPage1.Controls.Add(this.label20);
@@ -222,23 +222,64 @@
 			this.tabPage1.Text = "Bodies";
 			this.tabPage1.UseVisualStyleBackColor = true;
 			// 
+			// bodyActive
+			// 
+			this.bodyActive.AutoSize = true;
+			this.bodyActive.Location = new System.Drawing.Point(171, 94);
+			this.bodyActive.Name = "bodyActive";
+			this.bodyActive.Size = new System.Drawing.Size(15, 14);
+			this.bodyActive.TabIndex = 54;
+			this.bodyActive.UseVisualStyleBackColor = true;
+			// 
 			// bodyAutoMassRecalculate
 			// 
-			this.bodyAutoMassRecalculate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.bodyAutoMassRecalculate.FormattingEnabled = true;
-			this.bodyAutoMassRecalculate.Items.AddRange(new object[] {
-            "False",
-            "True"});
-			this.bodyAutoMassRecalculate.Location = new System.Drawing.Point(132, 359);
+			this.bodyAutoMassRecalculate.AutoSize = true;
+			this.bodyAutoMassRecalculate.Location = new System.Drawing.Point(213, 323);
 			this.bodyAutoMassRecalculate.Name = "bodyAutoMassRecalculate";
-			this.bodyAutoMassRecalculate.Size = new System.Drawing.Size(84, 21);
-			this.bodyAutoMassRecalculate.TabIndex = 0;
-			this.bodyAutoMassRecalculate.SelectedIndexChanged += new System.EventHandler(this.bodyAutoMassRecalculate_SelectedIndexChanged);
+			this.bodyAutoMassRecalculate.Size = new System.Drawing.Size(15, 14);
+			this.bodyAutoMassRecalculate.TabIndex = 53;
+			this.bodyAutoMassRecalculate.UseVisualStyleBackColor = true;
+			// 
+			// bodyAwake
+			// 
+			this.bodyAwake.AutoSize = true;
+			this.bodyAwake.Location = new System.Drawing.Point(213, 303);
+			this.bodyAwake.Name = "bodyAwake";
+			this.bodyAwake.Size = new System.Drawing.Size(15, 14);
+			this.bodyAwake.TabIndex = 52;
+			this.bodyAwake.UseVisualStyleBackColor = true;
+			// 
+			// bodyAllowSleep
+			// 
+			this.bodyAllowSleep.AutoSize = true;
+			this.bodyAllowSleep.Location = new System.Drawing.Point(72, 323);
+			this.bodyAllowSleep.Name = "bodyAllowSleep";
+			this.bodyAllowSleep.Size = new System.Drawing.Size(15, 14);
+			this.bodyAllowSleep.TabIndex = 51;
+			this.bodyAllowSleep.UseVisualStyleBackColor = true;
+			// 
+			// bodyBullet
+			// 
+			this.bodyBullet.AutoSize = true;
+			this.bodyBullet.Location = new System.Drawing.Point(136, 303);
+			this.bodyBullet.Name = "bodyBullet";
+			this.bodyBullet.Size = new System.Drawing.Size(15, 14);
+			this.bodyBullet.TabIndex = 50;
+			this.bodyBullet.UseVisualStyleBackColor = true;
+			// 
+			// bodyFixedRotation
+			// 
+			this.bodyFixedRotation.AutoSize = true;
+			this.bodyFixedRotation.Location = new System.Drawing.Point(72, 303);
+			this.bodyFixedRotation.Name = "bodyFixedRotation";
+			this.bodyFixedRotation.Size = new System.Drawing.Size(15, 14);
+			this.bodyFixedRotation.TabIndex = 49;
+			this.bodyFixedRotation.UseVisualStyleBackColor = true;
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(15, 363);
+			this.label1.Location = new System.Drawing.Point(93, 323);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(114, 13);
 			this.label1.TabIndex = 1;
@@ -264,19 +305,6 @@
 			this.bodyFixtureAdd.UseVisualStyleBackColor = true;
 			this.bodyFixtureAdd.Click += new System.EventHandler(this.button1_Click);
 			// 
-			// bodyAwake
-			// 
-			this.bodyAwake.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.bodyAwake.FormattingEnabled = true;
-			this.bodyAwake.Items.AddRange(new object[] {
-            "False",
-            "True"});
-			this.bodyAwake.Location = new System.Drawing.Point(173, 333);
-			this.bodyAwake.Name = "bodyAwake";
-			this.bodyAwake.Size = new System.Drawing.Size(56, 21);
-			this.bodyAwake.TabIndex = 13;
-			this.bodyAwake.SelectedIndexChanged += new System.EventHandler(this.bodyAwake_SelectedIndexChanged);
-			// 
 			// label22
 			// 
 			this.label22.AutoSize = true;
@@ -289,7 +317,7 @@
 			// label7
 			// 
 			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(128, 336);
+			this.label7.Location = new System.Drawing.Point(164, 303);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(43, 13);
 			this.label7.TabIndex = 12;
@@ -299,24 +327,11 @@
 			// 
 			this.label18.AutoSize = true;
 			this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label18.Location = new System.Drawing.Point(15, 380);
+			this.label18.Location = new System.Drawing.Point(16, 341);
 			this.label18.Name = "label18";
 			this.label18.Size = new System.Drawing.Size(51, 13);
 			this.label18.TabIndex = 35;
 			this.label18.Text = "Fixtures";
-			// 
-			// bodyAllowSleep
-			// 
-			this.bodyAllowSleep.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.bodyAllowSleep.FormattingEnabled = true;
-			this.bodyAllowSleep.Items.AddRange(new object[] {
-            "False",
-            "True"});
-			this.bodyAllowSleep.Location = new System.Drawing.Point(73, 333);
-			this.bodyAllowSleep.Name = "bodyAllowSleep";
-			this.bodyAllowSleep.Size = new System.Drawing.Size(51, 21);
-			this.bodyAllowSleep.TabIndex = 5;
-			this.bodyAllowSleep.SelectedIndexChanged += new System.EventHandler(this.bodyAllowSleep_SelectedIndexChanged);
 			// 
 			// toolStrip1
 			// 
@@ -359,7 +374,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(6, 336);
+			this.label3.Location = new System.Drawing.Point(1, 323);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(65, 13);
 			this.label3.TabIndex = 4;
@@ -368,9 +383,9 @@
 			// bodyFixtureListBox
 			// 
 			this.bodyFixtureListBox.FormattingEnabled = true;
-			this.bodyFixtureListBox.Location = new System.Drawing.Point(18, 396);
+			this.bodyFixtureListBox.Location = new System.Drawing.Point(18, 357);
 			this.bodyFixtureListBox.Name = "bodyFixtureListBox";
-			this.bodyFixtureListBox.Size = new System.Drawing.Size(198, 56);
+			this.bodyFixtureListBox.Size = new System.Drawing.Size(198, 95);
 			this.bodyFixtureListBox.TabIndex = 34;
 			// 
 			// bodyFixtureSelect
@@ -403,7 +418,7 @@
 			// label10
 			// 
 			this.label10.AutoSize = true;
-			this.label10.Location = new System.Drawing.Point(4, 281);
+			this.label10.Location = new System.Drawing.Point(11, 303);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(55, 13);
 			this.label10.TabIndex = 18;
@@ -412,46 +427,20 @@
 			// label9
 			// 
 			this.label9.AutoSize = true;
-			this.label9.Location = new System.Drawing.Point(6, 310);
+			this.label9.Location = new System.Drawing.Point(94, 303);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(36, 13);
 			this.label9.TabIndex = 16;
 			this.label9.Text = "Bullet:";
 			// 
-			// bodyFixedRotation
-			// 
-			this.bodyFixedRotation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.bodyFixedRotation.FormattingEnabled = true;
-			this.bodyFixedRotation.Items.AddRange(new object[] {
-            "False",
-            "True"});
-			this.bodyFixedRotation.Location = new System.Drawing.Point(62, 277);
-			this.bodyFixedRotation.Name = "bodyFixedRotation";
-			this.bodyFixedRotation.Size = new System.Drawing.Size(68, 21);
-			this.bodyFixedRotation.TabIndex = 19;
-			this.bodyFixedRotation.SelectedIndexChanged += new System.EventHandler(this.bodyFixedRotation_SelectedIndexChanged);
-			// 
 			// label8
 			// 
 			this.label8.AutoSize = true;
-			this.label8.Location = new System.Drawing.Point(104, 309);
+			this.label8.Location = new System.Drawing.Point(6, 279);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(61, 13);
 			this.label8.TabIndex = 14;
 			this.label8.Text = "Body Type:";
-			// 
-			// bodyBullet
-			// 
-			this.bodyBullet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.bodyBullet.FormattingEnabled = true;
-			this.bodyBullet.Items.AddRange(new object[] {
-            "False",
-            "True"});
-			this.bodyBullet.Location = new System.Drawing.Point(45, 306);
-			this.bodyBullet.Name = "bodyBullet";
-			this.bodyBullet.Size = new System.Drawing.Size(57, 21);
-			this.bodyBullet.TabIndex = 17;
-			this.bodyBullet.SelectedIndexChanged += new System.EventHandler(this.bodyBullet_SelectedIndexChanged);
 			// 
 			// bodyType
 			// 
@@ -461,7 +450,7 @@
             "Static",
             "Kinematic",
             "Dynamic"});
-			this.bodyType.Location = new System.Drawing.Point(166, 306);
+			this.bodyType.Location = new System.Drawing.Point(68, 276);
 			this.bodyType.Name = "bodyType";
 			this.bodyType.Size = new System.Drawing.Size(62, 21);
 			this.bodyType.TabIndex = 15;
@@ -511,19 +500,6 @@
 			this.label2.Size = new System.Drawing.Size(40, 13);
 			this.label2.TabIndex = 2;
 			this.label2.Text = "Active:";
-			// 
-			// bodyActive
-			// 
-			this.bodyActive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.bodyActive.FormattingEnabled = true;
-			this.bodyActive.Items.AddRange(new object[] {
-            "False",
-            "True"});
-			this.bodyActive.Location = new System.Drawing.Point(171, 91);
-			this.bodyActive.Name = "bodyActive";
-			this.bodyActive.Size = new System.Drawing.Size(58, 21);
-			this.bodyActive.TabIndex = 3;
-			this.bodyActive.SelectedIndexChanged += new System.EventHandler(this.bodyActive_SelectedIndexChanged);
 			// 
 			// label20
 			// 
@@ -608,6 +584,7 @@
 			// 
 			// tabPage2
 			// 
+			this.tabPage2.Controls.Add(this.fixtureIsSensor);
 			this.tabPage2.Controls.Add(this.toolStrip2);
 			this.tabPage2.Controls.Add(this.shapeType);
 			this.tabPage2.Controls.Add(this.groupBox1);
@@ -616,7 +593,6 @@
 			this.tabPage2.Controls.Add(this.fixtureName);
 			this.tabPage2.Controls.Add(this.label28);
 			this.tabPage2.Controls.Add(this.label41);
-			this.tabPage2.Controls.Add(this.fixtureIsSensor);
 			this.tabPage2.Controls.Add(this.label40);
 			this.tabPage2.Controls.Add(this.label43);
 			this.tabPage2.Controls.Add(this.label42);
@@ -631,6 +607,15 @@
 			this.tabPage2.TabIndex = 5;
 			this.tabPage2.Text = "Fixtures";
 			this.tabPage2.UseVisualStyleBackColor = true;
+			// 
+			// fixtureIsSensor
+			// 
+			this.fixtureIsSensor.AutoSize = true;
+			this.fixtureIsSensor.Location = new System.Drawing.Point(92, 172);
+			this.fixtureIsSensor.Name = "fixtureIsSensor";
+			this.fixtureIsSensor.Size = new System.Drawing.Size(15, 14);
+			this.fixtureIsSensor.TabIndex = 42;
+			this.fixtureIsSensor.UseVisualStyleBackColor = true;
 			// 
 			// toolStrip2
 			// 
@@ -815,23 +800,10 @@
 			this.label41.TabIndex = 11;
 			this.label41.Text = "Restitution:";
 			// 
-			// fixtureIsSensor
-			// 
-			this.fixtureIsSensor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.fixtureIsSensor.FormattingEnabled = true;
-			this.fixtureIsSensor.Items.AddRange(new object[] {
-            "False",
-            "True"});
-			this.fixtureIsSensor.Location = new System.Drawing.Point(59, 168);
-			this.fixtureIsSensor.Name = "fixtureIsSensor";
-			this.fixtureIsSensor.Size = new System.Drawing.Size(61, 21);
-			this.fixtureIsSensor.TabIndex = 13;
-			this.fixtureIsSensor.SelectedIndexChanged += new System.EventHandler(this.fixtureIsSensor_SelectedIndexChanged);
-			// 
 			// label40
 			// 
 			this.label40.AutoSize = true;
-			this.label40.Location = new System.Drawing.Point(2, 171);
+			this.label40.Location = new System.Drawing.Point(32, 172);
 			this.label40.Name = "label40";
 			this.label40.Size = new System.Drawing.Size(54, 13);
 			this.label40.TabIndex = 12;
@@ -1281,8 +1253,7 @@
 		private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.TabControl Tabbies;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.ComboBox bodyAutoMassRecalculate;
+		private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.Button bodyFixtureDelete;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button bodyFixtureAdd;
@@ -1297,10 +1268,8 @@
         private FloatNumericUpDown bodyInertiaScale;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.ComboBox bodyFixedRotation;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ComboBox bodyBullet;
+		private System.Windows.Forms.Label label9;
+		private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox bodyType;
         private FloatNumericUpDown bodyCenterX;
         private System.Windows.Forms.ListBox bodyListBox;
@@ -1308,8 +1277,7 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label2;
-        private FloatNumericUpDown bodyInertia;
-        private System.Windows.Forms.ComboBox bodyActive;
+		private FloatNumericUpDown bodyInertia;
         private FloatNumericUpDown bodyLinearVelY;
         private FloatNumericUpDown bodyAngle;
         private System.Windows.Forms.Label label20;
@@ -1325,12 +1293,10 @@
         private System.Windows.Forms.Label label12;
         private FloatNumericUpDown bodyPositionY;
         private System.Windows.Forms.Label label15;
-        private FloatNumericUpDown bodyLinearDamping;
-        private System.Windows.Forms.ComboBox bodyAllowSleep;
+		private FloatNumericUpDown bodyLinearDamping;
         private FloatNumericUpDown bodyLinearVelX;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.ComboBox bodyAwake;
+		private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -1345,8 +1311,7 @@
         private System.Windows.Forms.Panel shapePanel;
         private System.Windows.Forms.TextBox fixtureName;
         private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.Label label41;
-        private System.Windows.Forms.ComboBox fixtureIsSensor;
+		private System.Windows.Forms.Label label41;
         private FloatNumericUpDown fixtureRestitution;
         private System.Windows.Forms.Label label40;
         private FloatNumericUpDown fixtureDensity;
@@ -1359,6 +1324,13 @@
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripButton toolStripButton5;
 		private System.Windows.Forms.ToolStripButton toolStripButton6;
+		private System.Windows.Forms.CheckBox bodyAutoMassRecalculate;
+		private System.Windows.Forms.CheckBox bodyAwake;
+		private System.Windows.Forms.CheckBox bodyAllowSleep;
+		private System.Windows.Forms.CheckBox bodyBullet;
+		private System.Windows.Forms.CheckBox bodyFixedRotation;
+		private System.Windows.Forms.CheckBox fixtureIsSensor;
+		private System.Windows.Forms.CheckBox bodyActive;
 
 	}
 }

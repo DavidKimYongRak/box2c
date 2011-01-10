@@ -17,11 +17,9 @@ namespace Editor
 {
 	public partial class Main : Form
 	{
-		int width = 640;
-		int height = 480;
 		float settingsHz = 60.0f;
 		float viewZoom = 1.0f;
-		Vec2 viewCenter = new Vec2(0.0f, 20.0f);
+		Vec2 viewCenter = new Vec2(0.0f, 0.0f);
 		int tx, ty, tw, th;
 		bool rMouseDown;
 		Vec2 lastp;
@@ -40,7 +38,7 @@ namespace Editor
 			set
 			{
 				viewZoom = value;
-				OnGLResize(width, height);
+				OnGLResize();
 			}
 		}
 
@@ -97,27 +95,24 @@ namespace Editor
 			renderWindow.KeyReleased += new EventHandler<SFML.Window.KeyEventArgs>(renderWindow_KeyReleased);
 			renderWindow.Show(true);
 
-			OnGLResize((int)renderWindow.Width, (int)renderWindow.Height);
+			OnGLResize();
 			Tao.FreeGlut.Glut.glutInit();
 
 			debugDraw = new TestDebugDraw();
 			debugDraw.Flags = DebugFlags.Shapes | DebugFlags.Joints | DebugFlags.CenterOfMasses;
 		}
 
-		void OnGLResize(int w, int h)
+		void OnGLResize()
 		{
 			if (InvokeRequired)
 			{
-				Invoke((Action)delegate() { OnGLResize(w, h); });
+				Invoke((Action)delegate() { OnGLResize(); });
 				return;
 			}
 
-			width = w;
-			height = h;
-
 			tx = ty = 0;
-			tw = w;
-			th = h;
+			tw = (int)renderWindow.Width;
+			th = (int)renderWindow.Height;
 			Gl.glViewport(tx, ty, tw, th);
 
 			Gl.glMatrixMode(Gl.GL_PROJECTION);
@@ -307,44 +302,44 @@ namespace Editor
 			// Press 'z' to zoom out.
 			case KeyCode.Z:
 				viewZoom = Math.Min(1.1f * viewZoom, 20.0f);
-				OnGLResize(width, height);
+				OnGLResize();
 				break;
 
 			// Press 'x' to zoom in.
 			case KeyCode.X:
 				viewZoom = Math.Max(0.9f * viewZoom, 0.02f);
-				OnGLResize(width, height);
+				OnGLResize();
 				break;
 
 			// Press left to pan left.
 			case KeyCode.Left:
 				viewCenter.X -= 0.5f;
-				OnGLResize(width, height);
+				OnGLResize();
 				break;
 
 			// Press right to pan right.
 			case KeyCode.Right:
 				viewCenter.X += 0.5f;
-				OnGLResize(width, height);
+				OnGLResize();
 				break;
 
 			// Press down to pan down.
 			case KeyCode.Down:
 				viewCenter.Y -= 0.5f;
-				OnGLResize(width, height);
+				OnGLResize();
 				break;
 
 			// Press up to pan up.
 			case KeyCode.Up:
 				viewCenter.Y += 0.5f;
-				OnGLResize(width, height);
+				OnGLResize();
 				break;
 
 			// Press home to reset the view.
 			case KeyCode.Home:
 				viewZoom = 1.0f;
 				viewCenter = new Vec2(0.0f, 20.0f);
-				OnGLResize(width, height);
+				OnGLResize();
 				break;
 			}	
 		}
@@ -366,7 +361,7 @@ namespace Editor
 
 		void render_Resized(object sender, SizeEventArgs e)
 		{
-			OnGLResize((int)e.Width, (int)e.Height);
+			OnGLResize();
 		}
 
 		enum MouseButtonState
@@ -443,7 +438,7 @@ namespace Editor
 				Vec2 diff = p - lastp;
 				viewCenter.X -= diff.X;
 				viewCenter.Y -= diff.Y;
-				OnGLResize(width, height);
+				OnGLResize();
 				lastp = ConvertScreenToWorld(x, y);
 			}
 
@@ -456,12 +451,12 @@ namespace Editor
 				viewZoom /= 1.1f;
 			else
 				viewZoom *= 1.1f;
-			OnGLResize(width, height);
+			OnGLResize();
 		}
 
 		void OnGLRestart()
 		{
-			OnGLResize(width, height);
+			OnGLResize();
 			NextGameTick = System.Environment.TickCount;
 		}
 
@@ -502,15 +497,15 @@ namespace Editor
 
         public void LoadBodyObjectSettings()
         {
-            bodyActive.SelectedIndex = Convert.ToInt32(SelectedBody.Body.Active);
-            bodyAllowSleep.SelectedIndex = Convert.ToInt32(SelectedBody.Body.AllowSleep);
+			bodyActive.Checked = SelectedBody.Body.Active;
+			bodyAllowSleep.Checked = SelectedBody.Body.AllowSleep;
             bodyAngle.Value = Convert.ToDecimal(SelectedBody.Body.Angle);
             bodyAngularDamping.Value = Convert.ToDecimal(SelectedBody.Body.AngularDamping);
             bodyAngularVelocity.Value = Convert.ToDecimal(SelectedBody.Body.AngularVelocity);
-            bodyAwake.SelectedIndex = Convert.ToInt32(SelectedBody.Body.Awake);
+			bodyAwake.Checked = SelectedBody.Body.Awake;
             bodyType.SelectedIndex = (int)SelectedBody.Body.BodyType;
-            bodyBullet.SelectedIndex = Convert.ToInt32(SelectedBody.Body.Bullet);
-            bodyFixedRotation.SelectedIndex = Convert.ToInt32(SelectedBody.Body.FixedRotation);
+			bodyBullet.Checked = SelectedBody.Body.Bullet;
+			bodyFixedRotation.Checked = SelectedBody.Body.FixedRotation;
             bodyInertiaScale.Value = Convert.ToDecimal(SelectedBody.Body.InertiaScale);
             bodyLinearDamping.Value = Convert.ToDecimal(SelectedBody.Body.LinearDamping);
             bodyLinearVelX.Value = Convert.ToDecimal(SelectedBody.Body.LinearVelocity.X);
@@ -520,7 +515,7 @@ namespace Editor
 
             bodyName.Text = SelectedBody.Name;
 
-            bodyAutoMassRecalculate.SelectedIndex = Convert.ToInt32(SelectedBody.AutoMassRecalculate);
+			bodyAutoMassRecalculate.Checked = SelectedBody.AutoMassRecalculate;
 
             bodyCenterX.Value = Convert.ToDecimal(SelectedBody.Mass.Center.X);
             bodyCenterY.Value = Convert.ToDecimal(SelectedBody.Mass.Center.Y);
@@ -581,17 +576,17 @@ namespace Editor
 
         private void bodyAutoMassRecalculate_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedBody.AutoMassRecalculate = Convert.ToBoolean(bodyAutoMassRecalculate.SelectedIndex);
+            SelectedBody.AutoMassRecalculate = bodyAutoMassRecalculate.Checked;
         }
 
         private void bodyActive_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedBody.Body.Active = Convert.ToBoolean(bodyActive.SelectedIndex);
+			SelectedBody.Body.Active = bodyActive.Checked;
         }
 
         private void bodyAllowSleep_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedBody.Body.AllowSleep = Convert.ToBoolean(bodyAllowSleep.SelectedIndex);
+            SelectedBody.Body.AllowSleep = bodyAllowSleep.Checked;
         }
 
         private void bodyAngle_ValueChanged(object sender, DecimalValueChangedEventArgs e)
@@ -611,7 +606,7 @@ namespace Editor
 
         private void bodyAwake_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedBody.Body.Awake = Convert.ToBoolean(bodyAwake.SelectedIndex);
+			SelectedBody.Body.Awake = bodyAwake.Checked;
         }
 
         private void bodyType_SelectedIndexChanged(object sender, EventArgs e)
@@ -621,12 +616,12 @@ namespace Editor
 
         private void bodyBullet_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedBody.Body.Bullet = Convert.ToBoolean(bodyBullet.SelectedIndex);
+			SelectedBody.Body.Bullet = bodyBullet.Checked;
         }
 
         private void bodyFixedRotation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedBody.Body.FixedRotation = Convert.ToBoolean(bodyFixedRotation.SelectedIndex);
+            SelectedBody.Body.FixedRotation = bodyFixedRotation.Checked;
         }
 
         private void bodyInertiaScale_ValueChanged(object sender, DecimalValueChangedEventArgs e)
@@ -704,7 +699,7 @@ namespace Editor
             fixtureName.Text = SelectedFixture.Name;
             fixtureDensity.Value = Convert.ToDecimal(SelectedFixture.Fixture.Density);
             fixtureFriction.Value = Convert.ToDecimal(SelectedFixture.Fixture.Friction);
-            fixtureIsSensor.SelectedIndex = Convert.ToInt32(SelectedFixture.Fixture.IsSensor);
+			fixtureIsSensor.Checked = SelectedFixture.Fixture.IsSensor;
             fixtureRestitution.Value = Convert.ToDecimal(SelectedFixture.Fixture.Restitution);
            // ShapeSerialized shape = new ShapeSerialized(SelectedFixture.Fixture.Shape,"");
             //if (WorldObject.Shapes.Count > 0)
@@ -725,7 +720,7 @@ namespace Editor
 
         private void fixtureIsSensor_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedFixture.Fixture.IsSensor = Convert.ToBoolean(fixtureIsSensor.SelectedIndex);
+            SelectedFixture.Fixture.IsSensor = fixtureIsSensor.Checked;
         }
 
         private void fixtureDensity_ValueChanged(object sender, DecimalValueChangedEventArgs e)
