@@ -7,6 +7,39 @@ namespace Editor
 {
 	public class TestDebugDraw : DebugDraw
 	{
+		public static void DrawString(int x, int y, string str)
+		{
+			Gl.glMatrixMode(Gl.GL_PROJECTION);
+			Gl.glPushMatrix();
+			Gl.glLoadIdentity();
+			int w = (int)Main.GLWindow.Width;
+			int h = (int)Main.GLWindow.Height;
+			Glu.gluOrtho2D(0, w, h, 0);
+			Gl.glMatrixMode(Gl.GL_MODELVIEW);
+			Gl.glPushMatrix();
+			Gl.glLoadIdentity();
+
+			Gl.glColor3f(0.9f, 0.6f, 0.6f);
+			Gl.glRasterPos2i(x, y);
+
+			foreach (var c in str)
+				Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_HELVETICA_12, c);
+
+			Gl.glPopMatrix();
+			Gl.glMatrixMode(Gl.GL_PROJECTION);
+			Gl.glPopMatrix();
+			Gl.glMatrixMode(Gl.GL_MODELVIEW);
+		}
+
+		public static void DrawStringFollow(float x, float y, string str)
+		{
+			Gl.glColor3f(0.9f, 0.6f, 0.6f);
+			Gl.glRasterPos2f(x, y);
+
+			foreach (var c in str)
+				Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_HELVETICA_12, c);
+		}
+
 		public override void DrawCircle(Vec2 center, float radius, ColorF color)
 		{
 			float k_segments = (int)(1024.0f * (radius / 50));

@@ -30,158 +30,8 @@ namespace Editor
 		TestDebugDraw debugDraw;
 		BodyObject HoverBody = null, SelectedBody = null;
         FixtureDefSerialized SelectedFixture = null;
-
         CirclePanel circlePanel = new CirclePanel();
-		public static WorldObjectClass WorldObject = new WorldObjectClass();
-
-		public class WorldObjectClass
-		{
-			List<BodyObject> _bodies = new List<BodyObject>();
-			List<FixtureDefSerialized> _fixtures = new List<FixtureDefSerialized>();
-			List<JointDefSerialized> _joints = new List<JointDefSerialized>();
-
-			public List<BodyObject> Bodies
-			{
-				get { return _bodies; }
-			}
-
-			public List<FixtureDefSerialized> Fixtures
-			{
-				get { return _fixtures; }
-			}
-
-			public List<JointDefSerialized> Joints
-			{
-				get { return _joints; }
-			}
-
-			public void Clear()
-			{
-				_bodies.Clear();
-				_fixtures.Clear();
-			}
-
-			public void LoadFromFile(string fileName)
-			{
-				var deserializer = new WorldXmlDeserializer();
-				using (System.IO.FileStream fs = new System.IO.FileStream(fileName, System.IO.FileMode.Open))
-					deserializer.Deserialize(fs);
-
-				for (int i = 0; i < deserializer.Shapes.Count; ++i)
-				{
-					var x = deserializer.Shapes[i];
-
-					if (string.IsNullOrEmpty(x.Name))
-						x.Name = "Shape "+i.ToString();
-
-					//_shapes.Add(x);
-				}
-
-				for (int i = 0; i < deserializer.FixtureDefs.Count; ++i)
-				{
-					var x = deserializer.FixtureDefs[i];
-
-					if (string.IsNullOrEmpty(x.Name))
-						x.Name = "Fixture "+i.ToString();
-
-					_fixtures.Add(x);
-				}
-
-				for (int i = 0; i < deserializer.Bodies.Count; ++i)
-				{
-					var x = deserializer.Bodies[i];
-
-					if (string.IsNullOrEmpty(x.Name))
-						x.Name = "Body "+i.ToString();
-
-					_bodies.Add(new BodyObject(WorldObject, x));
-				}
-
-				for (int i = 0; i < deserializer.Joints.Count; ++i)
-				{
-					var x = deserializer.Joints[i];
-
-					if (string.IsNullOrEmpty(x.Name))
-						x.Name = "Joint "+i.ToString();
-
-					_joints.Add(x);
-				}
-			}
-		}
-
-		public class BodyObject
-		{
-			public BodyDef Body
-			{
-				get;
-				set;
-			}
-
-			public string Name
-			{
-				get;
-				set;
-			}
-
-			MassData _mass;
-			public MassData Mass
-			{
-				get { return _mass; }
-				set { _mass = value; }
-			}
-
-			bool _autoCalculate = true;
-
-			public bool AutoMassRecalculate
-			{
-				get { return _autoCalculate; }
-				set { _autoCalculate = value; }
-			}
-
-			NotifyList<FixtureDefSerialized> _fixtures = new NotifyList<FixtureDefSerialized>();
-			public NotifyList<FixtureDefSerialized> Fixtures
-			{
-				get { return _fixtures; }
-			}
-
-			public IEnumerable<FixtureDef> OnlyFixtures
-			{
-				get
-				{
-					foreach (var x in _fixtures)
-						yield return x.Fixture;
-				}
-			}
-
-			void _fixtures_ObjectsRemoved(object sender, EventArgs e)
-			{
-				_mass = Body.ComputeMass(OnlyFixtures);
-			}
-
-			void _fixtures_ObjectsAdded(object sender, EventArgs e)
-			{
-				_mass = Body.ComputeMass(OnlyFixtures);
-			}
-
-			public BodyObject(WorldObjectClass world, BodyDefSerialized x)
-			{
-				Body = x.Body;
-				Name = x.Name;
-
-				for (int i = 0; i < x.FixtureIDs.Count; ++i)
-				{
-					var fixture = world.Fixtures[x.FixtureIDs[i]];
-					//fixture.Fixture.Shape = world.Shapes[world.Fixtures[x.FixtureIDs[i]].ShapeID].Shape;
-					_fixtures.Add(fixture);
-				}
-
-				_mass = Body.ComputeMass(OnlyFixtures);
-
-				_fixtures.ObjectsAdded += new EventHandler(_fixtures_ObjectsAdded);
-				_fixtures.ObjectsRemoved += new EventHandler(_fixtures_ObjectsRemoved);
-			}
-		}
-
+		public static WorldObject WorldObject = new WorldObject();
 		bool _testing = false;
 
 		public float ViewZoom
@@ -231,45 +81,11 @@ namespace Editor
 			//simulationThread = null;
 		}
 
-		public void DrawString(int x, int y, string str)
-		{
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glPushMatrix();
-			Gl.glLoadIdentity();
-			int w = (int)Main.GLWindow.Width;
-			int h = (int)Main.GLWindow.Height;
-			Glu.gluOrtho2D(0, w, h, 0);
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-			Gl.glPushMatrix();
-			Gl.glLoadIdentity();
-
-			Gl.glColor3f(0.9f, 0.6f, 0.6f);
-			Gl.glRasterPos2i(x, y);
-
-			foreach (var c in str)
-				Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_HELVETICA_12, c);
-
-			Gl.glPopMatrix();
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glPopMatrix();
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-		}
-
-		public void DrawStringFollow(float x, float y, string str)
-		{
-			Gl.glColor3f(0.9f, 0.6f, 0.6f);
-			Gl.glRasterPos2f(x, y);
-
-			foreach (var c in str)
-				Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_HELVETICA_12, c);
-		}
-
 		public Main()
 		{
 			StartPosition = FormStartPosition.Manual;
 			InitializeComponent();
 
-			//OnGLResize(_glcontrol.Width, _glcontrol.Height);
 			Text = "Box2CS Level Editor - Box2D version " + Box2DVersion.Version.ToString();
 
 			renderWindow = new RenderWindow(panel1.Handle, new ContextSettings(32, 0, 12));
@@ -283,8 +99,6 @@ namespace Editor
 
 			OnGLResize((int)renderWindow.Width, (int)renderWindow.Height);
 			Tao.FreeGlut.Glut.glutInit();
-
-			updateDraw = UpdateDraw;
 
 			debugDraw = new TestDebugDraw();
 			debugDraw.Flags = DebugFlags.Shapes | DebugFlags.Joints | DebugFlags.CenterOfMasses;
@@ -349,8 +163,6 @@ namespace Editor
 			get { return renderWindow; }
 		}
 
-		delegate void UpdateDrawDelegate();
-		UpdateDrawDelegate updateDraw;
 		void UpdateDraw()
 		{
 			// Process events
@@ -402,7 +214,7 @@ namespace Editor
 				if (HoverBody != null && !string.IsNullOrEmpty(HoverBody.Name))
 				{
 					Vec2 p = ConvertScreenToWorld(CursorPos.X, CursorPos.Y);
-					DrawStringFollow(p.X, p.Y, HoverBody.Name);
+					TestDebugDraw.DrawStringFollow(p.X, p.Y, HoverBody.Name);
 				}
 
 				foreach (var x in WorldObject.Joints)
@@ -463,7 +275,7 @@ namespace Editor
 					gameFrame++;
 				}
 
-				Invoke(updateDraw);
+				Invoke((Action)delegate() { UpdateDraw(); });
 
 				// Sleep it off
 				Thread.Sleep(5);
@@ -476,8 +288,65 @@ namespace Editor
 
 		void renderWindow_KeyPressed(object sender, SFML.Window.KeyEventArgs e)
 		{
-			OnGLKeyboard(e.Code, renderWindow.Input.GetMouseX(),
-				renderWindow.Input.GetMouseY());
+			int x = renderWindow.Input.GetMouseX();
+			int y = renderWindow.Input.GetMouseY();
+
+			switch (e.Code)
+			{
+			case KeyCode.Escape:
+				Application.Exit();
+				break;
+
+			case KeyCode.T:
+				if (!_testing)
+					StartTest();
+				else
+					EndTest();
+				break;
+
+			// Press 'z' to zoom out.
+			case KeyCode.Z:
+				viewZoom = Math.Min(1.1f * viewZoom, 20.0f);
+				OnGLResize(width, height);
+				break;
+
+			// Press 'x' to zoom in.
+			case KeyCode.X:
+				viewZoom = Math.Max(0.9f * viewZoom, 0.02f);
+				OnGLResize(width, height);
+				break;
+
+			// Press left to pan left.
+			case KeyCode.Left:
+				viewCenter.X -= 0.5f;
+				OnGLResize(width, height);
+				break;
+
+			// Press right to pan right.
+			case KeyCode.Right:
+				viewCenter.X += 0.5f;
+				OnGLResize(width, height);
+				break;
+
+			// Press down to pan down.
+			case KeyCode.Down:
+				viewCenter.Y -= 0.5f;
+				OnGLResize(width, height);
+				break;
+
+			// Press up to pan up.
+			case KeyCode.Up:
+				viewCenter.Y += 0.5f;
+				OnGLResize(width, height);
+				break;
+
+			// Press home to reset the view.
+			case KeyCode.Home:
+				viewZoom = 1.0f;
+				viewCenter = new Vec2(0.0f, 20.0f);
+				OnGLResize(width, height);
+				break;
+			}	
 		}
 
 		void renderWindow_MouseMoved(object sender, MouseMoveEventArgs e)
@@ -498,66 +367,6 @@ namespace Editor
 		void render_Resized(object sender, SizeEventArgs e)
 		{
 			OnGLResize((int)e.Width, (int)e.Height);
-		}
-
-		void OnGLKeyboard(KeyCode key, int x, int y)
-		{
-			switch (key)
-			{
-			case KeyCode.Escape:
-				Application.Exit();
-				break;
-				
-			case KeyCode.T:
-				if (!_testing)
-					StartTest();
-				else
-					EndTest();
-				break;
-
-				// Press 'z' to zoom out.
-			case KeyCode.Z:
-				viewZoom = Math.Min(1.1f * viewZoom, 20.0f);
-				OnGLResize(width, height);
-				break;
-
-				// Press 'x' to zoom in.
-			case KeyCode.X:
-				viewZoom = Math.Max(0.9f * viewZoom, 0.02f);
-				OnGLResize(width, height);
-				break;
-
-				// Press left to pan left.
-			case KeyCode.Left:
-				viewCenter.X -= 0.5f;
-				OnGLResize(width, height);
-				break;
-
-				// Press right to pan right.
-			case KeyCode.Right:
-				viewCenter.X += 0.5f;
-				OnGLResize(width, height);
-				break;
-
-				// Press down to pan down.
-			case KeyCode.Down:
-				viewCenter.Y -= 0.5f;
-				OnGLResize(width, height);
-				break;
-
-				// Press up to pan up.
-			case KeyCode.Up:
-				viewCenter.Y += 0.5f;
-				OnGLResize(width, height);
-				break;
-
-				// Press home to reset the view.
-			case KeyCode.Home:
-				viewZoom = 1.0f;
-				viewCenter = new Vec2(0.0f, 20.0f);
-				OnGLResize(width, height);
-				break;
-			}
 		}
 
 		enum MouseButtonState
@@ -619,11 +428,7 @@ namespace Editor
 			if (MouseButtons == System.Windows.Forms.MouseButtons.Left)
 			{
 				if (moused != null)
-				{
 					SelectedBody = moused;
-					//propertyGrid1.SelectedObject = moused;
-					//propertyGrid1.Refresh();
-				}
 			}
 
 			HoverBody = moused;
@@ -648,13 +453,9 @@ namespace Editor
 		void OnGLMouseWheel(int wheel, int direction, int x, int y)
 		{
 			if (direction > 0)
-			{
 				viewZoom /= 1.1f;
-			}
 			else
-			{
 				viewZoom *= 1.1f;
-			}
 			OnGLResize(width, height);
 		}
 
@@ -753,80 +554,11 @@ namespace Editor
             }
         }
 
-		private void listBox4_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (listBox4.SelectedIndex == -1)
-				return;
-
-			propertyGrid4.SelectedObject = WorldObject.Joints[listBox4.SelectedIndex].Joint;
-		}
-
-		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-		{
-            /**
-			BodyForPropertyGrid bpg = (BodyForPropertyGrid)propertyGrid1.SelectedObject;
-
-			if (bpg.AutoMassRecalculate && 
-				e.ChangedItem.PropertyDescriptor.ComponentType.GetProperty(e.ChangedItem.PropertyDescriptor.Name)
-				.GetCustomAttributes(typeof(RecalculateMassAttribute), true)
-				.Length > 0)
-			{
-				var calc = bpg.Body.ComputeMass(bpg.Fixtures);
-
-				if (calc != bpg.Mass)
-				{
-					bpg.Mass = calc;
-					propertyGrid1.Refresh();
-				}
-			}
-             * */
-		}
-
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
 			WorldObject.Bodies.Add(new BodyObject(WorldObject, new BodyDefSerialized(null, new BodyDef(), new List<int> { }, "Body " + (WorldObject.Bodies.Count).ToString())));
 			bodyListBox.Items.Add("Body "+(WorldObject.Bodies.Count-1).ToString());
 		}
-
-        private void propertyGrid2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label10_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label14_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void numericUpDown7_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label18_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -955,9 +687,7 @@ namespace Editor
             MassData Mass = SelectedBody.Mass;
             Mass.Center = new Vec2(Mass.Center.X, (float)e.NewValue);
             SelectedBody.Mass = Mass;
-        }
-
-        
+        }    
 
         private void fixtureListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -968,6 +698,7 @@ namespace Editor
 			SelectedFixture = WorldObject.Fixtures[fixtureListBox.SelectedIndex];
             LoadFixtureObjectSettings();
         }
+
         public void LoadFixtureObjectSettings()
         {
             fixtureName.Text = SelectedFixture.Name;
@@ -986,6 +717,7 @@ namespace Editor
 
             LoadShapeObjectSettings();
         }
+
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
             SelectedFixture.Name = fixtureName.Text;
@@ -1028,21 +760,8 @@ namespace Editor
 
         private void fixtureShape_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //SelectedFixture.ShapeID = fixtureShape.SelectedIndex;
-            //SelectedFixture.Fixture.Shape = WorldObject.Shapes[fixtureShape.SelectedIndex].Shape;
         }
-        
-        /**
-        private void shapeListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (shapeListBox.SelectedIndex == -1)
-                return;
 
-			SelectedShape = WorldObject.Shapes[shapeListBox.SelectedIndex];
-
-            LoadShapeObjectSettings();
-        }
-         **/
         public void LoadShapeObjectSettings()
         {
             shapePanel.Controls.Clear();
@@ -1055,23 +774,25 @@ namespace Editor
                 circlePanel.circlePositionX.Value = Convert.ToDecimal(shape.Position.X);
                 circlePanel.circlePositionY.Value = Convert.ToDecimal(shape.Position.Y);
             }
+
             if (SelectedFixture.Fixture.Shape.ShapeType == ShapeType.Polygon)
-            {
                 shapeType.SelectedIndex = 1;
-            }
         }
+
         public void circleRadius_ValueChanged(object sender, DecimalValueChangedEventArgs e)
         {
             CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
             shape.Radius = (float)e.NewValue;
             SelectedFixture.Fixture.Shape = shape;
         }
+
         public void circlePositionX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
         {
             CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
             shape.Position = new Vec2( (float)e.NewValue ,shape.Position.Y);
             SelectedFixture.Fixture.Shape = shape;
         }
+
         public void circlePositionY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
         {
             CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
@@ -1088,6 +809,7 @@ namespace Editor
 
             LoadShapeObjectSettings();
         }
+
         private void bodyFixtureDelete_Click(object sender, EventArgs e)
         {
             SelectedBody.Fixtures.RemoveAt(bodyFixtureListBox.SelectedIndex);
@@ -1109,7 +831,6 @@ namespace Editor
 			bodyListBox.Items.Clear();
 			fixtureListBox.Items.Clear();
 			bodyFixtureListBox.Items.Clear();
-			listBox4.Items.Clear();
 		}
 
 		private void loadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1135,26 +856,8 @@ namespace Editor
 						var fixture = WorldObject.Fixtures[i];
 						fixtureListBox.Items.Add((string.IsNullOrEmpty(fixture.Name)) ? ("Fixture " + i.ToString()) : fixture.Name);
 					}
-                    /**
-					for (int i = 0; i < WorldObject.Shapes.Count; ++i)
-					{
-						var shape = WorldObject.Shapes[i];
-						string name = (string.IsNullOrEmpty(shape.Name)) ? ("Shape " + i.ToString()) : shape.Name;
-						shapeListBox.Items.Add(name);
-						fixtureShape.Items.Add(name);
-					}
-                     **/
 				}
 			}
 		}
-
-        private void label41_Click(object sender, EventArgs e)
-        {
-
-        }
-	}
-
-	public class HolyCrapControl : Control
-	{
 	}
 }
