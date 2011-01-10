@@ -462,8 +462,110 @@ namespace Editor
 
 		private void Main_Load(object sender, EventArgs e)
 		{
+			ImageList list = new ImageList();
+			list.ColorDepth = ColorDepth.Depth32Bit;
+			list.ImageSize = new System.Drawing.Size(16, 16);
+
+			System.Drawing.Bitmap b = new System.Drawing.Bitmap(16, 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(b))
+			{
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+				g.DrawEllipse(new System.Drawing.Pen(System.Drawing.Color.Green, 3), new System.Drawing.Rectangle(3, 3, 16 - 6, 16 - 6));
+			}
+			list.Images.Add(b);
+
+			b = new System.Drawing.Bitmap(16, 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(b))
+			{
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+				System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+				path.AddPolygon(new System.Drawing.Point[]
+				{
+					new System.Drawing.Point(4, 7),
+					new System.Drawing.Point(13, 3),
+					new System.Drawing.Point(7, 15),
+					new System.Drawing.Point(1, 13)
+				}
+				);
+				g.FillPath(System.Drawing.Brushes.Red, path);
+			}
+			list.Images.Add(b);
+
+			b = new System.Drawing.Bitmap(16, 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(b))
+			{
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+				g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+				TextRenderer.DrawText(g, "F", Font, new System.Drawing.Point(2, 2), System.Drawing.Color.Black);
+			}
+			list.Images.Add(b);
+
+			b = new System.Drawing.Bitmap(16, 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(b))
+			{
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+				g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+				TextRenderer.DrawText(g, "B", Font, new System.Drawing.Point(2, 2), System.Drawing.Color.Black);
+			}
+			list.Images.Add(b);
+
+			b = new System.Drawing.Bitmap(16, 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(b))
+			{
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+				g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+				TextRenderer.DrawText(g, "G", Font, new System.Drawing.Point(2, 2), System.Drawing.Color.Black);
+			}
+			list.Images.Add(b);
+
+			b = new System.Drawing.Bitmap(16, 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(b))
+			{
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+				g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+				TextRenderer.DrawText(g, "W", Font, new System.Drawing.Point(2, 2), System.Drawing.Color.Black);
+			}
+			list.Images.Add(b);
+
+			b = new System.Drawing.Bitmap(16, 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(b))
+			{
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+				g.DrawCurve(System.Drawing.Pens.Black, new System.Drawing.Point[] {
+				new System.Drawing.Point(2, 2),
+				new System.Drawing.Point(4, 7),
+				new System.Drawing.Point(12, 7),
+				new System.Drawing.Point(14, 2)
+				});
+			}
+			list.Images.Add(b);
+
 			simulationThread = new Thread(SimulationLoop);
 			simulationThread.Start();
+			{
+				treeViewEx1.ImageList = list;
+				var node = new Paril.Windows.Forms.TreeNodeEx("World");
+				node.ImageIndex = node.SelectedImageIndex = 5;
+
+				node.Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Ground", 4, 4));
+				node.Nodes[0].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Fixture 0 (Ramp piece)", 2, 2));
+				node.Nodes[0].Nodes[0].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Edge", 6, 6));
+				node.Nodes[0].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Fixture 1 (Ramp piece)", 2, 2));
+				node.Nodes[0].Nodes[1].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Polygon", 1, 1));
+
+				node.Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Elevator", 4, 4));
+				node.Nodes[1].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Fixture 0 (Left pulley track)", 2, 2));
+				node.Nodes[1].Nodes[0].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Circle", 0, 0));
+				node.Nodes[1].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Fixture 1 (Right pulley track)", 2, 2));
+				node.Nodes[1].Nodes[1].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Circle", 0, 0));
+				node.Nodes[1].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Fixture 1 (Pulley track)", 2, 2));
+				node.Nodes[1].Nodes[2].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Circle", 0, 0));
+
+				treeViewEx1.Nodes.Add(node);
+				node.Expand();
+			}
 		}
 
 		private void Main_FormClosing(object sender, FormClosingEventArgs e)
