@@ -854,5 +854,14 @@ namespace Editor
 				}
 			}
 		}
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            if (bodyListBox.SelectedIndex > -1 && bodyListBox.SelectedIndex < WorldObject.Bodies.Count)
+            {
+                WorldObject.Bodies.RemoveAt(bodyListBox.SelectedIndex);
+                bodyListBox.Items.RemoveAt(bodyListBox.SelectedIndex);
+            }
+        }
 	}
 }
