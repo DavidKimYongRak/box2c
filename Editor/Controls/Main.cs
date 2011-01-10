@@ -863,5 +863,24 @@ namespace Editor
                 bodyListBox.Items.RemoveAt(bodyListBox.SelectedIndex);
             }
         }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            if (bodyListBox.SelectedIndex > -1 && bodyListBox.SelectedIndex < WorldObject.Bodies.Count)
+            {
+                /**
+                new BodyObject(WorldObject,
+                    new BodyDefSerialized(WorldObject.Bodies[bodyListBox.SelectedIndex], new BodyDef(), new List<int> { }, "Body "))
+                );
+
+                BodyDefSerialized def = new BodyDefSerialized(WorldObject.Bodies[bodyListBox.SelectedIndex].Body, new BodyDef(), new List<int> { }, "Body "));
+                BodyObject body = new BodyObject();
+
+                WorldObject.Bodies.RemoveAt(bodyListBox.SelectedIndex);
+                bodyListBox.Items.RemoveAt(bodyListBox.SelectedIndex);
+                bodyListBox.SelectedIndex = WorldObject.Bodies.Count - 1;
+                **/
+            }
+        }
 	}
 }
