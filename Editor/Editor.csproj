@@ -60,7 +60,19 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Classes\BodyObject.cs" />
+    <Compile Include="Classes\NodeLabelExEditEventHandler.cs" />
+    <Compile Include="Classes\NodeLabelExEditEventArgs.cs" />
     <Compile Include="Classes\NotifyList.cs" />
+    <Compile Include="Classes\TreeNodeEx.cs" />
+    <Compile Include="Classes\TreeNodeExCollection.cs" />
+    <Compile Include="Classes\TreeViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Classes\TreeViewExAction.cs" />
+    <Compile Include="Classes\TreeViewExCancelEventArgs.cs" />
+    <Compile Include="Classes\TreeViewExCancelEventHandler.cs" />
+    <Compile Include="Classes\TreeViewExEventArgs.cs" />
+    <Compile Include="Classes\TreeViewExEventHandler.cs" />
     <Compile Include="Classes\WorldObject.cs" />
     <Compile Include="Controls\FloatNumericUpDown.cs">
       <SubType>UserControl</SubType>
