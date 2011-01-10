@@ -380,6 +380,7 @@
             this.toolStripButton6.Name = "toolStripButton6";
             this.toolStripButton6.Size = new System.Drawing.Size(74, 22);
             this.toolStripButton6.Text = "Duplicate ";
+            this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
             // 
             // label3
             // 
