@@ -482,7 +482,7 @@ namespace Paril.Windows.Forms
 				{
 					Invalidate();
 				}
-				else if (expanded && children[index - 1].IsVisible)
+				else if (index != 0 && expanded && children[index - 1].IsVisible)
 				{
 					treeView.InvalidateDown(node);
 				}
@@ -878,6 +878,26 @@ namespace Paril.Windows.Forms
 			{
 				return treeView;
 			}
+		}
+
+		public virtual bool CanDropOn()
+		{
+			return true;
+		}
+
+		public virtual bool CanDropUnder()
+		{
+			int count = (Parent != null) ? Parent.Nodes.Count : TreeView.Nodes.Count;
+
+			if (count > 0 && IsExpanded)
+				return true;
+
+			return Index == count - 1;
+		}
+
+		public virtual bool CanDropAbove()
+		{
+			return true;
 		}
 
 	}; // class TreeNode

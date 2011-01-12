@@ -120,7 +120,7 @@
 			this.fixtureRestitution = new Editor.FloatNumericUpDown();
 			this.fixtureDensity = new Editor.FloatNumericUpDown();
 			this.fixtureFriction = new Editor.FloatNumericUpDown();
-			this.treeViewEx1 = new Paril.Windows.Forms.TreeViewEx();
+			this.treeView1 = new Paril.Windows.Forms.TreeViewEx();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -391,40 +391,42 @@
 			// 
 			// toolStrip1
 			// 
-			this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripButton5,
             this.toolStripButton6});
 			this.toolStrip1.Location = new System.Drawing.Point(3, 3);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(239, 25);
+			this.toolStrip1.Size = new System.Drawing.Size(229, 25);
 			this.toolStrip1.TabIndex = 2;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
 			// toolStripButton1
 			// 
+			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
 			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(84, 22);
+			this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButton1.Text = "New Body ";
 			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
 			// 
 			// toolStripButton5
 			// 
+			this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton5.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton5.Image")));
 			this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButton5.Name = "toolStripButton5";
-			this.toolStripButton5.Size = new System.Drawing.Size(63, 22);
+			this.toolStripButton5.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButton5.Text = "Delete ";
 			// 
 			// toolStripButton6
 			// 
+			this.toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton6.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton6.Image")));
 			this.toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButton6.Name = "toolStripButton6";
-			this.toolStripButton6.Size = new System.Drawing.Size(80, 22);
+			this.toolStripButton6.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButton6.Text = "Duplicate ";
 			// 
 			// label3
@@ -675,40 +677,42 @@
 			// 
 			// toolStrip2
 			// 
-			this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton2,
             this.toolStripButton4,
             this.toolStripButton3});
 			this.toolStrip2.Location = new System.Drawing.Point(3, 3);
 			this.toolStrip2.Name = "toolStrip2";
-			this.toolStrip2.Size = new System.Drawing.Size(238, 25);
+			this.toolStrip2.Size = new System.Drawing.Size(229, 25);
 			this.toolStrip2.TabIndex = 2;
 			this.toolStrip2.Text = "toolStrip2";
 			// 
 			// toolStripButton2
 			// 
+			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
 			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButton2.Name = "toolStripButton2";
-			this.toolStripButton2.Size = new System.Drawing.Size(89, 22);
+			this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButton2.Text = "New Fixture";
 			this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
 			// 
 			// toolStripButton4
 			// 
+			this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
 			this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButton4.Name = "toolStripButton4";
-			this.toolStripButton4.Size = new System.Drawing.Size(60, 22);
+			this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButton4.Text = "Delete";
 			// 
 			// toolStripButton3
 			// 
+			this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
 			this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButton3.Name = "toolStripButton3";
-			this.toolStripButton3.Size = new System.Drawing.Size(77, 22);
+			this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButton3.Text = "Duplicate";
 			// 
 			// shapeType
@@ -906,12 +910,12 @@
 			// panel2
 			// 
 			this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.panel2.Controls.Add(this.treeViewEx1);
+			this.panel2.Controls.Add(this.treeView1);
 			this.panel2.Location = new System.Drawing.Point(0, 0);
 			this.panel2.Name = "panel2";
 			this.panel2.Padding = new System.Windows.Forms.Padding(1);
-			this.panel2.Size = new System.Drawing.Size(235, 221);
-			this.panel2.TabIndex = 2;
+			this.panel2.Size = new System.Drawing.Size(235, 216);
+			this.panel2.TabIndex = 1;
 			// 
 			// panel1
 			// 
@@ -1231,35 +1235,34 @@
 			this.fixtureFriction.TabIndex = 8;
 			this.fixtureFriction.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureFriction_ValueChanged);
 			// 
-			// treeViewEx1
+			// treeView1
 			// 
-			this.treeViewEx1.AllowDrop = true;
-			this.treeViewEx1.BackColor = System.Drawing.SystemColors.Window;
-			this.treeViewEx1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.treeViewEx1.CheckBoxes = false;
-			this.treeViewEx1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.treeViewEx1.ForeColor = System.Drawing.SystemColors.WindowText;
-			this.treeViewEx1.FullRowSelect = false;
-			this.treeViewEx1.HideSelection = true;
-			this.treeViewEx1.HotTracking = false;
-			this.treeViewEx1.ImageIndex = 0;
-			this.treeViewEx1.ImageList = null;
-			this.treeViewEx1.Indent = 19;
-			this.treeViewEx1.ItemHeight = 16;
-			this.treeViewEx1.LabelEdit = false;
-			this.treeViewEx1.Location = new System.Drawing.Point(1, 1);
-			this.treeViewEx1.Name = "treeViewEx1";
-			this.treeViewEx1.PathSeparator = "\\";
-			this.treeViewEx1.Scrollable = true;
-			this.treeViewEx1.SelectedImageIndex = -1;
-			this.treeViewEx1.SelectedNode = null;
-			this.treeViewEx1.ShowLines = true;
-			this.treeViewEx1.ShowPlusMinus = true;
-			this.treeViewEx1.ShowRootLines = true;
-			this.treeViewEx1.Size = new System.Drawing.Size(231, 217);
-			this.treeViewEx1.Sorted = false;
-			this.treeViewEx1.TabIndex = 0;
-			this.treeViewEx1.Text = "treeViewEx1";
+			this.treeView1.AllowDrop = true;
+			this.treeView1.BackColor = System.Drawing.SystemColors.Window;
+			this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.treeView1.CheckBoxes = false;
+			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.treeView1.ForeColor = System.Drawing.SystemColors.WindowText;
+			this.treeView1.FullRowSelect = false;
+			this.treeView1.HideSelection = true;
+			this.treeView1.HotTracking = false;
+			this.treeView1.ImageIndex = 0;
+			this.treeView1.ImageList = null;
+			this.treeView1.Indent = 19;
+			this.treeView1.ItemHeight = 16;
+			this.treeView1.LabelEdit = false;
+			this.treeView1.Location = new System.Drawing.Point(1, 1);
+			this.treeView1.Name = "treeView1";
+			this.treeView1.PathSeparator = "\\";
+			this.treeView1.Scrollable = true;
+			this.treeView1.SelectedImageIndex = -1;
+			this.treeView1.SelectedNode = null;
+			this.treeView1.ShowLines = true;
+			this.treeView1.ShowPlusMinus = true;
+			this.treeView1.ShowRootLines = true;
+			this.treeView1.Size = new System.Drawing.Size(231, 212);
+			this.treeView1.Sorted = false;
+			this.treeView1.TabIndex = 0;
 			// 
 			// Main
 			// 
@@ -1391,7 +1394,7 @@
 		private System.Windows.Forms.CheckBox fixtureIsSensor;
 		private System.Windows.Forms.CheckBox bodyActive;
 		private System.Windows.Forms.TabPage tabPage3;
-		private Paril.Windows.Forms.TreeViewEx treeViewEx1;
+		private Paril.Windows.Forms.TreeViewEx treeView1;
 		private System.Windows.Forms.Panel panel2;
 
 	}

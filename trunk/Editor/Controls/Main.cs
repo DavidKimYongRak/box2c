@@ -545,7 +545,7 @@ namespace Editor
 			simulationThread = new Thread(SimulationLoop);
 			simulationThread.Start();
 			{
-				treeViewEx1.ImageList = list;
+				treeView1.ImageList = list;
 				var node = new Paril.Windows.Forms.TreeNodeEx("World");
 				node.ImageIndex = node.SelectedImageIndex = 5;
 
@@ -563,7 +563,7 @@ namespace Editor
 				node.Nodes[1].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Fixture 1 (Pulley track)", 2, 2));
 				node.Nodes[1].Nodes[2].Nodes.Add(new Paril.Windows.Forms.TreeNodeEx("Circle", 0, 0));
 
-				treeViewEx1.Nodes.Add(node);
+				treeView1.Nodes.Add(node);
 				node.Expand();
 			}
 		}
