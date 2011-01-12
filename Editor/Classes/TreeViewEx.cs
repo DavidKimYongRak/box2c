@@ -30,6 +30,13 @@ namespace Paril.Windows.Forms
 
 	public class TreeViewEx : Forms.Control
 	{
+		enum DragMoveDirection
+		{
+			Below,
+			Above,
+			On
+		}
+
 		internal bool checkBoxes;
 		internal const int checkSize = 13;
 		internal TreeNodeEx editNode;
@@ -44,7 +51,7 @@ namespace Paril.Windows.Forms
 		internal int indent;
 		private int itemHeight;
 		private bool labelEdit;
-		private Forms.Timer mouseClickTimer;
+		private Forms.Timer mouseClickTimer, mouseExpandTimer;
 		private const int mouseEditTimeout = 350;
 		internal TreeNodeExCollection nodes;
 		private TreeNodeEx nodeToEdit = null;
@@ -52,7 +59,8 @@ namespace Paril.Windows.Forms
 		internal TreeNodeEx root;
 		private bool scrollable;
 		internal int selectedImageIndex = 0;
-		internal TreeNodeEx selectedNode;
+		internal TreeNodeEx selectedNode, dragDropNode, dragMoveNode;
+		DragMoveDirection dragMoveDirection;
 		private bool showLines;
 		private bool showPlusMinus;
 		private bool showRootLines;
@@ -346,6 +354,7 @@ namespace Paril.Windows.Forms
 						RectangleF bounds;
 						// Draw the lines and the expander.
 						DrawExpanderMarker(g, markerPen, nodes.currentNode, nodeFromTop, nodes.level);
+
 						// Draw checkboxes.
 						if (checkBoxes)
 						{
@@ -361,6 +370,7 @@ namespace Paril.Windows.Forms
 							}
 							Forms.ControlPaint.DrawCheckBox(g, RectIFromRectF(bounds), state);
 						}
+
 						// Draw the node image.
 						if (imageList != null)
 						{
@@ -371,9 +381,9 @@ namespace Paril.Windows.Forms
 							{
 								Image image = imageList.Images[index];
 								g.DrawImage(image, bounds.X, bounds.Y);
-
 							}
 						}
+
 						bounds = textBounds;
 						// The height may be too small now.
 						// If we are currently editing a node then dont draw it.
@@ -381,7 +391,18 @@ namespace Paril.Windows.Forms
 						{
 							// Draw the node text.
 							var bnds = RectIFromRectF(bounds);
-							if (nodes.currentNode  == selectedNode && (Focused || !hideSelection))
+
+							if (dragMoveNode == nodes.currentNode)
+							{
+								if (dragMoveDirection == DragMoveDirection.Above)
+									g.DrawLine(Pens.Black, new PointF(bnds.X, bnds.Y), new PointF(bnds.X + bnds.Width, bnds.Y));
+								else if (dragMoveDirection == DragMoveDirection.Below)
+									g.DrawLine(Pens.Black, new PointF(bnds.X, bnds.Y + bnds.Height), new PointF(bnds.X + bnds.Width, bnds.Y + bnds.Height));
+								else
+									g.FillRectangle(SystemBrushes.Highlight, bnds);
+							}
+
+							if ((dragMoveNode == nodes.currentNode && dragMoveDirection == DragMoveDirection.On) || (((dragDropNode == null && nodes.currentNode == selectedNode) || (nodes.currentNode == dragDropNode)) && (Focused || !hideSelection)))
 							{
 								// TODO: FullRowSelect
 								g.FillRectangle(SystemBrushes.Highlight, bnds);
@@ -453,11 +474,7 @@ namespace Paril.Windows.Forms
 			if (node.Nodes.Count > 0 && showPlusMinus)
 			{
 				GraphicsPath path = new GraphicsPath();
-				/*path.AddRectangle(new Rectangle(midX - 4, midY - 4, 8, 8));
-				path.AddLine(midX - 2, midY, midX + 2, midY);
-				if (!node.IsExpanded)
-					path.AddLine(midX, midY - 2, midX, midY + 2);
-				g.DrawPath(SystemPens.ControlText, path);*/
+
 				{
 					if (!node.IsExpanded)
 						_closedRenderer.DrawBackground(g, new Rectangle(midX - 4, midY - 4, 10, 10));
@@ -1081,6 +1098,8 @@ namespace Paril.Windows.Forms
 				int nodeFromTop = -1;
 				// Iterate through all the nodes, looking for the bounds that match.
 				NodeEnumeratorEx nodes = new NodeEnumeratorEx(this.nodes);
+				bool _clicked = false;
+
 				while (nodes.MoveNext())
 				{
 					if (nodes.currentNode == topNode)
@@ -1093,6 +1112,7 @@ namespace Paril.Windows.Forms
 						if (GetExpanderBounds(nodeFromTop, nodes.level).Contains(e.X, e.Y))
 						{
 							nodes.currentNode.Toggle();
+							_clicked = true;
 							break;
 						}
 						else if (GetCheckBounds(nodeFromTop, nodes.level).Contains(e.X, e.Y))
@@ -1106,10 +1126,26 @@ namespace Paril.Windows.Forms
 							}
 
 							Invalidate(GetCheckBounds(nodeFromTop, nodes.level));
+							_clicked = true;
 							break;
 
 						}
 						nodeFromTop++;
+					}
+				}
+
+				if (!_clicked)
+				{
+					var node = GetNodeAt(e.X, e.Y);
+					
+					if (node != null)
+					{
+						Focus();
+						dragDropNode = node;
+
+						if (selectedNode != null)
+							selectedNode.Invalidate();
+						dragDropNode.Invalidate();
 					}
 				}
 			}
@@ -1123,6 +1159,16 @@ namespace Paril.Windows.Forms
 		// Non Microsoft member.
 		protected override void OnMouseMove(Forms.MouseEventArgs e)
 		{
+			var node = GetNodeAt(e.X, e.Y);
+
+			if (dragDropNode != null && dragDropNode != node)
+			{
+				DoDragDrop(dragDropNode, Forms.DragDropEffects.Move | Forms.DragDropEffects.Copy | Forms.DragDropEffects.Link);
+
+				if (selectedNode != null)
+					selectedNode.Invalidate();
+			}
+
 			//TODO: Hot tracking.
 			base.OnMouseMove(e);
 		}
@@ -1134,10 +1180,188 @@ namespace Paril.Windows.Forms
 			base.OnMouseLeave(e);
 		}
 
+		protected override void OnDragDrop(Forms.DragEventArgs drgevent)
+		{
+			if (dragMoveNode != null && dragDropNode != null)
+			{
+				dragDropNode.Remove();
+
+				if (dragMoveDirection == DragMoveDirection.On)
+					dragMoveNode.Nodes.Add(dragDropNode);
+				else
+				{
+					int pos = (dragMoveDirection == DragMoveDirection.Above) ? dragMoveNode.Index : dragMoveNode.Index + 1;
+
+					if (dragMoveNode.Parent == null)
+						Nodes.Insert(pos, dragDropNode);
+					else
+						dragMoveNode.Parent.Nodes.Insert(pos, dragDropNode);
+				}
+				
+				dragMoveNode.Invalidate();
+				dragDropNode.Invalidate();
+
+				dragMoveNode = dragDropNode = null;
+			}
+
+			if (mouseExpandTimer != null)
+			{
+				mouseExpandTimer.Dispose();
+				mouseExpandTimer = null;
+			}
+
+			Invalidate();
+
+			base.OnDragDrop(drgevent);
+		}
+
+		protected override void OnDragEnter(Forms.DragEventArgs drgevent)
+		{
+			base.OnDragEnter(drgevent);
+		}
+
+		protected override void OnDragLeave(EventArgs e)
+		{
+			base.OnDragLeave(e);
+		}
+
+		bool HasParent(TreeNodeEx check, TreeNodeEx parent)
+		{
+			var node = check;
+
+			while (node != null)
+			{
+				if (node == parent)
+					return true;
+
+				node = node.Parent;
+			}
+
+			return false;
+		}
+
+		protected override void OnDragOver(Forms.DragEventArgs drgevent)
+		{
+			var pt = PointToClient(new Point (drgevent.X, drgevent.Y));
+
+			// Check if we can drag down
+			if (vScrollBar != null)
+			{
+				if (pt.Y > (Height - 26) && (vScrollBar.Value < vScrollBar.Maximum - vScrollBar.LargeChange + 1))
+					vScrollBar.Value++;
+				else if (pt.Y < 26 && (vScrollBar.Value > vScrollBar.Minimum))
+					vScrollBar.Value--;
+			}
+
+			var dragItem = GetNodeAt(pt);
+
+			bool newItem = (dragItem != dragMoveNode);
+
+			if (dragItem == dragDropNode || HasParent(dragItem, dragDropNode))
+			{
+				if (dragMoveNode != null)
+					dragMoveNode.Invalidate();
+				dragMoveNode = null;
+				drgevent.Effect = Forms.DragDropEffects.None;
+			}
+			else
+			{
+				if (dragItem != dragMoveNode && dragMoveNode != null)
+					dragMoveNode.Invalidate();
+
+				if (dragItem != null)
+				{
+					var bnds = GetNodeBounds(dragItem);
+					bool above = (pt.Y < (bnds.Y + (bnds.Height / 2)));
+					bool on = (pt.Y > (bnds.Y + 4)) && (pt.Y < (bnds.Y + bnds.Height - 4));
+
+					if (on && dragItem.CanDropOn())
+						dragMoveDirection = DragMoveDirection.On;
+					else if (above)
+					{
+						bool canUp = dragItem.CanDropAbove();
+						bool canOn = dragItem.CanDropOn();
+
+						if (!canUp && canOn)
+							dragMoveDirection = DragMoveDirection.On;
+						else if (canUp)
+							dragMoveDirection = DragMoveDirection.Above;
+					}
+					else if (!above)
+					{
+						bool canBelow = dragItem.CanDropUnder();
+						bool canOn = dragItem.CanDropOn();
+
+						if (!canBelow && canOn)
+							dragMoveDirection = DragMoveDirection.On;
+						else if (canBelow)
+							dragMoveDirection = DragMoveDirection.Below;
+					}
+				}
+
+				if (dragItem != null)
+				{
+					dragMoveNode = dragItem;
+
+					if (dragMoveNode != null)
+						dragMoveNode.Invalidate();
+
+					drgevent.Effect = Forms.DragDropEffects.Move;
+
+					if (newItem && dragMoveNode.Nodes.Count != 0 && !dragMoveNode.IsExpanded)
+					{
+						if (mouseExpandTimer == null)
+						{
+							mouseExpandTimer = new Forms.Timer();
+							mouseExpandTimer.Interval = 550;
+							mouseExpandTimer.Tick += new EventHandler(mouseExpandTimer_Tick);
+						}
+
+						mouseExpandTimer.Stop();
+						mouseExpandTimer.Start();
+					}
+				}
+				else if (mouseExpandTimer != null)
+					mouseExpandTimer.Stop();
+			}
+
+			base.OnDragOver(drgevent);
+		}
+
+		void mouseExpandTimer_Tick(object sender, EventArgs e)
+		{
+			if (dragMoveNode != null && !dragMoveNode.IsExpanded)
+				dragMoveNode.Expand();
+		}
+
+		protected override void OnQueryContinueDrag(Forms.QueryContinueDragEventArgs qcdevent)
+		{
+			if (dragMoveNode == null && (Forms.Control.MouseButtons & Forms.MouseButtons.Left) != Forms.MouseButtons.Left)
+			{
+				dragDropNode = null;
+				qcdevent.Action = Forms.DragAction.Cancel;
+			}
+
+			base.OnQueryContinueDrag(qcdevent);
+		}
+
+		protected override void OnGiveFeedback(Forms.GiveFeedbackEventArgs gfbevent)
+		{
+			base.OnGiveFeedback(gfbevent);
+		}
+
 		// Non Microsoft member.
 		protected override void OnMouseUp(Forms.MouseEventArgs e)
 		{
 			ProcessClick(e.X, e.Y, (e.Button == Forms.MouseButtons.Right));
+
+			if (dragDropNode != null)
+			{
+				dragDropNode.Invalidate();
+				dragDropNode = null;
+			}
+			if (selectedNode != null)
+				selectedNode.Invalidate();
 
 			base.OnMouseUp(e);
 		}
@@ -1424,6 +1648,20 @@ namespace Paril.Windows.Forms
 				}
 			}
 		}
+
+		protected override void OnMouseWheel(Forms.MouseEventArgs e)
+		{
+			if (vScrollBar != null)
+			{
+				if (e.Delta > 0 && (vScrollBar.Value > vScrollBar.Minimum))
+					vScrollBar.Value--;
+				else if (e.Delta < 0 && (vScrollBar.Value < vScrollBar.Maximum - vScrollBar.LargeChange + 1))
+					vScrollBar.Value++;
+			}
+
+			base.OnMouseWheel(e);
+		}
+
 		public int SelectedImageIndex
 		{
 			get
