@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
 			this.oneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.twoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,6 +104,9 @@
 			this.fixtureListBox = new System.Windows.Forms.ListBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.panel2 = new System.Windows.Forms.Panel();
+			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.newBodyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.newFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.panel1 = new Editor.BlankControl();
 			this.bodyCenterY = new Editor.FloatNumericUpDown();
 			this.bodyInertiaScale = new Editor.FloatNumericUpDown();
@@ -137,6 +141,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).BeginInit();
 			this.tabPage3.SuspendLayout();
 			this.panel2.SuspendLayout();
+			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// oneToolStripMenuItem
@@ -917,6 +922,28 @@
 			this.panel2.Size = new System.Drawing.Size(235, 216);
 			this.panel2.TabIndex = 1;
 			// 
+			// contextMenuStrip1
+			// 
+			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newBodyToolStripMenuItem,
+            this.newFixtureToolStripMenuItem});
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(153, 70);
+			// 
+			// newBodyToolStripMenuItem
+			// 
+			this.newBodyToolStripMenuItem.Name = "newBodyToolStripMenuItem";
+			this.newBodyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.newBodyToolStripMenuItem.Text = "New Body";
+			this.newBodyToolStripMenuItem.Click += new System.EventHandler(this.newBodyToolStripMenuItem_Click);
+			// 
+			// newFixtureToolStripMenuItem
+			// 
+			this.newFixtureToolStripMenuItem.Name = "newFixtureToolStripMenuItem";
+			this.newFixtureToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.newFixtureToolStripMenuItem.Text = "New Fixture";
+			this.newFixtureToolStripMenuItem.Click += new System.EventHandler(this.newFixtureToolStripMenuItem_Click);
+			// 
 			// panel1
 			// 
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1241,6 +1268,7 @@
 			this.treeView1.BackColor = System.Drawing.SystemColors.Window;
 			this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.treeView1.CheckBoxes = false;
+			this.treeView1.ContextMenuStrip = this.contextMenuStrip1;
 			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.treeView1.ForeColor = System.Drawing.SystemColors.WindowText;
 			this.treeView1.FullRowSelect = false;
@@ -1250,7 +1278,7 @@
 			this.treeView1.ImageList = null;
 			this.treeView1.Indent = 19;
 			this.treeView1.ItemHeight = 16;
-			this.treeView1.LabelEdit = false;
+			this.treeView1.LabelEdit = true;
 			this.treeView1.Location = new System.Drawing.Point(1, 1);
 			this.treeView1.Name = "treeView1";
 			this.treeView1.PathSeparator = "\\";
@@ -1297,6 +1325,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.fixtureCategoryBits)).EndInit();
 			this.tabPage3.ResumeLayout(false);
 			this.panel2.ResumeLayout(false);
+			this.contextMenuStrip1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1396,6 +1425,9 @@
 		private System.Windows.Forms.TabPage tabPage3;
 		private Paril.Windows.Forms.TreeViewEx treeView1;
 		private System.Windows.Forms.Panel panel2;
+		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+		private System.Windows.Forms.ToolStripMenuItem newBodyToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem newFixtureToolStripMenuItem;
 
 	}
 }

@@ -703,10 +703,11 @@ namespace Paril.Windows.Forms
 		private void RemoveRecurse()
 		{
 			// Remove children.
-			for (int i = 0; i < childCount; i++)
+			// FIXME: why?
+			/*for (int i = 0; i < childCount; i++)
 			{
 				children[i].RemoveRecurse();
-			}
+			}*/
 			// Remove out of parent's children.
 			for (int i = index; i < parent.childCount - 1; i++)
 			{
@@ -880,12 +881,17 @@ namespace Paril.Windows.Forms
 			}
 		}
 
-		public virtual bool CanDropOn()
+		public virtual bool CanDragDrop()
 		{
 			return true;
 		}
 
-		public virtual bool CanDropUnder()
+		public virtual bool CanDropOn(TreeNodeEx nodeToDrop)
+		{
+			return true;
+		}
+
+		public virtual bool CanDropUnder(TreeNodeEx nodeToDrop)
 		{
 			int count = (Parent != null) ? Parent.Nodes.Count : TreeView.Nodes.Count;
 
@@ -895,11 +901,23 @@ namespace Paril.Windows.Forms
 			return Index == count - 1;
 		}
 
-		public virtual bool CanDropAbove()
+		public virtual bool CanDropAbove(TreeNodeEx nodeToDrop)
 		{
 			return true;
 		}
 
+		public virtual bool CanRename()
+		{
+			return true;
+		}
+
+		public event EventHandler Renamed;
+
+		public virtual void OnRenamed()
+		{
+			if (Renamed != null)
+				Renamed(this, EventArgs.Empty);
+		}
 	}; // class TreeNode
 
 }; // namespace System.Windows.Forms
