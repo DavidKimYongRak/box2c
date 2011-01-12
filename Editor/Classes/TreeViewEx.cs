@@ -32,6 +32,7 @@ namespace Paril.Windows.Forms
 	{
 		enum DragMoveDirection
 		{
+			Neither,
 			Below,
 			Above,
 			On
@@ -151,8 +152,9 @@ namespace Paril.Windows.Forms
 			}
 			int x = (int)nodeBounds.X;
 			int width = GetTextBoxWidth(ref x);
-			// The height is fixed by the textbox.
-			textBox.SetBounds(x, (int)y, width, 0);
+
+			textBox.AutoSize = false;
+			textBox.SetBounds(x + 2, (int)y + 2, width, 17);
 			textBox.Visible = true;
 			textBox.Focus();
 			textBox.SelectAll();
@@ -402,7 +404,10 @@ namespace Paril.Windows.Forms
 									g.FillRectangle(SystemBrushes.Highlight, bnds);
 							}
 
-							if ((dragMoveNode == nodes.currentNode && dragMoveDirection == DragMoveDirection.On) || (((dragDropNode == null && nodes.currentNode == selectedNode) || (nodes.currentNode == dragDropNode)) && (Focused || !hideSelection)))
+							if ((dragMoveNode == nodes.currentNode && dragMoveDirection == DragMoveDirection.On) ||
+								(((dragDropNode == null && nodes.currentNode == selectedNode)
+								|| (nodes.currentNode == dragDropNode))
+								&& (Focused || !hideSelection)))
 							{
 								// TODO: FullRowSelect
 								g.FillRectangle(SystemBrushes.Highlight, bnds);
@@ -508,9 +513,12 @@ namespace Paril.Windows.Forms
 			if (!cancel)
 			{
 				editNode.Text = textBox.Text;
+				editNode.OnRenamed();
 			}
+
 			textBox.Visible = false;
 			editNode = null;
+
 			if (hScrollBar != null)
 			{
 				hScrollBar.Value = xScrollValueBeforeEdit;
@@ -1136,9 +1144,10 @@ namespace Paril.Windows.Forms
 
 				if (!_clicked)
 				{
+					var pt = new Point(e.X, e.Y);
 					var node = GetNodeAt(e.X, e.Y);
 					
-					if (node != null)
+					if (node != null && node.Bounds.Contains(pt))
 					{
 						Focus();
 						dragDropNode = node;
@@ -1161,7 +1170,7 @@ namespace Paril.Windows.Forms
 		{
 			var node = GetNodeAt(e.X, e.Y);
 
-			if (dragDropNode != null && dragDropNode != node)
+			if (dragDropNode != null && dragDropNode != node && node.CanDragDrop())
 			{
 				DoDragDrop(dragDropNode, Forms.DragDropEffects.Move | Forms.DragDropEffects.Copy | Forms.DragDropEffects.Link);
 
@@ -1184,7 +1193,10 @@ namespace Paril.Windows.Forms
 		{
 			if (dragMoveNode != null && dragDropNode != null)
 			{
-				dragDropNode.Remove();
+				if (dragDropNode.Parent != null)
+					dragDropNode.Parent.Nodes.Remove(dragDropNode);
+				else
+					dragDropNode.TreeView.Nodes.Remove(dragDropNode);
 
 				if (dragMoveDirection == DragMoveDirection.On)
 					dragMoveNode.Nodes.Add(dragDropNode);
@@ -1275,12 +1287,14 @@ namespace Paril.Windows.Forms
 					bool above = (pt.Y < (bnds.Y + (bnds.Height / 2)));
 					bool on = (pt.Y > (bnds.Y + 4)) && (pt.Y < (bnds.Y + bnds.Height - 4));
 
-					if (on && dragItem.CanDropOn())
+					dragMoveDirection = DragMoveDirection.Neither;
+
+					if (on && dragItem.CanDropOn(dragDropNode))
 						dragMoveDirection = DragMoveDirection.On;
 					else if (above)
 					{
-						bool canUp = dragItem.CanDropAbove();
-						bool canOn = dragItem.CanDropOn();
+						bool canUp = dragItem.CanDropAbove(dragDropNode);
+						bool canOn = dragItem.CanDropOn(dragDropNode);
 
 						if (!canUp && canOn)
 							dragMoveDirection = DragMoveDirection.On;
@@ -1289,13 +1303,19 @@ namespace Paril.Windows.Forms
 					}
 					else if (!above)
 					{
-						bool canBelow = dragItem.CanDropUnder();
-						bool canOn = dragItem.CanDropOn();
+						bool canBelow = dragItem.CanDropUnder(dragDropNode);
+						bool canOn = dragItem.CanDropOn(dragDropNode);
 
 						if (!canBelow && canOn)
 							dragMoveDirection = DragMoveDirection.On;
 						else if (canBelow)
 							dragMoveDirection = DragMoveDirection.Below;
+					}
+
+					if (dragMoveDirection == DragMoveDirection.Neither)
+					{
+						drgevent.Effect = Forms.DragDropEffects.None;
+						dragMoveNode = dragItem = null;
 					}
 				}
 
@@ -1415,7 +1435,8 @@ namespace Paril.Windows.Forms
 								{
 									if (labelEdit && allowEdit && !rightMouse)
 									{
-										nodeToEdit = nodes.currentNode;
+										if (selectedNode.CanRename())
+											nodeToEdit = nodes.currentNode;
 									}
 									Focus();
 								}
@@ -1442,6 +1463,7 @@ namespace Paril.Windows.Forms
 									mouseClickTimer.Tick +=new EventHandler(mouseClickTimer_Tick);
 									mouseClickTimer.Interval = mouseEditTimeout;
 								}
+
 								mouseClickTimer.Start();
 								break;
 							}
