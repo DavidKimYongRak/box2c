@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace Editor
 {
-    public partial class CirclePanel : UserControl
+    public partial class FixturePanel : UserControl
     {
-        public CirclePanel()
+		public FixturePanel()
         {
             InitializeComponent();
         }
