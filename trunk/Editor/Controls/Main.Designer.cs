@@ -38,6 +38,7 @@
 			this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.panel1 = new Editor.BlankControl();
 			this.Tabbies = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.bodyActive = new System.Windows.Forms.CheckBox();
@@ -59,24 +60,37 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.bodyFixtureListBox = new System.Windows.Forms.ListBox();
 			this.bodyFixtureSelect = new System.Windows.Forms.ComboBox();
+			this.bodyCenterY = new Editor.FloatNumericUpDown();
 			this.label23 = new System.Windows.Forms.Label();
+			this.bodyInertiaScale = new Editor.FloatNumericUpDown();
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.bodyType = new System.Windows.Forms.ComboBox();
+			this.bodyCenterX = new Editor.FloatNumericUpDown();
 			this.bodyListBox = new System.Windows.Forms.ListBox();
 			this.bodyName = new System.Windows.Forms.TextBox();
 			this.label21 = new System.Windows.Forms.Label();
 			this.label19 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
+			this.bodyInertia = new Editor.FloatNumericUpDown();
+			this.bodyLinearVelY = new Editor.FloatNumericUpDown();
+			this.bodyAngle = new Editor.FloatNumericUpDown();
 			this.label20 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
+			this.bodyAngularVelocity = new Editor.FloatNumericUpDown();
+			this.bodyAngularDamping = new Editor.FloatNumericUpDown();
+			this.bodyMass = new Editor.FloatNumericUpDown();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
+			this.bodyPositionX = new Editor.FloatNumericUpDown();
 			this.label16 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
+			this.bodyPositionY = new Editor.FloatNumericUpDown();
 			this.label15 = new System.Windows.Forms.Label();
+			this.bodyLinearDamping = new Editor.FloatNumericUpDown();
+			this.bodyLinearVelX = new Editor.FloatNumericUpDown();
 			this.label13 = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -101,30 +115,16 @@
 			this.label40 = new System.Windows.Forms.Label();
 			this.label43 = new System.Windows.Forms.Label();
 			this.label42 = new System.Windows.Forms.Label();
-			this.fixtureListBox = new System.Windows.Forms.ListBox();
-			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.newBodyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.newFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.panel1 = new Editor.BlankControl();
-			this.bodyCenterY = new Editor.FloatNumericUpDown();
-			this.bodyInertiaScale = new Editor.FloatNumericUpDown();
-			this.bodyCenterX = new Editor.FloatNumericUpDown();
-			this.bodyInertia = new Editor.FloatNumericUpDown();
-			this.bodyLinearVelY = new Editor.FloatNumericUpDown();
-			this.bodyAngle = new Editor.FloatNumericUpDown();
-			this.bodyAngularVelocity = new Editor.FloatNumericUpDown();
-			this.bodyAngularDamping = new Editor.FloatNumericUpDown();
-			this.bodyMass = new Editor.FloatNumericUpDown();
-			this.bodyPositionX = new Editor.FloatNumericUpDown();
-			this.bodyPositionY = new Editor.FloatNumericUpDown();
-			this.bodyLinearDamping = new Editor.FloatNumericUpDown();
-			this.bodyLinearVelX = new Editor.FloatNumericUpDown();
 			this.fixtureRestitution = new Editor.FloatNumericUpDown();
 			this.fixtureDensity = new Editor.FloatNumericUpDown();
 			this.fixtureFriction = new Editor.FloatNumericUpDown();
+			this.fixtureListBox = new System.Windows.Forms.ListBox();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.panel2 = new System.Windows.Forms.Panel();
 			this.treeView1 = new Paril.Windows.Forms.TreeViewEx();
+			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.newBodyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.newFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -211,6 +211,15 @@
 			this.splitContainer1.Size = new System.Drawing.Size(822, 507);
 			this.splitContainer1.SplitterDistance = 575;
 			this.splitContainer1.TabIndex = 1;
+			// 
+			// panel1
+			// 
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(575, 507);
+			this.panel1.TabIndex = 0;
+			this.panel1.Click += new System.EventHandler(this.panel1_Click);
 			// 
 			// Tabbies
 			// 
@@ -460,6 +469,26 @@
 			this.bodyFixtureSelect.Size = new System.Drawing.Size(84, 21);
 			this.bodyFixtureSelect.TabIndex = 33;
 			// 
+			// bodyCenterY
+			// 
+			this.bodyCenterY.EnableLowerLimit = false;
+			this.bodyCenterY.EnableUpperLimit = false;
+			this.bodyCenterY.Location = new System.Drawing.Point(178, 225);
+			this.bodyCenterY.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyCenterY.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyCenterY.Name = "bodyCenterY";
+			this.bodyCenterY.Size = new System.Drawing.Size(50, 20);
+			this.bodyCenterY.TabIndex = 47;
+			this.bodyCenterY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterY_ValueChanged);
+			// 
 			// label23
 			// 
 			this.label23.AutoSize = true;
@@ -468,6 +497,30 @@
 			this.label23.Size = new System.Drawing.Size(77, 13);
 			this.label23.TabIndex = 46;
 			this.label23.Text = "Center Grav X:";
+			// 
+			// bodyInertiaScale
+			// 
+			this.bodyInertiaScale.EnableUpperLimit = false;
+			this.bodyInertiaScale.Location = new System.Drawing.Point(83, 251);
+			this.bodyInertiaScale.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyInertiaScale.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyInertiaScale.Name = "bodyInertiaScale";
+			this.bodyInertiaScale.Size = new System.Drawing.Size(47, 20);
+			this.bodyInertiaScale.TabIndex = 20;
+			this.bodyInertiaScale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.bodyInertiaScale.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertiaScale_ValueChanged);
 			// 
 			// label11
 			// 
@@ -519,6 +572,26 @@
 			this.bodyType.TabIndex = 15;
 			this.bodyType.SelectedIndexChanged += new System.EventHandler(this.bodyType_SelectedIndexChanged);
 			// 
+			// bodyCenterX
+			// 
+			this.bodyCenterX.EnableLowerLimit = false;
+			this.bodyCenterX.EnableUpperLimit = false;
+			this.bodyCenterX.Location = new System.Drawing.Point(81, 225);
+			this.bodyCenterX.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyCenterX.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyCenterX.Name = "bodyCenterX";
+			this.bodyCenterX.Size = new System.Drawing.Size(49, 20);
+			this.bodyCenterX.TabIndex = 45;
+			this.bodyCenterX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterX_ValueChanged);
+			// 
 			// bodyListBox
 			// 
 			this.bodyListBox.FormattingEnabled = true;
@@ -564,6 +637,65 @@
 			this.label2.TabIndex = 2;
 			this.label2.Text = "Active:";
 			// 
+			// bodyInertia
+			// 
+			this.bodyInertia.EnableUpperLimit = false;
+			this.bodyInertia.Location = new System.Drawing.Point(178, 251);
+			this.bodyInertia.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyInertia.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyInertia.Name = "bodyInertia";
+			this.bodyInertia.Size = new System.Drawing.Size(51, 20);
+			this.bodyInertia.TabIndex = 43;
+			this.bodyInertia.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertia_ValueChanged);
+			// 
+			// bodyLinearVelY
+			// 
+			this.bodyLinearVelY.EnableLowerLimit = false;
+			this.bodyLinearVelY.EnableUpperLimit = false;
+			this.bodyLinearVelY.Location = new System.Drawing.Point(178, 173);
+			this.bodyLinearVelY.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyLinearVelY.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyLinearVelY.Name = "bodyLinearVelY";
+			this.bodyLinearVelY.Size = new System.Drawing.Size(51, 20);
+			this.bodyLinearVelY.TabIndex = 26;
+			this.bodyLinearVelY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelY_ValueChanged);
+			// 
+			// bodyAngle
+			// 
+			this.bodyAngle.EnableLowerLimit = false;
+			this.bodyAngle.EnableUpperLimit = false;
+			this.bodyAngle.Location = new System.Drawing.Point(179, 121);
+			this.bodyAngle.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyAngle.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyAngle.Name = "bodyAngle";
+			this.bodyAngle.Size = new System.Drawing.Size(50, 20);
+			this.bodyAngle.TabIndex = 6;
+			this.bodyAngle.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngle_ValueChanged);
+			// 
 			// label20
 			// 
 			this.label20.AutoSize = true;
@@ -581,6 +713,60 @@
 			this.label4.Size = new System.Drawing.Size(37, 13);
 			this.label4.TabIndex = 7;
 			this.label4.Text = "Angle:";
+			// 
+			// bodyAngularVelocity
+			// 
+			this.bodyAngularVelocity.EnableLowerLimit = false;
+			this.bodyAngularVelocity.EnableUpperLimit = false;
+			this.bodyAngularVelocity.Location = new System.Drawing.Point(75, 121);
+			this.bodyAngularVelocity.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyAngularVelocity.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyAngularVelocity.Name = "bodyAngularVelocity";
+			this.bodyAngularVelocity.Size = new System.Drawing.Size(55, 20);
+			this.bodyAngularVelocity.TabIndex = 10;
+			this.bodyAngularVelocity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularVelocity_ValueChanged);
+			// 
+			// bodyAngularDamping
+			// 
+			this.bodyAngularDamping.EnableLowerLimit = false;
+			this.bodyAngularDamping.EnableUpperLimit = false;
+			this.bodyAngularDamping.Location = new System.Drawing.Point(178, 199);
+			this.bodyAngularDamping.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyAngularDamping.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyAngularDamping.Name = "bodyAngularDamping";
+			this.bodyAngularDamping.Size = new System.Drawing.Size(51, 20);
+			this.bodyAngularDamping.TabIndex = 8;
+			this.bodyAngularDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularDamping_ValueChanged);
+			// 
+			// bodyMass
+			// 
+			this.bodyMass.EnableUpperLimit = false;
+			this.bodyMass.Location = new System.Drawing.Point(177, 277);
+			this.bodyMass.Maximum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+			this.bodyMass.Name = "bodyMass";
+			this.bodyMass.Size = new System.Drawing.Size(52, 20);
+			this.bodyMass.TabIndex = 41;
+			this.bodyMass.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyMass_ValueChanged);
 			// 
 			// label5
 			// 
@@ -600,6 +786,26 @@
 			this.label6.TabIndex = 11;
 			this.label6.Text = "Angular Vel:";
 			// 
+			// bodyPositionX
+			// 
+			this.bodyPositionX.EnableLowerLimit = false;
+			this.bodyPositionX.EnableUpperLimit = false;
+			this.bodyPositionX.Location = new System.Drawing.Point(81, 147);
+			this.bodyPositionX.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyPositionX.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyPositionX.Name = "bodyPositionX";
+			this.bodyPositionX.Size = new System.Drawing.Size(49, 20);
+			this.bodyPositionX.TabIndex = 28;
+			this.bodyPositionX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionX_ValueChanged);
+			// 
 			// label16
 			// 
 			this.label16.AutoSize = true;
@@ -618,6 +824,26 @@
 			this.label12.TabIndex = 23;
 			this.label12.Text = "Damping Lin:";
 			// 
+			// bodyPositionY
+			// 
+			this.bodyPositionY.EnableLowerLimit = false;
+			this.bodyPositionY.EnableUpperLimit = false;
+			this.bodyPositionY.Location = new System.Drawing.Point(178, 147);
+			this.bodyPositionY.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyPositionY.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyPositionY.Name = "bodyPositionY";
+			this.bodyPositionY.Size = new System.Drawing.Size(51, 20);
+			this.bodyPositionY.TabIndex = 30;
+			this.bodyPositionY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionY_ValueChanged);
+			// 
 			// label15
 			// 
 			this.label15.AutoSize = true;
@@ -626,6 +852,46 @@
 			this.label15.Size = new System.Drawing.Size(17, 13);
 			this.label15.TabIndex = 31;
 			this.label15.Text = "Y:";
+			// 
+			// bodyLinearDamping
+			// 
+			this.bodyLinearDamping.EnableLowerLimit = false;
+			this.bodyLinearDamping.EnableUpperLimit = false;
+			this.bodyLinearDamping.Location = new System.Drawing.Point(85, 199);
+			this.bodyLinearDamping.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyLinearDamping.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyLinearDamping.Name = "bodyLinearDamping";
+			this.bodyLinearDamping.Size = new System.Drawing.Size(45, 20);
+			this.bodyLinearDamping.TabIndex = 22;
+			this.bodyLinearDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.numericUpDown5_ValueChanged);
+			// 
+			// bodyLinearVelX
+			// 
+			this.bodyLinearVelX.EnableLowerLimit = false;
+			this.bodyLinearVelX.EnableUpperLimit = false;
+			this.bodyLinearVelX.Location = new System.Drawing.Point(80, 173);
+			this.bodyLinearVelX.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.bodyLinearVelX.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.bodyLinearVelX.Name = "bodyLinearVelX";
+			this.bodyLinearVelX.Size = new System.Drawing.Size(49, 20);
+			this.bodyLinearVelX.TabIndex = 24;
+			this.bodyLinearVelX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelX_ValueChanged);
 			// 
 			// label13
 			// 
@@ -892,324 +1158,6 @@
 			this.label42.TabIndex = 9;
 			this.label42.Text = "Friction:";
 			// 
-			// fixtureListBox
-			// 
-			this.fixtureListBox.FormattingEnabled = true;
-			this.fixtureListBox.Location = new System.Drawing.Point(3, 28);
-			this.fixtureListBox.Name = "fixtureListBox";
-			this.fixtureListBox.Size = new System.Drawing.Size(229, 82);
-			this.fixtureListBox.TabIndex = 1;
-			this.fixtureListBox.SelectedIndexChanged += new System.EventHandler(this.fixtureListBox_SelectedIndexChanged);
-			// 
-			// tabPage3
-			// 
-			this.tabPage3.Controls.Add(this.panel2);
-			this.tabPage3.Location = new System.Drawing.Point(4, 22);
-			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage3.Size = new System.Drawing.Size(235, 481);
-			this.tabPage3.TabIndex = 6;
-			this.tabPage3.Text = "tabPage3";
-			this.tabPage3.UseVisualStyleBackColor = true;
-			// 
-			// panel2
-			// 
-			this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.panel2.Controls.Add(this.treeView1);
-			this.panel2.Location = new System.Drawing.Point(0, 0);
-			this.panel2.Name = "panel2";
-			this.panel2.Padding = new System.Windows.Forms.Padding(1);
-			this.panel2.Size = new System.Drawing.Size(235, 216);
-			this.panel2.TabIndex = 1;
-			// 
-			// contextMenuStrip1
-			// 
-			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newBodyToolStripMenuItem,
-            this.newFixtureToolStripMenuItem});
-			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(153, 70);
-			// 
-			// newBodyToolStripMenuItem
-			// 
-			this.newBodyToolStripMenuItem.Name = "newBodyToolStripMenuItem";
-			this.newBodyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.newBodyToolStripMenuItem.Text = "New Body";
-			this.newBodyToolStripMenuItem.Click += new System.EventHandler(this.newBodyToolStripMenuItem_Click);
-			// 
-			// newFixtureToolStripMenuItem
-			// 
-			this.newFixtureToolStripMenuItem.Name = "newFixtureToolStripMenuItem";
-			this.newFixtureToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.newFixtureToolStripMenuItem.Text = "New Fixture";
-			this.newFixtureToolStripMenuItem.Click += new System.EventHandler(this.newFixtureToolStripMenuItem_Click);
-			// 
-			// panel1
-			// 
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(575, 507);
-			this.panel1.TabIndex = 0;
-			this.panel1.Click += new System.EventHandler(this.panel1_Click);
-			// 
-			// bodyCenterY
-			// 
-			this.bodyCenterY.EnableLowerLimit = false;
-			this.bodyCenterY.EnableUpperLimit = false;
-			this.bodyCenterY.Location = new System.Drawing.Point(178, 225);
-			this.bodyCenterY.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyCenterY.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyCenterY.Name = "bodyCenterY";
-			this.bodyCenterY.Size = new System.Drawing.Size(50, 20);
-			this.bodyCenterY.TabIndex = 47;
-			this.bodyCenterY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterY_ValueChanged);
-			// 
-			// bodyInertiaScale
-			// 
-			this.bodyInertiaScale.EnableUpperLimit = false;
-			this.bodyInertiaScale.Location = new System.Drawing.Point(83, 251);
-			this.bodyInertiaScale.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyInertiaScale.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyInertiaScale.Name = "bodyInertiaScale";
-			this.bodyInertiaScale.Size = new System.Drawing.Size(47, 20);
-			this.bodyInertiaScale.TabIndex = 20;
-			this.bodyInertiaScale.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			this.bodyInertiaScale.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertiaScale_ValueChanged);
-			// 
-			// bodyCenterX
-			// 
-			this.bodyCenterX.EnableLowerLimit = false;
-			this.bodyCenterX.EnableUpperLimit = false;
-			this.bodyCenterX.Location = new System.Drawing.Point(81, 225);
-			this.bodyCenterX.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyCenterX.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyCenterX.Name = "bodyCenterX";
-			this.bodyCenterX.Size = new System.Drawing.Size(49, 20);
-			this.bodyCenterX.TabIndex = 45;
-			this.bodyCenterX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterX_ValueChanged);
-			// 
-			// bodyInertia
-			// 
-			this.bodyInertia.EnableUpperLimit = false;
-			this.bodyInertia.Location = new System.Drawing.Point(178, 251);
-			this.bodyInertia.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyInertia.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyInertia.Name = "bodyInertia";
-			this.bodyInertia.Size = new System.Drawing.Size(51, 20);
-			this.bodyInertia.TabIndex = 43;
-			this.bodyInertia.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertia_ValueChanged);
-			// 
-			// bodyLinearVelY
-			// 
-			this.bodyLinearVelY.EnableLowerLimit = false;
-			this.bodyLinearVelY.EnableUpperLimit = false;
-			this.bodyLinearVelY.Location = new System.Drawing.Point(178, 173);
-			this.bodyLinearVelY.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyLinearVelY.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyLinearVelY.Name = "bodyLinearVelY";
-			this.bodyLinearVelY.Size = new System.Drawing.Size(51, 20);
-			this.bodyLinearVelY.TabIndex = 26;
-			this.bodyLinearVelY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelY_ValueChanged);
-			// 
-			// bodyAngle
-			// 
-			this.bodyAngle.EnableLowerLimit = false;
-			this.bodyAngle.EnableUpperLimit = false;
-			this.bodyAngle.Location = new System.Drawing.Point(179, 121);
-			this.bodyAngle.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyAngle.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyAngle.Name = "bodyAngle";
-			this.bodyAngle.Size = new System.Drawing.Size(50, 20);
-			this.bodyAngle.TabIndex = 6;
-			this.bodyAngle.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngle_ValueChanged);
-			// 
-			// bodyAngularVelocity
-			// 
-			this.bodyAngularVelocity.EnableLowerLimit = false;
-			this.bodyAngularVelocity.EnableUpperLimit = false;
-			this.bodyAngularVelocity.Location = new System.Drawing.Point(75, 121);
-			this.bodyAngularVelocity.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyAngularVelocity.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyAngularVelocity.Name = "bodyAngularVelocity";
-			this.bodyAngularVelocity.Size = new System.Drawing.Size(55, 20);
-			this.bodyAngularVelocity.TabIndex = 10;
-			this.bodyAngularVelocity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularVelocity_ValueChanged);
-			// 
-			// bodyAngularDamping
-			// 
-			this.bodyAngularDamping.EnableLowerLimit = false;
-			this.bodyAngularDamping.EnableUpperLimit = false;
-			this.bodyAngularDamping.Location = new System.Drawing.Point(178, 199);
-			this.bodyAngularDamping.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyAngularDamping.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyAngularDamping.Name = "bodyAngularDamping";
-			this.bodyAngularDamping.Size = new System.Drawing.Size(51, 20);
-			this.bodyAngularDamping.TabIndex = 8;
-			this.bodyAngularDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularDamping_ValueChanged);
-			// 
-			// bodyMass
-			// 
-			this.bodyMass.EnableUpperLimit = false;
-			this.bodyMass.Location = new System.Drawing.Point(177, 277);
-			this.bodyMass.Maximum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.bodyMass.Name = "bodyMass";
-			this.bodyMass.Size = new System.Drawing.Size(52, 20);
-			this.bodyMass.TabIndex = 41;
-			this.bodyMass.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyMass_ValueChanged);
-			// 
-			// bodyPositionX
-			// 
-			this.bodyPositionX.EnableLowerLimit = false;
-			this.bodyPositionX.EnableUpperLimit = false;
-			this.bodyPositionX.Location = new System.Drawing.Point(81, 147);
-			this.bodyPositionX.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyPositionX.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyPositionX.Name = "bodyPositionX";
-			this.bodyPositionX.Size = new System.Drawing.Size(49, 20);
-			this.bodyPositionX.TabIndex = 28;
-			this.bodyPositionX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionX_ValueChanged);
-			// 
-			// bodyPositionY
-			// 
-			this.bodyPositionY.EnableLowerLimit = false;
-			this.bodyPositionY.EnableUpperLimit = false;
-			this.bodyPositionY.Location = new System.Drawing.Point(178, 147);
-			this.bodyPositionY.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyPositionY.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyPositionY.Name = "bodyPositionY";
-			this.bodyPositionY.Size = new System.Drawing.Size(51, 20);
-			this.bodyPositionY.TabIndex = 30;
-			this.bodyPositionY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionY_ValueChanged);
-			// 
-			// bodyLinearDamping
-			// 
-			this.bodyLinearDamping.EnableLowerLimit = false;
-			this.bodyLinearDamping.EnableUpperLimit = false;
-			this.bodyLinearDamping.Location = new System.Drawing.Point(85, 199);
-			this.bodyLinearDamping.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyLinearDamping.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyLinearDamping.Name = "bodyLinearDamping";
-			this.bodyLinearDamping.Size = new System.Drawing.Size(45, 20);
-			this.bodyLinearDamping.TabIndex = 22;
-			this.bodyLinearDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.numericUpDown5_ValueChanged);
-			// 
-			// bodyLinearVelX
-			// 
-			this.bodyLinearVelX.EnableLowerLimit = false;
-			this.bodyLinearVelX.EnableUpperLimit = false;
-			this.bodyLinearVelX.Location = new System.Drawing.Point(80, 173);
-			this.bodyLinearVelX.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.bodyLinearVelX.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.bodyLinearVelX.Name = "bodyLinearVelX";
-			this.bodyLinearVelX.Size = new System.Drawing.Size(49, 20);
-			this.bodyLinearVelX.TabIndex = 24;
-			this.bodyLinearVelX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelX_ValueChanged);
-			// 
 			// fixtureRestitution
 			// 
 			this.fixtureRestitution.EnableUpperLimit = false;
@@ -1262,13 +1210,42 @@
 			this.fixtureFriction.TabIndex = 8;
 			this.fixtureFriction.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureFriction_ValueChanged);
 			// 
+			// fixtureListBox
+			// 
+			this.fixtureListBox.FormattingEnabled = true;
+			this.fixtureListBox.Location = new System.Drawing.Point(3, 28);
+			this.fixtureListBox.Name = "fixtureListBox";
+			this.fixtureListBox.Size = new System.Drawing.Size(229, 82);
+			this.fixtureListBox.TabIndex = 1;
+			this.fixtureListBox.SelectedIndexChanged += new System.EventHandler(this.fixtureListBox_SelectedIndexChanged);
+			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.panel2);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage3.Size = new System.Drawing.Size(235, 481);
+			this.tabPage3.TabIndex = 6;
+			this.tabPage3.Text = "tabPage3";
+			this.tabPage3.UseVisualStyleBackColor = true;
+			// 
+			// panel2
+			// 
+			this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel2.Controls.Add(this.treeView1);
+			this.panel2.Location = new System.Drawing.Point(0, 0);
+			this.panel2.Name = "panel2";
+			this.panel2.Padding = new System.Windows.Forms.Padding(1);
+			this.panel2.Size = new System.Drawing.Size(235, 216);
+			this.panel2.TabIndex = 1;
+			// 
 			// treeView1
 			// 
 			this.treeView1.AllowDrop = true;
 			this.treeView1.BackColor = System.Drawing.SystemColors.Window;
 			this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.treeView1.CheckBoxes = false;
-			this.treeView1.ContextMenuStrip = this.contextMenuStrip1;
 			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.treeView1.ForeColor = System.Drawing.SystemColors.WindowText;
 			this.treeView1.FullRowSelect = false;
@@ -1291,6 +1268,29 @@
 			this.treeView1.Size = new System.Drawing.Size(231, 212);
 			this.treeView1.Sorted = false;
 			this.treeView1.TabIndex = 0;
+			this.treeView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseUp);
+			// 
+			// contextMenuStrip1
+			// 
+			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newBodyToolStripMenuItem,
+            this.newFixtureToolStripMenuItem});
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(137, 48);
+			// 
+			// newBodyToolStripMenuItem
+			// 
+			this.newBodyToolStripMenuItem.Name = "newBodyToolStripMenuItem";
+			this.newBodyToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+			this.newBodyToolStripMenuItem.Text = "New Body";
+			this.newBodyToolStripMenuItem.Click += new System.EventHandler(this.newBodyToolStripMenuItem_Click);
+			// 
+			// newFixtureToolStripMenuItem
+			// 
+			this.newFixtureToolStripMenuItem.Name = "newFixtureToolStripMenuItem";
+			this.newFixtureToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+			this.newFixtureToolStripMenuItem.Text = "New Fixture";
+			this.newFixtureToolStripMenuItem.Click += new System.EventHandler(this.newFixtureToolStripMenuItem_Click);
 			// 
 			// Main
 			// 

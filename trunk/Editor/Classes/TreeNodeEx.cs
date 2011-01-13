@@ -78,7 +78,7 @@ namespace Paril.Windows.Forms
 
 			node.SortChildren();
 			InsertNodeAt(pos, node);
-			if (treeView != null && node == treeView.selectedNode)
+			if (treeView != null && node == treeView.SelectedNode)
 			{
 				treeView.SelectedNode = node;
 			}
@@ -533,7 +533,7 @@ namespace Paril.Windows.Forms
 			{
 				if (treeView == null)
 					return false;
-				return treeView.selectedNode == this;
+				return treeView.SelectedNode == this;
 			}
 		}
 
@@ -918,6 +918,88 @@ namespace Paril.Windows.Forms
 			if (Renamed != null)
 				Renamed(this, EventArgs.Empty);
 		}
+
+		public event TreeNodeExMovedEventHandler NodeMoved;
+		public event TreeNodeExMovedEventHandler NodeDropped;
+
+		public virtual void OnNodeMoved(TreeNodeExMovedEventArgs args)
+		{
+			if (NodeMoved != null)
+				NodeMoved(this, args);
+		}
+
+		public virtual void OnNodeDropped(TreeNodeExMovedEventArgs args)
+		{
+			if (NodeDropped != null)
+				NodeDropped(this, args);
+		}
 	}; // class TreeNode
+
+	public struct TreeNodeExParent
+	{
+		public TreeNodeEx Node
+		{
+			get;
+			set;
+		}
+
+		public TreeViewEx TreeView
+		{
+			get;
+			set;
+		}
+
+		public bool IsNode
+		{
+			get;
+			set;
+		}
+
+		public TreeNodeExParent(TreeNodeEx node) :
+			this()
+		{
+			IsNode = true;
+			Node = node;
+			TreeView = null;
+		}
+
+		public TreeNodeExParent(TreeViewEx view) :
+			this()
+		{
+			IsNode = false;
+			Node = null;
+			TreeView = view;
+		}
+	}
+
+	public class TreeNodeExMovedEventArgs : EventArgs
+	{
+		public TreeNodeExParent OldParent
+		{
+			get;
+			set;
+		}
+
+		public TreeNodeExParent NewParent
+		{
+			get;
+			set;
+		}
+
+		public TreeNodeEx Node
+		{
+			get;
+			set;
+		}
+
+		public TreeNodeExMovedEventArgs(TreeNodeEx node, TreeNodeExParent oldParent, TreeNodeExParent newParent)
+		{
+			Node = node;
+			OldParent = oldParent;
+			NewParent = newParent;
+		}
+	}
+
+	public delegate void TreeNodeExMovedEventHandler (object sender, TreeNodeExMovedEventArgs e);
 
 }; // namespace System.Windows.Forms

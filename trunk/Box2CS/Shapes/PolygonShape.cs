@@ -258,10 +258,10 @@ namespace Box2CS
 					if (!(s > 0.0f))
 					{
 						if (_autoReverse)
-							ReverseOrder();
+							verts = ReverseOrder(verts);
 						else
 							throw new Exception("Polygon is non-convex or has colinear edges");
-						return;
+						break;
 					}
 				}
 			}
@@ -328,11 +328,11 @@ namespace Box2CS
 			}
 		}
 
-		public void ReverseOrder()
+		public Vec2[] ReverseOrder(Vec2[] verts)
 		{
-			var list = new System.Collections.Generic.List<Vec2>(Vertices);
+			var list = new System.Collections.Generic.List<Vec2>(verts);
 			list.Reverse();
-			Vertices = list.ToArray();
+			return list.ToArray();
 		}
 
 		public override void ComputeAABB(out AABB aabb, Transform xf)

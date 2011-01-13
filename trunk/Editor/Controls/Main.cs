@@ -605,6 +605,16 @@ namespace Editor
 
 				return true;
 			}
+
+			public override void OnNodeDropped(Paril.Windows.Forms.TreeNodeExMovedEventArgs args)
+			{
+				base.OnNodeDropped(args);
+			}
+
+			public override void OnNodeMoved(Paril.Windows.Forms.TreeNodeExMovedEventArgs args)
+			{
+				base.OnNodeMoved(args);
+			}
 		}
 
 		public class ShapeNode : Paril.Windows.Forms.TreeNodeEx
@@ -1092,6 +1102,12 @@ namespace Editor
 			}
 			else
 				treeView1.Nodes[0].Nodes.Add(node);
+		}
+
+		private void treeView1_MouseUp(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right)
+				contextMenuStrip1.Show(treeView1, e.X, e.Y);
 		}
 	}
 }
