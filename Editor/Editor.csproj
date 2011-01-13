@@ -74,6 +74,18 @@
     <Compile Include="Classes\TreeViewExEventArgs.cs" />
     <Compile Include="Classes\TreeViewExEventHandler.cs" />
     <Compile Include="Classes\WorldObject.cs" />
+    <Compile Include="Controls\BodyPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\BodyPanel.designer.cs">
+      <DependentUpon>BodyPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FixturePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FixturePanel.designer.cs">
+      <DependentUpon>FixturePanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FloatNumericUpDown.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -95,6 +107,12 @@
     <Compile Include="Controls\CirclePanel.designer.cs">
       <DependentUpon>CirclePanel.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Controls\BodyPanel.resx">
+      <DependentUpon>BodyPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FixturePanel.resx">
+      <DependentUpon>FixturePanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\FloatNumericUpDown.resx">
       <DependentUpon>FloatNumericUpDown.cs</DependentUpon>
     </EmbeddedResource>

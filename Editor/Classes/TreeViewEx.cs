@@ -167,18 +167,6 @@ namespace Paril.Windows.Forms
 			updating++;
 		}
 
-		Forms.BorderStyle BorderStyleInternal;
-		public Forms.BorderStyle BorderStyle
-		{
-			get
-			{
-				return BorderStyleInternal;
-			}
-			set
-			{
-				BorderStyleInternal = value;
-			}
-		}
 		public bool CheckBoxes
 		{
 			get
@@ -413,8 +401,8 @@ namespace Paril.Windows.Forms
 								g.FillRectangle(SystemBrushes.Highlight, bnds);
 								Forms.TextRenderer.DrawText(g, nodes.currentNode.Text, Font, bnds, SystemColors.HighlightText, Forms.TextFormatFlags.NoClipping);
 								// Draw the focus rectangle.
-								//Rectangle r = new Rectangle((int)(bounds.X - 1), (int)(bounds.Y - 1), (int)(bounds.Width + 1), (int)(bounds.Height + 1));
-								//Forms.ControlPaint.DrawFocusRectangle(g, r);
+								Rectangle r = new Rectangle((int)(bounds.X), (int)(bounds.Y), (int)(bounds.Width), (int)(bounds.Height));
+								Forms.ControlPaint.DrawFocusRectangle(g, r);
 							}
 							else
 							{
@@ -1956,7 +1944,6 @@ namespace Paril.Windows.Forms
 			indent = 19;
 			itemHeight = -1;
 			scrollable = true;
-			BorderStyleInternal = Forms.BorderStyle.Fixed3D;
 			showLines = true;
 			showPlusMinus = true;
 			showRootLines = true;

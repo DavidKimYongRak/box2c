@@ -219,6 +219,43 @@ namespace Box2CS
 			if (!(2 <= verts.Length && verts.Length <= Box2DSettings.b2_maxPolygonVertices))
 				throw new ArgumentOutOfRangeException("verts", "Vertice count is " + ((2 <= verts.Length) ? "less than 2" : "greater than "+Box2DSettings.b2_maxPolygonVertices.ToString()));
 
+			if (_autoReverse)
+			// Ensure the polygon is convex and the interior
+			// is to the left of each edge.
+			{
+				bool _reversed = false;
+				for (int i = 0; i < verts.Length; ++i)
+				{
+					int i1 = i;
+					int i2 = i + 1 < verts.Length ? i + 1 : 0;
+					Vec2 edge = verts[i2] - verts[i1];
+
+					for (int j = 0; j < verts.Length; ++j)
+					{
+						// Don't check vertices on the current edge.
+						if (j == i1 || j == i2)
+						{
+							continue;
+						}
+
+						Vec2 r = verts[j] - verts[i1];
+
+						// Your polygon is non-convex (it has an indentation) or
+						// has colinear edges.
+						float s = edge.Cross(r);
+						if (!(s > 0.0f))
+						{
+							_reversed = true;
+							verts = ReverseOrder(verts);
+							break;
+						}
+					}
+
+					if (_reversed)
+						break;
+				}
+			}
+
 			// Compute normals. Ensure the edges have non-zero length.
 			for (int i = 0; i < verts.Length; ++i)
 			{
@@ -231,39 +268,6 @@ namespace Box2CS
 
 				normals[i] = edge.Cross(1.0f);
 				normals[i].Normalize();
-			}
-
-			if (_autoReverse)
-			// Ensure the polygon is convex and the interior
-			// is to the left of each edge.
-				for (int i = 0; i < verts.Length; ++i)
-			{
-				int i1 = i;
-				int i2 = i + 1 < verts.Length ? i + 1 : 0;
-				Vec2 edge = verts[i2] - verts[i1];
-
-				for (int j = 0; j < verts.Length; ++j)
-				{
-					// Don't check vertices on the current edge.
-					if (j == i1 || j == i2)
-					{
-						continue;
-					}
-
-					Vec2 r = verts[j] - verts[i1];
-
-					// Your polygon is non-convex (it has an indentation) or
-					// has colinear edges.
-					float s = edge.Cross(r);
-					if (!(s > 0.0f))
-					{
-						if (_autoReverse)
-							verts = ReverseOrder(verts);
-						else
-							throw new Exception("Polygon is non-convex or has colinear edges");
-						break;
-					}
-				}
 			}
 
 			// Compute the polygon centroid.

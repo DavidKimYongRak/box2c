@@ -81,7 +81,6 @@
 			this.circlePositionY.Name = "circlePositionY";
 			this.circlePositionY.Size = new System.Drawing.Size(50, 20);
 			this.circlePositionY.TabIndex = 14;
-			this.circlePositionY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.circlePositionY_ValueChanged);
 			// 
 			// circlePositionX
 			// 
@@ -101,7 +100,6 @@
 			this.circlePositionX.Name = "circlePositionX";
 			this.circlePositionX.Size = new System.Drawing.Size(50, 20);
 			this.circlePositionX.TabIndex = 12;
-			this.circlePositionX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.circlePositionX_ValueChanged);
 			// 
 			// circleRadius
 			// 
@@ -120,7 +118,6 @@
 			this.circleRadius.Name = "circleRadius";
 			this.circleRadius.Size = new System.Drawing.Size(84, 20);
 			this.circleRadius.TabIndex = 10;
-			this.circleRadius.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.circleRadius_ValueChanged);
 			// 
 			// CirclePanel
 			// 
