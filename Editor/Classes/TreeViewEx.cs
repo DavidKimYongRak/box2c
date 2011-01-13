@@ -60,7 +60,7 @@ namespace Paril.Windows.Forms
 		internal TreeNodeEx root;
 		private bool scrollable;
 		internal int selectedImageIndex = 0;
-		internal TreeNodeEx selectedNode, dragDropNode, dragMoveNode;
+		private TreeNodeEx selectedNode, nodeToBeDropped, selectedDropNode;
 		DragMoveDirection dragMoveDirection;
 		private bool showLines;
 		private bool showPlusMinus;
@@ -394,7 +394,7 @@ namespace Paril.Windows.Forms
 							// Draw the node text.
 							var bnds = RectIFromRectF(bounds);
 
-							if (dragMoveNode == nodes.currentNode)
+							if (selectedDropNode == nodes.currentNode)
 							{
 								if (dragMoveDirection == DragMoveDirection.Above)
 									g.DrawLine(Pens.Black, new PointF(bnds.X, bnds.Y), new PointF(bnds.X + bnds.Width, bnds.Y));
@@ -404,9 +404,9 @@ namespace Paril.Windows.Forms
 									g.FillRectangle(SystemBrushes.Highlight, bnds);
 							}
 
-							if ((dragMoveNode == nodes.currentNode && dragMoveDirection == DragMoveDirection.On) ||
-								(((dragDropNode == null && nodes.currentNode == selectedNode)
-								|| (nodes.currentNode == dragDropNode))
+							if ((selectedDropNode == nodes.currentNode && dragMoveDirection == DragMoveDirection.On) ||
+								(((nodeToBeDropped == null && nodes.currentNode == selectedNode)
+								|| (nodes.currentNode == nodeToBeDropped))
 								&& (Focused || !hideSelection)))
 							{
 								// TODO: FullRowSelect
@@ -1150,11 +1150,11 @@ namespace Paril.Windows.Forms
 					if (node != null && node.Bounds.Contains(pt))
 					{
 						Focus();
-						dragDropNode = node;
+						nodeToBeDropped = node;
 
 						if (selectedNode != null)
 							selectedNode.Invalidate();
-						dragDropNode.Invalidate();
+						nodeToBeDropped.Invalidate();
 					}
 				}
 			}
@@ -1170,9 +1170,9 @@ namespace Paril.Windows.Forms
 		{
 			var node = GetNodeAt(e.X, e.Y);
 
-			if (dragDropNode != null && dragDropNode != node && node.CanDragDrop())
+			if (nodeToBeDropped != null && nodeToBeDropped != node && node.CanDragDrop())
 			{
-				DoDragDrop(dragDropNode, Forms.DragDropEffects.Move | Forms.DragDropEffects.Copy | Forms.DragDropEffects.Link);
+				DoDragDrop(nodeToBeDropped, Forms.DragDropEffects.Move | Forms.DragDropEffects.Copy | Forms.DragDropEffects.Link);
 
 				if (selectedNode != null)
 					selectedNode.Invalidate();
@@ -1191,29 +1191,52 @@ namespace Paril.Windows.Forms
 
 		protected override void OnDragDrop(Forms.DragEventArgs drgevent)
 		{
-			if (dragMoveNode != null && dragDropNode != null)
+			if (selectedDropNode != null && nodeToBeDropped != null)
 			{
-				if (dragDropNode.Parent != null)
-					dragDropNode.Parent.Nodes.Remove(dragDropNode);
-				else
-					dragDropNode.TreeView.Nodes.Remove(dragDropNode);
+				TreeNodeExParent oldParent, newParent;
 
-				if (dragMoveDirection == DragMoveDirection.On)
-					dragMoveNode.Nodes.Add(dragDropNode);
+				if (nodeToBeDropped.Parent != null)
+				{
+					oldParent = new TreeNodeExParent(nodeToBeDropped.Parent);
+					nodeToBeDropped.Parent.Nodes.Remove(nodeToBeDropped);
+				}
 				else
 				{
-					int pos = (dragMoveDirection == DragMoveDirection.Above) ? dragMoveNode.Index : dragMoveNode.Index + 1;
+					oldParent = new TreeNodeExParent(nodeToBeDropped.TreeView);
+					nodeToBeDropped.TreeView.Nodes.Remove(nodeToBeDropped);
+				}
 
-					if (dragMoveNode.Parent == null)
-						Nodes.Insert(pos, dragDropNode);
+				if (dragMoveDirection == DragMoveDirection.On)
+				{
+					selectedDropNode.Nodes.Add(nodeToBeDropped);
+					newParent = new TreeNodeExParent(selectedDropNode);
+				}
+				else
+				{
+					int pos = (dragMoveDirection == DragMoveDirection.Above) ? selectedDropNode.Index : selectedDropNode.Index + 1;
+
+					if (selectedDropNode.Parent == null)
+					{
+						Nodes.Insert(pos, nodeToBeDropped);
+						newParent = new TreeNodeExParent(this);
+					}
 					else
-						dragMoveNode.Parent.Nodes.Insert(pos, dragDropNode);
+					{
+						selectedDropNode.Parent.Nodes.Insert(pos, nodeToBeDropped);
+						newParent = new TreeNodeExParent(selectedDropNode.Parent);
+					}
 				}
 				
-				dragMoveNode.Invalidate();
-				dragDropNode.Invalidate();
+				selectedDropNode.Invalidate();
+				nodeToBeDropped.Invalidate();
 
-				dragMoveNode = dragDropNode = null;
+				// tell the dropped node
+				nodeToBeDropped.OnNodeMoved(new TreeNodeExMovedEventArgs(selectedDropNode, oldParent, newParent));
+
+				// tell the receiver
+				selectedDropNode.OnNodeDropped(new TreeNodeExMovedEventArgs(selectedDropNode, oldParent, newParent));
+
+				selectedDropNode = nodeToBeDropped = null;
 			}
 
 			if (mouseExpandTimer != null)
@@ -1267,19 +1290,19 @@ namespace Paril.Windows.Forms
 
 			var dragItem = GetNodeAt(pt);
 
-			bool newItem = (dragItem != dragMoveNode);
+			bool newItem = (dragItem != selectedDropNode);
 
-			if (dragItem == dragDropNode || HasParent(dragItem, dragDropNode))
+			if (dragItem == nodeToBeDropped || HasParent(dragItem, nodeToBeDropped))
 			{
-				if (dragMoveNode != null)
-					dragMoveNode.Invalidate();
-				dragMoveNode = null;
+				if (selectedDropNode != null)
+					selectedDropNode.Invalidate();
+				selectedDropNode = null;
 				drgevent.Effect = Forms.DragDropEffects.None;
 			}
 			else
 			{
-				if (dragItem != dragMoveNode && dragMoveNode != null)
-					dragMoveNode.Invalidate();
+				if (dragItem != selectedDropNode && selectedDropNode != null)
+					selectedDropNode.Invalidate();
 
 				if (dragItem != null)
 				{
@@ -1289,12 +1312,12 @@ namespace Paril.Windows.Forms
 
 					dragMoveDirection = DragMoveDirection.Neither;
 
-					if (on && dragItem.CanDropOn(dragDropNode))
+					if (on && dragItem.CanDropOn(nodeToBeDropped))
 						dragMoveDirection = DragMoveDirection.On;
 					else if (above)
 					{
-						bool canUp = dragItem.CanDropAbove(dragDropNode);
-						bool canOn = dragItem.CanDropOn(dragDropNode);
+						bool canUp = dragItem.CanDropAbove(nodeToBeDropped);
+						bool canOn = dragItem.CanDropOn(nodeToBeDropped);
 
 						if (!canUp && canOn)
 							dragMoveDirection = DragMoveDirection.On;
@@ -1303,8 +1326,8 @@ namespace Paril.Windows.Forms
 					}
 					else if (!above)
 					{
-						bool canBelow = dragItem.CanDropUnder(dragDropNode);
-						bool canOn = dragItem.CanDropOn(dragDropNode);
+						bool canBelow = dragItem.CanDropUnder(nodeToBeDropped);
+						bool canOn = dragItem.CanDropOn(nodeToBeDropped);
 
 						if (!canBelow && canOn)
 							dragMoveDirection = DragMoveDirection.On;
@@ -1315,20 +1338,20 @@ namespace Paril.Windows.Forms
 					if (dragMoveDirection == DragMoveDirection.Neither)
 					{
 						drgevent.Effect = Forms.DragDropEffects.None;
-						dragMoveNode = dragItem = null;
+						selectedDropNode = dragItem = null;
 					}
 				}
 
 				if (dragItem != null)
 				{
-					dragMoveNode = dragItem;
+					selectedDropNode = dragItem;
 
-					if (dragMoveNode != null)
-						dragMoveNode.Invalidate();
+					if (selectedDropNode != null)
+						selectedDropNode.Invalidate();
 
 					drgevent.Effect = Forms.DragDropEffects.Move;
 
-					if (newItem && dragMoveNode.Nodes.Count != 0 && !dragMoveNode.IsExpanded)
+					if (newItem && selectedDropNode.Nodes.Count != 0 && !selectedDropNode.IsExpanded)
 					{
 						if (mouseExpandTimer == null)
 						{
@@ -1350,15 +1373,15 @@ namespace Paril.Windows.Forms
 
 		void mouseExpandTimer_Tick(object sender, EventArgs e)
 		{
-			if (dragMoveNode != null && !dragMoveNode.IsExpanded)
-				dragMoveNode.Expand();
+			if (selectedDropNode != null && !selectedDropNode.IsExpanded)
+				selectedDropNode.Expand();
 		}
 
 		protected override void OnQueryContinueDrag(Forms.QueryContinueDragEventArgs qcdevent)
 		{
-			if (dragMoveNode == null && (Forms.Control.MouseButtons & Forms.MouseButtons.Left) != Forms.MouseButtons.Left)
+			if (selectedDropNode == null && (Forms.Control.MouseButtons & Forms.MouseButtons.Left) != Forms.MouseButtons.Left)
 			{
-				dragDropNode = null;
+				nodeToBeDropped = null;
 				qcdevent.Action = Forms.DragAction.Cancel;
 			}
 
@@ -1375,11 +1398,12 @@ namespace Paril.Windows.Forms
 		{
 			ProcessClick(e.X, e.Y, (e.Button == Forms.MouseButtons.Right));
 
-			if (dragDropNode != null)
+			if (nodeToBeDropped != null)
 			{
-				dragDropNode.Invalidate();
-				dragDropNode = null;
+				nodeToBeDropped.Invalidate();
+				nodeToBeDropped = null;
 			}
+
 			if (selectedNode != null)
 				selectedNode.Invalidate();
 
