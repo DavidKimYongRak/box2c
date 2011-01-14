@@ -92,6 +92,7 @@
     <Compile Include="Tests\Gun.cs" />
     <Compile Include="Tests\LineJoint.cs" />
     <Compile Include="Tests\Mirrors.cs" />
+    <Compile Include="Tests\MovingJoint.cs" />
     <Compile Include="Tests\OneSidedPlatform.cs" />
     <Compile Include="Tests\PolyShapes.cs" />
     <Compile Include="Tests\Prismatic.cs" />

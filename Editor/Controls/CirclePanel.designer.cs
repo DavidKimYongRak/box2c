@@ -39,7 +39,7 @@
 			// label42
 			// 
 			this.label42.AutoSize = true;
-			this.label42.Location = new System.Drawing.Point(67, 13);
+			this.label42.Location = new System.Drawing.Point(67, 8);
 			this.label42.Name = "label42";
 			this.label42.Size = new System.Drawing.Size(43, 13);
 			this.label42.TabIndex = 11;
@@ -48,7 +48,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(10, 39);
+			this.label1.Location = new System.Drawing.Point(10, 34);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(57, 13);
 			this.label1.TabIndex = 13;
@@ -57,7 +57,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(129, 39);
+			this.label2.Location = new System.Drawing.Point(129, 34);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(17, 13);
 			this.label2.TabIndex = 15;
@@ -67,7 +67,7 @@
 			// 
 			this.circlePositionY.EnableLowerLimit = false;
 			this.circlePositionY.EnableUpperLimit = false;
-			this.circlePositionY.Location = new System.Drawing.Point(152, 35);
+			this.circlePositionY.Location = new System.Drawing.Point(152, 30);
 			this.circlePositionY.Maximum = new decimal(new int[] {
             1000000000,
             0,
@@ -86,7 +86,7 @@
 			// 
 			this.circlePositionX.EnableLowerLimit = false;
 			this.circlePositionX.EnableUpperLimit = false;
-			this.circlePositionX.Location = new System.Drawing.Point(70, 35);
+			this.circlePositionX.Location = new System.Drawing.Point(70, 30);
 			this.circlePositionX.Maximum = new decimal(new int[] {
             1000000000,
             0,
@@ -109,7 +109,7 @@
             0,
             0,
             131072});
-			this.circleRadius.Location = new System.Drawing.Point(118, 9);
+			this.circleRadius.Location = new System.Drawing.Point(118, 4);
 			this.circleRadius.Maximum = new decimal(new int[] {
             0,
             0,
@@ -130,7 +130,7 @@
 			this.Controls.Add(this.label42);
 			this.Controls.Add(this.circleRadius);
 			this.Name = "CirclePanel";
-			this.Size = new System.Drawing.Size(229, 120);
+			this.Size = new System.Drawing.Size(229, 62);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

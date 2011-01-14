@@ -116,6 +116,7 @@ namespace Paril.Windows.Forms
 				owner.SizeChildrenArray();
 				SetNodeOwner(node);
 				node.parent = owner;
+				node.OnNodeMoved(new TreeNodeExMovedEventArgs(node, null, new TreeNodeExParent(owner)));
 				int pos = owner.childCount++;
 				node.index = pos;
 				owner.children[node.index] = node;
