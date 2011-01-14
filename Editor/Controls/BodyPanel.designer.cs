@@ -80,6 +80,7 @@
 			this.bodyActive.Size = new System.Drawing.Size(15, 14);
 			this.bodyActive.TabIndex = 96;
 			this.bodyActive.UseVisualStyleBackColor = true;
+			this.bodyActive.CheckedChanged += new System.EventHandler(this.bodyActive_SelectedIndexChanged);
 			// 
 			// bodyAutoMassRecalculate
 			// 
@@ -89,6 +90,7 @@
 			this.bodyAutoMassRecalculate.Size = new System.Drawing.Size(15, 14);
 			this.bodyAutoMassRecalculate.TabIndex = 95;
 			this.bodyAutoMassRecalculate.UseVisualStyleBackColor = true;
+			this.bodyAutoMassRecalculate.CheckedChanged += new System.EventHandler(this.bodyAutoMassRecalculate_SelectedIndexChanged);
 			// 
 			// bodyAwake
 			// 
@@ -98,6 +100,7 @@
 			this.bodyAwake.Size = new System.Drawing.Size(15, 14);
 			this.bodyAwake.TabIndex = 94;
 			this.bodyAwake.UseVisualStyleBackColor = true;
+			this.bodyAwake.CheckedChanged += new System.EventHandler(this.bodyAwake_SelectedIndexChanged);
 			// 
 			// bodyAllowSleep
 			// 
@@ -107,6 +110,7 @@
 			this.bodyAllowSleep.Size = new System.Drawing.Size(15, 14);
 			this.bodyAllowSleep.TabIndex = 93;
 			this.bodyAllowSleep.UseVisualStyleBackColor = true;
+			this.bodyAllowSleep.CheckedChanged += new System.EventHandler(this.bodyAllowSleep_SelectedIndexChanged);
 			// 
 			// bodyBullet
 			// 
@@ -116,6 +120,7 @@
 			this.bodyBullet.Size = new System.Drawing.Size(15, 14);
 			this.bodyBullet.TabIndex = 92;
 			this.bodyBullet.UseVisualStyleBackColor = true;
+			this.bodyBullet.CheckedChanged += new System.EventHandler(this.bodyBullet_SelectedIndexChanged);
 			// 
 			// bodyFixedRotation
 			// 
@@ -125,6 +130,7 @@
 			this.bodyFixedRotation.Size = new System.Drawing.Size(15, 14);
 			this.bodyFixedRotation.TabIndex = 91;
 			this.bodyFixedRotation.UseVisualStyleBackColor = true;
+			this.bodyFixedRotation.CheckedChanged += new System.EventHandler(this.bodyFixedRotation_SelectedIndexChanged);
 			// 
 			// label1
 			// 
@@ -180,6 +186,7 @@
 			this.bodyCenterY.Name = "bodyCenterY";
 			this.bodyCenterY.Size = new System.Drawing.Size(50, 20);
 			this.bodyCenterY.TabIndex = 89;
+			this.bodyCenterY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterY_ValueChanged);
 			// 
 			// label23
 			// 
@@ -212,6 +219,7 @@
             0,
             0,
             0});
+			this.bodyInertiaScale.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertiaScale_ValueChanged);
 			// 
 			// label11
 			// 
@@ -261,6 +269,7 @@
 			this.bodyType.Name = "bodyType";
 			this.bodyType.Size = new System.Drawing.Size(62, 21);
 			this.bodyType.TabIndex = 66;
+			this.bodyType.SelectedIndexChanged += new System.EventHandler(this.bodyType_SelectedIndexChanged);
 			// 
 			// bodyCenterX
 			// 
@@ -280,6 +289,7 @@
 			this.bodyCenterX.Name = "bodyCenterX";
 			this.bodyCenterX.Size = new System.Drawing.Size(49, 20);
 			this.bodyCenterX.TabIndex = 87;
+			this.bodyCenterX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyCenterX_ValueChanged);
 			// 
 			// bodyName
 			// 
@@ -288,6 +298,7 @@
 			this.bodyName.Size = new System.Drawing.Size(70, 20);
 			this.bodyName.TabIndex = 82;
 			this.bodyName.Text = "Test Body";
+			this.bodyName.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
 			// 
 			// label21
 			// 
@@ -333,6 +344,7 @@
 			this.bodyInertia.Name = "bodyInertia";
 			this.bodyInertia.Size = new System.Drawing.Size(51, 20);
 			this.bodyInertia.TabIndex = 85;
+			this.bodyInertia.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyInertia_ValueChanged);
 			// 
 			// bodyLinearVelY
 			// 
@@ -352,6 +364,7 @@
 			this.bodyLinearVelY.Name = "bodyLinearVelY";
 			this.bodyLinearVelY.Size = new System.Drawing.Size(51, 20);
 			this.bodyLinearVelY.TabIndex = 75;
+			this.bodyLinearVelY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelY_ValueChanged);
 			// 
 			// bodyAngle
 			// 
@@ -371,6 +384,7 @@
 			this.bodyAngle.Name = "bodyAngle";
 			this.bodyAngle.Size = new System.Drawing.Size(50, 20);
 			this.bodyAngle.TabIndex = 58;
+			this.bodyAngle.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngle_ValueChanged);
 			// 
 			// label20
 			// 
@@ -408,6 +422,7 @@
 			this.bodyAngularVelocity.Name = "bodyAngularVelocity";
 			this.bodyAngularVelocity.Size = new System.Drawing.Size(55, 20);
 			this.bodyAngularVelocity.TabIndex = 62;
+			this.bodyAngularVelocity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularVelocity_ValueChanged);
 			// 
 			// bodyAngularDamping
 			// 
@@ -427,6 +442,7 @@
 			this.bodyAngularDamping.Name = "bodyAngularDamping";
 			this.bodyAngularDamping.Size = new System.Drawing.Size(51, 20);
 			this.bodyAngularDamping.TabIndex = 60;
+			this.bodyAngularDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyAngularDamping_ValueChanged);
 			// 
 			// bodyMass
 			// 
@@ -440,6 +456,7 @@
 			this.bodyMass.Name = "bodyMass";
 			this.bodyMass.Size = new System.Drawing.Size(52, 20);
 			this.bodyMass.TabIndex = 83;
+			this.bodyMass.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyMass_ValueChanged);
 			// 
 			// label5
 			// 
@@ -477,6 +494,7 @@
 			this.bodyPositionX.Name = "bodyPositionX";
 			this.bodyPositionX.Size = new System.Drawing.Size(49, 20);
 			this.bodyPositionX.TabIndex = 77;
+			this.bodyPositionX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionX_ValueChanged);
 			// 
 			// label16
 			// 
@@ -514,6 +532,7 @@
 			this.bodyPositionY.Name = "bodyPositionY";
 			this.bodyPositionY.Size = new System.Drawing.Size(51, 20);
 			this.bodyPositionY.TabIndex = 79;
+			this.bodyPositionY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyPositionY_ValueChanged);
 			// 
 			// label15
 			// 
@@ -542,6 +561,7 @@
 			this.bodyLinearDamping.Name = "bodyLinearDamping";
 			this.bodyLinearDamping.Size = new System.Drawing.Size(45, 20);
 			this.bodyLinearDamping.TabIndex = 71;
+			this.bodyLinearDamping.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearDamping_ValueChanged);
 			// 
 			// bodyLinearVelX
 			// 
@@ -561,6 +581,7 @@
 			this.bodyLinearVelX.Name = "bodyLinearVelX";
 			this.bodyLinearVelX.Size = new System.Drawing.Size(49, 20);
 			this.bodyLinearVelX.TabIndex = 73;
+			this.bodyLinearVelX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.bodyLinearVelX_ValueChanged);
 			// 
 			// label13
 			// 

@@ -37,14 +37,14 @@
 			this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.panel1 = new Editor.BlankControl();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.panel2 = new System.Windows.Forms.Panel();
+			this.treeView1 = new Paril.Windows.Forms.TreeViewEx();
 			this.label1 = new System.Windows.Forms.Label();
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newBodyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.panel1 = new Editor.BlankControl();
-			this.treeView1 = new Paril.Windows.Forms.TreeViewEx();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -127,6 +127,15 @@
 			this.splitContainer1.SplitterDistance = 575;
 			this.splitContainer1.TabIndex = 1;
 			// 
+			// panel1
+			// 
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(575, 507);
+			this.panel1.TabIndex = 0;
+			this.panel1.Click += new System.EventHandler(this.panel1_Click);
+			// 
 			// splitContainer2
 			// 
 			this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -156,6 +165,36 @@
 			this.panel2.Padding = new System.Windows.Forms.Padding(1);
 			this.panel2.Size = new System.Drawing.Size(243, 195);
 			this.panel2.TabIndex = 0;
+			// 
+			// treeView1
+			// 
+			this.treeView1.AllowDrop = true;
+			this.treeView1.BackColor = System.Drawing.SystemColors.Window;
+			this.treeView1.CheckBoxes = false;
+			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.treeView1.ForeColor = System.Drawing.SystemColors.WindowText;
+			this.treeView1.FullRowSelect = false;
+			this.treeView1.HideSelection = false;
+			this.treeView1.HotTracking = false;
+			this.treeView1.ImageIndex = 0;
+			this.treeView1.ImageList = null;
+			this.treeView1.Indent = 19;
+			this.treeView1.ItemHeight = 16;
+			this.treeView1.LabelEdit = true;
+			this.treeView1.Location = new System.Drawing.Point(1, 1);
+			this.treeView1.Margin = new System.Windows.Forms.Padding(1);
+			this.treeView1.Name = "treeView1";
+			this.treeView1.PathSeparator = "\\";
+			this.treeView1.Scrollable = true;
+			this.treeView1.SelectedImageIndex = -1;
+			this.treeView1.SelectedNode = null;
+			this.treeView1.ShowLines = true;
+			this.treeView1.ShowPlusMinus = true;
+			this.treeView1.ShowRootLines = true;
+			this.treeView1.Size = new System.Drawing.Size(239, 191);
+			this.treeView1.Sorted = false;
+			this.treeView1.TabIndex = 2;
+			this.treeView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseUp);
 			// 
 			// label1
 			// 
@@ -187,45 +226,6 @@
 			this.newFixtureToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
 			this.newFixtureToolStripMenuItem.Text = "New Fixture";
 			this.newFixtureToolStripMenuItem.Click += new System.EventHandler(this.newFixtureToolStripMenuItem_Click);
-			// 
-			// panel1
-			// 
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(575, 507);
-			this.panel1.TabIndex = 0;
-			this.panel1.Click += new System.EventHandler(this.panel1_Click);
-			// 
-			// treeView1
-			// 
-			this.treeView1.AllowDrop = true;
-			this.treeView1.BackColor = System.Drawing.SystemColors.Window;
-			this.treeView1.CheckBoxes = false;
-			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.treeView1.ForeColor = System.Drawing.SystemColors.WindowText;
-			this.treeView1.FullRowSelect = false;
-			this.treeView1.HideSelection = true;
-			this.treeView1.HotTracking = false;
-			this.treeView1.ImageIndex = 0;
-			this.treeView1.ImageList = null;
-			this.treeView1.Indent = 19;
-			this.treeView1.ItemHeight = 16;
-			this.treeView1.LabelEdit = true;
-			this.treeView1.Location = new System.Drawing.Point(1, 1);
-			this.treeView1.Margin = new System.Windows.Forms.Padding(1);
-			this.treeView1.Name = "treeView1";
-			this.treeView1.PathSeparator = "\\";
-			this.treeView1.Scrollable = true;
-			this.treeView1.SelectedImageIndex = -1;
-			this.treeView1.SelectedNode = null;
-			this.treeView1.ShowLines = true;
-			this.treeView1.ShowPlusMinus = true;
-			this.treeView1.ShowRootLines = true;
-			this.treeView1.Size = new System.Drawing.Size(239, 191);
-			this.treeView1.Sorted = false;
-			this.treeView1.TabIndex = 2;
-			this.treeView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseUp);
 			// 
 			// Main
 			// 

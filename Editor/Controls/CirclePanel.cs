@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Box2CS;
 
 namespace Editor
 {
@@ -15,5 +16,37 @@ namespace Editor
         {
             InitializeComponent();
         }
+
+		public CircleShape SelectedShape
+		{
+			get { return (CircleShape)Program.MainForm.SelectedNode.ShapeNode.Shape; }
+		}
+
+		public void Added()
+		{
+			LoadCircleShapeData();
+		}
+
+		public void LoadCircleShapeData()
+		{
+			circleRadius.Value = (decimal)SelectedShape.Radius;
+			circlePositionX.Value = (decimal)SelectedShape.Position.X;
+			circlePositionY.Value = (decimal)SelectedShape.Position.Y;
+		}
+
+		public void circleRadius_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+		{
+			SelectedShape.Radius = (float)e.NewValue;
+		}
+
+		public void circlePositionX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+		{
+			SelectedShape.Position = new Vec2((float)e.NewValue, SelectedShape.Position.Y);
+		}
+
+		public void circlePositionY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+		{
+			SelectedShape.Position = new Vec2(SelectedShape.Position.X, (float)e.NewValue);
+		}
     }
 }
