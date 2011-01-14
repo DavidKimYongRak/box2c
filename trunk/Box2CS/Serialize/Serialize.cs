@@ -785,7 +785,7 @@ namespace Box2CS.Serialize
 		}
 	}
 
-	public struct WorldData
+	public class WorldData
 	{
 		public int Version
 		{

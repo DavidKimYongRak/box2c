@@ -991,6 +991,8 @@ namespace Paril.Windows.Forms
 		{
 			if (AfterSelect != null)
 				AfterSelect(this, e);
+
+			e.Node.OnSelected();
 		}
 
 		protected internal virtual void OnBeforeCheck(TreeViewExCancelEventArgs e)

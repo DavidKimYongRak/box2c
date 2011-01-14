@@ -679,9 +679,7 @@ namespace Paril.Windows.Forms
 		{
 			// If we need to, redraw the parent.
 			if (treeView != null)
-			{
 				treeView.InvalidateDown(this);
-			}
 
 			// When removing a node, we need to see if topNode is it or its children.
 			// If so we find a new topNode.
@@ -693,11 +691,12 @@ namespace Paril.Windows.Forms
 					treeView.topNode = PrevVisibleNode;
 					break;
 				}
+
 				node = node.parent;
 			}
 
+			OnNodeMoved(new TreeNodeExMovedEventArgs(this, new TreeNodeExParent(this.parent), null));
 			RemoveRecurse();
-
 		}
 
 		private void RemoveRecurse()
@@ -933,9 +932,17 @@ namespace Paril.Windows.Forms
 			if (NodeDropped != null)
 				NodeDropped(this, args);
 		}
+
+		public event EventHandler Selected;
+
+		public virtual void OnSelected()
+		{
+			if (Selected != null)
+				Selected(this, EventArgs.Empty);
+		}
 	}; // class TreeNode
 
-	public struct TreeNodeExParent
+	public class TreeNodeExParent
 	{
 		public TreeNodeEx Node
 		{
@@ -955,16 +962,14 @@ namespace Paril.Windows.Forms
 			set;
 		}
 
-		public TreeNodeExParent(TreeNodeEx node) :
-			this()
+		public TreeNodeExParent(TreeNodeEx node)
 		{
 			IsNode = true;
 			Node = node;
 			TreeView = null;
 		}
 
-		public TreeNodeExParent(TreeViewEx view) :
-			this()
+		public TreeNodeExParent(TreeViewEx view)
 		{
 			IsNode = false;
 			Node = null;

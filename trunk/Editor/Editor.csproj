@@ -59,7 +59,6 @@
     <Compile Include="Classes\BlankControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Classes\BodyObject.cs" />
     <Compile Include="Classes\NodeLabelExEditEventHandler.cs" />
     <Compile Include="Classes\NodeLabelExEditEventArgs.cs" />
     <Compile Include="Classes\NotifyList.cs" />

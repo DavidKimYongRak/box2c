@@ -9,24 +9,24 @@ namespace Editor
 {
 	public class WorldObject
 	{
-		List<BodyObject> _bodies = new List<BodyObject>();
-		List<FixtureDefSerialized> _fixtures = new List<FixtureDefSerialized>();
-		List<JointDefSerialized> _joints = new List<JointDefSerialized>();
+		List<BodyNode> _bodies = new List<BodyNode>();
+		List<FixtureNode> _fixtures = new List<FixtureNode>();
+		//List<JointDefSerialized> _joints = new List<JointDefSerialized>();
 
-		public List<BodyObject> Bodies
+		public List<BodyNode> Bodies
 		{
 			get { return _bodies; }
 		}
 
-		public List<FixtureDefSerialized> Fixtures
+		public List<FixtureNode> Fixtures
 		{
 			get { return _fixtures; }
 		}
 
-		public List<JointDefSerialized> Joints
-		{
-			get { return _joints; }
-		}
+		//public List<JointDefSerialized> Joints
+		//{
+		//	get { return _joints; }
+		//}
 
 		public void Clear()
 		{
@@ -57,7 +57,7 @@ namespace Editor
 				if (string.IsNullOrEmpty(x.Name))
 					x.Name = "Fixture "+i.ToString();
 
-				_fixtures.Add(x);
+				//_fixtures.Add(x);
 			}
 
 			for (int i = 0; i < deserializer.Bodies.Count; ++i)
@@ -67,7 +67,7 @@ namespace Editor
 				if (string.IsNullOrEmpty(x.Name))
 					x.Name = "Body "+i.ToString();
 
-				_bodies.Add(new BodyObject(this, x));
+				//_bodies.Add(new BodyObject(this, x));
 			}
 
 			for (int i = 0; i < deserializer.Joints.Count; ++i)
@@ -77,7 +77,7 @@ namespace Editor
 				if (string.IsNullOrEmpty(x.Name))
 					x.Name = "Joint "+i.ToString();
 
-				_joints.Add(x);
+				//_joints.Add(x);
 			}
 		}
 	}

@@ -26,10 +26,25 @@ namespace Editor
 		World _world;
 		Thread simulationThread;
 		TestDebugDraw debugDraw;
-		BodyObject HoverBody = null, SelectedBody = null;
-        CirclePanel circlePanel = new CirclePanel();
+		BodyNode HoverBody = null, SelectedBody = null;
+		CirclePanel circlePanel = new CirclePanel();
+		FixturePanel fixturePanel = new FixturePanel();
+		BodyPanel bodyPanel = new BodyPanel();
 		public static WorldObject WorldObject = new WorldObject();
 		bool _testing = false;
+
+		SelectedNode _selectedNode;
+
+		public SelectedNode SelectedNode
+		{
+			get { return _selectedNode; }
+
+			set
+			{
+				_selectedNode = value;
+				SelectedNodeChanged();
+			}
+		}
 
 		public float ViewZoom
 		{
@@ -61,13 +76,13 @@ namespace Editor
 				body.MassData = x.Mass;
 			}
 
-			foreach (var j in WorldObject.Joints)
+			/*foreach (var j in WorldObject.Joints)
 			{
 				j.Joint.BodyA = bodies[j.BodyAIndex];
 				j.Joint.BodyB = bodies[j.BodyBIndex];
 
 				var joint = _world.CreateJoint(j.Joint);
-			}
+			}*/
 		}
 
 		void EndTest()
@@ -165,8 +180,8 @@ namespace Editor
 			// Clear the window
 			renderWindow.Clear();
 
-            Gl.glClearColor((float)BackColor.R / 255.0f, (float)BackColor.G / 255.0f, (float)BackColor.B / 255.0f, 1);
-            Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
+			Gl.glClearColor((float)BackColor.R / 255.0f, (float)BackColor.G / 255.0f, (float)BackColor.B / 255.0f, 1);
+			Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
 
 			Gl.glMatrixMode(Gl.GL_MODELVIEW);
 			Gl.glLoadIdentity();
@@ -211,7 +226,7 @@ namespace Editor
 					TestDebugDraw.DrawStringFollow(p.X, p.Y, HoverBody.Name);
 				}
 
-				foreach (var x in WorldObject.Joints)
+				/*foreach (var x in WorldObject.Joints)
 				{
 					Vec2 a1 = Vec2.Empty, a2 = Vec2.Empty;
 
@@ -239,7 +254,7 @@ namespace Editor
 						break;
 					}
 					debugDraw.DrawJoint(x, a1, a2, WorldObject.Bodies[x.BodyAIndex].Body, WorldObject.Bodies[x.BodyBIndex].Body);
-				}
+				}*/
 			}
 			else
 				_world.DrawDebugData();
@@ -259,7 +274,7 @@ namespace Editor
 
 				int loops = 0;
 				while (System.Environment.TickCount > NextGameTick && loops < MAX_FRAMESKIP)
-				{					
+				{
 					//Simulate();
 					if (_world != null)
 						_world.Step(1.0f / settingsHz, 8, 3);
@@ -340,7 +355,7 @@ namespace Editor
 				viewCenter = new Vec2(0.0f, 20.0f);
 				OnGLResize();
 				break;
-			}	
+			}
 		}
 
 		void renderWindow_MouseMoved(object sender, MouseMoveEventArgs e)
@@ -385,7 +400,7 @@ namespace Editor
 					{
 					}
 				}
-		
+
 				if (state == MouseButtonState.Up)
 				{
 				}
@@ -393,7 +408,7 @@ namespace Editor
 			else if (button == MouseButton.Right)
 			{
 				if (state == MouseButtonState.Down)
-				{	
+				{
 					lastp = ConvertScreenToWorld(x, y);
 					rMouseDown = true;
 				}
@@ -409,7 +424,7 @@ namespace Editor
 		{
 			Vec2 p = ConvertScreenToWorld(x, y);
 
-			BodyObject moused = null;
+			BodyNode moused = null;
 			foreach (var b in WorldObject.Bodies)
 			{
 				foreach (var f in b.Fixtures)
@@ -459,204 +474,14 @@ namespace Editor
 			NextGameTick = System.Environment.TickCount;
 		}
 
-		public class WorldNode : Paril.Windows.Forms.TreeNodeEx
-		{
-			public WorldNode(string name) :
-				base(name)
-			{
-			}
-
-			public override bool CanRename()
-			{
-				return false;
-			}
-
-			public override bool CanDragDrop()
-			{
-				return false;
-			}
-
-			public override bool CanDropOn(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				return false;
-			}
-
-			public override bool CanDropAbove(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				return false;
-			}
-
-			public override bool CanDropUnder(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				return false;
-			}
-		}
-
-		public class BodyNode : Paril.Windows.Forms.TreeNodeEx
-		{
-			public BodyDefSerialized Body
-			{
-				get;
-				set;
-			}
-
-			public BodyNode(BodyDefSerialized body) :
-				base(body.Name)
-			{
-				Body = body;
-			}
-
-			public override void OnRenamed()
-			{
-				Body.Name = Text;
-				base.OnRenamed();
-			}
-
-			public override bool CanDropAbove(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				if (nodeToDrop is ShapeNode)
-					return false;
-
-				return true;
-			}
-
-			bool HasParentType(Paril.Windows.Forms.TreeNodeEx check, Type parent)
-			{
-				var node = check;
-
-				while (node != null)
-				{
-					if (node.GetType() == parent)
-						return true;
-
-					node = node.Parent;
-				}
-
-				return false;
-			}
-
-			public override bool CanDropOn(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				if (nodeToDrop is FixtureNode)
-					return true;
-
-				return false;
-			}
-
-			public override bool CanDropUnder(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				if (nodeToDrop is ShapeNode)
-					return false;
-
-				return true;
-			}
-		}
-
-		public class FixtureNode : Paril.Windows.Forms.TreeNodeEx
-		{
-			public FixtureDefSerialized Fixture
-			{
-				get;
-				set;
-			}
-
-			public ShapeNode ShapeNode
-			{
-				get;
-				private set;
-			}
-
-			public FixtureNode(FixtureDefSerialized fixture) :
-				base(fixture.Name)
-			{
-				Fixture = fixture;
-
-				ShapeNode = new ShapeNode(new ShapeSerialized(new CircleShape(), "Circle"));
-				Nodes.Add(ShapeNode);
-			}
-
-			public override void OnRenamed()
-			{
-				Fixture.Name = Text;
-				base.OnRenamed();
-			}
-
-			public override bool CanDropOn(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				if (nodeToDrop is ShapeNode)
-					return true;
-
-				return false;
-			}
-
-			public override bool CanDropAbove(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				if (nodeToDrop is ShapeNode || (this.Parent is BodyNode && nodeToDrop is BodyNode))
-					return false;
-
-				return true;
-			}
-
-			public override bool CanDropUnder(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				if (nodeToDrop is ShapeNode || (this.Parent is BodyNode && nodeToDrop is BodyNode))
-					return false;
-
-				return true;
-			}
-
-			public override void OnNodeDropped(Paril.Windows.Forms.TreeNodeExMovedEventArgs args)
-			{
-				base.OnNodeDropped(args);
-			}
-
-			public override void OnNodeMoved(Paril.Windows.Forms.TreeNodeExMovedEventArgs args)
-			{
-				base.OnNodeMoved(args);
-			}
-		}
-
-		public class ShapeNode : Paril.Windows.Forms.TreeNodeEx
-		{
-			public ShapeSerialized Shape
-			{
-				get;
-				set;
-			}
-
-			public ShapeNode(ShapeSerialized shape) :
-				base(shape.Shape.ShapeType.ToString())
-			{
-				Shape = shape;
-			}
-
-			public override bool CanRename()
-			{
-				return false;
-			}
-
-			public override bool CanDropOn(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				return false;
-			}
-
-			public override bool CanDropAbove(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				return false;
-			}
-
-			public override bool CanDropUnder(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
-			{
-				return false;
-			}
-		}
-
 		private void Main_Load(object sender, EventArgs e)
 		{
 			simulationThread = new Thread(SimulationLoop);
 			simulationThread.Start();
 			{
-				var node = new WorldNode("World");
+				var d = new WorldData();
+				d.Gravity = new Vec2(0, 10);
+				var node = new WorldNode("World", d);
 				treeView1.Nodes.Add(node);
 
 				node.Expand();
@@ -711,8 +536,10 @@ namespace Editor
 		private void newBodyToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			var body = new BodyDefSerialized(null, new BodyDef(), new List<int>(), "Body");
-			var node = new BodyNode(body);
+			var node = new BodyNode(WorldObject, body);
 			treeView1.Nodes[0].Nodes.Add(node);
+
+			WorldObject.Bodies.Add(node);
 		}
 
 		private void newFixtureToolStripMenuItem_Click(object sender, EventArgs e)
@@ -729,12 +556,396 @@ namespace Editor
 			}
 			else
 				treeView1.Nodes[0].Nodes.Add(node);
+
+			WorldObject.Fixtures.Add(node);
 		}
 
 		private void treeView1_MouseUp(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Right)
 				contextMenuStrip1.Show(treeView1, e.X, e.Y);
+		}
+
+		void SelectedNodeChanged()
+		{
+			splitContainer2.Panel2.SuspendLayout();
+			splitContainer2.Panel2.Controls.Clear();
+
+			switch (SelectedNode.NodeType)
+			{
+			case SelectedNodeType.Body:
+				splitContainer2.Panel2.Controls.Add(bodyPanel);
+				break;
+
+			case SelectedNodeType.Fixture:
+				splitContainer2.Panel2.Controls.Add(fixturePanel);
+				break;
+
+			case SelectedNodeType.Shape:
+				switch (SelectedNode.ShapeNode.Shape.ShapeType)
+				{
+				case ShapeType.Circle:
+					splitContainer2.Panel2.Controls.Add(circlePanel);
+					break;
+				case ShapeType.Polygon:
+					break;
+				}
+				break;
+			}
+			splitContainer2.Panel2.ResumeLayout();
+		}
+	}
+
+	public class BaseNode : Paril.Windows.Forms.TreeNodeEx
+	{
+		public BaseNode(string str) :
+			base(str)
+		{
+		}
+
+		public override void OnSelected()
+		{
+			Program.MainForm.SelectedNode = new SelectedNode(this);
+			Program.MainForm.label1.Text = Program.MainForm.SelectedNode.NodeType.ToString();
+			base.OnSelected();
+		}
+	}
+
+	public class WorldNode : BaseNode
+	{
+		public WorldData Data
+		{
+			get;
+			set;
+		}
+
+		public WorldNode(string name, WorldData data) :
+			base(name)
+		{
+			Data = data;
+		}
+
+		public override bool CanRename()
+		{
+			return false;
+		}
+
+		public override bool CanDragDrop()
+		{
+			return false;
+		}
+
+		public override bool CanDropOn(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			return false;
+		}
+
+		public override bool CanDropAbove(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			return false;
+		}
+
+		public override bool CanDropUnder(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			return false;
+		}
+	}
+
+	public class BodyNode : BaseNode
+	{
+		public BodyDef Body
+		{
+			get;
+			set;
+		}
+
+		public string Name
+		{
+			get;
+			set;
+		}
+
+		MassData _mass;
+		public MassData Mass
+		{
+			get { return _mass; }
+			set { _mass = value; }
+		}
+
+		bool _autoCalculate = true;
+
+		public bool AutoMassRecalculate
+		{
+			get { return _autoCalculate; }
+			set { _autoCalculate = value; }
+		}
+
+		NotifyList<FixtureNode> _fixtures = new NotifyList<FixtureNode>();
+		public NotifyList<FixtureNode> Fixtures
+		{
+			get { return _fixtures; }
+		}
+
+		public IEnumerable<FixtureDef> OnlyFixtures
+		{
+			get
+			{
+				foreach (var x in _fixtures)
+					yield return x.Fixture;
+			}
+		}
+
+		void _fixtures_ObjectsRemoved(object sender, EventArgs e)
+		{
+			_mass = Body.ComputeMass(OnlyFixtures);
+		}
+
+		void _fixtures_ObjectsAdded(object sender, EventArgs e)
+		{
+			_mass = Body.ComputeMass(OnlyFixtures);
+		}
+
+		public BodyNode(WorldObject world, BodyDefSerialized x) :
+			base(x.Name)
+		{
+			Body = x.Body;
+			Name = x.Name;
+
+			for (int i = 0; i < x.FixtureIDs.Count; ++i)
+			{
+				var fixture = world.Fixtures[x.FixtureIDs[i]];
+				_fixtures.Add(fixture);
+			}
+
+			_mass = Body.ComputeMass(OnlyFixtures);
+
+			_fixtures.ObjectsAdded += new EventHandler(_fixtures_ObjectsAdded);
+			_fixtures.ObjectsRemoved += new EventHandler(_fixtures_ObjectsRemoved);
+		}
+
+		public override void OnRenamed()
+		{
+			Name = Text;
+			base.OnRenamed();
+		}
+
+		public override bool CanDropAbove(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			if (nodeToDrop is ShapeNode)
+				return false;
+
+			return true;
+		}
+
+		bool HasParentType(Paril.Windows.Forms.TreeNodeEx check, Type parent)
+		{
+			var node = check;
+
+			while (node != null)
+			{
+				if (node.GetType() == parent)
+					return true;
+
+				node = node.Parent;
+			}
+
+			return false;
+		}
+
+		public override bool CanDropOn(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			if (nodeToDrop is FixtureNode)
+				return true;
+
+			return false;
+		}
+
+		public override bool CanDropUnder(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			if (nodeToDrop is ShapeNode)
+				return false;
+
+			return true;
+		}
+	}
+
+	public class FixtureNode : BaseNode
+	{
+		public FixtureDef Fixture
+		{
+			get;
+			set;
+		}
+
+		public string Name
+		{
+			get;
+			set;
+		}
+
+		public ShapeNode ShapeNode
+		{
+			get;
+			private set;
+		}
+
+		public FixtureNode(FixtureDefSerialized fixture) :
+			base(fixture.Name)
+		{
+			Name = fixture.Name;
+			Fixture = fixture.Fixture;
+
+			ShapeNode = new ShapeNode(new CircleShape());
+			Fixture.Shape = ShapeNode.Shape;
+			Nodes.Add(ShapeNode);
+		}
+
+		public override void OnRenamed()
+		{
+			Name = Text;
+			base.OnRenamed();
+		}
+
+		public override bool CanDropOn(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			if (nodeToDrop is ShapeNode)
+				return true;
+
+			return false;
+		}
+
+		public override bool CanDropAbove(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			if (nodeToDrop is ShapeNode || (this.Parent is BodyNode && nodeToDrop is BodyNode))
+				return false;
+
+			return true;
+		}
+
+		public override bool CanDropUnder(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			if (nodeToDrop is ShapeNode || (this.Parent is BodyNode && nodeToDrop is BodyNode))
+				return false;
+
+			return true;
+		}
+
+		public override void OnNodeDropped(Paril.Windows.Forms.TreeNodeExMovedEventArgs args)
+		{
+			base.OnNodeDropped(args);
+		}
+
+		void CheckNode(Paril.Windows.Forms.TreeNodeExMovedEventArgs args)
+		{
+			if (args.OldParent != null && args.OldParent.IsNode && args.OldParent.Node is BodyNode)
+				(args.OldParent.Node as BodyNode).Fixtures.Remove(this);
+
+			if (args.NewParent != null && args.NewParent.IsNode && args.NewParent.Node is BodyNode)
+				(args.NewParent.Node as BodyNode).Fixtures.Add(this);
+		}
+
+		public override void OnNodeMoved(Paril.Windows.Forms.TreeNodeExMovedEventArgs args)
+		{
+			CheckNode(args);
+			base.OnNodeMoved(args);
+		}
+	}
+
+	public class ShapeNode : BaseNode
+	{
+		public Box2CS.Shape Shape
+		{
+			get;
+			set;
+		}
+
+		public ShapeNode(Box2CS.Shape shape) :
+			base(shape.ShapeType.ToString())
+		{
+			Shape = shape;
+		}
+
+		public override bool CanRename()
+		{
+			return false;
+		}
+
+		public override bool CanDropOn(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			return false;
+		}
+
+		public override bool CanDropAbove(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			return false;
+		}
+
+		public override bool CanDropUnder(Paril.Windows.Forms.TreeNodeEx nodeToDrop)
+		{
+			return false;
+		}
+	}
+
+	public enum SelectedNodeType
+	{
+		World,
+		Group,
+		Body,
+		Fixture,
+		Shape,
+		Joint
+	}
+
+	public struct SelectedNode
+	{
+		public Paril.Windows.Forms.TreeNodeEx Node
+		{
+			get;
+			set;
+		}
+
+		public SelectedNodeType NodeType
+		{
+			get;
+			set;
+		}
+
+		// Easy conversions
+		public WorldNode WorldNode
+		{
+			get { return (WorldNode)Node; }
+		}
+
+		public BodyNode BodyNode
+		{
+			get { return (BodyNode)Node; }
+		}
+
+		public FixtureNode FixtureNode
+		{
+			get { return (FixtureNode)Node; }
+		}
+
+		public ShapeNode ShapeNode
+		{
+			get { return (ShapeNode)Node; }
+		}
+
+		public SelectedNode(Paril.Windows.Forms.TreeNodeEx node) :
+			this()
+		{
+			Node = node;
+
+			if (node is WorldNode)
+				NodeType = SelectedNodeType.World;
+			else if (node is BodyNode)
+				NodeType = SelectedNodeType.Body;
+			else if (node is FixtureNode)
+				NodeType = SelectedNodeType.Fixture;
+			else if (node is ShapeNode)
+				NodeType = SelectedNodeType.Shape;
+			else
+				throw new Exception();
 		}
 	}
 }
