@@ -28,6 +28,7 @@ namespace Editor
 		TestDebugDraw debugDraw;
 		BodyNode HoverBody = null;
 		CirclePanel circlePanel = new CirclePanel();
+		PolygonPanel polygonPanel = new PolygonPanel();
 		FixturePanel fixturePanel = new FixturePanel();
 		BodyPanel bodyPanel = new BodyPanel();
 		public static WorldObject WorldObject = new WorldObject();
@@ -566,7 +567,14 @@ namespace Editor
 		private void treeView1_MouseUp(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Right)
-				contextMenuStrip1.Show(treeView1, e.X, e.Y);
+			{
+				var node = treeView1.GetNodeAt(e.X, e.Y);
+
+				if (node is ShapeNode)
+					shapeTreeViewContextMenu.Show(treeView1, e.X, e.Y);
+				else
+					baseTreeViewContextStrip.Show(treeView1, e.X, e.Y);
+			}
 		}
 
 		void SelectedNodeChanged()
@@ -594,11 +602,35 @@ namespace Editor
 					circlePanel.Added();
 					break;
 				case ShapeType.Polygon:
+					splitContainer2.Panel2.Controls.Add(polygonPanel);
+					polygonPanel.Added();
 					break;
 				}
 				break;
 			}
 			splitContainer2.Panel2.ResumeLayout();
+		}
+
+		private void circleToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (SelectedNode.ShapeNode.Shape is CircleShape)
+				return;
+
+			var node = new ShapeNode(new CircleShape());
+			if (SelectedNode.Node.Parent is FixtureNode)
+				((FixtureNode)SelectedNode.Node.Parent).SetShape(node);
+			treeView1.SelectedNode = node;
+		}
+
+		private void polygonToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (SelectedNode.ShapeNode.Shape is PolygonShape)
+				return;
+
+			var node = new ShapeNode(new PolygonShape());
+			if (SelectedNode.Node.Parent is FixtureNode)
+				((FixtureNode)SelectedNode.Node.Parent).SetShape(node);
+			treeView1.SelectedNode = node;
 		}
 	}
 
@@ -801,9 +833,17 @@ namespace Editor
 			Name = fixture.Name;
 			Fixture = fixture.Fixture;
 
-			ShapeNode = new ShapeNode(new CircleShape());
-			Fixture.Shape = ShapeNode.Shape;
-			Nodes.Add(ShapeNode);
+			SetShape(new ShapeNode(new CircleShape()));
+		}
+
+		public void SetShape(ShapeNode shapeNode)
+		{
+			if (ShapeNode != null)
+				Nodes.Remove(ShapeNode);
+
+			ShapeNode = shapeNode;
+			Fixture.Shape = shapeNode.Shape;
+			Nodes.Add(shapeNode);
 		}
 
 		public override void OnRenamed()

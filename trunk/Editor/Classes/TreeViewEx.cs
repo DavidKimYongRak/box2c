@@ -1463,7 +1463,6 @@ namespace Paril.Windows.Forms
 									if (!eventArgs.Cancel)
 									{
 										SelectedNode = nodes.currentNode;
-										OnAfterSelect(new TreeViewExEventArgs(nodes.currentNode));
 										Focus();
 									}
 								}
@@ -1756,6 +1755,8 @@ namespace Paril.Windows.Forms
 						selectedNode.Invalidate();
 						selectedNode.EnsureVisible();
 					}
+
+					OnAfterSelect(new TreeViewExEventArgs(value));
 				}
 			}
 		}
