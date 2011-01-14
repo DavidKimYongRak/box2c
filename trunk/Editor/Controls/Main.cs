@@ -26,7 +26,7 @@ namespace Editor
 		World _world;
 		Thread simulationThread;
 		TestDebugDraw debugDraw;
-		BodyNode HoverBody = null, SelectedBody = null;
+		BodyNode HoverBody = null;
 		CirclePanel circlePanel = new CirclePanel();
 		FixturePanel fixturePanel = new FixturePanel();
 		BodyPanel bodyPanel = new BodyPanel();
@@ -41,8 +41,11 @@ namespace Editor
 
 			set
 			{
-				_selectedNode = value;
-				SelectedNodeChanged();
+				if (_selectedNode.Node != value.Node)
+				{
+					_selectedNode = value;
+					SelectedNodeChanged();
+				}
 			}
 		}
 
@@ -201,7 +204,7 @@ namespace Editor
 					{
 						ColorF color = new ColorF(0.9f, 0.7f, 0.7f);
 
-						if (SelectedBody != null && x.Body == SelectedBody.Body)
+						if (SelectedNode.NodeType == SelectedNodeType.Body && x == SelectedNode.BodyNode)
 							color = new ColorF(1, 1, 0);
 						else if (HoverBody != null && x.Body == HoverBody.Body)
 							color = new ColorF(1, 0, 0);
@@ -437,7 +440,7 @@ namespace Editor
 			if (MouseButtons == System.Windows.Forms.MouseButtons.Left)
 			{
 				if (moused != null)
-					SelectedBody = moused;
+					SelectedNode = new SelectedNode(moused);
 			}
 
 			HoverBody = moused;
@@ -575,10 +578,12 @@ namespace Editor
 			{
 			case SelectedNodeType.Body:
 				splitContainer2.Panel2.Controls.Add(bodyPanel);
+				bodyPanel.Added();
 				break;
 
 			case SelectedNodeType.Fixture:
 				splitContainer2.Panel2.Controls.Add(fixturePanel);
+				fixturePanel.Added();
 				break;
 
 			case SelectedNodeType.Shape:
@@ -586,6 +591,7 @@ namespace Editor
 				{
 				case ShapeType.Circle:
 					splitContainer2.Panel2.Controls.Add(circlePanel);
+					circlePanel.Added();
 					break;
 				case ShapeType.Polygon:
 					break;
@@ -949,280 +955,3 @@ namespace Editor
 		}
 	}
 }
-
-#if OUT
-private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-{
-	if (bodyListBox.SelectedIndex == -1)
-		return;
-
-	//propertyGrid1.SelectedObject = bodies[listBox1.SelectedIndex];
-	SelectedBody = WorldObject.Bodies[bodyListBox.SelectedIndex];
-    LoadBodyObjectSettings();
-}
-
-public void LoadBodyObjectSettings()
-{
-	bodyActive.Checked = SelectedBody.Body.Active;
-	bodyAllowSleep.Checked = SelectedBody.Body.AllowSleep;
-    bodyAngle.Value = Convert.ToDecimal(SelectedBody.Body.Angle);
-    bodyAngularDamping.Value = Convert.ToDecimal(SelectedBody.Body.AngularDamping);
-    bodyAngularVelocity.Value = Convert.ToDecimal(SelectedBody.Body.AngularVelocity);
-	bodyAwake.Checked = SelectedBody.Body.Awake;
-    bodyType.SelectedIndex = (int)SelectedBody.Body.BodyType;
-	bodyBullet.Checked = SelectedBody.Body.Bullet;
-	bodyFixedRotation.Checked = SelectedBody.Body.FixedRotation;
-    bodyInertiaScale.Value = Convert.ToDecimal(SelectedBody.Body.InertiaScale);
-    bodyLinearDamping.Value = Convert.ToDecimal(SelectedBody.Body.LinearDamping);
-    bodyLinearVelX.Value = Convert.ToDecimal(SelectedBody.Body.LinearVelocity.X);
-    bodyLinearVelY.Value = Convert.ToDecimal(SelectedBody.Body.LinearVelocity.Y);
-    bodyPositionX.Value = Convert.ToDecimal(SelectedBody.Body.Position.X);
-    bodyPositionY.Value = Convert.ToDecimal(SelectedBody.Body.Position.Y);
-
-    bodyName.Text = SelectedBody.Name;
-
-	bodyAutoMassRecalculate.Checked = SelectedBody.AutoMassRecalculate;
-
-    bodyCenterX.Value = Convert.ToDecimal(SelectedBody.Mass.Center.X);
-    bodyCenterY.Value = Convert.ToDecimal(SelectedBody.Mass.Center.Y);
-    bodyMass.Value = Convert.ToDecimal(SelectedBody.Mass.Mass);
-    bodyInertia.Value = Convert.ToDecimal(SelectedBody.Mass.Inertia);
-        
-    bodyFixtureListBox.Items.Clear();
-
-    for (int i = 0; i < SelectedBody.Fixtures.Count; i ++)
-	{
-        FixtureDefSerialized fixDefSer = SelectedBody.Fixtures[i];
-        bodyFixtureListBox.Items.Add(fixDefSer.Name);
-    }
-
-    int prevIndex = bodyFixtureSelect.SelectedIndex;
-
-    bodyFixtureSelect.Items.Clear();
-
-    if (WorldObject.Fixtures.Count > 0)
-    {
-        for (int i = 0; i < WorldObject.Fixtures.Count; i++)
-        {
-            FixtureDefSerialized fixDefSer = WorldObject.Fixtures[i];
-            bodyFixtureSelect.Items.Add(fixDefSer.Name);
-        }
-
-        if (prevIndex < 0 || prevIndex >= WorldObject.Fixtures.Count)
-            prevIndex = 0;
-
-        bodyFixtureSelect.SelectedIndex = prevIndex;
-    }
-}
-
-private void textBox1_TextChanged(object sender, EventArgs e)
-{
-    SelectedBody.Name = bodyName.Text;
-}
-
-private void bodyAutoMassRecalculate_SelectedIndexChanged(object sender, EventArgs e)
-{
-    SelectedBody.AutoMassRecalculate = bodyAutoMassRecalculate.Checked;
-}
-
-private void bodyActive_SelectedIndexChanged(object sender, EventArgs e)
-{
-	SelectedBody.Body.Active = bodyActive.Checked;
-}
-
-private void bodyAllowSleep_SelectedIndexChanged(object sender, EventArgs e)
-{
-    SelectedBody.Body.AllowSleep = bodyAllowSleep.Checked;
-}
-
-private void bodyAngle_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedBody.Body.Angle = (float)e.NewValue;
-}
-
-private void bodyAngularDamping_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedBody.Body.AngularDamping = (float)e.NewValue;
-}
-
-private void bodyAngularVelocity_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedBody.Body.AngularVelocity = (float)e.NewValue;
-}
-
-private void bodyAwake_SelectedIndexChanged(object sender, EventArgs e)
-{
-	SelectedBody.Body.Awake = bodyAwake.Checked;
-}
-
-private void bodyType_SelectedIndexChanged(object sender, EventArgs e)
-{
-    SelectedBody.Body.BodyType = (BodyType)bodyType.SelectedIndex;
-}
-
-private void bodyBullet_SelectedIndexChanged(object sender, EventArgs e)
-{
-	SelectedBody.Body.Bullet = bodyBullet.Checked;
-}
-
-private void bodyFixedRotation_SelectedIndexChanged(object sender, EventArgs e)
-{
-    SelectedBody.Body.FixedRotation = bodyFixedRotation.Checked;
-}
-
-private void bodyInertiaScale_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedBody.Body.InertiaScale = (float)e.NewValue;
-}
-
-private void numericUpDown5_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedBody.Body.LinearDamping = (float)e.NewValue;
-}
-
-private void bodyLinearVelX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedBody.Body.LinearVelocity = new Vec2((float)e.NewValue, SelectedBody.Body.LinearVelocity.Y);
-}
-
-private void bodyLinearVelY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedBody.Body.LinearVelocity = new Vec2(SelectedBody.Body.LinearVelocity.X, (float)e.NewValue);
-}
-
-private void bodyPositionX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedBody.Body.Position =
-        new Vec2((float)e.NewValue, SelectedBody.Body.Position.Y);
-}
-
-private void bodyPositionY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedBody.Body.Position =
-        new Vec2(SelectedBody.Body.Position.X, (float)e.NewValue);
-}
-
-private void bodyMass_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    MassData Mass = SelectedBody.Mass;
-    Mass.Mass = (float)e.NewValue;
-    SelectedBody.Mass = Mass;
-}
-
-private void bodyInertia_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    MassData Mass = SelectedBody.Mass;
-    Mass.Inertia = (float)e.NewValue;
-    SelectedBody.Mass = Mass;
-}
-
-private void bodyCenterX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    MassData Mass = SelectedBody.Mass;
-    Mass.Center = new Vec2((float)e.NewValue, Mass.Center.Y);
-    SelectedBody.Mass = Mass;
-}
-
-private void bodyCenterY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    MassData Mass = SelectedBody.Mass;
-    Mass.Center = new Vec2(Mass.Center.X, (float)e.NewValue);
-    SelectedBody.Mass = Mass;
-}    
-
-public void LoadFixtureObjectSettings()
-{
-    fixtureName.Text = SelectedFixture.Name;
-    fixtureDensity.Value = Convert.ToDecimal(SelectedFixture.Fixture.Density);
-    fixtureFriction.Value = Convert.ToDecimal(SelectedFixture.Fixture.Friction);
-	fixtureIsSensor.Checked = SelectedFixture.Fixture.IsSensor;
-    fixtureRestitution.Value = Convert.ToDecimal(SelectedFixture.Fixture.Restitution);
-    // ShapeSerialized shape = new ShapeSerialized(SelectedFixture.Fixture.Shape,"");
-    //if (WorldObject.Shapes.Count > 0)
-    //{
-        //fixtureShape.SelectedIndex = SelectedFixture.ShapeID;
-    //}
-    fixtureCategoryBits.Value = SelectedFixture.Fixture.Filter.CategoryBits;
-    fixtureGroupIndex.Value = SelectedFixture.Fixture.Filter.GroupIndex;
-    fixtureMaskBits.Value = SelectedFixture.Fixture.Filter.MaskBits;
-
-    LoadShapeObjectSettings();
-}
-
-private void textBox1_TextChanged_1(object sender, EventArgs e)
-{
-    SelectedFixture.Name = fixtureName.Text;
-}
-
-private void fixtureIsSensor_SelectedIndexChanged(object sender, EventArgs e)
-{
-    SelectedFixture.Fixture.IsSensor = fixtureIsSensor.Checked;
-}
-
-private void fixtureDensity_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedFixture.Fixture.Density = (float)e.NewValue;
-}
-
-private void fixtureFriction_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedFixture.Fixture.Friction = (float)e.NewValue;
-}
-
-private void fixtureRestitution_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    SelectedFixture.Fixture.Restitution = (float)e.NewValue;
-}
-
-private void fixtureCategoryBits_ValueChanged(object sender, EventArgs e)
-{
-    SelectedFixture.Fixture.Filter.CategoryBits = (ushort)fixtureCategoryBits.Value;
-}
-
-private void fixtureGroupIndex_ValueChanged(object sender, EventArgs e)
-{
-    SelectedFixture.Fixture.Filter.CategoryBits = (ushort)fixtureCategoryBits.Value;
-}
-
-private void fixtureMaskBits_ValueChanged(object sender, EventArgs e)
-{
-    SelectedFixture.Fixture.Filter.MaskBits = (ushort)fixtureMaskBits.Value;
-}
-
-public void circleRadius_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
-    shape.Radius = (float)e.NewValue;
-    SelectedFixture.Fixture.Shape = shape;
-}
-
-public void circlePositionX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
-    shape.Position = new Vec2( (float)e.NewValue ,shape.Position.Y);
-    SelectedFixture.Fixture.Shape = shape;
-}
-
-public void circlePositionY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
-{
-    CircleShape shape = (CircleShape)SelectedFixture.Fixture.Shape;
-    shape.Position = new Vec2(shape.Position.X, (float)e.NewValue);
-    SelectedFixture.Fixture.Shape = shape;
-}
-
-private void shapeType_SelectedIndexChanged(object sender, EventArgs e)
-{
-    if (shapeType.SelectedIndex == 0 && !(SelectedFixture.Fixture.Shape is CircleShape))
-        SelectedFixture.Fixture.Shape = new CircleShape();
-    else if (shapeType.SelectedIndex == 1 && !(SelectedFixture.Fixture.Shape is PolygonShape))
-        SelectedFixture.Fixture.Shape = new PolygonShape();
-
-    LoadShapeObjectSettings();
-}
-
-private void bodyFixtureDelete_Click(object sender, EventArgs e)
-{
-    SelectedBody.Fixtures.RemoveAt(bodyFixtureListBox.SelectedIndex);
-    LoadBodyObjectSettings();
-}
-#endif

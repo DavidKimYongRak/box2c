@@ -59,6 +59,7 @@
 			this.fixtureIsSensor.Size = new System.Drawing.Size(15, 14);
 			this.fixtureIsSensor.TabIndex = 53;
 			this.fixtureIsSensor.UseVisualStyleBackColor = true;
+			this.fixtureIsSensor.CheckedChanged += new System.EventHandler(this.fixtureIsSensor_SelectedIndexChanged);
 			// 
 			// groupBox1
 			// 
@@ -77,7 +78,7 @@
 			// 
 			// fixtureGroupIndex
 			// 
-			this.fixtureGroupIndex.Location = new System.Drawing.Point(109, 31);
+			this.fixtureGroupIndex.Location = new System.Drawing.Point(109, 52);
 			this.fixtureGroupIndex.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -91,11 +92,12 @@
 			this.fixtureGroupIndex.Name = "fixtureGroupIndex";
 			this.fixtureGroupIndex.Size = new System.Drawing.Size(84, 20);
 			this.fixtureGroupIndex.TabIndex = 18;
+			this.fixtureGroupIndex.ValueChanged += new System.EventHandler(this.fixtureGroupIndex_ValueChanged);
 			// 
 			// fixtureMaskBits
 			// 
 			this.fixtureMaskBits.Hexadecimal = true;
-			this.fixtureMaskBits.Location = new System.Drawing.Point(109, 52);
+			this.fixtureMaskBits.Location = new System.Drawing.Point(109, 31);
 			this.fixtureMaskBits.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -104,6 +106,7 @@
 			this.fixtureMaskBits.Name = "fixtureMaskBits";
 			this.fixtureMaskBits.Size = new System.Drawing.Size(84, 20);
 			this.fixtureMaskBits.TabIndex = 17;
+			this.fixtureMaskBits.ValueChanged += new System.EventHandler(this.fixtureMaskBits_ValueChanged);
 			// 
 			// fixtureCategoryBits
 			// 
@@ -117,11 +120,12 @@
 			this.fixtureCategoryBits.Name = "fixtureCategoryBits";
 			this.fixtureCategoryBits.Size = new System.Drawing.Size(84, 20);
 			this.fixtureCategoryBits.TabIndex = 16;
+			this.fixtureCategoryBits.ValueChanged += new System.EventHandler(this.fixtureCategoryBits_ValueChanged);
 			// 
 			// label26
 			// 
 			this.label26.AutoSize = true;
-			this.label26.Location = new System.Drawing.Point(50, 54);
+			this.label26.Location = new System.Drawing.Point(50, 33);
 			this.label26.Name = "label26";
 			this.label26.Size = new System.Drawing.Size(53, 13);
 			this.label26.TabIndex = 15;
@@ -130,7 +134,7 @@
 			// label25
 			// 
 			this.label25.AutoSize = true;
-			this.label25.Location = new System.Drawing.Point(36, 34);
+			this.label25.Location = new System.Drawing.Point(36, 55);
 			this.label25.Name = "label25";
 			this.label25.Size = new System.Drawing.Size(68, 13);
 			this.label25.TabIndex = 13;
@@ -152,6 +156,7 @@
 			this.fixtureName.Size = new System.Drawing.Size(130, 20);
 			this.fixtureName.TabIndex = 51;
 			this.fixtureName.Text = "Test Fixture";
+			this.fixtureName.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
 			// 
 			// label28
 			// 
@@ -215,6 +220,7 @@
 			this.fixtureRestitution.Name = "fixtureRestitution";
 			this.fixtureRestitution.Size = new System.Drawing.Size(44, 20);
 			this.fixtureRestitution.TabIndex = 47;
+			this.fixtureRestitution.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureRestitution_ValueChanged);
 			// 
 			// fixtureDensity
 			// 
@@ -228,6 +234,7 @@
 			this.fixtureDensity.Name = "fixtureDensity";
 			this.fixtureDensity.Size = new System.Drawing.Size(65, 20);
 			this.fixtureDensity.TabIndex = 43;
+			this.fixtureDensity.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureDensity_ValueChanged);
 			// 
 			// fixtureFriction
 			// 
@@ -246,6 +253,7 @@
 			this.fixtureFriction.Name = "fixtureFriction";
 			this.fixtureFriction.Size = new System.Drawing.Size(54, 20);
 			this.fixtureFriction.TabIndex = 45;
+			this.fixtureFriction.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.fixtureFriction_ValueChanged);
 			// 
 			// FixturePanel
 			// 
@@ -264,6 +272,7 @@
 			this.Controls.Add(this.fixtureFriction);
 			this.Name = "FixturePanel";
 			this.Size = new System.Drawing.Size(229, 170);
+			this.Load += new System.EventHandler(this.FixturePanel_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.fixtureGroupIndex)).EndInit();
