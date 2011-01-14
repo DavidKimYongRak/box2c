@@ -32,20 +32,24 @@
 			this.oneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.twoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.threeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+			this.mainMenu = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.panel1 = new Editor.BlankControl();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.panel2 = new System.Windows.Forms.Panel();
-			this.treeView1 = new Paril.Windows.Forms.TreeViewEx();
 			this.label1 = new System.Windows.Forms.Label();
-			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.baseTreeViewContextStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newBodyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuStrip1.SuspendLayout();
+			this.shapeTreeViewContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.changeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.circleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.polygonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.panel1 = new Editor.BlankControl();
+			this.treeView1 = new Paril.Windows.Forms.TreeViewEx();
+			this.mainMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -55,7 +59,8 @@
 			this.splitContainer2.Panel2.SuspendLayout();
 			this.splitContainer2.SuspendLayout();
 			this.panel2.SuspendLayout();
-			this.contextMenuStrip1.SuspendLayout();
+			this.baseTreeViewContextStrip.SuspendLayout();
+			this.shapeTreeViewContextMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// oneToolStripMenuItem
@@ -76,16 +81,16 @@
 			this.threeToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
 			this.threeToolStripMenuItem.Text = "Three";
 			// 
-			// menuStrip1
+			// mainMenu
 			// 
-			this.menuStrip1.AllowMerge = false;
-			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.mainMenu.AllowMerge = false;
+			this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem});
-			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(822, 24);
-			this.menuStrip1.TabIndex = 2;
-			this.menuStrip1.Text = "menuStrip1";
+			this.mainMenu.Location = new System.Drawing.Point(0, 0);
+			this.mainMenu.Name = "mainMenu";
+			this.mainMenu.Size = new System.Drawing.Size(822, 24);
+			this.mainMenu.TabIndex = 2;
+			this.mainMenu.Text = "menuStrip1";
 			// 
 			// fileToolStripMenuItem
 			// 
@@ -127,15 +132,6 @@
 			this.splitContainer1.SplitterDistance = 575;
 			this.splitContainer1.TabIndex = 1;
 			// 
-			// panel1
-			// 
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(575, 507);
-			this.panel1.TabIndex = 0;
-			this.panel1.Click += new System.EventHandler(this.panel1_Click);
-			// 
 			// splitContainer2
 			// 
 			this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -165,6 +161,76 @@
 			this.panel2.Padding = new System.Windows.Forms.Padding(1);
 			this.panel2.Size = new System.Drawing.Size(243, 195);
 			this.panel2.TabIndex = 0;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(21, 37);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(35, 13);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "label1";
+			// 
+			// baseTreeViewContextStrip
+			// 
+			this.baseTreeViewContextStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newBodyToolStripMenuItem,
+            this.newFixtureToolStripMenuItem});
+			this.baseTreeViewContextStrip.Name = "contextMenuStrip1";
+			this.baseTreeViewContextStrip.Size = new System.Drawing.Size(137, 48);
+			// 
+			// newBodyToolStripMenuItem
+			// 
+			this.newBodyToolStripMenuItem.Name = "newBodyToolStripMenuItem";
+			this.newBodyToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+			this.newBodyToolStripMenuItem.Text = "New Body";
+			this.newBodyToolStripMenuItem.Click += new System.EventHandler(this.newBodyToolStripMenuItem_Click);
+			// 
+			// newFixtureToolStripMenuItem
+			// 
+			this.newFixtureToolStripMenuItem.Name = "newFixtureToolStripMenuItem";
+			this.newFixtureToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+			this.newFixtureToolStripMenuItem.Text = "New Fixture";
+			this.newFixtureToolStripMenuItem.Click += new System.EventHandler(this.newFixtureToolStripMenuItem_Click);
+			// 
+			// shapeTreeViewContextMenu
+			// 
+			this.shapeTreeViewContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.changeToToolStripMenuItem});
+			this.shapeTreeViewContextMenu.Name = "contextMenuStrip1";
+			this.shapeTreeViewContextMenu.Size = new System.Drawing.Size(153, 48);
+			// 
+			// changeToToolStripMenuItem
+			// 
+			this.changeToToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.circleToolStripMenuItem,
+            this.polygonToolStripMenuItem});
+			this.changeToToolStripMenuItem.Name = "changeToToolStripMenuItem";
+			this.changeToToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.changeToToolStripMenuItem.Text = "Change To...";
+			// 
+			// circleToolStripMenuItem
+			// 
+			this.circleToolStripMenuItem.Name = "circleToolStripMenuItem";
+			this.circleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.circleToolStripMenuItem.Text = "Circle";
+			this.circleToolStripMenuItem.Click += new System.EventHandler(this.circleToolStripMenuItem_Click);
+			// 
+			// polygonToolStripMenuItem
+			// 
+			this.polygonToolStripMenuItem.Name = "polygonToolStripMenuItem";
+			this.polygonToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.polygonToolStripMenuItem.Text = "Polygon";
+			this.polygonToolStripMenuItem.Click += new System.EventHandler(this.polygonToolStripMenuItem_Click);
+			// 
+			// panel1
+			// 
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(575, 507);
+			this.panel1.TabIndex = 0;
+			this.panel1.Click += new System.EventHandler(this.panel1_Click);
 			// 
 			// treeView1
 			// 
@@ -196,50 +262,19 @@
 			this.treeView1.TabIndex = 2;
 			this.treeView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseUp);
 			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(21, 37);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(35, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "label1";
-			// 
-			// contextMenuStrip1
-			// 
-			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newBodyToolStripMenuItem,
-            this.newFixtureToolStripMenuItem});
-			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(137, 48);
-			// 
-			// newBodyToolStripMenuItem
-			// 
-			this.newBodyToolStripMenuItem.Name = "newBodyToolStripMenuItem";
-			this.newBodyToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-			this.newBodyToolStripMenuItem.Text = "New Body";
-			this.newBodyToolStripMenuItem.Click += new System.EventHandler(this.newBodyToolStripMenuItem_Click);
-			// 
-			// newFixtureToolStripMenuItem
-			// 
-			this.newFixtureToolStripMenuItem.Name = "newFixtureToolStripMenuItem";
-			this.newFixtureToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-			this.newFixtureToolStripMenuItem.Text = "New Fixture";
-			this.newFixtureToolStripMenuItem.Click += new System.EventHandler(this.newFixtureToolStripMenuItem_Click);
-			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(822, 531);
 			this.Controls.Add(this.splitContainer1);
-			this.Controls.Add(this.menuStrip1);
+			this.Controls.Add(this.mainMenu);
 			this.Name = "Main";
 			this.Text = "Main";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
 			this.Load += new System.EventHandler(this.Main_Load);
-			this.menuStrip1.ResumeLayout(false);
-			this.menuStrip1.PerformLayout();
+			this.mainMenu.ResumeLayout(false);
+			this.mainMenu.PerformLayout();
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -250,7 +285,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
 			this.splitContainer2.ResumeLayout(false);
 			this.panel2.ResumeLayout(false);
-			this.contextMenuStrip1.ResumeLayout(false);
+			this.baseTreeViewContextStrip.ResumeLayout(false);
+			this.shapeTreeViewContextMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -263,17 +299,21 @@
         private System.Windows.Forms.ToolStripMenuItem oneToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem twoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem threeToolStripMenuItem;
-		private System.Windows.Forms.MenuStrip menuStrip1;
+		private System.Windows.Forms.MenuStrip mainMenu;
 		private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+		private System.Windows.Forms.ContextMenuStrip baseTreeViewContextStrip;
 		private System.Windows.Forms.ToolStripMenuItem newBodyToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem newFixtureToolStripMenuItem;
 		private System.Windows.Forms.SplitContainer splitContainer2;
 		private Paril.Windows.Forms.TreeViewEx treeView1;
 		private System.Windows.Forms.Panel panel2;
 		public System.Windows.Forms.Label label1;
+		private System.Windows.Forms.ContextMenuStrip shapeTreeViewContextMenu;
+		private System.Windows.Forms.ToolStripMenuItem changeToToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem circleToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem polygonToolStripMenuItem;
 
 	}
 }
