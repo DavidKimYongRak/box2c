@@ -395,8 +395,22 @@ namespace Box2CS
 			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2fixture_getsensor(IntPtr fixture);
 
+			[StructLayout(LayoutKind.Sequential)]
+			public struct FilterDataInternal
+			{
+				ushort category, mask;
+				short group;
+
+				public FilterDataInternal(FilterData data)
+				{
+					category = data.CategoryBits;
+					mask = data.MaskBits;
+					group = data.GroupIndex;
+				}
+			}
+
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2fixture_setfilterdata(IntPtr fixture, FilterData val);
+			public static extern void b2fixture_setfilterdata(IntPtr fixture, FilterDataInternal val);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern void b2fixture_getfilterdata(IntPtr fixture, [Out] [In] FilterData filterData);
@@ -552,7 +566,7 @@ namespace Box2CS
 		public FilterData FilterData
 		{
 			get { FilterData temp = new FilterData(); NativeMethods.b2fixture_getfilterdata(_fixturePtr, temp); return temp; }
-			set { NativeMethods.b2fixture_setfilterdata(_fixturePtr, value); }
+			set { NativeMethods.b2fixture_setfilterdata(_fixturePtr, new NativeMethods.FilterDataInternal(value)); }
 		}
 
 		/// <summary>
