@@ -141,7 +141,7 @@ namespace Testbed.Tests
 
 				float maxImpulse = 0.0f;
 				for (int i = 0; i < count; ++i)
-					maxImpulse = Math.Max(maxImpulse, impulse.normalImpulses[i]);
+					maxImpulse = Math.Max(maxImpulse, impulse.GetNormalImpulse(i));
 
 				if (maxImpulse > x.MaxForce)
 				{

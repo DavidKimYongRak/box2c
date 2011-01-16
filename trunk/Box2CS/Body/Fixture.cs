@@ -398,14 +398,11 @@ namespace Box2CS
 			[StructLayout(LayoutKind.Sequential)]
 			public struct FilterDataInternal
 			{
-				ushort category, mask;
-				short group;
+				FilterData _filterData;
 
 				public FilterDataInternal(FilterData data)
 				{
-					category = data.CategoryBits;
-					mask = data.MaskBits;
-					group = data.GroupIndex;
+					_filterData = data;
 				}
 			}
 
