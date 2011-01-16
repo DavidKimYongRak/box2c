@@ -414,7 +414,7 @@ namespace Testbed
 			{
 				m_points[m_pointCount].fixtureA = fixtureA;
 				m_points[m_pointCount].fixtureB = fixtureB;
-				m_points[m_pointCount].position = worldManifold.Points[i];
+				m_points[m_pointCount].position = worldManifold.GetPoint(i);
 				m_points[m_pointCount].normal = worldManifold.Normal;
 				m_points[m_pointCount].state = state2[i];
 				++m_pointCount;

@@ -459,7 +459,7 @@ namespace Box2DSharpRenderTest
 					contact.Enabled = false;
 					if (!BodiesToRemove.Contains(bullet))
 					{
-						body.ApplyLinearImpulse(-(bullet.Position - body.Position) * 45, contact.WorldManifold.Points[0]);
+						body.ApplyLinearImpulse(-(bullet.Position - body.Position) * 45, contact.WorldManifold.GetPoint(0));
 						BodiesToRemove.Add(bullet);
 						return;
 					}
@@ -484,7 +484,7 @@ namespace Box2DSharpRenderTest
 							biped.Biped.OwnedPlayer.WeldDefs[0] == null)
 						{
 							var jd = new RevoluteJointDef();
-							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.Points[0]);
+							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.GetPoint(0));
 							jd.LowerAngle = -0.5f * (float)Math.PI; // -90 degrees
 							jd.UpperAngle = 0.25f * (float)Math.PI; // 45 degrees
 							jd.EnableLimit = true;
@@ -502,7 +502,7 @@ namespace Box2DSharpRenderTest
 							biped.Biped.OwnedPlayer.WeldDefs[1] == null)
 						{
 							var jd = new RevoluteJointDef();
-							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.Points[0]);
+							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.GetPoint(0));
 							jd.LowerAngle = -0.5f * (float)Math.PI; // -90 degrees
 							jd.UpperAngle = 0.25f * (float)Math.PI; // 45 degrees
 							jd.EnableLimit = true;
@@ -538,7 +538,7 @@ namespace Box2DSharpRenderTest
 							biped.Biped.OwnedPlayer.WeldDefs[3] == null)
 						{
 							var jd = new RevoluteJointDef();
-							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.Points[0]);
+							jd.Initialize(biped.Biped.Bodies[(int)biped.FixtureIndex], other, contact.WorldManifold.GetPoint(0));
 							jd.LowerAngle = -0.5f * (float)Math.PI; // -90 degrees
 							jd.UpperAngle = 0.25f * (float)Math.PI; // 45 degrees
 							jd.EnableLimit = true;

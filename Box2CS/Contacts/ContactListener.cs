@@ -6,9 +6,9 @@ namespace Box2CS
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	internal delegate void BeginEndContactDelegate(IntPtr contact);
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	internal delegate void PreSolveDelegate(IntPtr contact, IntPtr oldManifold);
+	internal delegate void PreSolveDelegate(IntPtr contact, Manifold oldManifold);
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	internal delegate void PostSolveDelegate(IntPtr contact, IntPtr impulse);
+	internal delegate void PostSolveDelegate(IntPtr contact, ContactImpulse impulse);
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct cb2contactlistener
@@ -25,23 +25,26 @@ namespace Box2CS
 	[StructLayout(LayoutKind.Sequential)]
 	public struct ContactImpulse
 	{
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
-		float[] _normalImpulses;
+		float _normalImpulse0, _normalImpulse1;
 
-		public float[] normalImpulses
+		public float GetNormalImpulse(int index)
 		{
-			get { return _normalImpulses; }
-			//set { _normalImpulses = value; }
+			if (index == 0)
+				return _normalImpulse0;
+			else
+				return _normalImpulse1;
 		}
 
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
-		float[] _tangentImpulses;
+		float _tangentImpulse0, _tangentImpulse1;
 
-		public float[] tangentImpulses
+		public float GetTangentImpulse(int index)
 		{
-			get { return _tangentImpulses; }
-			//set { _tangentImpulses = value; }
+			if (index == 0)
+				return _tangentImpulse0;
+			else
+				return _tangentImpulse1;
 		}
+
 	};
 
 	public abstract class ContactListener : IDisposable
@@ -66,10 +69,10 @@ namespace Box2CS
 		public ContactListener()
 		{
 			functions = new cb2contactlistener();
-			functions.BeginContact += BeginContactInternal;
-			functions.EndContact += EndContactInternal;
-			functions.PreSolve += PreSolveInternal;
-			functions.PostSolve += PostSolveInternal;
+			functions.BeginContact = BeginContactInternal;
+			functions.EndContact = EndContactInternal;
+			functions.PreSolve = PreSolveInternal;
+			functions.PostSolve = PostSolveInternal;
 
 			_listener = NativeMethods.cb2contactlistener_create(functions);
 		}
@@ -84,14 +87,14 @@ namespace Box2CS
 			EndContact(Contact.FromPtr(contact));	
 		}
 
-		void PreSolveInternal(IntPtr contact, IntPtr oldManifold)
+		void PreSolveInternal(IntPtr contact, Manifold oldManifold)
 		{
-			PreSolve(Contact.FromPtr(contact), (Manifold)Marshal.PtrToStructure(oldManifold, typeof(Manifold)));
+			PreSolve(Contact.FromPtr(contact), oldManifold);
 		}
 
-		void PostSolveInternal(IntPtr contact, IntPtr impulse)
+		void PostSolveInternal(IntPtr contact, ContactImpulse impulse)
 		{
-			PostSolve(Contact.FromPtr(contact), (ContactImpulse)Marshal.PtrToStructure(impulse, typeof(ContactImpulse)));
+			PostSolve(Contact.FromPtr(contact), impulse);
 		}
 
 		public abstract void BeginContact(Contact contact);

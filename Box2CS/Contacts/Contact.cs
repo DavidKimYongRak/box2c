@@ -107,20 +107,19 @@ namespace Box2CS
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct Manifold
+	public class Manifold
 	{
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
-		ManifoldPoint[] _points;
+		ManifoldPoint point0;
+		ManifoldPoint point1;
 
 		Vec2 _localNormal;
 		Vec2 _localPoint;
 		ManifoldType _manifoldType;
 		int _pointCount;
 
-		public ManifoldPoint[] Points
+		public ManifoldPoint this[int index]
 		{
-			get { return _points; }
-			set { _points = value; }
+			get { if (index == 0) return point0; else return point1; }
 		}
 
 		public Vec2 LocalNormal
@@ -160,13 +159,13 @@ namespace Box2CS
 			// Detect persists and removes.
 			for (int i = 0; i < manifold1.PointCount; ++i)
 			{
-				ContactID id = manifold1.Points[i].ID;
+				ContactID id = manifold1[i].ID;
 
 				state1[i] = PointState.Remove;
 
 				for (int j = 0; j < manifold2.PointCount; ++j)
 				{
-					if (manifold2.Points[j].ID.Key == id.Key)
+					if (manifold2[j].ID.Key == id.Key)
 					{
 						state1[i] = PointState.Persist;
 						break;
@@ -177,13 +176,13 @@ namespace Box2CS
 			// Detect persists and adds.
 			for (int i = 0; i < manifold2.PointCount; ++i)
 			{
-				ContactID id = manifold2.Points[i].ID;
+				ContactID id = manifold2[i].ID;
 
 				state2[i] = PointState.Add;
 
 				for (int j = 0; j < manifold1.PointCount; ++j)
 				{
-					if (manifold1.Points[j].ID.Key == id.Key)
+					if (manifold1[j].ID.Key == id.Key)
 					{
 						state2[i] = PointState.Persist;
 						break;
@@ -197,13 +196,13 @@ namespace Box2CS
 	public struct WorldManifold
 	{
 		Vec2 _normal;
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst=Box2DSettings.b2_maxManifoldPoints, ArraySubType=UnmanagedType.Struct)]
-		Vec2[] _points;
+		Vec2 _point0, _point1;
 
-		public Vec2[] Points
+		public Vec2 GetPoint(int index)
 		{
-			get { return _points; }
-			set { _points = value; }
+			if (index == 0)
+				return _point0;
+			return _point1;
 		}
 
 		public Vec2 Normal
@@ -227,10 +226,10 @@ namespace Box2CS
 		static class NativeMethods
 		{
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern IntPtr b2contact_getmanifold(IntPtr contact);
+			public static extern void b2contact_getmanifold(IntPtr contact, [Out] [In] Manifold manifold);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern IntPtr b2contact_getworldmanifold(IntPtr contact, out WorldManifold worldManifold);
+			public static extern void b2contact_getworldmanifold(IntPtr contact, out WorldManifold worldManifold);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			[return: MarshalAs(UnmanagedType.U1)]
@@ -271,15 +270,9 @@ namespace Box2CS
 			return new Contact(ptr);
 		}
 
-		[EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted=true)]
-		internal Manifold ManifoldFromThing()
-		{
-			return (Manifold)Marshal.PtrToStructure(NativeMethods.b2contact_getmanifold(_contactPtr), typeof(Manifold));
-		}
-
 		public Manifold Manifold
 		{
-			get { return ManifoldFromThing(); }
+			get { Manifold manifold = new Manifold(); NativeMethods.b2contact_getmanifold(_contactPtr, manifold); return manifold; }
 		}
 
 		public WorldManifold WorldManifold
