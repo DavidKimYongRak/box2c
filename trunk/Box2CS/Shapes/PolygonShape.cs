@@ -358,7 +358,7 @@ namespace Box2CS
 
 		public override void ComputeMass(out MassData massData, float density)
 		{
-			if (!(VertexCount >= 2))
+			if (VertexCount < 2)
 				throw new ArgumentOutOfRangeException("Vertice count less than 2");
 
 			// A line segment has zero mass.

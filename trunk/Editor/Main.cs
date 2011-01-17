@@ -754,7 +754,14 @@ namespace Editor
 
 		public void RecalculateMass()
 		{
-			_mass = Body.ComputeMass(OnlyFixtures);
+			try
+			{
+				_mass = Body.ComputeMass(OnlyFixtures);
+			}
+			catch
+			{
+				_mass = new MassData(0, Vec2.Empty, 0);
+			}
 		}
 
 		public BodyNode(WorldObject world, BodyDefSerialized x) :
