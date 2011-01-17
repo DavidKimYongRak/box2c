@@ -37,6 +37,9 @@ namespace Editor
 		public void circleRadius_ValueChanged(object sender, DecimalValueChangedEventArgs e)
 		{
 			SelectedShape.Radius = (float)e.NewValue;
+
+			if ((Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.AutoMassRecalculate)
+				(Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.RecalculateMass();
 		}
 
 		public void circlePositionX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
@@ -47,6 +50,11 @@ namespace Editor
 		public void circlePositionY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
 		{
 			SelectedShape.Position = new Vec2(SelectedShape.Position.X, (float)e.NewValue);
+		}
+
+		private void CirclePanel_Load(object sender, EventArgs e)
+		{
+
 		}
     }
 }

@@ -98,6 +98,12 @@ namespace Editor
 		private void bodyType_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			SelectedBody.Body.BodyType = (BodyType)bodyType.SelectedIndex;
+
+			if (SelectedBody.Body.BodyType == BodyType.Dynamic)
+			{
+				SelectedBody.RecalculateMass();
+				LoadBodyObjectSettings();
+			}
 		}
 
 		private void bodyBullet_SelectedIndexChanged(object sender, EventArgs e)

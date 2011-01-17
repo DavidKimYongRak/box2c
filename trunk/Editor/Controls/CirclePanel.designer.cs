@@ -134,6 +134,7 @@
 			this.Controls.Add(this.circleRadius);
 			this.Name = "CirclePanel";
 			this.Size = new System.Drawing.Size(229, 62);
+			this.Load += new System.EventHandler(this.CirclePanel_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
