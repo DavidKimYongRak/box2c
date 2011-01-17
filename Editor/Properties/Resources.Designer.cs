@@ -59,5 +59,12 @@ namespace Editor.Properties {
                 resourceCulture = value;
             }
         }
+        
+        internal static System.Drawing.Bitmap error {
+            get {
+                object obj = ResourceManager.GetObject("error", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

@@ -270,4 +270,49 @@ namespace Box2CS
 			return new SimpleArrayParser(input).Convert<T>(converter);
 		}
 	}
+
+	public static class Extensions
+	{
+		public static T PopFront<T>(this IList<T> list)
+		{
+			if (list.Count == 0)
+				throw new IndexOutOfRangeException();
+
+			var val = list[0];
+			list.RemoveAt(0);
+			return val;
+		}
+
+		public static T PopBack<T>(this IList<T> list)
+		{
+			if (list.Count == 0)
+				throw new IndexOutOfRangeException();
+
+			var val = list[list.Count - 1];
+			list.RemoveAt(list.Count - 1);
+			return val;
+		}
+	}
+
+	public struct ValueTuple<T1, T2>
+	{
+		public T1 Value1
+		{
+			get;
+			set;
+		}
+
+		public T2 Value2
+		{
+			get;
+			set;
+		}
+
+		public ValueTuple(T1 value1, T2 value2) :
+			this()
+		{
+			Value1 = value1;
+			Value2 = value2;
+		}
+	}
 }

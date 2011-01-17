@@ -178,7 +178,27 @@ namespace Testbed
 			m_debugDraw.DrawString(x, y, str);
 		}
 
-		Fixture _selectedFixture;
+		Fixture? _selectedFixture;
+		Vec2 testPoint;
+
+		public bool MouseQueryAABB(Fixture fixture)
+		{
+			Body body = fixture.Body;
+			if (body.BodyType == BodyType.Dynamic)
+			{
+				bool inside = fixture.TestPoint(testPoint);
+				if (inside)
+				{
+					_selectedFixture = fixture;
+
+					// We are done, terminate the query.
+					return false;
+				}
+			}
+
+			// Continue the query.
+			return true;
+		}
 
 		public virtual void Step()
 		{
@@ -229,24 +249,7 @@ namespace Testbed
 				aabb.UpperBound = p + d;
 
 				m_world.QueryAABB(
-				delegate(Fixture fixture)
-				{
-					Body body = fixture.Body;
-					if (body.BodyType == BodyType.Dynamic)
-					{
-						bool inside = fixture.TestPoint(p);
-						if (inside)
-						{
-							_selectedFixture = fixture;
-
-							// We are done, terminate the query.
-							return false;
-						}
-					}
-
-					// Continue the query.
-					return true;
-				},
+				MouseQueryAABB,
 				aabb);
 			}
 		}
@@ -275,32 +278,16 @@ namespace Testbed
 			aabb.UpperBound = p + d;
 
 			// Query the world for overlapping shapes.
-			Fixture m_fixture = null;
+			Fixture? m_fixture = null;
+			testPoint = p;
 
 			m_world.QueryAABB(
-			delegate(Fixture fixture)
-			{
-				Body body = fixture.Body;
-				if (body.BodyType == BodyType.Dynamic)
-				{
-					bool inside = fixture.TestPoint(p);
-					if (inside)
-					{
-						m_fixture = fixture;
-
-						// We are done, terminate the query.
-						return false;
-					}
-				}
-
-				// Continue the query.
-				return true;
-			},
+			MouseQueryAABB,
 			aabb);
 
 			if (m_fixture != null)
 			{
-				Body body = m_fixture.Body;
+				Body body = m_fixture.Value.Body;
 				MouseJointDef md = new MouseJointDef();
 				{
 					md.BodyA = m_groundBody;
@@ -394,6 +381,9 @@ namespace Testbed
 		{
 		}
 
+		static PointState[]
+			state1 = new PointState[Box2DSettings.b2_maxManifoldPoints],
+			state2 = new PointState[Box2DSettings.b2_maxManifoldPoints];
 		public override void PreSolve(Contact contact, Manifold oldManifold)
 		{
 			Manifold manifold = contact.Manifold;
@@ -404,8 +394,6 @@ namespace Testbed
 			Fixture fixtureA = contact.FixtureA;
 			Fixture fixtureB = contact.FixtureB;
 
-			PointState[] state1 = new PointState[Box2DSettings.b2_maxManifoldPoints],
-				state2 = new PointState[Box2DSettings.b2_maxManifoldPoints];
 			Manifold.GetPointStates(ref state1, ref state2, ref oldManifold, ref manifold);
 
 			WorldManifold worldManifold = contact.WorldManifold;
@@ -489,11 +477,11 @@ namespace Testbed
 
 			if (_selectedFixture != null)
 			{
-				var body = _selectedFixture.Body;
+				var body = _selectedFixture.Value.Body;
 
-				if (_selectedFixture.UserData != null)
+				if (_selectedFixture.Value.UserData != null)
 				{
-					m_debugDraw.DrawString(5, m_textLine, "Fixture data: " + _selectedFixture.UserData.ToString());
+					m_debugDraw.DrawString(5, m_textLine, "Fixture data: " + _selectedFixture.Value.UserData.ToString());
 					m_textLine += 15;
 				}
 

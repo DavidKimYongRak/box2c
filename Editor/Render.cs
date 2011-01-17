@@ -195,18 +195,15 @@ namespace Editor
 					PolygonShape poly = (PolygonShape)fixture.Shape;
 					int vertexCount = poly.VertexCount;
 					//b2Assert(vertexCount <= b2_maxPolygonVertices);
-					Vec2[] vertices = new Vec2[Box2DSettings.b2_maxPolygonVertices];
-
 					for (int i = 0; i < vertexCount; ++i)
-					{
-						vertices[i] = (xf * poly.Vertices[i]);
-					}
+						drawVertices[i] = (xf * poly.Vertices[i]);
 
-					DrawSolidPolygon(vertices, vertexCount, color);
+					DrawSolidPolygon(drawVertices, vertexCount, color);
 				}
 				break;
 			}
 		}
+		static Vec2[] drawVertices = new Vec2[Box2DSettings.b2_maxPolygonVertices];
 
 		public void DrawArc(Vec2 pos, float radius, float startAngle, float endAngle)
 		{

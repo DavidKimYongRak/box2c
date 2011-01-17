@@ -107,7 +107,7 @@ namespace Box2CS
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
-	public class Manifold
+	public struct Manifold
 	{
 		ManifoldPoint point0;
 		ManifoldPoint point1;
@@ -148,7 +148,6 @@ namespace Box2CS
 	
 		public static void GetPointStates(ref PointState[] state1, ref PointState[] state2,
 					  ref Manifold manifold1, ref Manifold manifold2)
-
 		{
 			for (int i = 0; i < Box2DSettings.b2_maxManifoldPoints; ++i)
 			{
@@ -221,12 +220,12 @@ namespace Box2CS
 		Remove		///< point was removed in the update
 	};
 
-	public sealed class Contact
+	public struct Contact
 	{
 		static class NativeMethods
 		{
 			[DllImport(Box2DSettings.Box2CDLLName)]
-			public static extern void b2contact_getmanifold(IntPtr contact, [Out] [In] Manifold manifold);
+			public static extern void b2contact_getmanifold(IntPtr contact, out Manifold manifold);
 
 			[DllImport(Box2DSettings.Box2CDLLName)]
 			public static extern void b2contact_getworldmanifold(IntPtr contact, out WorldManifold worldManifold);
@@ -265,14 +264,14 @@ namespace Box2CS
 		internal static Contact FromPtr(IntPtr ptr)
 		{
 			if (ptr == IntPtr.Zero)
-				return null;
+				throw new Exception();
 
 			return new Contact(ptr);
 		}
 
 		public Manifold Manifold
 		{
-			get { Manifold manifold = new Manifold(); NativeMethods.b2contact_getmanifold(_contactPtr, manifold); return manifold; }
+			get { Manifold manifold = new Manifold(); NativeMethods.b2contact_getmanifold(_contactPtr, out manifold); return manifold; }
 		}
 
 		public WorldManifold WorldManifold
@@ -338,7 +337,7 @@ namespace Box2CS
 		public override bool Equals(object obj)
 		{
 			if (obj is Contact)
-				return (obj as Contact) == this;
+				return ((Contact)obj) == this;
 
 			return base.Equals(obj);
 		}

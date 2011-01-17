@@ -166,15 +166,15 @@ namespace Box2CS
 			set { _internalPolyShape.m_vertexCount = value; }
 		}
 
-		void ComputeCentroid(out Vec2 centroid, Vec2[] vertices)
+		public static void ComputeCentroid(out Vec2 centroid, System.Collections.Generic.IList<Vec2> vertices)
 		{
-			if (!(vertices.Length >= 2))
+			if (!(vertices.Count >= 2))
 				throw new ArgumentOutOfRangeException("vertices");
 
 			centroid = Vec2.Empty;
 			float area = 0.0f;
 
-			if (vertices.Length == 2)
+			if (vertices.Count == 2)
 			{
 				centroid = 0.5f * (vertices[0] + vertices[1]);
 				return;
@@ -186,12 +186,12 @@ namespace Box2CS
 
 			const float inv3 = 1.0f / 3.0f;
 
-			for (int i = 0; i < vertices.Length; ++i)
+			for (int i = 0; i < vertices.Count; ++i)
 			{
 				// Triangle vertices.
 				Vec2 p1 = pRef;
 				Vec2 p2 = vertices[i];
-				Vec2 p3 = i + 1 < vertices.Length ? vertices[i + 1] : vertices[0];
+				Vec2 p3 = i + 1 < vertices.Count ? vertices[i + 1] : vertices[0];
 
 				Vec2 e1 = p2 - p1;
 				Vec2 e2 = p3 - p1;
