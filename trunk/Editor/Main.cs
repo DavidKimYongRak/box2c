@@ -441,7 +441,10 @@ namespace Editor
 			if (MouseButtons == System.Windows.Forms.MouseButtons.Left)
 			{
 				if (moused != null)
+				{
 					SelectedNode = new SelectedNode(moused);
+					treeView1.SelectedNode = SelectedNode.Node;
+				}
 			}
 
 			HoverBody = moused;
