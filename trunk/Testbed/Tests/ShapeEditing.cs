@@ -47,7 +47,7 @@ namespace Testbed.Tests
 			case 'd':
 				if (m_fixture2 != null)
 				{
-					m_body.DestroyFixture(m_fixture2);
+					m_body.DestroyFixture(m_fixture2.Value);
 					m_fixture2 = null;
 					m_body.IsAwake = true;
 				}
@@ -65,7 +65,7 @@ namespace Testbed.Tests
 		}
 
 		Body m_body;
-		Fixture m_fixture1;
-		Fixture m_fixture2;
+		Fixture? m_fixture1;
+		Fixture? m_fixture2;
 	};
 }

@@ -103,7 +103,7 @@ void b2world_setcontactfilter (cb2world *world, cb2ContactFilterWrapper *listene
 struct cb2contactlistener
 {
 	typedef void (*beginendcontact) (cb2contact *contact);
-	typedef void (*presolve) (cb2contact *contact, cb2manifold *oldManifold);
+	typedef void (*presolve) (cb2contact *contact, cb2manifold oldManifold);
 	typedef void (*postsolve) (cb2contact *contact, cb2contactimpulse impulse);
 
 	beginendcontact begincontact_callback;
@@ -134,7 +134,7 @@ public:
 
 	  void PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
 	  {
-		  listener.presolve_callback(contact, (b2Manifold*)oldManifold);
+		  listener.presolve_callback(contact, *oldManifold);
 	  }
 
 	  void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)

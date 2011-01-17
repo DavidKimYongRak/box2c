@@ -144,6 +144,7 @@ namespace Testbed
 		[System.Runtime.InteropServices.DllImport(Box2DSettings.Box2CDLLName)]
 		extern static uint b2world_getmin();
 
+		System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 		void Simulate()
 		{
 			if (test != null)
@@ -154,7 +155,6 @@ namespace Testbed
 					TestSettings.restart = false;
 				}
 
-				System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 				sw.Start();
 				TestSettings.hz = settingsHz;
 				test.Step();

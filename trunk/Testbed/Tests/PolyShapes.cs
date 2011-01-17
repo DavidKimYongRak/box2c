@@ -20,6 +20,7 @@ namespace Testbed.Tests
 		{
 		}
 
+		static Vec2[] drawingVertices = new Vec2[Box2DSettings.b2_maxPolygonVertices];
 		public void DrawFixture(Fixture fixture)
 		{
 			ColorF color = new ColorF(0.95f, 0.95f, 0.6f);
@@ -43,12 +44,11 @@ namespace Testbed.Tests
 					PolygonShape poly = (PolygonShape)fixture.Shape;
 					int vertexCount = poly.VertexCount;
 					//Assert(vertexCount <= _maxPolygonVertices);
-					Vec2[] vertices = new Vec2[Box2DSettings.b2_maxPolygonVertices];
 
 					for (int i = 0; i < vertexCount; ++i)
-						vertices[i] = xf * poly.Vertices[i];
+						drawingVertices[i] = xf * poly.Vertices[i];
 
-					m_debugDraw.DrawPolygon(vertices, vertexCount, color);
+					m_debugDraw.DrawPolygon(drawingVertices, vertexCount, color);
 				}
 				break;
 			}

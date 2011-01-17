@@ -13,7 +13,7 @@ namespace Testbed.Tests
 			m_fixture = null;
 		}
 
-		public override float ReportFixture(	Fixture fixture,  Vec2 point,
+		public override float ReportFixture(Fixture fixture,  Vec2 point,
 			 Vec2 normal, float fraction)
 		{
 			m_fixture = fixture;
@@ -23,7 +23,7 @@ namespace Testbed.Tests
 			return fraction;
 		}
 
-		public Fixture m_fixture;
+		public Fixture? m_fixture;
 		public Vec2 m_point;
 		public Vec2 m_normal;
 	};

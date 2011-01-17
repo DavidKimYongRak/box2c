@@ -378,7 +378,7 @@ namespace Box2CS
 		}
 	}
 
-	public sealed class Fixture
+	public struct Fixture
 	{
 		static class NativeMethods
 		{
@@ -462,17 +462,18 @@ namespace Box2CS
 		internal IntPtr FixturePtr
 		{
 			get { return _fixturePtr; }
+			set { _fixturePtr = value; }
 		}
 
-		internal Fixture(IntPtr fixture)
+		internal Fixture(IntPtr ptr)
 		{
-			_fixturePtr = fixture;
+			_fixturePtr = ptr;
 		}
 
 		internal static Fixture FromPtr(IntPtr ptr)
 		{
 			if (ptr == IntPtr.Zero)
-				return null;
+				throw new Exception();
 
 			return new Fixture(ptr);
 		}
@@ -667,7 +668,7 @@ namespace Box2CS
 		public override bool Equals(object obj)
 		{
 			if (obj is Fixture)
-				return (obj as Fixture) == this;
+				return ((Fixture)obj) == this;
 
 			return base.Equals(obj);
 		}

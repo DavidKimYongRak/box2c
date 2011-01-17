@@ -628,9 +628,15 @@ namespace Editor
 				return;
 
 			var node = new ShapeNode(new PolygonShape());
+			node.Data = new PolygonPanelData();
 			if (SelectedNode.Node.Parent is FixtureNode)
 				((FixtureNode)SelectedNode.Node.Parent).SetShape(node);
 			treeView1.SelectedNode = node;
+		}
+
+		private void decomposeToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Decomposer.OpenDialog();
 		}
 	}
 
@@ -900,6 +906,12 @@ namespace Editor
 	public class ShapeNode : BaseNode
 	{
 		public Box2CS.Shape Shape
+		{
+			get;
+			set;
+		}
+
+		public object Data
 		{
 			get;
 			set;
