@@ -729,9 +729,9 @@ namespace Box2DSharpRenderTest
 
 			var gun = new MeshShape("gun.bmesh", 3, true);
 			var gunBody = world.CreateBody(new BodyDef(BodyType.Dynamic, player1.Biped.Bodies[(int)BipedFixtureIndex.LHand].WorldCenter + new Vec2(1.5f, 1.7f), 4.71238898f));
-			gun.AddToBody(gunBody, 2);
-			foreach (var f in gunBody.Fixtures)
-				f.FilterData = player1.Biped.Bodies[(int)BipedFixtureIndex.LHand].FixtureList.FilterData;
+			var fixtures = gun.AddToBody(gunBody, 2);
+			for (int i = 0; i < fixtures.Length; ++i)
+				fixtures[i].FilterData = player1.Biped.Bodies[(int)BipedFixtureIndex.LHand].FixtureList.FilterData;
 
 			var weld = new WeldJointDef();
 			{
@@ -742,9 +742,9 @@ namespace Box2DSharpRenderTest
 
 				gun = new MeshShape("gun.bmesh", 3, false);
 				gunBody = world.CreateBody(new BodyDef(BodyType.Dynamic, player2.Biped.Bodies[(int)BipedFixtureIndex.LHand].WorldCenter + new Vec2(-1.5f, 1.7f), 4.71238898f));
-				gun.AddToBody(gunBody, 2);
-				foreach (var f in gunBody.Fixtures)
-					f.FilterData = player2.Biped.Bodies[(int)BipedFixtureIndex.LHand].FixtureList.FilterData;
+				fixtures = gun.AddToBody(gunBody, 2);
+				for (int i = 0; i < fixtures.Length; ++i)
+					fixtures[i].FilterData = player2.Biped.Bodies[(int)BipedFixtureIndex.LHand].FixtureList.FilterData;
 			}
 			weld = new WeldJointDef();
 			{
@@ -794,7 +794,7 @@ namespace Box2DSharpRenderTest
 				aabb.UpperBound = p + d;
 
 				// Query the world for overlapping shapes.
-				Fixture m_fixture = null;
+				Fixture? m_fixture = null;
 
 				world.QueryAABB(
 				delegate(Fixture fixture)
@@ -819,7 +819,7 @@ namespace Box2DSharpRenderTest
 
 				if (m_fixture != null)
 				{
-					Body body = m_fixture.Body;
+					Body body = m_fixture.Value.Body;
 					MouseJointDef md = new MouseJointDef();
 					{
 						md.BodyA = ground;
