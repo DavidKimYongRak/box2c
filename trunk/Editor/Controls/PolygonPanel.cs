@@ -43,6 +43,7 @@ namespace Editor
 				//dataGridView1.Rows[i].SetValues(PolyData.Vertices[i].X / pictureBox1.Width, PolyData.Vertices[i].Y / pictureBox1.Height);
 			}
 
+			pictureBox1.VerticeList = PolyData.Vertices;
 			pictureBox1.Invalidate();
 		}
 
@@ -57,7 +58,7 @@ namespace Editor
 
 			for (int i = 0; i < PolyData.Vertices.Count; ++i)
 			{
-				vertices[i] = (new Vec2(((pictureBox1.Width / 2) - PolyData.Vertices[i].X) / pictureBox1.Width, ((pictureBox1.Height / 2) - PolyData.Vertices[i].Y) / pictureBox1.Height)) * (float)PolyData.Scale;
+				vertices[i] = (new Vec2((PolyData.Vertices[i].X - (pictureBox1.Width / 2)) / pictureBox1.Width, (PolyData.Vertices[i].Y - (pictureBox1.Height / 2)) / pictureBox1.Height)) * (float)PolyData.Scale;
 			}
 
 			SelectedShape.Vertices = vertices;
@@ -66,60 +67,6 @@ namespace Editor
 		public PolygonPanelData PolyData
 		{
 			get { return Program.MainForm.SelectedNode.ShapeNode.Data as PolygonPanelData; }
-		}
-
-		int _movingVertice = -1, _hoverVertice = -1;
-
-		private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
-		{
-			if (e.Button == System.Windows.Forms.MouseButtons.Left)
-			{
-				if (_hoverVertice != -1)
-					_movingVertice = _hoverVertice;
-				else
-				{
-					PolyData.Vertices.Add(new Vec2(Snap(e.X), Snap(pictureBox1.Height - e.Y)));
-					_movingVertice = PolyData.Vertices.Count - 1;
-
-					DataGridViewRow row = new DataGridViewRow();
-					//dataGridView1.Rows.Add(row);
-					//dataGridView1.Rows[_movingVertice].SetValues(PolyData.Vertices[_movingVertice].X / pictureBox1.Width, PolyData.Vertices[_movingVertice].Y / pictureBox1.Height);
-				}
-			}
-
-			pictureBox1.Invalidate();
-		}
-
-		private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (_movingVertice != -1)
-			{
-				PolyData.Vertices[_movingVertice] = new Vec2(Snap(e.X), Snap(pictureBox1.Height - e.Y));
-				//dataGridView1.Rows[_movingVertice].SetValues(PolyData.Vertices[_movingVertice].X / pictureBox1.Width, PolyData.Vertices[_movingVertice].Y / pictureBox1.Height);
-				pictureBox1.Invalidate();
-			}
-			else
-			{
-				int oldVert = _hoverVertice;
-
-				_hoverVertice = -1;
-				int i = 0;
-				foreach (var x in PolyData.Vertices)
-				{
-					Rectangle rect = new Rectangle(e.X - 3, e.Y - 3, 7, 7);
-
-					if (rect.Contains((int)x.X, (int)(pictureBox1.Height - x.Y)))
-					{
-						_hoverVertice = i;
-						break;
-					}
-
-					i++;
-				}
-
-				if (oldVert != _hoverVertice)
-					pictureBox1.Invalidate();
-			}
 		}
 
 		void ValidatePolygon()
@@ -183,14 +130,6 @@ namespace Editor
 			}
 		}
 
-		private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
-		{
-			_movingVertice = -1;
-
-			// validate
-			ValidatePolygon();
-		}
-
 		void ShowError(string text, string tooltip)
 		{
 			statusStrip1.ShowItemToolTips = true;
@@ -200,82 +139,15 @@ namespace Editor
 			toolStripStatusLabel1.ToolTipText = tooltip;
 		}
 
+		void pictureBox1_ValidatePolygon(object sender, System.EventArgs e)
+		{
+			ValidatePolygon();
+		}
+
 		void HideError()
 		{
 			toolStripStatusLabel1.DisplayStyle = ToolStripItemDisplayStyle.Text;
 			toolStripStatusLabel1.Text = "";
-		}
-
-		const float VertSize = 4.0f;
-		void DrawVert(Graphics g, Vec2 pos, bool hover)
-		{
-			g.FillRectangle((hover) ? Brushes.Tomato : Brushes.White, new RectangleF(pos.X - (VertSize / 2), pictureBox1.Height - pos.Y - (VertSize / 2), VertSize, VertSize));
-		}
-
-		void DrawVertConnect(Graphics g, Vec2 l, Vec2 r, bool last)
-		{
-			g.DrawLine(new Pen((last) ? Color.ForestGreen : Color.Aqua, 2), new PointF(l.X, pictureBox1.Height - l.Y), new PointF(r.X, pictureBox1.Height - r.Y));
-		}
-
-		float _gridSize = 2;
-		void DrawGrid(Graphics g, Color c)
-		{
-			var pen = new Pen(c, 1);
-
-			for (int x = 0; x < pictureBox1.Width; x += (int)_gridSize)
-				g.DrawLine(pen, new Point(x, 0), new Point(x, pictureBox1.Height));
-
-			for (int x = 0; x < pictureBox1.Height; x += (int)_gridSize)
-				g.DrawLine(pen, new Point(0, x), new Point(pictureBox1.Width, x));
-		}
-
-		float Snap(float Value)
-		{
-			if (Value < 0)
-				Value = 0;
-			if (Value > pictureBox1.Width)
-				Value = pictureBox1.Width;
-			if (_gridSize == 0)
-				return Value;
-
-			if (Math.Abs(Math.Floor(Value/_gridSize)-(Value/_gridSize))<Math.Abs(Math.Ceiling(Value/_gridSize)-(Value/_gridSize)))
-				return (float)Math.Floor((Value/_gridSize))*_gridSize;
-			return (float)Math.Ceiling((Value/_gridSize))*_gridSize;
-		}
-
-		private void pictureBox1_Paint(object sender, PaintEventArgs e)
-		{
-			DrawGrid(e.Graphics, Color.FromArgb(127, Color.Chocolate));
-
-			var g = e.Graphics;
-			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-			if (PolyData.Vertices.Count > 2)
-			{
-				PointF[] polygon = new PointF[PolyData.Vertices.Count];
-
-				for (int i = 0; i < PolyData.Vertices.Count; ++i)
-					polygon[i] = new PointF(PolyData.Vertices[i].X, pictureBox1.Height - PolyData.Vertices[i].Y);
-
-				using (GraphicsPath path = new GraphicsPath())
-				{
-					path.AddPolygon(polygon);
-					g.FillPath(new SolidBrush(Color.FromArgb(128, Color.ForestGreen)), path);
-				}
-			}
-
-			for (int i = 0; i < PolyData.Vertices.Count; ++i)
-			{
-				DrawVert(g, PolyData.Vertices[i], (i == _hoverVertice));
-
-				if (i == PolyData.Vertices.Count - 1)
-				{
-					if (PolyData.Vertices.Count != 2)
-						DrawVertConnect(g, PolyData.Vertices[i], PolyData.Vertices[0], true);
-				}
-				else
-					DrawVertConnect(g, PolyData.Vertices[i], PolyData.Vertices[i + 1], false);
-			}
 		}
 
 		private void toolStripButton2_Click(object sender, EventArgs e)
@@ -348,6 +220,213 @@ namespace Editor
 			}
 
 			pictureBox1.Invalidate();
+		}
+
+		private void toolStripButton7_Click(object sender, EventArgs e)
+		{
+
+		}
+	}
+
+	public class PolygonPlotter : Control
+	{
+		public PolygonPlotter()
+		{
+			SetStyle(ControlStyles.AllPaintingInWmPaint |
+				ControlStyles.UserMouse |
+				ControlStyles.UserPaint |
+				ControlStyles.OptimizedDoubleBuffer,
+				true);
+
+			GridSize = 2;
+			VertSize = 4.0f;
+			MovingVertice = HoverVertice = -1;
+		}
+
+		public IList<Vec2> VerticeList
+		{
+			get;
+			set;
+		}
+
+		int VertAtPos(Point pt)
+		{
+			int vertice = -1;
+			int i = 0;
+
+			foreach (var x in VerticeList)
+			{
+				Rectangle rect = new Rectangle(pt.X - 3, pt.Y - 3, 7, 7);
+
+				if (rect.Contains((int)x.X, (int)(Height - x.Y)))
+				{
+					vertice = i;
+					break;
+				}
+
+				i++;
+			}
+
+			return vertice;
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (e.Button == System.Windows.Forms.MouseButtons.Left)
+			{
+				if (HoverVertice != -1)
+					MovingVertice = HoverVertice;
+				else
+				{
+					VerticeList.Add(new Vec2(Snap(e.X), Snap(Height - e.Y)));
+					MovingVertice = VerticeList.Count - 1;
+
+					DataGridViewRow row = new DataGridViewRow();
+					//dataGridView1.Rows.Add(row);
+					//dataGridView1.Rows[_movingVertice].SetValues(PolyData.Vertices[_movingVertice].X / pictureBox1.Width, PolyData.Vertices[_movingVertice].Y / pictureBox1.Height);
+				}
+			}
+			else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+			{
+				if (HoverVertice != -1)
+				{
+					VerticeList.RemoveAt(HoverVertice);
+					HoverVertice = VertAtPos(e.Location);
+				}
+			}
+
+			Invalidate();
+		}
+
+		public event EventHandler ValidatePolygon;
+
+		protected virtual void OnValidatePolygon()
+		{
+			if (ValidatePolygon != null)
+				ValidatePolygon(this, EventArgs.Empty);
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			MovingVertice = -1;
+
+			// validate
+			OnValidatePolygon();
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			if (MovingVertice != -1)
+			{
+				VerticeList[MovingVertice] = new Vec2(Snap(e.X), Snap(Height - e.Y));
+				Invalidate();
+			}
+			else
+			{
+				int oldVert = HoverVertice;
+
+				HoverVertice = VertAtPos(e.Location);
+
+				if (oldVert != HoverVertice)
+					Invalidate();
+			}
+		}
+
+		public float GridSize
+		{
+			get;
+			set;
+		}
+
+		public float VertSize
+		{
+			get;
+			set;
+		}
+
+		public int HoverVertice
+		{
+			get;
+			set;
+		}
+
+		public int MovingVertice
+		{
+			get;
+			set;
+		}
+
+		void DrawVert(Graphics g, Vec2 pos, bool hover)
+		{
+			g.FillRectangle((hover) ? Brushes.Tomato : Brushes.White, new RectangleF(pos.X - (VertSize / 2), Height - pos.Y - (VertSize / 2), VertSize, VertSize));
+		}
+
+		void DrawVertConnect(Graphics g, Vec2 l, Vec2 r, bool last)
+		{
+			g.DrawLine(new Pen((last) ? Color.ForestGreen : Color.Aqua, 2), new PointF(l.X, Height - l.Y), new PointF(r.X, Height - r.Y));
+		}
+
+		void DrawGrid(Graphics g, Color c)
+		{
+			var pen = new Pen(c, 1);
+
+			for (float x = 0; x < Width; x += GridSize)
+				g.DrawLine(pen, new PointF(x, 0), new PointF(x, Height));
+
+			for (float x = 0; x < Height; x += GridSize)
+				g.DrawLine(pen, new PointF(0, x), new PointF(Width, x));
+		}
+
+		float Snap(float Value)
+		{
+			if (Value < 0)
+				Value = 0;
+			if (Value > Width)
+				Value = Width;
+			if (GridSize == 0)
+				return Value;
+
+			if (Math.Abs(Math.Floor(Value/GridSize)-(Value/GridSize))<Math.Abs(Math.Ceiling(Value/GridSize)-(Value/GridSize)))
+				return (float)Math.Floor((Value/GridSize))*GridSize;
+			return (float)Math.Ceiling((Value/GridSize))*GridSize;
+		}
+
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			DrawGrid(e.Graphics, Color.FromArgb(127, Color.Chocolate));
+
+			if (VerticeList == null)
+				return;
+
+			var g = e.Graphics;
+			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+			if (VerticeList.Count > 2)
+			{
+				PointF[] polygon = new PointF[VerticeList.Count];
+
+				for (int i = 0; i < VerticeList.Count; ++i)
+					polygon[i] = new PointF(VerticeList[i].X, Height - VerticeList[i].Y);
+
+				using (GraphicsPath path = new GraphicsPath())
+				{
+					path.AddPolygon(polygon);
+					g.FillPath(new SolidBrush(Color.FromArgb(128, Color.ForestGreen)), path);
+				}
+			}
+
+			for (int i = 0; i < VerticeList.Count; ++i)
+			{
+				DrawVert(g, VerticeList[i], (i == HoverVertice));
+
+				if (i == VerticeList.Count - 1)
+				{
+					if (VerticeList.Count != 2)
+						DrawVertConnect(g, VerticeList[i], VerticeList[0], true);
+				}
+				else
+					DrawVertConnect(g, VerticeList[i], VerticeList[i + 1], false);
+			}
 		}
 	}
 

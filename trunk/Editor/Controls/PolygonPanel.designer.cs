@@ -33,7 +33,7 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.pictureBox1 = new PolygonPlotter();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -48,8 +48,8 @@
 			this.floatNumericUpDown1 = new Editor.FloatNumericUpDown();
 			this.circlePositionY = new Editor.FloatNumericUpDown();
 			this.circlePositionX = new Editor.FloatNumericUpDown();
+			this.toolStripButton7 = new System.Windows.Forms.ToolStripButton();
 			this.groupBox1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.groupBox2.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -102,10 +102,7 @@
 			this.pictureBox1.Size = new System.Drawing.Size(124, 124);
 			this.pictureBox1.TabIndex = 18;
 			this.pictureBox1.TabStop = false;
-			this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
-			this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
-			this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
-			this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
+			this.pictureBox1.ValidatePolygon += new System.EventHandler(pictureBox1_ValidatePolygon);
 			// 
 			// groupBox2
 			// 
@@ -145,7 +142,8 @@
             this.toolStripButton4,
             this.toolStripSeparator1,
             this.toolStripButton3,
-            this.toolStripButton6});
+            this.toolStripButton6,
+            this.toolStripButton7});
 			this.toolStrip1.Location = new System.Drawing.Point(3, 16);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(217, 25);
@@ -285,6 +283,16 @@
 			this.circlePositionX.Size = new System.Drawing.Size(50, 20);
 			this.circlePositionX.TabIndex = 12;
 			// 
+			// toolStripButton7
+			// 
+			this.toolStripButton7.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButton7.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton7.Image")));
+			this.toolStripButton7.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton7.Name = "toolStripButton7";
+			this.toolStripButton7.Size = new System.Drawing.Size(23, 22);
+			this.toolStripButton7.Text = "Onion Skin";
+			this.toolStripButton7.Click += new System.EventHandler(this.toolStripButton7_Click);
+			// 
 			// PolygonPanel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -299,7 +307,6 @@
 			this.Size = new System.Drawing.Size(229, 277);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			this.statusStrip1.ResumeLayout(false);
@@ -320,7 +327,7 @@
 		private System.Windows.Forms.GroupBox groupBox1;
 		public FloatNumericUpDown floatNumericUpDown1;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.PictureBox pictureBox1;
+		private PolygonPlotter pictureBox1;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.ToolStrip toolStrip1;
 		private System.Windows.Forms.ToolStripButton toolStripButton1;
@@ -332,5 +339,6 @@
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
 		private System.Windows.Forms.ToolStripButton toolStripButton3;
 		private System.Windows.Forms.ToolStripButton toolStripButton6;
+		private System.Windows.Forms.ToolStripButton toolStripButton7;
     }
 }
