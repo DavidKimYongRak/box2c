@@ -62,6 +62,9 @@ namespace Editor
 			}
 
 			SelectedShape.Vertices = vertices;
+
+			if ((Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.AutoMassRecalculate)
+				(Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.RecalculateMass();
 		}
 
 		public PolygonPanelData PolyData

@@ -752,6 +752,11 @@ namespace Editor
 			_mass = Body.ComputeMass(OnlyFixtures);
 		}
 
+		public void RecalculateMass()
+		{
+			_mass = Body.ComputeMass(OnlyFixtures);
+		}
+
 		public BodyNode(WorldObject world, BodyDefSerialized x) :
 			base(x.Name)
 		{
@@ -834,6 +839,16 @@ namespace Editor
 		{
 			get;
 			private set;
+		}
+
+		public BodyNode OwnedBody
+		{
+			get
+			{
+				if (Parent != null && (Parent is BodyNode))
+					return ((BodyNode)Parent);
+				return null;
+			}
 		}
 
 		public FixtureNode(FixtureDefSerialized fixture) :
