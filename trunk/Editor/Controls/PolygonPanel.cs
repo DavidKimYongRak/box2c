@@ -63,7 +63,8 @@ namespace Editor
 
 			SelectedShape.Vertices = vertices;
 
-			if ((Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.AutoMassRecalculate)
+			if ((Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody != null &&
+				(Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.AutoMassRecalculate)
 				(Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.RecalculateMass();
 		}
 
@@ -227,7 +228,17 @@ namespace Editor
 
 		private void toolStripButton7_Click(object sender, EventArgs e)
 		{
+			using (Editor.Controls.OnionChooser chooser = new Controls.OnionChooser())
+			{
+				if (chooser.ShowDialog() == DialogResult.OK)
+				{
+					var index = chooser.SelectedFixtureIndex;
 
+					if (index == -1)
+					{
+					}
+				}
+			}
 		}
 	}
 
@@ -275,6 +286,9 @@ namespace Editor
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
+			if (VerticeList == null || !Enabled)
+				return;
+
 			if (e.Button == System.Windows.Forms.MouseButtons.Left)
 			{
 				if (HoverVertice != -1)
@@ -311,6 +325,9 @@ namespace Editor
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
+			if (VerticeList == null || !Enabled)
+				return;
+
 			MovingVertice = -1;
 
 			// validate
@@ -319,6 +336,9 @@ namespace Editor
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
+			if (VerticeList == null || !Enabled)
+				return;
+
 			if (MovingVertice != -1)
 			{
 				VerticeList[MovingVertice] = new Vec2(Snap(e.X), Snap(Height - e.Y));
