@@ -230,13 +230,16 @@ namespace Editor
 		{
 			using (Editor.Controls.OnionChooser chooser = new Controls.OnionChooser())
 			{
+				chooser.StartPosition = FormStartPosition.CenterParent;
 				if (chooser.ShowDialog() == DialogResult.OK)
 				{
 					var index = chooser.SelectedFixtureIndex;
+					
+					pictureBox1.OnionList = null;
+					pictureBox1.Invalidate();
 
-					if (index == -1)
-					{
-					}
+					if (index != -1)
+						pictureBox1.OnionList = (Main.WorldObject.Fixtures[index].ShapeNode.Data as PolygonPanelData).Vertices;
 				}
 			}
 		}
@@ -258,6 +261,12 @@ namespace Editor
 		}
 
 		public IList<Vec2> VerticeList
+		{
+			get;
+			set;
+		}
+
+		public IList<Vec2> OnionList
 		{
 			get;
 			set;
@@ -379,14 +388,14 @@ namespace Editor
 			set;
 		}
 
-		void DrawVert(Graphics g, Vec2 pos, bool hover)
+		void DrawVert(Graphics g, Vec2 pos, Color c)
 		{
-			g.FillRectangle((hover) ? Brushes.Tomato : Brushes.White, new RectangleF(pos.X - (VertSize / 2), Height - pos.Y - (VertSize / 2), VertSize, VertSize));
+			g.FillRectangle(new SolidBrush(c), new RectangleF(pos.X - (VertSize / 2), Height - pos.Y - (VertSize / 2), VertSize, VertSize));
 		}
 
-		void DrawVertConnect(Graphics g, Vec2 l, Vec2 r, bool last)
+		void DrawVertConnect(Graphics g, Vec2 l, Vec2 r, Color c)
 		{
-			g.DrawLine(new Pen((last) ? Color.ForestGreen : Color.Aqua, 2), new PointF(l.X, Height - l.Y), new PointF(r.X, Height - r.Y));
+			g.DrawLine(new Pen(c, 2), new PointF(l.X, Height - l.Y), new PointF(r.X, Height - r.Y));
 		}
 
 		void DrawGrid(Graphics g, Color c)
@@ -414,42 +423,47 @@ namespace Editor
 			return (float)Math.Ceiling((Value/GridSize))*GridSize;
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
+		void DrawVertices(Graphics g, IList<Vec2> list, byte alpha)
 		{
-			DrawGrid(e.Graphics, Color.FromArgb(127, Color.Chocolate));
-
-			if (VerticeList == null)
-				return;
-
-			var g = e.Graphics;
-			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-			if (VerticeList.Count > 2)
+			if (list.Count > 2)
 			{
-				PointF[] polygon = new PointF[VerticeList.Count];
+				PointF[] polygon = new PointF[list.Count];
 
-				for (int i = 0; i < VerticeList.Count; ++i)
-					polygon[i] = new PointF(VerticeList[i].X, Height - VerticeList[i].Y);
+				for (int i = 0; i < list.Count; ++i)
+					polygon[i] = new PointF(list[i].X, Height - list[i].Y);
 
 				using (GraphicsPath path = new GraphicsPath())
 				{
 					path.AddPolygon(polygon);
-					g.FillPath(new SolidBrush(Color.FromArgb(128, Color.ForestGreen)), path);
+					g.FillPath(new SolidBrush(Color.FromArgb(alpha / 2, Color.ForestGreen)), path);
 				}
 			}
 
-			for (int i = 0; i < VerticeList.Count; ++i)
+			for (int i = 0; i < list.Count; ++i)
 			{
-				DrawVert(g, VerticeList[i], (i == HoverVertice));
+				DrawVert(g, list[i], Color.FromArgb(alpha, (i == HoverVertice) ? Color.Tomato : Color.White));
 
-				if (i == VerticeList.Count - 1)
+				if (i == list.Count - 1)
 				{
-					if (VerticeList.Count != 2)
-						DrawVertConnect(g, VerticeList[i], VerticeList[0], true);
+					if (list.Count != 2)
+						DrawVertConnect(g, list[i], list[0], Color.FromArgb(alpha, Color.ForestGreen));
 				}
 				else
-					DrawVertConnect(g, VerticeList[i], VerticeList[i + 1], false);
+					DrawVertConnect(g, list[i], list[i + 1], Color.FromArgb(alpha, Color.Aqua));
 			}
+		}
+
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			DrawGrid(e.Graphics, Color.FromArgb(127, Color.Chocolate));
+
+			var g = e.Graphics;
+			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+			if (OnionList != null)
+				DrawVertices(g, OnionList, 64);
+			if (VerticeList != null)
+				DrawVertices(g, VerticeList, 255);
 		}
 	}
 
