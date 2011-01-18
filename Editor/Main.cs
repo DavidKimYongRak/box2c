@@ -653,7 +653,6 @@ namespace Editor
 		public override void OnSelected()
 		{
 			Program.MainForm.SelectedNode = new SelectedNode(this);
-			Program.MainForm.label1.Text = Program.MainForm.SelectedNode.NodeType.ToString();
 			base.OnSelected();
 		}
 	}

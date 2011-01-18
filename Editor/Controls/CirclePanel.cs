@@ -38,7 +38,8 @@ namespace Editor
 		{
 			SelectedShape.Radius = (float)e.NewValue;
 
-			if ((Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.AutoMassRecalculate)
+			if ((Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody != null &&
+				(Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.AutoMassRecalculate)
 				(Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.RecalculateMass();
 		}
 

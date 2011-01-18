@@ -36,12 +36,12 @@
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.decomposeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.panel1 = new Editor.BlankControl();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.treeView1 = new Paril.Windows.Forms.TreeViewEx();
-			this.label1 = new System.Windows.Forms.Label();
 			this.baseTreeViewContextStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newBodyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,7 +49,6 @@
 			this.changeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.circleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.polygonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.decomposeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mainMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -57,7 +56,6 @@
 			this.splitContainer1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
 			this.splitContainer2.Panel1.SuspendLayout();
-			this.splitContainer2.Panel2.SuspendLayout();
 			this.splitContainer2.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.baseTreeViewContextStrip.SuspendLayout();
@@ -106,15 +104,22 @@
 			// loadToolStripMenuItem
 			// 
 			this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-			this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.loadToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
 			this.loadToolStripMenuItem.Text = "Load...";
 			this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
 			// 
 			// saveToolStripMenuItem
 			// 
 			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.saveToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
 			this.saveToolStripMenuItem.Text = "Save...";
+			// 
+			// decomposeToolStripMenuItem
+			// 
+			this.decomposeToolStripMenuItem.Name = "decomposeToolStripMenuItem";
+			this.decomposeToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
+			this.decomposeToolStripMenuItem.Text = "Decompose";
+			this.decomposeToolStripMenuItem.Click += new System.EventHandler(this.decomposeToolStripMenuItem_Click);
 			// 
 			// splitContainer1
 			// 
@@ -153,10 +158,6 @@
 			// splitContainer2.Panel1
 			// 
 			this.splitContainer2.Panel1.Controls.Add(this.panel2);
-			// 
-			// splitContainer2.Panel2
-			// 
-			this.splitContainer2.Panel2.Controls.Add(this.label1);
 			this.splitContainer2.Size = new System.Drawing.Size(243, 507);
 			this.splitContainer2.SplitterDistance = 195;
 			this.splitContainer2.TabIndex = 0;
@@ -202,15 +203,6 @@
 			this.treeView1.Sorted = false;
 			this.treeView1.TabIndex = 2;
 			this.treeView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseUp);
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(21, 37);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(35, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "label1";
 			// 
 			// baseTreeViewContextStrip
 			// 
@@ -264,13 +256,6 @@
 			this.polygonToolStripMenuItem.Text = "Polygon";
 			this.polygonToolStripMenuItem.Click += new System.EventHandler(this.polygonToolStripMenuItem_Click);
 			// 
-			// decomposeToolStripMenuItem
-			// 
-			this.decomposeToolStripMenuItem.Name = "decomposeToolStripMenuItem";
-			this.decomposeToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
-			this.decomposeToolStripMenuItem.Text = "Decompose";
-			this.decomposeToolStripMenuItem.Click += new System.EventHandler(this.decomposeToolStripMenuItem_Click);
-			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -289,8 +274,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
 			this.splitContainer2.Panel1.ResumeLayout(false);
-			this.splitContainer2.Panel2.ResumeLayout(false);
-			this.splitContainer2.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
 			this.splitContainer2.ResumeLayout(false);
 			this.panel2.ResumeLayout(false);
@@ -318,7 +301,6 @@
 		private System.Windows.Forms.SplitContainer splitContainer2;
 		private Paril.Windows.Forms.TreeViewEx treeView1;
 		private System.Windows.Forms.Panel panel2;
-		public System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ContextMenuStrip shapeTreeViewContextMenu;
 		private System.Windows.Forms.ToolStripMenuItem changeToToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem circleToolStripMenuItem;
