@@ -40,7 +40,7 @@ namespace Box2CS
 
 		public override string ToString()
 		{
-			return Major.ToString() + " " + Minor.ToString() + " " + Revision.ToString();
+			return Major.ToString() + "." + Minor.ToString() + "." + Revision.ToString();
 		}
 	}
 }

@@ -55,10 +55,10 @@ namespace Editor
 
 		private void fixtureDensity_ValueChanged(object sender, DecimalValueChangedEventArgs e)
 		{
+			SelectedFixture.Fixture.Density = (float)e.NewValue;
+
 			if ((e.NewValue == 0 && e.OldValue != 0) || (e.NewValue != 0 && e.OldValue == 0) && SelectedFixture.OwnedBody.AutoMassRecalculate)
 				SelectedFixture.OwnedBody.RecalculateMass();
-				
-			SelectedFixture.Fixture.Density = (float)e.NewValue;
 		}
 
 		private void fixtureFriction_ValueChanged(object sender, DecimalValueChangedEventArgs e)

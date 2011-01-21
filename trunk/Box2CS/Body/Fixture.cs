@@ -254,7 +254,7 @@ namespace Box2CS
 		/// <returns></returns>
 		public FixtureDef Clone()
 		{
-			return new FixtureDef(Shape, Density, Restitution, Friction, Filter, IsSensor, UserData);
+			return new FixtureDef(Shape.Clone(), Density, Restitution, Friction, Filter, IsSensor, UserData);
 		}
 
 		/// <summary>

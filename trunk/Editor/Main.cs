@@ -493,6 +493,12 @@ namespace Editor
 
 				node.Expand();
 			}
+
+			imageList1.Images.Add(Properties.Resources.world);
+			imageList1.Images.Add(Properties.Resources.circle);
+			imageList1.Images.Add(Properties.Resources.polygon);
+
+			treeView1.ImageList = imageList1;
 		}
 
 		private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -576,7 +582,17 @@ namespace Editor
 				if (node is ShapeNode)
 					shapeTreeViewContextMenu.Show(treeView1, e.X, e.Y);
 				else
+				{
+					deleteToolStripMenuItem.Enabled = cloneToolStripMenuItem.Enabled = false;
+
+					if (node is FixtureNode || node is BodyNode)
+					{
+						deleteToolStripMenuItem.Enabled = true;
+						cloneToolStripMenuItem.Enabled = true;
+					}
+
 					baseTreeViewContextStrip.Show(treeView1, e.X, e.Y);
+				}
 			}
 		}
 
@@ -641,12 +657,24 @@ namespace Editor
 		{
 			Decomposer.OpenDialog();
 		}
+
+		private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SelectedNode.Node.Delete();
+			splitContainer2.Panel2.Controls.Clear();
+		}
+
+		private void cloneToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			BaseNode node = (BaseNode)SelectedNode.Node.Clone();
+			SelectedNode.Node.Parent.Nodes.Add(node);
+		}
 	}
 
 	public class BaseNode : Paril.Windows.Forms.TreeNodeEx
 	{
-		public BaseNode(string str) :
-			base(str)
+		public BaseNode(string str, int image = -1) :
+			base(str, image, image)
 		{
 		}
 
@@ -654,6 +682,16 @@ namespace Editor
 		{
 			Program.MainForm.SelectedNode = new SelectedNode(this);
 			base.OnSelected();
+		}
+
+		public virtual void Delete()
+		{
+			throw new Exception("Delete not added to this");
+		}
+
+		public override object Clone()
+		{
+			throw new Exception("Clone not added to this");
 		}
 	}
 
@@ -666,7 +704,7 @@ namespace Editor
 		}
 
 		public WorldNode(string name, WorldData data) :
-			base(name)
+			base(name, 0)
 		{
 			Data = data;
 		}
@@ -707,8 +745,8 @@ namespace Editor
 
 		public string Name
 		{
-			get;
-			set;
+			get { return Text; }
+			set { Text = value; }
 		}
 
 		MassData _mass;
@@ -781,9 +819,15 @@ namespace Editor
 			_fixtures.ObjectsRemoved += new EventHandler(_fixtures_ObjectsRemoved);
 		}
 
+		public BodyNode() :
+			base("Body")
+		{
+			_fixtures.ObjectsAdded += new EventHandler(_fixtures_ObjectsAdded);
+			_fixtures.ObjectsRemoved += new EventHandler(_fixtures_ObjectsRemoved);
+		}
+
 		public override void OnRenamed()
 		{
-			Name = Text;
 			base.OnRenamed();
 		}
 
@@ -825,6 +869,38 @@ namespace Editor
 
 			return true;
 		}
+
+		public override void Delete()
+		{
+			Remove();
+
+			foreach (var f in Main.WorldObject.Bodies)
+			{
+				foreach (var x in f.Fixtures)
+					Main.WorldObject.Fixtures.Remove(x);
+			}
+
+			Main.WorldObject.Bodies.Remove(this);
+		}
+
+		public override object Clone()	
+		{
+			BodyNode node = new BodyNode();
+
+			node.Body = (BodyDef)Body.Clone();
+			Main.WorldObject.Bodies.Add(node);
+
+			node.Name = Name;
+
+			foreach (var x in Fixtures)
+			{
+				FixtureNode fixNode = (FixtureNode)x.Clone();
+				node.Nodes.Add(fixNode);
+				Main.WorldObject.Fixtures.Add(fixNode);
+			}
+
+			return node;
+		}
 	}
 
 	public class FixtureNode : BaseNode
@@ -837,8 +913,8 @@ namespace Editor
 
 		public string Name
 		{
-			get;
-			set;
+			get { return Text; }
+			set { Text = value; }
 		}
 
 		public ShapeNode ShapeNode
@@ -866,6 +942,12 @@ namespace Editor
 			SetShape(new ShapeNode(new CircleShape()));
 		}
 
+		public FixtureNode(FixtureDef fixture) :
+			base("Fixture")
+		{
+			Fixture = fixture;
+		}
+
 		public void SetShape(ShapeNode shapeNode)
 		{
 			if (ShapeNode != null)
@@ -878,7 +960,6 @@ namespace Editor
 
 		public override void OnRenamed()
 		{
-			Name = Text;
 			base.OnRenamed();
 		}
 
@@ -925,6 +1006,24 @@ namespace Editor
 			CheckNode(args);
 			base.OnNodeMoved(args);
 		}
+
+		public override void Delete()
+		{
+			if (OwnedBody != null)
+				OwnedBody.Fixtures.Remove(this);
+
+			Main.WorldObject.Fixtures.Remove(this);
+			Remove();
+		}
+
+		public override object Clone()
+		{
+			FixtureNode node = new FixtureNode(Fixture.Clone());
+			node.Name = node.Text = Name;
+			node.SetShape((ShapeNode)ShapeNode.Clone());
+
+			return node;
+		}
 	}
 
 	public class ShapeNode : BaseNode
@@ -935,7 +1034,7 @@ namespace Editor
 			set;
 		}
 
-		public object Data
+		public ICloneable Data
 		{
 			get;
 			set;
@@ -945,6 +1044,11 @@ namespace Editor
 			base(shape.ShapeType.ToString())
 		{
 			Shape = shape;
+
+			if (Shape is CircleShape)
+				ImageIndex = SelectedImageIndex = 1;
+			else if (Shape is PolygonShape)
+				ImageIndex = SelectedImageIndex = 2;
 		}
 
 		public override bool CanRename()
@@ -966,6 +1070,15 @@ namespace Editor
 		{
 			return false;
 		}
+
+		public override object Clone()
+		{
+			ShapeNode node = new ShapeNode(Shape.Clone());
+			if (Data != null)
+				node.Data = (ICloneable)Data.Clone();
+
+			return node;
+		}
 	}
 
 	public enum SelectedNodeType
@@ -980,7 +1093,7 @@ namespace Editor
 
 	public struct SelectedNode
 	{
-		public Paril.Windows.Forms.TreeNodeEx Node
+		public BaseNode Node
 		{
 			get;
 			set;
@@ -1013,7 +1126,7 @@ namespace Editor
 			get { return (ShapeNode)Node; }
 		}
 
-		public SelectedNode(Paril.Windows.Forms.TreeNodeEx node) :
+		public SelectedNode(BaseNode node) :
 			this()
 		{
 			Node = node;
