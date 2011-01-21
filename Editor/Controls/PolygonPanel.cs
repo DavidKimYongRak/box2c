@@ -467,7 +467,7 @@ namespace Editor
 		}
 	}
 
-	public class PolygonPanelData
+	public class PolygonPanelData : ICloneable
 	{
 		public List<Vec2> Vertices
 		{
@@ -485,6 +485,16 @@ namespace Editor
 		{
 			Vertices = new List<Vec2>();
 			Scale = 1;
+		}
+
+		public object Clone()
+		{
+			PolygonPanelData data = new PolygonPanelData();
+
+			data.Scale = Scale;
+			data.Vertices = new List<Vec2>(Vertices);
+			
+			return data;
 		}
 	}
 }

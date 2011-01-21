@@ -13,7 +13,7 @@ namespace Box2CS
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
-	public sealed class BodyDef : IFixedSize
+	public sealed class BodyDef : IFixedSize, ICloneable
 	{
 		int IFixedSize.FixedSize()
 		{
@@ -319,6 +319,12 @@ namespace Box2CS
 				m_I = 0.0f;
 
 			return new MassData(m_mass, center, m_I);
+		}
+
+		public object Clone()
+		{
+			BodyDef def = new BodyDef(BodyType, Position, Angle, LinearVelocity, AngularVelocity, LinearDamping, AngularDamping, Bullet, Active, FixedRotation, AllowSleep, Awake, InertiaScale, UserData);
+			return def;
 		}
 	}
 

@@ -367,7 +367,7 @@ namespace Paril.Windows.Forms
 							bounds = GetImageBounds(nodeFromTop, nodes.level);
 							int index = GetDisplayIndex(nodes.currentNode);
 
-							if (index < imageList.Images.Count)
+							if (index < imageList.Images.Count && index >= 0)
 							{
 								Image image = imageList.Images[index];
 								g.DrawImage(image, bounds.X, bounds.Y);
@@ -567,7 +567,7 @@ namespace Paril.Windows.Forms
 		// Get the node image index to display depending on what is set.
 		private int GetDisplayIndex(TreeNodeEx node)
 		{
-			int index = 0;
+			int index = -1;
 			if (node == selectedNode)
 			{
 				if (node.SelectedImageIndex > -1)
