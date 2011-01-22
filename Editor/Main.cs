@@ -558,7 +558,7 @@ namespace Editor
 
 		private void newFixtureToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			var fixture = new FixtureDefSerialized(new FixtureDef(), -1, "Fixture");
+			var fixture = new FixtureDefSerialized(new FixtureDef(null, 0.2f), -1, "Fixture");
 			var node = new FixtureNode(fixture);
 
 			var selectedNode = treeView1.SelectedNode;
@@ -636,7 +636,7 @@ namespace Editor
 			if (SelectedNode.ShapeNode.Shape is CircleShape)
 				return;
 
-			var node = new ShapeNode(new CircleShape());
+			var node = new ShapeNode(new CircleShape(0.5f));
 			if (SelectedNode.Node.Parent is FixtureNode)
 				((FixtureNode)SelectedNode.Node.Parent).SetShape(node);
 			treeView1.SelectedNode = node;
@@ -652,6 +652,8 @@ namespace Editor
 			if (SelectedNode.Node.Parent is FixtureNode)
 				((FixtureNode)SelectedNode.Node.Parent).SetShape(node);
 			treeView1.SelectedNode = node;
+
+			polygonPanel.Apply();
 		}
 
 		private void decomposeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -940,7 +942,7 @@ namespace Editor
 			Name = fixture.Name;
 			Fixture = fixture.Fixture;
 
-			SetShape(new ShapeNode(new CircleShape()));
+			SetShape(new ShapeNode(new CircleShape(0.5f)));
 		}
 
 		public FixtureNode(FixtureDef fixture) :

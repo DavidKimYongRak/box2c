@@ -47,7 +47,7 @@ namespace Editor
 			pictureBox1.Invalidate();
 		}
 
-		private void toolStripButton1_Click(object sender, EventArgs e)
+		public void Apply()
 		{
 			if (!string.IsNullOrEmpty(toolStripStatusLabel1.Text))
 			{
@@ -66,6 +66,11 @@ namespace Editor
 			if ((Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody != null &&
 				(Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.AutoMassRecalculate)
 				(Program.MainForm.SelectedNode.Node.Parent as FixtureNode).OwnedBody.RecalculateMass();
+		}
+
+		private void toolStripButton1_Click(object sender, EventArgs e)
+		{
+			Apply();
 		}
 
 		public PolygonPanelData PolyData
@@ -242,6 +247,16 @@ namespace Editor
 						pictureBox1.OnionList = (Main.WorldObject.Fixtures[index].ShapeNode.Data as PolygonPanelData).Vertices;
 				}
 			}
+		}
+
+		private void circlePositionY_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+		{
+
+		}
+
+		private void circlePositionX_ValueChanged(object sender, DecimalValueChangedEventArgs e)
+		{
+
 		}
 	}
 
@@ -481,9 +496,18 @@ namespace Editor
 			set;
 		}
 
+		// FIXME: support passing shape here
 		public PolygonPanelData()
 		{
-			Vertices = new List<Vec2>();
+			Vertices = new List<Vec2>
+				(
+				)
+				{
+				new Vec2(30, 94),
+				new Vec2(30, 30),
+				new Vec2(94, 30),
+				new Vec2(94, 94)
+				};
 			Scale = 1;
 		}
 
