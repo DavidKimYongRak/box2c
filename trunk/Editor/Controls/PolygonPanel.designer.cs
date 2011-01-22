@@ -32,8 +32,9 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.floatNumericUpDown1 = new Editor.FloatNumericUpDown();
 			this.label3 = new System.Windows.Forms.Label();
-			this.pictureBox1 = new PolygonPlotter();
+			this.pictureBox1 = new Editor.PolygonPlotter();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -45,10 +46,9 @@
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
-			this.floatNumericUpDown1 = new Editor.FloatNumericUpDown();
+			this.toolStripButton7 = new System.Windows.Forms.ToolStripButton();
 			this.circlePositionY = new Editor.FloatNumericUpDown();
 			this.circlePositionX = new Editor.FloatNumericUpDown();
-			this.toolStripButton7 = new System.Windows.Forms.ToolStripButton();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -85,6 +85,36 @@
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Vertices";
 			// 
+			// floatNumericUpDown1
+			// 
+			this.floatNumericUpDown1.EnableLowerLimit = false;
+			this.floatNumericUpDown1.EnableUpperLimit = false;
+			this.floatNumericUpDown1.Interval = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+			this.floatNumericUpDown1.Location = new System.Drawing.Point(140, 19);
+			this.floatNumericUpDown1.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+			this.floatNumericUpDown1.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+			this.floatNumericUpDown1.Name = "floatNumericUpDown1";
+			this.floatNumericUpDown1.Size = new System.Drawing.Size(77, 20);
+			this.floatNumericUpDown1.TabIndex = 18;
+			this.floatNumericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.floatNumericUpDown1.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.floatNumericUpDown1_ValueChanged);
+			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
@@ -97,12 +127,18 @@
 			// pictureBox1
 			// 
 			this.pictureBox1.BackColor = System.Drawing.Color.Black;
+			this.pictureBox1.GridSize = 1F;
+			this.pictureBox1.HoverVertice = -1;
 			this.pictureBox1.Location = new System.Drawing.Point(49, 41);
+			this.pictureBox1.MovingVertice = -1;
 			this.pictureBox1.Name = "pictureBox1";
+			this.pictureBox1.OnionList = null;
 			this.pictureBox1.Size = new System.Drawing.Size(124, 124);
 			this.pictureBox1.TabIndex = 18;
 			this.pictureBox1.TabStop = false;
-			this.pictureBox1.ValidatePolygon += new System.EventHandler(pictureBox1_ValidatePolygon);
+			this.pictureBox1.VerticeList = null;
+			this.pictureBox1.VertSize = 4.5F;
+			this.pictureBox1.ValidatePolygon += new System.EventHandler(this.pictureBox1_ValidatePolygon);
 			// 
 			// groupBox2
 			// 
@@ -215,35 +251,15 @@
 			this.toolStripButton6.Text = "Rotate Right";
 			this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
 			// 
-			// floatNumericUpDown1
+			// toolStripButton7
 			// 
-			this.floatNumericUpDown1.EnableLowerLimit = false;
-			this.floatNumericUpDown1.EnableUpperLimit = false;
-			this.floatNumericUpDown1.Interval = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-			this.floatNumericUpDown1.Location = new System.Drawing.Point(140, 19);
-			this.floatNumericUpDown1.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-			this.floatNumericUpDown1.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-			this.floatNumericUpDown1.Name = "floatNumericUpDown1";
-			this.floatNumericUpDown1.Size = new System.Drawing.Size(77, 20);
-			this.floatNumericUpDown1.TabIndex = 18;
-			this.floatNumericUpDown1.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			this.floatNumericUpDown1.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.floatNumericUpDown1_ValueChanged);
+			this.toolStripButton7.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButton7.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton7.Image")));
+			this.toolStripButton7.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton7.Name = "toolStripButton7";
+			this.toolStripButton7.Size = new System.Drawing.Size(23, 22);
+			this.toolStripButton7.Text = "Onion Skin";
+			this.toolStripButton7.Click += new System.EventHandler(this.toolStripButton7_Click);
 			// 
 			// circlePositionY
 			// 
@@ -263,6 +279,7 @@
 			this.circlePositionY.Name = "circlePositionY";
 			this.circlePositionY.Size = new System.Drawing.Size(50, 20);
 			this.circlePositionY.TabIndex = 14;
+			this.circlePositionY.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.circlePositionY_ValueChanged);
 			// 
 			// circlePositionX
 			// 
@@ -282,16 +299,7 @@
 			this.circlePositionX.Name = "circlePositionX";
 			this.circlePositionX.Size = new System.Drawing.Size(50, 20);
 			this.circlePositionX.TabIndex = 12;
-			// 
-			// toolStripButton7
-			// 
-			this.toolStripButton7.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton7.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton7.Image")));
-			this.toolStripButton7.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton7.Name = "toolStripButton7";
-			this.toolStripButton7.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButton7.Text = "Onion Skin";
-			this.toolStripButton7.Click += new System.EventHandler(this.toolStripButton7_Click);
+			this.circlePositionX.ValueChanged += new Editor.DecimalValueChangedEventHandler(this.circlePositionX_ValueChanged);
 			// 
 			// PolygonPanel
 			// 
