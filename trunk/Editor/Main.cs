@@ -497,6 +497,7 @@ namespace Editor
 			imageList1.Images.Add(Properties.Resources.world);
 			imageList1.Images.Add(Properties.Resources.circle);
 			imageList1.Images.Add(Properties.Resources.polygon);
+			imageList1.Images.Add(Properties.Resources.body);
 
 			treeView1.ImageList = imageList1;
 		}
@@ -802,7 +803,7 @@ namespace Editor
 		}
 
 		public BodyNode(WorldObject world, BodyDefSerialized x) :
-			base(x.Name)
+			base(x.Name, 3)
 		{
 			Body = x.Body;
 			Name = x.Name;
