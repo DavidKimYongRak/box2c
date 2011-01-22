@@ -118,6 +118,9 @@ namespace Editor
 
 			debugDraw = new TestDebugDraw();
 			debugDraw.Flags = DebugFlags.Shapes | DebugFlags.Joints | DebugFlags.CenterOfMasses;
+
+			Gl.glEnable(Gl.GL_BLEND);
+			Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		void OnGLResize()
@@ -194,6 +197,15 @@ namespace Editor
 			//test.m_world.DrawDebugData();
 
 			//DrawTest();
+
+			Gl.glBegin(Gl.GL_LINES);
+			Gl.glColor4ub(0, 255, 0, 64);
+			Gl.glVertex2f(0, 10);
+			Gl.glVertex2f(0, -10);
+			Gl.glColor4ub(255, 0, 0, 64);
+			Gl.glVertex2f(10, 0);
+			Gl.glVertex2f(-10, 0);
+			Gl.glEnd();
 
 			if (!_testing)
 			{

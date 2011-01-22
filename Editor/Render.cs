@@ -81,8 +81,7 @@ namespace Editor
 			float k_segments = (int)(1024.0f * (radius / 50));
 			float k_increment = (float)(2.0f * Math.PI / k_segments);
 			float theta = 0.0f;
-			Gl.glEnable(Gl.GL_BLEND);
-			Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
+
 			Gl.glColor4f(0.5f * color.R, 0.5f * color.G, 0.5f * color.B, 0.5f);
 			Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 			for (int i = 0; i < k_segments; ++i)
@@ -92,7 +91,6 @@ namespace Editor
 				theta += k_increment;
 			}
 			Gl.glEnd();
-			Gl.glDisable(Gl.GL_BLEND);
 
 			theta = 0.0f;
 			Gl.glColor4f(color.R, color.G, color.B, 1.0f);
@@ -114,8 +112,6 @@ namespace Editor
 
 		public override void DrawSolidPolygon(Vec2[] vertices, int vertexCount, ColorF color)
 		{
-			Gl.glEnable(Gl.GL_BLEND);
-			Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
 			Gl.glColor4f(0.5f * color.R, 0.5f * color.G, 0.5f * color.B, 0.5f);
 			Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 			for (int i = 0; i < vertexCount; ++i)
@@ -123,7 +119,6 @@ namespace Editor
 				Gl.glVertex2f(vertices[i].X, vertices[i].Y);
 			}
 			Gl.glEnd();
-			Gl.glDisable(Gl.GL_BLEND);
 
 			Gl.glColor4f(color.R, color.G, color.B, 1.0f);
 			Gl.glBegin(Gl.GL_LINE_LOOP);
