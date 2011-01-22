@@ -40,6 +40,7 @@
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.panel2 = new System.Windows.Forms.Panel();
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.baseTreeViewContextStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newBodyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,9 +51,9 @@
 			this.changeToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.circleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.polygonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.panel1 = new Editor.BlankControl();
 			this.treeView1 = new Paril.Windows.Forms.TreeViewEx();
+			this.panel3 = new System.Windows.Forms.Panel();
 			this.mainMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -64,6 +65,7 @@
 			this.panel2.SuspendLayout();
 			this.baseTreeViewContextStrip.SuspendLayout();
 			this.shapeTreeViewContextMenu.SuspendLayout();
+			this.panel3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// oneToolStripMenuItem
@@ -134,7 +136,7 @@
 			// 
 			// splitContainer1.Panel1
 			// 
-			this.splitContainer1.Panel1.Controls.Add(this.panel1);
+			this.splitContainer1.Panel1.Controls.Add(this.panel3);
 			// 
 			// splitContainer1.Panel2
 			// 
@@ -168,6 +170,12 @@
 			this.panel2.Padding = new System.Windows.Forms.Padding(1);
 			this.panel2.Size = new System.Drawing.Size(243, 195);
 			this.panel2.TabIndex = 0;
+			// 
+			// imageList1
+			// 
+			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// baseTreeViewContextStrip
 			// 
@@ -243,18 +251,12 @@
 			this.polygonToolStripMenuItem.Text = "Polygon";
 			this.polygonToolStripMenuItem.Click += new System.EventHandler(this.polygonToolStripMenuItem_Click);
 			// 
-			// imageList1
-			// 
-			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			// 
 			// panel1
 			// 
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel1.Location = new System.Drawing.Point(0, 0);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(575, 507);
+			this.panel1.Size = new System.Drawing.Size(573, 505);
 			this.panel1.TabIndex = 0;
 			this.panel1.Click += new System.EventHandler(this.panel1_Click);
 			// 
@@ -288,6 +290,16 @@
 			this.treeView1.TabIndex = 2;
 			this.treeView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseUp);
 			// 
+			// panel3
+			// 
+			this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel3.Controls.Add(this.panel1);
+			this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel3.Location = new System.Drawing.Point(0, 0);
+			this.panel3.Name = "panel3";
+			this.panel3.Size = new System.Drawing.Size(575, 507);
+			this.panel3.TabIndex = 1;
+			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -311,6 +323,7 @@
 			this.panel2.ResumeLayout(false);
 			this.baseTreeViewContextStrip.ResumeLayout(false);
 			this.shapeTreeViewContextMenu.ResumeLayout(false);
+			this.panel3.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -342,6 +355,7 @@
 		private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem cloneToolStripMenuItem;
 		private System.Windows.Forms.ImageList imageList1;
+		private System.Windows.Forms.Panel panel3;
 
 	}
 }
