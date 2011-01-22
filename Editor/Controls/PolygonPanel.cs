@@ -255,8 +255,8 @@ namespace Editor
 				ControlStyles.OptimizedDoubleBuffer,
 				true);
 
-			GridSize = 2;
-			VertSize = 4.0f;
+			GridSize = 1;
+			VertSize = 4.5f;
 			MovingVertice = HoverVertice = -1;
 		}
 
@@ -458,7 +458,7 @@ namespace Editor
 			DrawGrid(e.Graphics, Color.FromArgb(127, Color.Chocolate));
 
 			var g = e.Graphics;
-			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+			//g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
 			if (OnionList != null)
 				DrawVertices(g, OnionList, 64);

@@ -60,6 +60,13 @@ namespace Editor.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap body {
+            get {
+                object obj = ResourceManager.GetObject("body", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap circle {
             get {
                 object obj = ResourceManager.GetObject("circle", resourceCulture);
