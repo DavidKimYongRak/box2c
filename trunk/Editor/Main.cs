@@ -311,6 +311,8 @@ namespace Editor
 		{
 		}
 
+		Controls.SliderTest sliderTest = new Controls.SliderTest();
+		
 		void renderWindow_KeyPressed(object sender, SFML.Window.KeyEventArgs e)
 		{
 			int x = renderWindow.Input.GetMouseX();
@@ -370,6 +372,13 @@ namespace Editor
 				viewZoom = 1.0f;
 				viewCenter = new Vec2(0.0f, 20.0f);
 				OnGLResize();
+				break;
+
+			case KeyCode.C:
+				{
+					sliderTest.Show();
+					sliderTest.Location = new System.Drawing.Point(Cursor.Position.X - (sliderTest.Width / 2), Cursor.Position.Y);
+				}
 				break;
 			}
 		}
@@ -530,6 +539,9 @@ namespace Editor
 
 		private void panel1_Click(object sender, EventArgs e)
 		{
+			if (sliderTest.Visible)
+				sliderTest.Hide();
+
 			panel1.Focus();
 		}
 
@@ -942,8 +954,15 @@ namespace Editor
 		{
 			get
 			{
-				if (Parent != null && (Parent is BodyNode))
-					return ((BodyNode)Parent);
+				if (Parent == null)
+					return null;
+
+				for (var x = Parent; x != null; x = x.Parent)
+				{
+					if (x is BodyNode)
+						return (BodyNode)x;
+				}
+
 				return null;
 			}
 		}

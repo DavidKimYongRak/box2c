@@ -104,6 +104,12 @@
     <Compile Include="Controls\FloatNumericUpDown.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\SliderTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\SliderTest.Designer.cs">
+      <DependentUpon>SliderTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Decomposer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -142,6 +148,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FloatNumericUpDown.resx">
       <DependentUpon>FloatNumericUpDown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\SliderTest.resx">
+      <DependentUpon>SliderTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Decomposer.resx">
       <DependentUpon>Decomposer.cs</DependentUpon>
