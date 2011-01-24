@@ -307,12 +307,12 @@ namespace Editor
 			}
 		}
 
+		Controls.SliderTest sliderTest = new Controls.SliderTest();
+	
 		void renderWindow_KeyReleased(object sender, SFML.Window.KeyEventArgs e)
 		{
 		}
-
-		Controls.SliderTest sliderTest = new Controls.SliderTest();
-		
+	
 		void renderWindow_KeyPressed(object sender, SFML.Window.KeyEventArgs e)
 		{
 			int x = renderWindow.Input.GetMouseX();
