@@ -150,6 +150,37 @@ namespace Box2DSharpRenderTest
 				Gl.glVertex2f(aabb.LowerBound.X, aabb.UpperBound.Y);
 				Gl.glEnd();
 			}
+
+			static Vec2[] drawVertices = new Vec2[8];
+			public void DrawSolidPolygon(Shape shape, Transform xf, ColorF color)
+			{
+				switch (shape.ShapeType)
+				{
+				case ShapeType.Circle:
+					{
+						CircleShape circle = (CircleShape)shape;
+
+						Vec2 center = (xf * circle.Position);
+						float radius = circle.Radius;
+						Vec2 axis = xf.R.Col1;
+
+						DrawSolidCircle(center, radius, axis, color);
+					}
+					break;
+
+				case ShapeType.Polygon:
+					{
+						PolygonShape poly = (PolygonShape)shape;
+						int vertexCount = poly.VertexCount;
+						//b2Assert(vertexCount <= b2_maxPolygonVertices);
+						for (int i = 0; i < vertexCount; ++i)
+							drawVertices[i] = (xf * poly.Vertices[i]);
+
+						DrawSolidPolygon(drawVertices, vertexCount, color);
+					}
+					break;
+				}
+			}
 		}
 
 		static World world;
@@ -438,7 +469,7 @@ namespace Box2DSharpRenderTest
 				_body.CreateFixture(new FixtureDef(bulletBodyShape, 0.01f, 0.0f, 0.2f, gunHand.FixtureList.FilterData));
 				_body.IsBullet = true;
 				_body.LinearVelocity = new Vec2((float)(Vel.X * 45), (float)(Vel.Y * 45));
-				_body.UserData = (biped == player1.Biped) ? 4 : 5;
+				_body.UserData = (biped == players[0].Biped) ? 4 : 5;
 			}
 		}
 
@@ -617,7 +648,7 @@ namespace Box2DSharpRenderTest
 			}
 		}
 
-		static Player player1, player2;
+		static Player[] players = new Player[2];
 
 		public struct GroundBodyDescriptor
 		{
@@ -629,8 +660,45 @@ namespace Box2DSharpRenderTest
 			}
 		}
 
+		struct NetworkOptions
+		{
+			public string Name;
+			public string IP;
+			public bool Hosting;
+		}
+
+		Networking.NetworkServer server;
+		Networking.NetworkClient client;
+		NetworkOptions networkOptions = new NetworkOptions();
+
+		static BipedDef player1Def = new BipedDef(9, 9);
+		static BipedDef player2Def = new BipedDef(-9, 9);
+
+		float _currentZoom = 10;
+
 		private void Form2_Load(object sender, EventArgs e)
 		{
+			using (NetworkDialog dialog = new NetworkDialog())
+			{
+				dialog.ShowDialog();
+
+				if (!dialog.checkBox1.Checked && (string.IsNullOrEmpty(dialog.textBox2.Text) ||
+					string.IsNullOrEmpty(dialog.textBox1.Text)))
+				{
+					Close();
+					return;
+				}
+
+				networkOptions.Name = dialog.textBox1.Text;
+				networkOptions.IP = dialog.textBox2.Text;
+				networkOptions.Hosting = dialog.checkBox1.Checked;
+			}
+
+			if (networkOptions.Hosting)
+				server = new Networking.NetworkServer();
+			else
+				client = new Networking.NetworkClient(System.Net.IPAddress.Parse(networkOptions.IP), networkOptions.Name);
+
 			sogc = new SimpleOpenGlControl();
 			sogc.Dock = DockStyle.Fill;
 			sogc.Paint += new PaintEventHandler(sogc_Paint);
@@ -642,116 +710,96 @@ namespace Box2DSharpRenderTest
 			sogc.MouseUp += new MouseEventHandler(sogc_MouseUp);
 			sogc.KeyDown += new KeyEventHandler(sogc_KeyDown);
 			sogc.KeyUp += new KeyEventHandler(sogc_KeyUp);
-			Controls.Add(sogc);
+			splitContainer1.Panel1.Controls.Add(sogc);
 
 			sogc.InitializeContexts();
-			InitOpenGL(sogc.Size, 1, PointF.Empty);
-
-			// Define the gravity vector.
-			Vec2 gravity = new Vec2(0.0f, -17.0f);
-
-			// Do we want to let bodies sleep?
-			bool doSleep = true;
-
-			// Construct a world object, which will hold and simulate the rigid bodies.
-			world = new World(gravity, doSleep);
-			world.WarmStarting = true;
-			world.ContinuousPhysics = true;
-
-			{
-				float bottom = (float)(sogc.Height / 2) / 14.0f;
-				float left = (float)(sogc.Width / 2) / 14.0f;
-				BodyDef bd = new BodyDef();
-				{
-					ground = world.CreateBody(bd);
-
-					PolygonShape shape = new PolygonShape();
-					{
-						shape.SetAsEdge(new Vec2(-left, -bottom), new Vec2(left, -bottom));
-						ground.CreateFixture(shape, 0.0f);
-						ground.UserData = new GroundBodyDescriptor(ground);
-					}
-
-					ground = world.CreateBody(bd);
-
-					{
-						shape.SetAsEdge(new Vec2(-left, bottom), new Vec2(-left, -bottom));
-						ground.CreateFixture(shape, 0.0f);
-						ground.UserData = new GroundBodyDescriptor(ground);
-					}
-
-					ground = world.CreateBody(bd);
-
-					{
-						shape.SetAsEdge(new Vec2(left, bottom), new Vec2(left, -bottom));
-						ground.CreateFixture(shape, 0.0f);
-						ground.UserData = new GroundBodyDescriptor(ground);
-					}
-
-					ground = world.CreateBody(bd);
-
-					{
-						shape.SetAsEdge(new Vec2(left, bottom), new Vec2(-left, bottom));
-						ground.CreateFixture(shape, 0.0f);
-						ground.UserData = new GroundBodyDescriptor(ground);
-					}
-				}
-			}
+			InitOpenGL(sogc.Size, _currentZoom, PointF.Empty);
+			
+			Il.ilInit();
+			Ilut.ilutInit();
 
 			_debugDraw = new GDIDebugThing();
 			_debugDraw.Flags = DebugFlags.Shapes;
-			world.DebugDraw = _debugDraw;
 
-			_filterer = new Filterer();
-			world.ContactFilter = _filterer;
+			if (networkOptions.Hosting)
+			{
+				// Define the gravity vector.
+				Vec2 gravity = new Vec2(0.0f, -17.0f);
 
-			_listener = new MyListener();
-			world.ContactListener = _listener;
+				// Do we want to let bodies sleep?
+				bool doSleep = true;
 
-			System.Timers.Timer timer = new System.Timers.Timer();
+				// Construct a world object, which will hold and simulate the rigid bodies.
+				world = new World(gravity, doSleep);
+				world.WarmStarting = true;
+				world.ContinuousPhysics = true;
+
+				{
+					float bottom = (float)(sogc.Height / 2) / _currentZoom;
+					float left = (float)(sogc.Width / 2) / _currentZoom;
+					BodyDef bd = new BodyDef();
+					{
+						ground = world.CreateBody(bd);
+
+						PolygonShape shape = new PolygonShape();
+						{
+							shape.SetAsEdge(new Vec2(-left, -bottom), new Vec2(left, -bottom));
+							ground.CreateFixture(shape, 0.0f);
+							ground.UserData = new GroundBodyDescriptor(ground);
+						}
+
+						ground = world.CreateBody(bd);
+
+						{
+							shape.SetAsEdge(new Vec2(-left, bottom), new Vec2(-left, -bottom));
+							ground.CreateFixture(shape, 0.0f);
+							ground.UserData = new GroundBodyDescriptor(ground);
+						}
+
+						ground = world.CreateBody(bd);
+
+						{
+							shape.SetAsEdge(new Vec2(left, bottom), new Vec2(left, -bottom));
+							ground.CreateFixture(shape, 0.0f);
+							ground.UserData = new GroundBodyDescriptor(ground);
+						}
+
+						ground = world.CreateBody(bd);
+
+						{
+							shape.SetAsEdge(new Vec2(left, bottom), new Vec2(-left, bottom));
+							ground.CreateFixture(shape, 0.0f);
+							ground.UserData = new GroundBodyDescriptor(ground);
+						}
+					}
+				}
+
+				world.DebugDraw = _debugDraw;
+
+				_filterer = new Filterer();
+				world.ContactFilter = _filterer;
+
+				_listener = new MyListener();
+				world.ContactListener = _listener;
+	
+
+				_glidCrate = Ilut.ilutGLLoadImage("crate1.jpg");
+				_glidChain1 = Ilut.ilutGLLoadImage("chain_top.png");
+				_glidChain2 = Ilut.ilutGLLoadImage("chain_bottom.png");
+				_glidChainball = Ilut.ilutGLLoadImage("chainball.png");
+
+				players[0] = new Player(world, new Vec2(-24, 0), 9, 9);
+				players[1] = new Player(world, new Vec2(24, 0), -9, 9);
+			}
+
+			timer = new System.Timers.Timer();
 			timer.Interval = 15;
 			timer.SynchronizingObject = this;
 			timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
 			timer.Start();
-
-			//Gl.glEnable(Gl.GL_ALPHA_TEST); //Enable alpha-blending
-			//Gl.glAlphaFunc(Gl.GL_GREATER, 0.01f); 
-
-			Il.ilInit();
-			Ilut.ilutInit();
-
-			_glidCrate = Ilut.ilutGLLoadImage("crate1.jpg");
-			_glidChain1 = Ilut.ilutGLLoadImage("chain_top.png");
-			_glidChain2 = Ilut.ilutGLLoadImage("chain_bottom.png");
-			_glidChainball = Ilut.ilutGLLoadImage("chainball.png");
-
-			player1 = new Player(world, new Vec2(-24, 0), 9, 9);
-
-			var gun = new MeshShape("gun.bmesh", 3, true);
-			var gunBody = world.CreateBody(new BodyDef(BodyType.Dynamic, player1.Biped.Bodies[(int)BipedFixtureIndex.LHand].WorldCenter + new Vec2(1.5f, 1.7f), 4.71238898f));
-			var fixtures = gun.AddToBody(gunBody, 2);
-			for (int i = 0; i < fixtures.Length; ++i)
-				fixtures[i].FilterData = player1.Biped.Bodies[(int)BipedFixtureIndex.LHand].FixtureList.FilterData;
-
-			var weld = new WeldJointDef();
-			{
-				weld.Initialize(gunBody, player1.Biped.Bodies[(int)BipedFixtureIndex.LHand], new Vec2(0, 0));
-				world.CreateJoint(weld);
-
-				player2 = new Player(world, new Vec2(24, 0), -9, 9);
-
-				gun = new MeshShape("gun.bmesh", 3, false);
-				gunBody = world.CreateBody(new BodyDef(BodyType.Dynamic, player2.Biped.Bodies[(int)BipedFixtureIndex.LHand].WorldCenter + new Vec2(-1.5f, 1.7f), 4.71238898f));
-				fixtures = gun.AddToBody(gunBody, 2);
-				for (int i = 0; i < fixtures.Length; ++i)
-					fixtures[i].FilterData = player2.Biped.Bodies[(int)BipedFixtureIndex.LHand].FixtureList.FilterData;
-			}
-			weld = new WeldJointDef();
-			{
-				weld.Initialize(gunBody, player2.Biped.Bodies[(int)BipedFixtureIndex.LHand], new Vec2(0, 0));
-				world.CreateJoint(weld);
-			}
 		}
+
+		System.Timers.Timer timer;
 
 		[Flags]
 		public enum GameKeys
@@ -762,8 +810,11 @@ namespace Box2DSharpRenderTest
 			Left = 8,
 			Legs = 16,
 			Hands = 32,
+			StickLegs = 64,
+			StickHands = 128,
+			StiffToggle = 256,
 		}
-		GameKeys _gameKeys = 0;
+		GameKeys _oldGameKeys = 0, _gameKeys = 0;
 
 		Point _downPos;
 		void sogc_MouseUp(object sender, MouseEventArgs e)
@@ -773,11 +824,12 @@ namespace Box2DSharpRenderTest
 				world.DestroyJoint(_mouseJoint);
 				_mouseJoint = null;
 			}
-
 		}
 
 		void sogc_MouseDown(object sender, MouseEventArgs e)
 		{
+			return;
+
 			_downPos = e.Location;
 
 			if (e.Button == System.Windows.Forms.MouseButtons.Middle)
@@ -880,20 +932,20 @@ namespace Box2DSharpRenderTest
 			case Keys.K:
 				_gameKeys |= GameKeys.Legs;
 				break;
-			case Keys.H:
-				new Bullet(player1.Biped);
-				break;
-			case Keys.O:
-				_slowmotion = !_slowmotion;
-				break;
+			//case Keys.H:
+			//	new Bullet(players[0].Biped);
+			//	break;
+			//case Keys.O:
+			//	_slowmotion = !_slowmotion;
+			//	break;
 			case Keys.U:
-				player1.Biped.StickBody();
+				_gameKeys |= GameKeys.StiffToggle;
 				break;
 			case Keys.M:
-				player1.StickingLegs = true;
+				_gameKeys |= GameKeys.StickLegs;
 				break;
 			case Keys.N:
-				player1.StickingHands = true;
+				_gameKeys |= GameKeys.StickHands;
 				break;
 			}
 
@@ -923,13 +975,10 @@ namespace Box2DSharpRenderTest
 				_gameKeys &= ~GameKeys.Legs;
 				break;
 			case Keys.M:
-				player1.StickingLegs = false;
+				_gameKeys &= ~GameKeys.StickLegs;
 				break;
 			case Keys.N:
-				player1.StickingHands = false;
-				break;
-			case Keys.U:
-				player1.Biped.StickBody();
+				_gameKeys &= ~GameKeys.StickHands;
 				break;
 			}
 
@@ -938,11 +987,15 @@ namespace Box2DSharpRenderTest
 
 		void sogc_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
+			return;
+			
 			sogc_MouseClick(sender, e);
 		}
 
 		void sogc_MouseClick(object sender, MouseEventArgs e)
 		{
+			return;
+
 			if (e.Button == System.Windows.Forms.MouseButtons.Middle)
 				return;
 
@@ -978,100 +1031,155 @@ namespace Box2DSharpRenderTest
 		void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			sogc.Invalidate();
-			
-			// Prepare for simulation. Typically we use a time step of 1/60 of a
-			// second (60Hz) and 10 iterations. This provides a high quality simulation
-			// in most game scenarios.
-			float timeStep = 1.0f / ((_slowmotion) ? 145.0f : 70.0f);
-			int velocityIterations = 8;
-			int positionIterations = 4;
 
-			const int MoveSpeed = 450 * 9;
-
-			BipedFixtureIndex[] fixturesToMove;
-			float speedMultiplier = 1;
-
-			if ((_gameKeys & GameKeys.Legs) != 0)
+			if (networkOptions.Hosting)
 			{
-				fixturesToMove = new BipedFixtureIndex[] { BipedFixtureIndex.LFoot, BipedFixtureIndex.RFoot };
-				speedMultiplier = 0.25f;
-			}
-			else if ((_gameKeys & GameKeys.Hands) != 0)
-			{
-				fixturesToMove = new BipedFixtureIndex[] { BipedFixtureIndex.LHand, BipedFixtureIndex.RHand };
-				speedMultiplier = 0.25f;
+				// Prepare for simulation. Typically we use a time step of 1/60 of a
+				// second (60Hz) and 10 iterations. This provides a high quality simulation
+				// in most game scenarios.
+				float timeStep = 1.0f / ((_slowmotion) ? 145.0f : 70.0f);
+				int velocityIterations = 8;
+				int positionIterations = 4;
+
+				const int MoveSpeed = 450 * 9;
+
+				BipedFixtureIndex[] fixturesToMove;
+				float speedMultiplier = 1;
+
+				if (server.Clients.Count != 0)
+				{
+					for (int i = 0; i < 2; ++i)
+					{
+						if (server.Clients.Count == i)
+							break;
+
+						if ((server.Clients[i].Keys & GameKeys.Legs) != 0)
+						{
+							fixturesToMove = new BipedFixtureIndex[] { BipedFixtureIndex.LFoot, BipedFixtureIndex.RFoot };
+							speedMultiplier = 0.25f;
+						}
+						else if ((server.Clients[i].Keys & GameKeys.Hands) != 0)
+						{
+							fixturesToMove = new BipedFixtureIndex[] { BipedFixtureIndex.LHand, BipedFixtureIndex.RHand };
+							speedMultiplier = 0.25f;
+						}
+						else
+							fixturesToMove = new BipedFixtureIndex[] { BipedFixtureIndex.Chest };
+
+						if ((server.Clients[i].Keys & GameKeys.Up) != 0)
+						{
+							foreach (var x in fixturesToMove)
+								players[i].Biped.Bodies[(int)x].ApplyForce(new Vec2(0, MoveSpeed * speedMultiplier), players[i].Biped.Bodies[(int)x].WorldCenter);
+						}
+						if ((server.Clients[i].Keys & GameKeys.Down) != 0)
+						{
+							foreach (var x in fixturesToMove)
+								players[i].Biped.Bodies[(int)x].ApplyForce(new Vec2(0, (-MoveSpeed / 2) * speedMultiplier), players[i].Biped.Bodies[(int)x].WorldCenter);
+						}
+						if ((server.Clients[i].Keys & GameKeys.Left) != 0)
+						{
+							foreach (var x in fixturesToMove)
+								players[i].Biped.Bodies[(int)x].ApplyForce(new Vec2((-MoveSpeed / 2) * speedMultiplier, 0), players[i].Biped.Bodies[(int)x].WorldCenter);
+						}
+						if ((server.Clients[i].Keys & GameKeys.Right) != 0)
+						{
+							foreach (var x in fixturesToMove)
+								players[i].Biped.Bodies[(int)x].ApplyForce(new Vec2((MoveSpeed / 2) * speedMultiplier, 0), players[i].Biped.Bodies[(int)x].WorldCenter);
+						}
+
+						players[i].StickingHands = (server.Clients[i].Keys & GameKeys.StickHands) != 0;
+						players[i].StickingLegs = (server.Clients[i].Keys & GameKeys.StickLegs) != 0;
+
+						if ((server.Clients[i].Keys & GameKeys.StiffToggle) != 0)
+						{
+							players[i].Biped.StickBody();
+							server.Clients[i].Keys &= ~GameKeys.StiffToggle;
+						}
+					}
+				}
+
+				// This is our little game loop.
+				// Instruct the world to perform a single step of simulation.
+				// It is generally best to keep the time step and iterations fixed.
+				world.Step(timeStep, velocityIterations, positionIterations);
+
+				foreach (var x in BodiesToRemove)
+					world.DestroyBody(x);
+				BodiesToRemove.Clear();
+
+				for (int i = 0; i < players[0].WeldDefs.Length; ++i)
+				{
+					if (players[0].WeldDefs[i] != null)
+					{
+						players[0].Welds[i] = (RevoluteJoint)world.CreateJoint(players[0].WeldDefs[i]);
+						players[0].WeldDefs[i] = null;
+					}
+
+					if (i < 2 && !players[0].StickingLegs ||
+					i >= 2 && !players[0].StickingHands)
+					{
+						if (players[0].Welds[i] != null)
+						{
+							world.DestroyJoint(players[0].Welds[i]);
+							players[0].Welds[i] = null;
+						}
+					}
+
+					if (players[1].WeldDefs[i] != null)
+					{
+						players[1].Welds[i] = (RevoluteJoint)world.CreateJoint(players[1].WeldDefs[i]);
+						players[1].WeldDefs[i] = null;
+					}
+
+					if (i < 2 && !players[1].StickingLegs ||
+					i >= 2 && !players[1].StickingHands)
+					{
+						if (players[1].Welds[i] != null)
+						{
+							world.DestroyJoint(players[1].Welds[i]);
+							players[1].Welds[i] = null;
+						}
+					}
+				}
+
+				server.Stream.Write((byte)Networking.EClientDataPacketType.PlayerPacket);
+				for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
+				{
+					server.Stream.Write(players[0].Biped.Bodies[(int)i].Position.X);
+					server.Stream.Write(players[0].Biped.Bodies[(int)i].Position.Y);
+					server.Stream.Write(players[0].Biped.Bodies[(int)i].Angle);
+
+					server.Stream.Write(players[1].Biped.Bodies[(int)i].Position.X);
+					server.Stream.Write(players[1].Biped.Bodies[(int)i].Position.Y);
+					server.Stream.Write(players[1].Biped.Bodies[(int)i].Angle);
+				}
 			}
 			else
-				fixturesToMove = new BipedFixtureIndex[] { BipedFixtureIndex.Chest };
-
-			if ((_gameKeys & GameKeys.Up) != 0)
 			{
-				foreach (var x in fixturesToMove)
-					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2(0, MoveSpeed * speedMultiplier), player1.Biped.Bodies[(int)x].WorldCenter);
-			}
-			if ((_gameKeys & GameKeys.Down) != 0)
-			{
-				foreach (var x in fixturesToMove)
-					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2(0, (-MoveSpeed / 2) * speedMultiplier), player1.Biped.Bodies[(int)x].WorldCenter);
-			}
-			if ((_gameKeys & GameKeys.Left) != 0)
-			{
-				foreach (var x in fixturesToMove)
-					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2((-MoveSpeed / 2) * speedMultiplier, 0), player1.Biped.Bodies[(int)x].WorldCenter);
-			}
-			if ((_gameKeys & GameKeys.Right) != 0)
-			{
-				foreach (var x in fixturesToMove)
-					player1.Biped.Bodies[(int)x].ApplyForce(new Vec2((MoveSpeed / 2) * speedMultiplier, 0), player1.Biped.Bodies[(int)x].WorldCenter);
-			}
-			// This is our little game loop.
-			// Instruct the world to perform a single step of simulation.
-			// It is generally best to keep the time step and iterations fixed.
-			world.Step(timeStep, velocityIterations, positionIterations);
-
-			foreach (var x in BodiesToRemove)
-				world.DestroyBody(x);
-			BodiesToRemove.Clear();
-
-			for (int i = 0; i < player1.WeldDefs.Length; ++i)
-			{
-				if (player1.WeldDefs[i] != null)
+				if (_oldGameKeys != _gameKeys)
 				{
-					player1.Welds[i] = (RevoluteJoint)world.CreateJoint(player1.WeldDefs[i]);
-					player1.WeldDefs[i] = null;
+					client.Stream.Write((byte)Networking.EServerDataPacketType.ClientCmd);
+					client.Stream.Write((int)_gameKeys);
+
+					_oldGameKeys = _gameKeys;
 				}
 
-				if (i < 2 && !player1.StickingLegs ||
-					i >= 2 && !player1.StickingHands)
+				if ((_gameKeys & GameKeys.StiffToggle) != 0)
 				{
-					if (player1.Welds[i] != null)
-					{
-						world.DestroyJoint(player1.Welds[i]);
-						player1.Welds[i] = null;
-					}
-				}
-
-				if (player2.WeldDefs[i] != null)
-				{
-					player2.Welds[i] = (RevoluteJoint)world.CreateJoint(player2.WeldDefs[i]);
-					player2.WeldDefs[i] = null;
-				}
-
-				if (i < 2 && !player1.StickingLegs ||
-					i >= 2 && !player1.StickingHands)
-				{
-					if (player2.Welds[i] != null)
-					{
-						world.DestroyJoint(player2.Welds[i]);
-						player2.Welds[i] = null;
-					}
+					_gameKeys &= ~GameKeys.StiffToggle;
+					_oldGameKeys &= ~GameKeys.StiffToggle;
 				}
 			}
+
+			if (networkOptions.Hosting)
+				server.Check();
+			else
+				client.Check();
 		}
 
 		void sogc_Resize(object sender, EventArgs e)
 		{
-			InitOpenGL(sogc.Size, 1, PointF.Empty);
+			InitOpenGL(sogc.Size, _currentZoom, PointF.Empty);
 			sogc.Invalidate();
 		}
 
@@ -1120,13 +1228,26 @@ namespace Box2DSharpRenderTest
 			Gl.glLoadIdentity();
 
 			Gl.glTranslatef(sogc.Width / 2, sogc.Height / 2, 0);
-			Gl.glScalef(14, -14, 14);
+			Gl.glScalef(zoom, -zoom, zoom);
 
-			if (_drawDebug)
+			if (_drawDebug && networkOptions.Hosting)
 			{
 				Gl.glPushMatrix();
 				world.DrawDebugData();
 				Gl.glPopMatrix();
+			}
+			else if (!networkOptions.Hosting)
+			{
+				if (client.Transforms != null)
+				{
+					var color = new ColorF(0.9f, 0.7f, 0.7f);
+
+					for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
+					{
+						_debugDraw.DrawSolidPolygon(player1Def.Fixtures[(int)i].Shape, client.Transforms[i,0], color);					
+						_debugDraw.DrawSolidPolygon(player2Def.Fixtures[(int)i].Shape, client.Transforms[i,1], color);
+					}
+				}
 			}
 
 			Gl.glPushMatrix();
@@ -1207,6 +1328,22 @@ namespace Box2DSharpRenderTest
 		private void Form2_KeyDown(object sender, KeyEventArgs e)
 		{
 
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			client.SendText(textBox2.Text);
+			textBox2.Clear();
+		}
+
+		private void Form2_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			timer.Stop();
+
+			if (networkOptions.Hosting)
+				server.Close();
+			else
+				client.Close();
 		}
 	}
 
