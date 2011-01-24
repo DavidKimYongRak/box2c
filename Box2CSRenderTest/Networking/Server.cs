@@ -244,6 +244,12 @@ namespace Box2DSharpRenderTest.Networking
 			private set;
 		}
 
+		public long Frame
+		{
+			get;
+			set;
+		}
+
 		public ConnectedClient ClientFromEndPoint(IPEndPoint endPoint)
 		{
 			foreach (var p in Clients)

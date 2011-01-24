@@ -32,6 +32,8 @@
 			this.textBox2 = new System.Windows.Forms.TextBox();
 			this.button1 = new System.Windows.Forms.Button();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.pictureBox1 = new Box2DSharpRenderTest.BlankControl();
+			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
 			this.SuspendLayout();
@@ -74,6 +76,10 @@
 			this.splitContainer1.Name = "splitContainer1";
 			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
+			// splitContainer1.Panel1
+			// 
+			this.splitContainer1.Panel1.Controls.Add(this.pictureBox1);
+			// 
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.textBox1);
@@ -82,6 +88,15 @@
 			this.splitContainer1.Size = new System.Drawing.Size(738, 609);
 			this.splitContainer1.SplitterDistance = 495;
 			this.splitContainer1.TabIndex = 3;
+			// 
+			// pictureBox1
+			// 
+			this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+			this.pictureBox1.Name = "pictureBox1";
+			this.pictureBox1.Size = new System.Drawing.Size(738, 495);
+			this.pictureBox1.TabIndex = 0;
+			this.pictureBox1.Text = "blankControl1";
 			// 
 			// Form2
 			// 
@@ -94,8 +109,7 @@
 			this.Text = "Form2";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form2_FormClosing);
 			this.Load += new System.EventHandler(this.Form2_Load);
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form2_KeyDown);
-			this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form2_PreviewKeyDown);
+			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.Panel2.PerformLayout();
 			this.splitContainer1.ResumeLayout(false);
@@ -109,6 +123,7 @@
 		public System.Windows.Forms.TextBox textBox1;
 		public System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.SplitContainer splitContainer1;
+		private BlankControl pictureBox1;
 
 	}
 }

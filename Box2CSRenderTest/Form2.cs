@@ -11,6 +11,8 @@ using Tao.OpenGl;
 using Tao.Platform.Windows;
 using Box2CS;
 using Tao.DevIl;
+//using SFML.Graphics;
+using SFML.Window;
 
 namespace Box2DSharpRenderTest
 {
@@ -277,7 +279,6 @@ namespace Box2DSharpRenderTest
 			}
 		}
 
-		SimpleOpenGlControl sogc;
 		static Body ground;
 
 		int _glidCrate;
@@ -676,6 +677,9 @@ namespace Box2DSharpRenderTest
 
 		float _currentZoom = 10;
 
+		SFML.Graphics.RenderWindow renderWindow;
+		System.Threading.Thread simulationThread;
+
 		private void Form2_Load(object sender, EventArgs e)
 		{
 			using (NetworkDialog dialog = new NetworkDialog())
@@ -699,21 +703,16 @@ namespace Box2DSharpRenderTest
 			else
 				client = new Networking.NetworkClient(System.Net.IPAddress.Parse(networkOptions.IP), networkOptions.Name);
 
-			sogc = new SimpleOpenGlControl();
-			sogc.Dock = DockStyle.Fill;
-			sogc.Paint += new PaintEventHandler(sogc_Paint);
-			sogc.Resize += new EventHandler(sogc_Resize);
-			sogc.MouseMove += new MouseEventHandler(sogc_MouseMove);
-			sogc.MouseClick += new MouseEventHandler(sogc_MouseClick);
-			sogc.MouseDoubleClick += new MouseEventHandler(sogc_MouseDoubleClick);
-			sogc.MouseDown += new MouseEventHandler(sogc_MouseDown);
-			sogc.MouseUp += new MouseEventHandler(sogc_MouseUp);
-			sogc.KeyDown += new KeyEventHandler(sogc_KeyDown);
-			sogc.KeyUp += new KeyEventHandler(sogc_KeyUp);
-			splitContainer1.Panel1.Controls.Add(sogc);
+			renderWindow = new SFML.Graphics.RenderWindow(pictureBox1.Handle, new ContextSettings(32, 0, 12));
+			renderWindow.Resized += new EventHandler<SizeEventArgs>(render_Resized);
+			//renderWindow.MouseButtonPressed += new EventHandler<MouseButtonEventArgs>(renderWindow_MouseButtonPressed);
+			//renderWindow.MouseButtonReleased += new EventHandler<MouseButtonEventArgs>(renderWindow_MouseButtonReleased);
+			//renderWindow.MouseMoved += new EventHandler<MouseMoveEventArgs>(renderWindow_MouseMoved);
+			renderWindow.KeyPressed += new EventHandler<SFML.Window.KeyEventArgs>(renderWindow_KeyPressed);
+			renderWindow.KeyReleased += new EventHandler<SFML.Window.KeyEventArgs>(renderWindow_KeyReleased);
+			renderWindow.Show(true);
 
-			sogc.InitializeContexts();
-			InitOpenGL(sogc.Size, _currentZoom, PointF.Empty);
+			InitOpenGL(pictureBox1.Size, _currentZoom, PointF.Empty);
 			
 			Il.ilInit();
 			Ilut.ilutInit();
@@ -735,8 +734,8 @@ namespace Box2DSharpRenderTest
 				world.ContinuousPhysics = true;
 
 				{
-					float bottom = (float)(sogc.Height / 2) / _currentZoom;
-					float left = (float)(sogc.Width / 2) / _currentZoom;
+					float bottom = (float)(pictureBox1.Height / 2) / _currentZoom;
+					float left = (float)(pictureBox1.Width / 2) / _currentZoom;
 					BodyDef bd = new BodyDef();
 					{
 						ground = world.CreateBody(bd);
@@ -792,14 +791,142 @@ namespace Box2DSharpRenderTest
 				players[1] = new Player(world, new Vec2(24, 0), -9, 9);
 			}
 
-			timer = new System.Timers.Timer();
-			timer.Interval = 15;
-			timer.SynchronizingObject = this;
-			timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
-			timer.Start();
+			simulationThread = new System.Threading.Thread(SimulationLoop);
+			simulationThread.Start();
 		}
 
-		System.Timers.Timer timer;
+		Point CursorPos;
+		public float settingsHz = 20;
+
+		void SimulationLoop()
+		{
+			while (true)
+			{
+				CursorPos = new System.Drawing.Point(renderWindow.Input.GetMouseX(), renderWindow.Input.GetMouseY());
+
+				int TICKS_PER_SECOND = (int)settingsHz;
+				int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
+				const int MAX_FRAMESKIP = 5;
+
+				int loops = 0;
+				while (System.Environment.TickCount > NextGameTick && loops < MAX_FRAMESKIP)
+				{
+					Simulate();
+
+					NextGameTick += SKIP_TICKS;
+					loops++;
+					gameFrame++;
+				}
+
+				Invoke((Action)delegate() { UpdateDraw(); });
+
+				// Sleep it off
+				System.Threading.Thread.Sleep(5);
+			}
+		}
+
+		Dictionary<KeyCode, bool> _keyRepeats = new Dictionary<KeyCode, bool>();
+
+		void renderWindow_KeyReleased(object sender, SFML.Window.KeyEventArgs e)
+		{
+			switch (e.Code)
+			{
+			case KeyCode.W:
+				_gameKeys &= ~GameKeys.Up;
+				break;
+			case KeyCode.S:
+				_gameKeys &= ~GameKeys.Down;
+				break;
+			case KeyCode.A:
+				_gameKeys &= ~GameKeys.Left;
+				break;
+			case KeyCode.D:
+				_gameKeys &= ~GameKeys.Right;
+				break;
+			case KeyCode.L:
+				_gameKeys &= ~GameKeys.Hands;
+				break;
+			case KeyCode.K:
+				_gameKeys &= ~GameKeys.Legs;
+				break;
+			case KeyCode.M:
+				_gameKeys &= ~GameKeys.StickLegs;
+				break;
+			case KeyCode.N:
+				_gameKeys &= ~GameKeys.StickHands;
+				break;
+			}
+
+			_keyRepeats.Remove(e.Code);
+		}
+
+		void renderWindow_KeyPressed(object sender, SFML.Window.KeyEventArgs e)
+		{
+			if (_keyRepeats.ContainsKey(e.Code))
+				return;
+
+			switch (e.Code)
+			{
+			case KeyCode.Z:
+				_drawDebug = !_drawDebug;
+				break;
+			case KeyCode.W:
+				_gameKeys |= GameKeys.Up;
+				break;
+			case KeyCode.S:
+				_gameKeys |= GameKeys.Down;
+				break;
+			case KeyCode.A:
+				_gameKeys |= GameKeys.Left;
+				break;
+			case KeyCode.D:
+				_gameKeys |= GameKeys.Right;
+				break;
+			case KeyCode.L:
+				_gameKeys |= GameKeys.Hands;
+				break;
+			case KeyCode.K:
+				_gameKeys |= GameKeys.Legs;
+				break;
+			//case Keys.H:
+			//	new Bullet(players[0].Biped);
+			//	break;
+			//case Keys.O:
+			//	_slowmotion = !_slowmotion;
+			//	break;
+			case KeyCode.U:
+				_gameKeys |= GameKeys.StiffToggle;
+				break;
+			case KeyCode.M:
+				_gameKeys |= GameKeys.StickLegs;
+				break;
+			case KeyCode.N:
+				_gameKeys |= GameKeys.StickHands;
+				break;
+			}
+
+			_keyRepeats.Add(e.Code, true);
+		}
+
+		/*void renderWindow_MouseMoved(object sender, MouseMoveEventArgs e)
+		{
+			OnGLMouseMotion(e.X, e.Y);
+		}
+
+		void renderWindow_MouseButtonReleased(object sender, MouseButtonEventArgs e)
+		{
+			OnGLMouse(e.Button, MouseButtonState.Up, e.X, e.Y);
+		}
+
+		void renderWindow_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+		{
+			OnGLMouse(e.Button, MouseButtonState.Down, e.X, e.Y);
+		}*/
+
+		void render_Resized(object sender, SizeEventArgs e)
+		{
+			OnGLResize();
+		}
 
 		[Flags]
 		public enum GameKeys
@@ -816,7 +943,7 @@ namespace Box2DSharpRenderTest
 		}
 		GameKeys _oldGameKeys = 0, _gameKeys = 0;
 
-		Point _downPos;
+		/*Point _downPos;
 		void sogc_MouseUp(object sender, MouseEventArgs e)
 		{
 			if (_mouseJoint != null)
@@ -834,7 +961,7 @@ namespace Box2DSharpRenderTest
 
 			if (e.Button == System.Windows.Forms.MouseButtons.Middle)
 			{
-				var p = new Vec2((float)((sogc.Width / 2) - (sogc.Width - _downPos.X)) / 14.0f, (float)((sogc.Height / 2) - _downPos.Y) / 14.0f);
+				var p = new Vec2((float)((pictureBox1.Width / 2) - (pictureBox1.Width - _downPos.X)) / 14.0f, (float)((pictureBox1.Height / 2) - _downPos.Y) / 14.0f);
 
 				if (_mouseJoint != null)
 					return;
@@ -889,7 +1016,7 @@ namespace Box2DSharpRenderTest
 		int _moveCount = 2;
 		void sogc_MouseMove(object sender, MouseEventArgs e)
 		{
-			var p = new Vec2((float)((sogc.Width / 2) - (sogc.Width - e.Location.X)) / 14.0f, (float)((sogc.Height / 2) - e.Location.Y) / 14.0f);
+			var p = new Vec2((float)((pictureBox1.Width / 2) - (pictureBox1.Width - e.Location.X)) / 14.0f, (float)((pictureBox1.Height / 2) - e.Location.Y) / 14.0f);
 			if (_mouseJoint != null)
 				_mouseJoint.Target = p;
 
@@ -902,88 +1029,6 @@ namespace Box2DSharpRenderTest
 				_moveCount++;
 		}
 
-		Dictionary<Keys, bool> _keyRepeats = new Dictionary<Keys, bool>();
-
-		void sogc_KeyDown(object sender, KeyEventArgs e)
-		{
-			if (_keyRepeats.ContainsKey(e.KeyCode))
-				return;
-
-			switch (e.KeyCode)
-			{
-			case Keys.Z:
-				_drawDebug = !_drawDebug;
-				break;
-			case Keys.W:
-				_gameKeys |= GameKeys.Up;
-				break;
-			case Keys.S:
-				_gameKeys |= GameKeys.Down;
-				break;
-			case Keys.A:
-				_gameKeys |= GameKeys.Left;
-				break;
-			case Keys.D:
-				_gameKeys |= GameKeys.Right;
-				break;
-			case Keys.L:
-				_gameKeys |= GameKeys.Hands;
-				break;
-			case Keys.K:
-				_gameKeys |= GameKeys.Legs;
-				break;
-			//case Keys.H:
-			//	new Bullet(players[0].Biped);
-			//	break;
-			//case Keys.O:
-			//	_slowmotion = !_slowmotion;
-			//	break;
-			case Keys.U:
-				_gameKeys |= GameKeys.StiffToggle;
-				break;
-			case Keys.M:
-				_gameKeys |= GameKeys.StickLegs;
-				break;
-			case Keys.N:
-				_gameKeys |= GameKeys.StickHands;
-				break;
-			}
-
-			_keyRepeats.Add(e.KeyCode, true);
-		}
-
-		void sogc_KeyUp(object sender, KeyEventArgs e)
-		{
-			switch (e.KeyCode)
-			{
-			case Keys.W:
-				_gameKeys &= ~GameKeys.Up;
-				break;
-			case Keys.S:
-				_gameKeys &= ~GameKeys.Down;
-				break;
-			case Keys.A:
-				_gameKeys &= ~GameKeys.Left;
-				break;
-			case Keys.D:
-				_gameKeys &= ~GameKeys.Right;
-				break;
-			case Keys.L:
-				_gameKeys &= ~GameKeys.Hands;
-				break;
-			case Keys.K:
-				_gameKeys &= ~GameKeys.Legs;
-				break;
-			case Keys.M:
-				_gameKeys &= ~GameKeys.StickLegs;
-				break;
-			case Keys.N:
-				_gameKeys &= ~GameKeys.StickHands;
-				break;
-			}
-
-			_keyRepeats.Remove(e.KeyCode);
-		}
 
 		void sogc_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
@@ -999,13 +1044,7 @@ namespace Box2DSharpRenderTest
 			if (e.Button == System.Windows.Forms.MouseButtons.Middle)
 				return;
 
-			var pos = new Vec2((float)((sogc.Width / 2) - (sogc.Width - _downPos.X)) / 14.0f, (float)((sogc.Height / 2) - _downPos.Y) / 14.0f);
-			/*if (e.Button == System.Windows.Forms.MouseButtons.Left)
-				MakeCircle(pos, 0.15f);
-			else if (e.Button == System.Windows.Forms.MouseButtons.Middle)
-				MakeChain(pos);
-			else
-				MakeBox(pos, 0.5f, 0.5f);*/
+			var pos = new Vec2((float)((pictureBox1.Width / 2) - (pictureBox1.Width - _downPos.X)) / 14.0f, (float)((pictureBox1.Height / 2) - _downPos.Y) / 14.0f);
 
 			if (e.Button == System.Windows.Forms.MouseButtons.Left)
 			{
@@ -1026,20 +1065,18 @@ namespace Box2DSharpRenderTest
 
 			_moveCount = 0;
 			_oldPos = e.Location;
-		}
+		}*/
 
-		void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		void Simulate()
 		{
-			sogc.Invalidate();
-
 			if (networkOptions.Hosting)
 			{
 				// Prepare for simulation. Typically we use a time step of 1/60 of a
 				// second (60Hz) and 10 iterations. This provides a high quality simulation
 				// in most game scenarios.
-				float timeStep = 1.0f / ((_slowmotion) ? 145.0f : 70.0f);
-				int velocityIterations = 8;
-				int positionIterations = 4;
+				float timeStep = 1.0f / settingsHz;
+				int velocityIterations = 14;
+				int positionIterations = 8;
 
 				const int MoveSpeed = 450 * 9;
 
@@ -1142,7 +1179,8 @@ namespace Box2DSharpRenderTest
 					}
 				}
 
-				server.Stream.Write((byte)Networking.EClientDataPacketType.PlayerPacket);
+				server.Stream.Write((byte)Networking.EClientDataPacketType.FramePacket);
+				server.Stream.Write(server.Frame);
 				for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
 				{
 					server.Stream.Write(players[0].Biped.Bodies[(int)i].Position.X);
@@ -1172,21 +1210,31 @@ namespace Box2DSharpRenderTest
 			}
 
 			if (networkOptions.Hosting)
+			{
 				server.Check();
+
+				server.Frame++;
+			}
 			else
+			{
 				client.Check();
+
+				Invoke((Action)delegate()
+				{
+					Text = client.Frame.ToString() + "|" + (client.Time / 1000).ToString() + "|" + client.CurFrame.ServerFrame.ToString() + "|" + (client.CurFrame.ServerTime / 1000).ToString();
+				});
+
+				client.Frame++;
+			}
 		}
 
-		void sogc_Resize(object sender, EventArgs e)
+		void OnGLResize()
 		{
-			InitOpenGL(sogc.Size, _currentZoom, PointF.Empty);
-			sogc.Invalidate();
+			InitOpenGL(pictureBox1.Size, _currentZoom, PointF.Empty);
 		}
 
-		void sogc_Paint(object sender, PaintEventArgs e)
-		{
-			OpenGLDraw();
-		}
+		static long NextGameTick = System.Environment.TickCount;
+		static int gameFrame = 0;
 
 		PointF offset;
 		float zoom = 1;
@@ -1217,17 +1265,25 @@ namespace Box2DSharpRenderTest
 			Gl.glOrtho(0, Width, Height, 0, -1, 1);
 
 			Gl.glMatrixMode(Gl.GL_MODELVIEW);
+			NextGameTick = System.Environment.TickCount;
 		}
 
 		bool _drawDebug = true;
+		long _renderFrame = 0;
 
-		public void OpenGLDraw()
+		public void UpdateDraw()
 		{
+			// Process events
+			renderWindow.DispatchEvents();
+
+			// Clear the window
+			renderWindow.Clear();
+
 			Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
 			Gl.glMatrixMode(Gl.GL_MODELVIEW);
 			Gl.glLoadIdentity();
 
-			Gl.glTranslatef(sogc.Width / 2, sogc.Height / 2, 0);
+			Gl.glTranslatef(pictureBox1.Width / 2, pictureBox1.Height / 2, 0);
 			Gl.glScalef(zoom, -zoom, zoom);
 
 			if (_drawDebug && networkOptions.Hosting)
@@ -1238,14 +1294,25 @@ namespace Box2DSharpRenderTest
 			}
 			else if (!networkOptions.Hosting)
 			{
-				if (client.Transforms != null)
+				if (client.OldFrame.Transforms != null)
+				{
+					var color = new ColorF(0.2f, 0.2f, 0.2f);
+
+					for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
+					{
+						_debugDraw.DrawSolidPolygon(player1Def.Fixtures[(int)i].Shape, client.OldFrame.Transforms[i, 0], color);
+						_debugDraw.DrawSolidPolygon(player2Def.Fixtures[(int)i].Shape, client.OldFrame.Transforms[i, 1], color);
+					}
+				}
+
+				if (client.CurFrame.Transforms != null)
 				{
 					var color = new ColorF(0.9f, 0.7f, 0.7f);
 
 					for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
 					{
-						_debugDraw.DrawSolidPolygon(player1Def.Fixtures[(int)i].Shape, client.Transforms[i,0], color);					
-						_debugDraw.DrawSolidPolygon(player2Def.Fixtures[(int)i].Shape, client.Transforms[i,1], color);
+						_debugDraw.DrawSolidPolygon(player1Def.Fixtures[(int)i].Shape, client.CurFrame.Transforms[i, 0], color);
+						_debugDraw.DrawSolidPolygon(player2Def.Fixtures[(int)i].Shape, client.CurFrame.Transforms[i, 1], color);
 					}
 				}
 			}
@@ -1315,19 +1382,15 @@ namespace Box2DSharpRenderTest
 				Gl.glEnd();
 				Gl.glPopMatrix();
 			}
+
 			Gl.glBindTexture(Gl.GL_TEXTURE_2D, 0);
 
 			Gl.glPopMatrix();
-		}
+		
+			renderWindow.Display();
 
-		private void Form2_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-		{
-
-		}
-
-		private void Form2_KeyDown(object sender, KeyEventArgs e)
-		{
-
+			_renderFrame++;
+			Invoke((Action)delegate() { textBox2.Text=_renderFrame.ToString(); });
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -1338,7 +1401,7 @@ namespace Box2DSharpRenderTest
 
 		private void Form2_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			timer.Stop();
+			simulationThread.Abort();
 
 			if (networkOptions.Hosting)
 				server.Close();
@@ -1358,5 +1421,9 @@ namespace Box2DSharpRenderTest
 		{
 			return (float)(Math.PI * deg / 180.0f);
 		}
+	}
+
+	public class BlankControl : Control
+	{
 	}
 }

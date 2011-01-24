@@ -13,7 +13,7 @@ namespace Box2DSharpRenderTest.Networking
 		ConnectedPacket,
 		DisconnectedPacket,
 		ChatPacket,
-		PlayerPacket
+		FramePacket
 	}
 
 	public class ClientDataPacket : DataPacket
@@ -45,7 +45,7 @@ namespace Box2DSharpRenderTest.Networking
 					}
 				case EClientDataPacketType.ChatPacket:
 					{
-						Program.MainForm.textBox1.Text += Memory.ReadString().Replace("\n", Environment.NewLine);
+						Program.MainForm.Invoke((Action)delegate() { Program.MainForm.textBox1.Text += Memory.ReadString().Replace("\n", Environment.NewLine); });
 						break;
 					}
 				case EClientDataPacketType.DisconnectedPacket:
@@ -54,19 +54,50 @@ namespace Box2DSharpRenderTest.Networking
 						System.Windows.Forms.Application.Exit();
 						break;
 					}
-				case EClientDataPacketType.PlayerPacket:
+				case EClientDataPacketType.FramePacket:
 					{
-						Client.Transforms = new Box2CS.Transform[(int)BipedFixtureIndex.Max,2];
+						Client.OldFrame = Client.CurFrame;
+
+						Frame frame = new Frame();
+
+						frame.ServerFrame = Memory.ReadInt64();
+						frame.ServerTime = (int)frame.ServerFrame * 50;
+
+						frame.Transforms = new Box2CS.Transform[(int)BipedFixtureIndex.Max, 2];
 
 						for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
 						{
-							Client.Transforms[i,0] = new Box2CS.Transform(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), new Box2CS.Mat22(Memory.ReadSingle()));
-							Client.Transforms[i,1] = new Box2CS.Transform(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), new Box2CS.Mat22(Memory.ReadSingle()));
+							frame.Transforms[i, 0] = new Box2CS.Transform(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), new Box2CS.Mat22(Memory.ReadSingle()));
+							frame.Transforms[i, 1] = new Box2CS.Transform(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), new Box2CS.Mat22(Memory.ReadSingle()));
 						}
+
+						Client.CurFrame = frame;
+
 						break;
 					}
 				}
 			}
+		}
+	}
+
+	public struct Frame
+	{
+		public long ServerFrame
+		{
+			get;
+			set;
+		}
+
+		public int ServerTime
+		{
+			get;
+			set;
+		}
+
+		public Box2CS.Transform[,] Transforms
+		{
+			get;
+			set;
 		}
 	}
 
@@ -103,7 +134,25 @@ namespace Box2DSharpRenderTest.Networking
 			private set;
 		}
 
-		public Box2CS.Transform[,] Transforms
+		public long Frame
+		{
+			get;
+			set;
+		}
+
+		public Frame OldFrame
+		{
+			get;
+			set;
+		}
+
+		public Frame CurFrame
+		{
+			get;
+			set;
+		}
+
+		public int Time
 		{
 			get;
 			set;
