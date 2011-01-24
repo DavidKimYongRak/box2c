@@ -69,11 +69,21 @@
     <Compile Include="Form2.Designer.cs">
       <DependentUpon>Form2.cs</DependentUpon>
     </Compile>
+    <Compile Include="NetworkDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NetworkDialog.Designer.cs">
+      <DependentUpon>NetworkDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Networking\Client.cs" />
     <Compile Include="Networking\Server.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetworkDialog.resx">
+      <DependentUpon>NetworkDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
