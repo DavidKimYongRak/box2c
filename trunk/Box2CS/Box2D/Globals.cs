@@ -29,19 +29,19 @@ namespace Box2CS
 	{
 		class NativeMethods
 		{
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void cb2_collidecircles(out Manifold manifold, IntPtr circle1, Transform xf1, IntPtr circle2, Transform xf2);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void cb2_collidepolygonandcircle(out Manifold manifold, IntPtr polygon, Transform xf1, IntPtr circle, Transform xf2);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void cb2_collidepolygons(out Manifold manifold, IntPtr polygon1, Transform xf1, IntPtr polygon2, Transform xf2);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern int cb2_clipsegmenttoline([MarshalAs(UnmanagedType.LPArray, SizeConst=2)]out ClipVertex[] vOut, ClipVertex[] vIn, Vec2 normal, float offset);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool cb2_testoverlap(IntPtr shapeA, IntPtr shapeB, Transform xfA, Transform xfB);
 		}
