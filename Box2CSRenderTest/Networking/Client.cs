@@ -63,20 +63,38 @@ namespace Box2DSharpRenderTest.Networking
 						frame.ServerFrame = Memory.ReadInt64();
 						frame.ServerTime = (int)frame.ServerFrame * 50;
 
-						frame.Transforms = new Box2CS.Transform[(int)BipedFixtureIndex.Max, 2];
+						frame.Transforms = new TransformHolder[(int)BipedFixtureIndex.Max, 2];
 
 						for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
 						{
-							frame.Transforms[i, 0] = new Box2CS.Transform(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), new Box2CS.Mat22(Memory.ReadSingle()));
-							frame.Transforms[i, 1] = new Box2CS.Transform(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), new Box2CS.Mat22(Memory.ReadSingle()));
+							frame.Transforms[i, 0] = new TransformHolder(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), Memory.ReadSingle());
+							frame.Transforms[i, 1] = new TransformHolder(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), Memory.ReadSingle());
 						}
 
 						Client.CurFrame = frame;
+						Client.NextFrameTime = DateTime.Now.TimeOfDay.TotalMilliseconds;
 
 						break;
 					}
 				}
 			}
+		}
+	}
+
+	public struct TransformHolder
+	{
+		public Box2CS.Vec2 Position;
+		public float Angle;
+
+		public TransformHolder(Box2CS.Vec2 position, float angle)
+		{
+			Position = position;
+			Angle = angle;
+		}
+
+		public Box2CS.Transform ToTransform()
+		{
+			return new Box2CS.Transform(Position, new Box2CS.Mat22(Angle));
 		}
 	}
 
@@ -94,7 +112,7 @@ namespace Box2DSharpRenderTest.Networking
 			set;
 		}
 
-		public Box2CS.Transform[,] Transforms
+		public TransformHolder[,] Transforms
 		{
 			get;
 			set;
@@ -153,6 +171,12 @@ namespace Box2DSharpRenderTest.Networking
 		}
 
 		public int Time
+		{
+			get;
+			set;
+		}
+
+		public double NextFrameTime
 		{
 			get;
 			set;

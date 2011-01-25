@@ -820,8 +820,12 @@ namespace Box2DSharpRenderTest
 
 				Invoke((Action)delegate() { UpdateDraw(); });
 
+				mutex.WaitOne();
+				mutex.ReleaseMutex();
+
 				// Sleep it off
-				System.Threading.Thread.Sleep(5);
+				System.Threading.Thread.Sleep(2);
+		
 			}
 		}
 
@@ -1219,11 +1223,6 @@ namespace Box2DSharpRenderTest
 			{
 				client.Check();
 
-				Invoke((Action)delegate()
-				{
-					Text = client.Frame.ToString() + "|" + (client.Time / 1000).ToString() + "|" + client.CurFrame.ServerFrame.ToString() + "|" + (client.CurFrame.ServerTime / 1000).ToString();
-				});
-
 				client.Frame++;
 			}
 		}
@@ -1270,9 +1269,12 @@ namespace Box2DSharpRenderTest
 
 		bool _drawDebug = true;
 		long _renderFrame = 0;
+		System.Threading.Mutex mutex = new System.Threading.Mutex();
 
 		public void UpdateDraw()
 		{
+			mutex.WaitOne();
+
 			// Process events
 			renderWindow.DispatchEvents();
 
@@ -1294,16 +1296,7 @@ namespace Box2DSharpRenderTest
 			}
 			else if (!networkOptions.Hosting)
 			{
-				if (client.OldFrame.Transforms != null)
-				{
-					var color = new ColorF(0.2f, 0.2f, 0.2f);
-
-					for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
-					{
-						_debugDraw.DrawSolidPolygon(player1Def.Fixtures[(int)i].Shape, client.OldFrame.Transforms[i, 0], color);
-						_debugDraw.DrawSolidPolygon(player2Def.Fixtures[(int)i].Shape, client.OldFrame.Transforms[i, 1], color);
-					}
-				}
+				float frac = (float)(DateTime.Now.TimeOfDay.TotalMilliseconds - client.NextFrameTime) / 50.0f;
 
 				if (client.CurFrame.Transforms != null)
 				{
@@ -1311,8 +1304,19 @@ namespace Box2DSharpRenderTest
 
 					for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
 					{
-						_debugDraw.DrawSolidPolygon(player1Def.Fixtures[(int)i].Shape, client.CurFrame.Transforms[i, 0], color);
-						_debugDraw.DrawSolidPolygon(player2Def.Fixtures[(int)i].Shape, client.CurFrame.Transforms[i, 1], color);
+						if (client.OldFrame.Transforms == null)
+						{
+							_debugDraw.DrawSolidPolygon(player1Def.Fixtures[(int)i].Shape, client.CurFrame.Transforms[i, 0].ToTransform(), color);
+							_debugDraw.DrawSolidPolygon(player2Def.Fixtures[(int)i].Shape, client.CurFrame.Transforms[i, 1].ToTransform(), color);
+						}
+						else
+						{
+							var transform1_new = client.CurFrame.Transforms[i, 0];
+							var transform1_old = client.OldFrame.Transforms[i, 0];
+							transform1_new.Position = transform1_old.Position + ((transform1_old.Position - transform1_new.Position) * frac);
+							transform1_new.Angle = transform1_old.Angle + ((transform1_old.Angle - transform1_new.Angle) * frac);
+							_debugDraw.DrawSolidPolygon(player1Def.Fixtures[(int)i].Shape, transform1_new.ToTransform(), color);
+						}
 					}
 				}
 			}
@@ -1390,7 +1394,14 @@ namespace Box2DSharpRenderTest
 			renderWindow.Display();
 
 			_renderFrame++;
-			Invoke((Action)delegate() { textBox2.Text=_renderFrame.ToString(); });
+
+			if (!networkOptions.Hosting)
+			{
+				float frac = (float)(DateTime.Now.TimeOfDay.TotalMilliseconds - client.NextFrameTime) / 50.0f;
+				Invoke((Action)delegate() { Text=frac.ToString(); });
+			}
+
+			mutex.ReleaseMutex();
 		}
 
 		private void button1_Click(object sender, EventArgs e)
