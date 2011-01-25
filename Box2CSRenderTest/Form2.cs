@@ -796,7 +796,8 @@ namespace Box2DSharpRenderTest
 		}
 
 		Point CursorPos;
-		public float settingsHz = 20;
+		public const float settingsHz = 25;
+		public const int settingsHzInMs = (int)(1000.0f / settingsHz);
 
 		void SimulationLoop()
 		{
@@ -1296,7 +1297,7 @@ namespace Box2DSharpRenderTest
 			}
 			else if (!networkOptions.Hosting)
 			{
-				float frac = 1.0f - (float)((DateTime.Now.TimeOfDay.TotalMilliseconds - client.NextFrameTime) / 50.0);
+				float frac = 1.0f - (float)((DateTime.Now.TimeOfDay.TotalMilliseconds - client.NextFrameTime) / (double)settingsHzInMs);
 
 				if (client.CurFrame.Transforms != null)
 				{
@@ -1311,11 +1312,14 @@ namespace Box2DSharpRenderTest
 						}
 						else
 						{
-							var transform1_new = client.CurFrame.Transforms[i, 0];
-							var transform1_old = client.OldFrame.Transforms[i, 0];
-							transform1_new.Position = transform1_old.Position + ((transform1_old.Position - transform1_new.Position) * frac);
-							transform1_new.Angle = transform1_old.Angle + ((transform1_old.Angle - transform1_new.Angle) * frac);
-							_debugDraw.DrawSolidPolygon(player1Def.Fixtures[(int)i].Shape, transform1_new.ToTransform(), color);
+							for (int z = 0; z < 2; ++z)
+							{
+								var transform1_new = client.CurFrame.Transforms[i, z];
+								var transform1_old = client.OldFrame.Transforms[i, z];
+								transform1_new.Position = transform1_old.Position + ((transform1_old.Position - transform1_new.Position) * frac);
+								transform1_new.Angle = transform1_old.Angle + ((transform1_old.Angle - transform1_new.Angle) * frac);
+								_debugDraw.DrawSolidPolygon(((z == 0) ? player1Def : player2Def).Fixtures[(int)i].Shape, transform1_new.ToTransform(), color);
+							}
 						}
 					}
 				}
@@ -1394,12 +1398,6 @@ namespace Box2DSharpRenderTest
 			renderWindow.Display();
 
 			_renderFrame++;
-
-			if (!networkOptions.Hosting)
-			{
-				float frac = (float)(DateTime.Now.TimeOfDay.TotalMilliseconds - client.NextFrameTime) / 50.0f;
-				Invoke((Action)delegate() { Text=frac.ToString(); });
-			}
 
 			mutex.ReleaseMutex();
 		}

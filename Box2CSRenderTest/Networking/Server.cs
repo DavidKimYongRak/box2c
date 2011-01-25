@@ -300,7 +300,7 @@ namespace Box2DSharpRenderTest.Networking
 
 		public void Check(bool _skipCheck = false)
 		{
-			if (!_skipCheck && _udpServer.Available != 0)
+			while (!_skipCheck && _udpServer.Available != 0)
 			{
 				IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
 				var data = new ServerDataPacket(this, _udpServer.Receive(ref endPoint), endPoint);

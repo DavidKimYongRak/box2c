@@ -61,7 +61,7 @@ namespace Box2DSharpRenderTest.Networking
 						Frame frame = new Frame();
 
 						frame.ServerFrame = Memory.ReadInt64();
-						frame.ServerTime = (int)frame.ServerFrame * 50;
+						frame.ServerTime = (int)frame.ServerFrame * Form2.settingsHzInMs;
 
 						frame.Transforms = new TransformHolder[(int)BipedFixtureIndex.Max, 2];
 
@@ -207,7 +207,7 @@ namespace Box2DSharpRenderTest.Networking
 
 		public void Check(bool skipCheck = false)
 		{
-			if (!skipCheck && _udpClient.Available != 0)
+			while (!skipCheck && _udpClient.Available != 0)
 			{
 				IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
 				var data = new ClientDataPacket(this, _udpClient.Receive(ref endPoint), endPoint);
