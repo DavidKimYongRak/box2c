@@ -382,16 +382,16 @@ namespace Box2CS
 	{
 		static class NativeMethods
 		{
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern int b2fixture_gettype(IntPtr fixture);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_getshape(IntPtr fixture, IntPtr shape);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_setsensor(IntPtr fixture, [MarshalAs(UnmanagedType.U1)] bool val);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2fixture_getsensor(IntPtr fixture);
 
@@ -406,54 +406,54 @@ namespace Box2CS
 				}
 			}
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_setfilterdata(IntPtr fixture, FilterDataInternal val);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_getfilterdata(IntPtr fixture, [Out] [In] FilterData filterData);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern IntPtr b2fixture_getbody(IntPtr fixture);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern IntPtr b2fixture_getnext(IntPtr fixture);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2fixture_testpoint(IntPtr fixture, Vec2 point);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2fixture_raycast(IntPtr fixture, out RayCastOutput output, RayCastInput input);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_getmassdata(IntPtr fixture, out MassData data);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern float b2fixture_getdensity(IntPtr fixture);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_setdensity(IntPtr fixture, float density);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern float b2fixture_getfriction(IntPtr fixture);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_setfriction(IntPtr fixture, float density);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern float b2fixture_getrestitution(IntPtr fixture);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_setrestitution(IntPtr fixture, float density);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_getaabb(IntPtr fixture, out AABB outPtr);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2fixture_setuserdata(IntPtr fixture, IntPtr data);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern IntPtr b2fixture_getuserdata(IntPtr fixture);
 		}
 

@@ -49,28 +49,28 @@ namespace Box2CS
 	{
 		static class NativeMethods
 		{
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2mousejoint_gettarget(IntPtr joint, out Vec2 outPtr);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2mousejoint_settarget(IntPtr joint, Vec2 val);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern float b2mousejoint_getmaxforce(IntPtr joint);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2mousejoint_setmaxforce(IntPtr joint, float val);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern float b2mousejoint_getfrequency(IntPtr joint);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2mousejoint_setfrequency(IntPtr joint, float val);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern float b2mousejoint_getdampingratio(IntPtr joint);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2mousejoint_setdampingratio(IntPtr joint, float val);
 		}
 

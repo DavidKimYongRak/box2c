@@ -224,33 +224,33 @@ namespace Box2CS
 	{
 		static class NativeMethods
 		{
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2contact_getmanifold(IntPtr contact, out Manifold manifold);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2contact_getworldmanifold(IntPtr contact, out WorldManifold worldManifold);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2contact_istouching(IntPtr contact);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2contact_setenabled(IntPtr contact, [MarshalAs(UnmanagedType.U1)] bool flag);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			[return: MarshalAs(UnmanagedType.U1)]
 			public static extern bool b2contact_getenabled(IntPtr contact);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern IntPtr b2contact_getnext(IntPtr contact);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern IntPtr b2contact_getfixturea(IntPtr contact);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern IntPtr b2contact_getfixtureb(IntPtr contact);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2contact_evaluate(IntPtr contact, out Manifold outManifold, Transform xfA, Transform xfB);
 		}
 

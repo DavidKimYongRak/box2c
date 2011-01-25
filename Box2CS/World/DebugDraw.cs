@@ -39,16 +39,16 @@ namespace Box2CS
 	{
 		static class NativeMethods
 		{
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern IntPtr cb2debugdraw_create(cb2debugdraw functions);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern uint cb2debugdraw_getflags(IntPtr wrapper);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void cb2debugdraw_setflags(IntPtr wrapper, uint flags);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void cb2debugdraw_destroy(IntPtr wrapper);
 		}
 

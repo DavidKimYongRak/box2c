@@ -70,22 +70,22 @@ namespace Box2CS
 	{
 		static class NativeMethods
 		{
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2distancejoint_setlength(IntPtr joint, float data);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern float b2distancejoint_getlength(IntPtr joint);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2distancejoint_setfrequency(IntPtr joint, float data);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern float b2distancejoint_getfrequency(IntPtr joint);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern void b2distancejoint_setdampingratio(IntPtr joint, float data);
 
-			[DllImport(Box2DSettings.Box2CDLLName)]
+			[DllImport(Box2DSettings.Box2CDLLName, CallingConvention=CallingConvention.Cdecl)]
 			public static extern float b2distancejoint_getdampingratio(IntPtr joint);
 		}
 

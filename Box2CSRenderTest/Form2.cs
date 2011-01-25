@@ -1296,7 +1296,7 @@ namespace Box2DSharpRenderTest
 			}
 			else if (!networkOptions.Hosting)
 			{
-				float frac = (float)(DateTime.Now.TimeOfDay.TotalMilliseconds - client.NextFrameTime) / 50.0f;
+				float frac = 1.0f - (float)((DateTime.Now.TimeOfDay.TotalMilliseconds - client.NextFrameTime) / 50.0);
 
 				if (client.CurFrame.Transforms != null)
 				{
