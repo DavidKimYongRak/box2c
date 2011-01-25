@@ -130,7 +130,7 @@ namespace Box2DSharpRenderTest.Networking
 						client.Stream.Write((byte)(Server.Clients.Count - 1));
 
 						Server.Stream.Write((byte)EClientDataPacketType.ChatPacket);
-						Server.Stream.Write("Player "+client.Name+" connected\n");
+						Server.Stream.Write("Player "+client.Name+" connected");
 					}
 					break;
 				case EServerDataPacketType.DisconnectPacket:
@@ -143,7 +143,7 @@ namespace Box2DSharpRenderTest.Networking
 						Server.Clients.Remove(p);
 
 						Server.Stream.Write((byte)EClientDataPacketType.ChatPacket);
-						Server.Stream.Write("Player "+p.Name+" disconnected\n");
+						Server.Stream.Write("Player "+p.Name+" disconnected");
 					}
 					break;
 				case EServerDataPacketType.ChatPacket:
@@ -151,7 +151,7 @@ namespace Box2DSharpRenderTest.Networking
 						var p = Server.ClientFromEndPoint(EndPoint);
 						var index = Memory.ReadByte();
 
-						var finalString = p.Name + ": " + Memory.ReadString() + "\n";
+						var finalString = p.Name + ": " + Memory.ReadString();
 
 						Server.Stream.Write((byte)EClientDataPacketType.ChatPacket);
 						Server.Stream.Write(finalString);

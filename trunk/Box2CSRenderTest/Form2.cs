@@ -13,6 +13,7 @@ using Box2CS;
 using Tao.DevIl;
 //using SFML.Graphics;
 using SFML.Window;
+using Tao.FreeGlut;
 
 namespace Box2DSharpRenderTest
 {
@@ -713,6 +714,7 @@ namespace Box2DSharpRenderTest
 			renderWindow.Show(true);
 
 			InitOpenGL(pictureBox1.Size, _currentZoom, PointF.Empty);
+			Tao.FreeGlut.Glut.glutInit();
 			
 			Il.ilInit();
 			Ilut.ilutInit();
@@ -799,6 +801,30 @@ namespace Box2DSharpRenderTest
 		public const float settingsHz = 25;
 		public const int settingsHzInMs = (int)(1000.0f / settingsHz);
 
+		public static void DrawString(int x, int y, string str)
+		{
+			Gl.glMatrixMode(Gl.GL_PROJECTION);
+			Gl.glPushMatrix();
+			Gl.glLoadIdentity();
+			int w = (int)Program.MainForm.pictureBox1.Width;
+			int h = (int)Program.MainForm.pictureBox1.Height;
+			Glu.gluOrtho2D(0, w, h, 0);
+			Gl.glMatrixMode(Gl.GL_MODELVIEW);
+			Gl.glPushMatrix();
+			Gl.glLoadIdentity();
+
+			Gl.glColor3f(0.9f, 0.6f, 0.6f);
+			Gl.glRasterPos2i(x, y);
+
+			foreach (var c in str)
+				Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_HELVETICA_12, c);
+
+			Gl.glPopMatrix();
+			Gl.glMatrixMode(Gl.GL_PROJECTION);
+			Gl.glPopMatrix();
+			Gl.glMatrixMode(Gl.GL_MODELVIEW);
+		}
+
 		void SimulationLoop()
 		{
 			while (true)
@@ -865,8 +891,68 @@ namespace Box2DSharpRenderTest
 			_keyRepeats.Remove(e.Code);
 		}
 
+		bool typing;
+		string currentString = "";
+
+		static char CharFromKeyCode(SFML.Window.KeyEventArgs e)
+		{
+			switch (e.Code)
+			{
+			case KeyCode.Period:
+				return (e.Shift) ? '>' : '.';
+			case KeyCode.BackSlash:
+				return (e.Shift) ? '?' : '/';
+			case KeyCode.Comma:
+				return (e.Shift) ? '<' : ',';
+			case KeyCode.Dash:
+				return (e.Shift) ? '_' : '-';
+			case KeyCode.Equal:
+				return (e.Shift) ? '+' : '=';
+			case KeyCode.LBracket:
+				return (e.Shift) ? '{' : '[';
+			case KeyCode.Quote:
+				return (e.Shift) ? '"' : '\'';
+			case KeyCode.RBracket:
+				return (e.Shift) ? '}' : ']';
+			case KeyCode.SemiColon:
+				return (e.Shift) ? ':' : ';';
+			case KeyCode.Slash:
+				return (e.Shift) ? '|' : '\\';
+			case KeyCode.Tilde:
+				return '~';
+			}
+
+			return (char)e.Code;
+		}
+
 		void renderWindow_KeyPressed(object sender, SFML.Window.KeyEventArgs e)
 		{
+			if (typing)
+			{
+				char cFromCode = CharFromKeyCode(e);
+				if (e.Code == KeyCode.Back)
+				{
+					if (currentString.Length != 0)
+						currentString = currentString.Remove(currentString.Length - 1);
+				}
+				else if (e.Code == KeyCode.Return)
+				{
+					typing = !typing;
+
+					if (!string.IsNullOrEmpty(currentString))
+						client.SendText(currentString);
+
+					currentString = "";
+					return;
+				}
+				else if (e.Code == KeyCode.Space)
+					currentString += ' ';
+				else if (char.IsPunctuation(cFromCode) || char.IsLetterOrDigit(cFromCode) || char.IsSymbol(cFromCode))
+					currentString += cFromCode;
+
+				return;
+			}
+
 			if (_keyRepeats.ContainsKey(e.Code))
 				return;
 
@@ -901,6 +987,9 @@ namespace Box2DSharpRenderTest
 			//	break;
 			case KeyCode.U:
 				_gameKeys |= GameKeys.StiffToggle;
+				break;
+			case KeyCode.T:
+				typing = !typing;
 				break;
 			case KeyCode.M:
 				_gameKeys |= GameKeys.StickLegs;
@@ -1323,6 +1412,22 @@ namespace Box2DSharpRenderTest
 						}
 					}
 				}
+
+				Gl.glPushMatrix();
+				int y = 250;
+				int start = client.Console.Messages.Count;
+				for (int i = 0; i < 6; ++i)
+				{
+					if ((start - i) <= 0)
+						break;
+
+					DrawString(0, y, client.Console.Messages[start - i - 1]);
+					y -= 10;
+				}
+
+				if (typing)
+					DrawString(0, 260, currentString + ((((int)((DateTime.Now.TimeOfDay.TotalMilliseconds * 2) / 1000) & 1) != 0) ? "|" : ""));
+				Gl.glPopMatrix();
 			}
 
 			Gl.glPushMatrix();
@@ -1400,12 +1505,6 @@ namespace Box2DSharpRenderTest
 			_renderFrame++;
 
 			mutex.ReleaseMutex();
-		}
-
-		private void button1_Click(object sender, EventArgs e)
-		{
-			client.SendText(textBox2.Text);
-			textBox2.Clear();
 		}
 
 		private void Form2_FormClosing(object sender, FormClosingEventArgs e)

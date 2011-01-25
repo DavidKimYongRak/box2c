@@ -45,7 +45,7 @@ namespace Box2DSharpRenderTest.Networking
 					}
 				case EClientDataPacketType.ChatPacket:
 					{
-						Program.MainForm.Invoke((Action)delegate() { Program.MainForm.textBox1.Text += Memory.ReadString().Replace("\n", Environment.NewLine); });
+						Client.Console.AddMessage(Memory.ReadString());
 						break;
 					}
 				case EClientDataPacketType.DisconnectedPacket:
@@ -119,9 +119,49 @@ namespace Box2DSharpRenderTest.Networking
 		}
 	}
 
+	public class ClientConsole
+	{
+		public List<string> Messages
+		{
+			get;
+			set;
+		}
+
+		int _displayRange;
+		public int DisplayRange
+		{
+			get { return _displayRange; }
+			
+			set
+			{
+				if (_displayRange >= Messages.Count)
+					_displayRange = -1;
+				else
+					_displayRange = value;
+			}
+		}
+
+		public void AddMessage(string msg)
+		{
+			Messages.Add(msg);
+		}
+
+		public ClientConsole()
+		{
+			Messages = new List<string>();
+			DisplayRange = -1;
+		}
+	}
+
 	public class NetworkClient
 	{
 		UdpClient _udpClient;
+
+		public ClientConsole Console
+		{
+			get;
+			set;
+		}
 
 		public int ConnectedIndex
 		{
@@ -184,6 +224,7 @@ namespace Box2DSharpRenderTest.Networking
 
 		public NetworkClient(IPAddress address, string name)
 		{
+			Console = new ClientConsole();
 			EndPoint = new IPEndPoint(address, NetworkSettings.Port);
 			_udpClient = new UdpClient();
 			_udpClient.Connect(EndPoint);
