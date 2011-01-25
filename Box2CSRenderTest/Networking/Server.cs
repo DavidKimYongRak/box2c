@@ -10,7 +10,8 @@ namespace Box2DSharpRenderTest.Networking
 {
 	public static class NetworkSettings
 	{
-		public const int Port = 10101;
+		public const int UDPPort = 10101;
+		public const int TCPPort = 01010;
 	}
 
 	public abstract class EasyDispose : IDisposable
@@ -195,16 +196,52 @@ namespace Box2DSharpRenderTest.Networking
 			set;
 		}
 
-		public MemoryStream Memory
+		public class UDP
 		{
-			get;
-			private set;
+			public MemoryStream Memory
+			{
+				get;
+				private set;
+			}
+
+			public BinaryWriter Stream
+			{
+				get;
+				private set;
+			}
 		}
 
-		public BinaryWriter Stream
+		public class TCP
+		{
+			public MemoryStream Memory
+			{
+				get;
+				private set;
+			}
+
+			public BinaryWriter Stream
+			{
+				get;
+				private set;
+			}
+
+			public TcpClient Client
+			{
+				get;
+				private set;
+			}
+		}
+
+		public UDP Udp
 		{
 			get;
-			private set;
+			set;
+		}
+
+		public TCP Tcp
+		{
+			get;
+			set;
 		}
 
 		public NetworkServer Server
@@ -221,6 +258,8 @@ namespace Box2DSharpRenderTest.Networking
 
 		public ConnectedClient(NetworkServer server)
 		{
+			Udp = new UDP();
+			Tcp = new TCP();
 			Server = server;
 			Stream = new BinaryWriter(Memory = new MemoryStream());
 		}
@@ -282,7 +321,7 @@ namespace Box2DSharpRenderTest.Networking
 
 		public NetworkServer()
 		{
-			_udpServer = new UdpClient(NetworkSettings.Port);
+			_udpServer = new UdpClient(NetworkSettings.UDPPort);
 			Clients = new List<ConnectedClient>();
 			Memory = new MemoryStream();
 			Stream = new BinaryWriter(Memory);

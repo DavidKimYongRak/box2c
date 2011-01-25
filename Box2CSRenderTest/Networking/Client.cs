@@ -6,6 +6,16 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 
+using FarseerPhysics;
+using FarseerPhysics.Common;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Collision;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Contacts;
+using FarseerPhysics.Dynamics.Joints;
+using Microsoft.Xna.Framework;
+using FarseerPhysics.Factories;
+
 namespace Box2DSharpRenderTest.Networking
 {
 	public enum EClientDataPacketType
@@ -67,8 +77,8 @@ namespace Box2DSharpRenderTest.Networking
 
 						for (int i = 0; i < (int)BipedFixtureIndex.Max; ++i)
 						{
-							frame.Transforms[i, 0] = new TransformHolder(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), Memory.ReadSingle());
-							frame.Transforms[i, 1] = new TransformHolder(new Box2CS.Vec2(Memory.ReadSingle(), Memory.ReadSingle()), Memory.ReadSingle());
+							frame.Transforms[i, 0] = new TransformHolder(new Vector2(Memory.ReadSingle(), Memory.ReadSingle()), Memory.ReadSingle());
+							frame.Transforms[i, 1] = new TransformHolder(new Vector2(Memory.ReadSingle(), Memory.ReadSingle()), Memory.ReadSingle());
 						}
 
 						Client.CurFrame = frame;
@@ -83,18 +93,19 @@ namespace Box2DSharpRenderTest.Networking
 
 	public struct TransformHolder
 	{
-		public Box2CS.Vec2 Position;
+		public Vector2 Position;
 		public float Angle;
 
-		public TransformHolder(Box2CS.Vec2 position, float angle)
+		public TransformHolder(Vector2 position, float angle)
 		{
 			Position = position;
 			Angle = angle;
 		}
 
-		public Box2CS.Transform ToTransform()
+		public Transform ToTransform()
 		{
-			return new Box2CS.Transform(Position, new Box2CS.Mat22(Angle));
+			var mat = new Mat22(Angle);
+			return new Transform(ref Position, ref mat);
 		}
 	}
 
@@ -155,8 +166,6 @@ namespace Box2DSharpRenderTest.Networking
 
 	public class NetworkClient
 	{
-		UdpClient _udpClient;
-
 		public ClientConsole Console
 		{
 			get;
@@ -169,24 +178,179 @@ namespace Box2DSharpRenderTest.Networking
 			set;
 		}
 
-		public UdpClient Client
+		public class UDP
 		{
-			get { return _udpClient; }
+			NetworkClient _client;
+
+			public UdpClient Client
+			{
+				get;
+				private set;
+			}
+
+			public MemoryStream Memory
+			{
+				get;
+				private set;
+			}
+
+			public BinaryWriter Stream
+			{
+				get;
+				private set;
+			}
+
+			public IPEndPoint EndPoint
+			{
+				get;
+				private set;
+			}
+
+			public UDP(NetworkClient client)
+			{
+				_client = client;
+			}
+
+			public void Connect(IPEndPoint endPoint, string name)
+			{
+				EndPoint = endPoint;
+				Client = new UdpClient();
+				Client.Connect(EndPoint);
+
+				Memory = new MemoryStream();
+				Stream = new BinaryWriter(Memory);
+
+				Stream.Write((byte)EServerDataPacketType.ConnectPacket);
+				Stream.Write(name);
+			}
+
+			public void Close()
+			{
+				Memory.SetLength(0);
+				Memory.Position = 0;
+				Stream.Write((byte)EServerDataPacketType.DisconnectPacket);
+				Check(true);
+
+				Client.Close();
+				Client = null;
+			}
+
+			public void Check(bool skipCheck = false)
+			{
+				while (!skipCheck && Client.Available != 0)
+				{
+					IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
+					var data = new ClientDataPacket(_client, Client.Receive(ref endPoint), endPoint);
+					data.Parse();
+				}
+
+				if (Memory.Length != 0)
+				{
+					Client.Send(Memory.GetBuffer(), (int)Memory.Length);
+					Memory.SetLength(0);
+					Memory.Position = 0;
+				}
+			}
 		}
 
-		public MemoryStream Memory
+		public UDP Udp
 		{
 			get;
 			private set;
 		}
 
-		public BinaryWriter Stream
+
+		public class TCP
 		{
-			get;
-			private set;
+			NetworkClient _client;
+
+			public TcpClient Client
+			{
+				get;
+				private set;
+			}
+
+			public MemoryStream Memory
+			{
+				get;
+				private set;
+			}
+
+			public BinaryWriter Stream
+			{
+				get;
+				private set;
+			}
+
+			public IPEndPoint EndPoint
+			{
+				get;
+				private set;
+			}
+
+			public NetworkStream NetStream
+			{
+				get;
+				set;
+			}
+
+			public TCP(NetworkClient client)
+			{
+				_client = client;
+			}
+
+			public void Connect(IPEndPoint endPoint, string name)
+			{
+				EndPoint = endPoint;
+				Client = new TcpClient();
+				Client.Connect(EndPoint);
+
+				NetStream = Client.GetStream();
+
+				Memory = new MemoryStream();
+				Stream = new BinaryWriter(Memory);
+
+				Stream.Write((byte)EServerDataPacketType.ConnectPacket);
+				Stream.Write(name);
+			}
+
+			public void Close()
+			{
+				Client.Close();
+				Client = null;
+			}
+
+			public void Check(bool skipCheck = false)
+			{
+				while (!skipCheck && NetStream.DataAvailable)
+				{
+					List<byte> bytes = new List<byte>();
+					
+					while (true)
+					{
+						byte[] buffer = new byte[4096];
+						int i = NetStream.Read(buffer, 0, buffer.Length);
+					
+						if (i <= 0)
+							break;
+
+						bytes.AddRange(buffer);
+					}
+
+					var data = new ClientDataPacket(_client, bytes.ToArray(), (IPEndPoint)Client.Client.RemoteEndPoint);
+					data.Parse();
+				}
+
+				if (Memory.Length != 0)
+				{
+					NetStream.Write(Memory.GetBuffer(), 0, (int)Memory.Length);
+					Memory.SetLength(0);
+					Memory.Position = 0;
+				}
+			}
 		}
 
-		public IPEndPoint EndPoint
+		public TCP Tcp
 		{
 			get;
 			private set;
@@ -224,50 +388,28 @@ namespace Box2DSharpRenderTest.Networking
 
 		public NetworkClient(IPAddress address, string name)
 		{
+			Udp = new NetworkClient.UDP(this);
+			Udp.Connect(new IPEndPoint(address, NetworkSettings.UDPPort), name);
+
 			Console = new ClientConsole();
-			EndPoint = new IPEndPoint(address, NetworkSettings.Port);
-			_udpClient = new UdpClient();
-			_udpClient.Connect(EndPoint);
-
-			Memory = new MemoryStream();
-			Stream = new BinaryWriter(Memory);
-
-			Stream.Write((byte)EServerDataPacketType.ConnectPacket);
-			Stream.Write(name);
 		}
 
 		public void Close()
 		{
-			Memory.SetLength(0);
-			Memory.Position = 0;
-			Stream.Write((byte)EServerDataPacketType.DisconnectPacket);
-			Check(true);
-
-			_udpClient.Close();
+			Udp.Close();
 		}
 
-		public void Check(bool skipCheck = false)
+		public void Check()
 		{
-			while (!skipCheck && _udpClient.Available != 0)
-			{
-				IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
-				var data = new ClientDataPacket(this, _udpClient.Receive(ref endPoint), endPoint);
-				data.Parse();
-			}
-
-			if (Memory.Length != 0)
-			{
-				_udpClient.Send(Memory.GetBuffer(), (int)Memory.Length);
-				Memory.SetLength(0);
-				Memory.Position = 0;
-			}
+			Udp.Check();
+			Tcp.Check();
 		}
 
 		public void SendText(string str)
 		{
-			Stream.Write((byte)EServerDataPacketType.ChatPacket);
-			Stream.Write((byte)ConnectedIndex);
-			Stream.Write(str);
+			Udp.Stream.Write((byte)EServerDataPacketType.ChatPacket);
+			Udp.Stream.Write((byte)ConnectedIndex);
+			Udp.Stream.Write(str);
 		}
 	}
 }

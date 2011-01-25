@@ -35,6 +35,10 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FarseerPhysics, Version=3.2.4033.31311, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\FarseerPhysics.dll</HintPath>
+    </Reference>
     <Reference Include="sfmlnet-graphics, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\sfml2\dotnet\lib\sfmlnet-graphics.dll</HintPath>
@@ -115,12 +119,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Box2CS\Box2CS.csproj">
-      <Project>{CC0D251D-A2A2-49E1-8990-1BCB41AE1D16}</Project>
-      <Name>Box2CS</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
