@@ -24,18 +24,22 @@ namespace Box2DSharpRenderTest
 		}
 	}
 
+	public class Player
+	{
+	}
+
 	public class Biped
 	{
-		Form2.Player _ownedPlayer;
+		Player _ownedPlayer;
 
-		public Form2.Player OwnedPlayer
+		public Player OwnedPlayer
 		{
 			get { return _ownedPlayer; }
 		}
 
 		public Body[] Bodies;
 
-		public Biped(Form2.Player ownedPlayer, World world, Vector2 position, float xScale, float yScale)
+		public Biped(Player ownedPlayer, World world, Vector2 position, float xScale, float yScale)
 		{
 			_ownedPlayer = ownedPlayer;
 			m_world = world;

@@ -8,351 +8,458 @@ using System.IO;
 
 namespace Box2DSharpRenderTest.Networking
 {
-	public static class NetworkSettings
+	public enum PlayerState
 	{
-		public const int UDPPort = 10101;
-		public const int TCPPort = 01010;
+		/// <summary>
+		/// Empty slot
+		/// </summary>
+		Disconnected,
+
+		/// <summary>
+		/// Is connected to the server, but has not
+		/// been assigned a game state yet (gives time to precache, etc)
+		/// </summary>
+		Connecting,
+
+		/// <summary>
+		/// Inside the game
+		/// </summary>
+		Spawned
 	}
 
-	public abstract class EasyDispose : IDisposable
+	public class PlayerList
 	{
-		public bool Disposed
+		List<Player> _players = new List<Player>();
+
+		public Player GetFreePlayer()
 		{
-			get;
-			private set;
+			foreach (var x in _players)
+			{
+				if (x.State == PlayerState.Disconnected)
+					return x;
+			}
+
+			var player = new Player();
+			_players.Add(player);
+
+			return player;
 		}
 
-		protected abstract void ReleaseUnmanagedResources();
-		protected abstract void ReleaseManagedResources();
-
-		void Dispose(bool disposing)
+		public Player this[int index]
 		{
-			if (!Disposed)
-			{
-				if (disposing)
-					ReleaseManagedResources();
+			get { return _players[index]; }
+		}
 
-				ReleaseUnmanagedResources();
-				Disposed = true;
+		public Player PlayerFromEndPoint(bool tcp, IPEndPoint endPoint)
+		{
+			foreach (var x in _players)
+			{
+				if (tcp && ((IPEndPoint)x.Tcp.Client.Client.RemoteEndPoint).Address.Equals(endPoint) &&
+						((IPEndPoint)x.Tcp.Client.Client.RemoteEndPoint).Port == endPoint.Port)
+					return x;
+				else if (!tcp && x.Udp.EndPoint.Address.Equals(endPoint) && x.Udp.EndPoint.Port == endPoint.Port)
+					return x;
+			}
+			
+			return null;
+		}
+
+		public void Remove(Player player)
+		{
+			// FIXME: do it if needed.
+		}
+	}
+
+	public class Player
+	{
+		public class UDP : Paril.Helpers.EasyDispose
+		{
+			Player _player;
+			MemoryStream _memory;
+
+			public BinaryWriter Stream
+			{
+				get;
+				set;
+			}
+
+			public IPEndPoint EndPoint
+			{
+				get;
+				set;
+			}
+
+			public UDP(Player player)
+			{
+				_player = player;
+				_memory = new MemoryStream();
+				Stream = new BinaryWriter(_memory);
+			}
+
+			public void Close()
+			{
+				_memory.Dispose();
+				_memory = null;
+			}
+
+			protected override void ReleaseManagedResources()
+			{
+				if (_memory != null)
+					Close();
+			}
+
+			protected override void ReleaseUnmanagedResources()
+			{
 			}
 		}
 
-		public void Dispose()
+		public class TCP : Paril.Helpers.EasyDispose
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+			Player _player;
+			MemoryStream _memory;
 
-		~EasyDispose()
-		{
-			Dispose(false);
-		}
-	}
-
-	public abstract class DataPacket : EasyDispose
-	{
-		protected BinaryReader Memory
-		{
-			get;
-			private set;
-		}
-
-		public IPEndPoint EndPoint
-		{
-			get;
-			private set;
-		}
-
-		public DataPacket(byte[] data, IPEndPoint endPoint)
-		{
-			Memory = new BinaryReader(new MemoryStream(data));
-			EndPoint = endPoint;
-		}
-
-		public abstract void Parse();
-
-		protected override void ReleaseManagedResources()
-		{
-			Memory.BaseStream.Dispose();
-			Memory = null;
-		}
-
-		protected override void ReleaseUnmanagedResources()
-		{
-		}
-	}
-
-	public enum EServerDataPacketType
-	{
-		ConnectPacket,
-		DisconnectPacket,
-		ChatPacket,
-		ClientCmd
-	}
-
-	public class ServerDataPacket : DataPacket
-	{
-		public NetworkServer Server
-		{
-			get;
-			set;
-		}
-
-		public ServerDataPacket(NetworkServer server, byte[] data, IPEndPoint endPoint) :
-			base(data, endPoint)
-		{
-			Server = server;
-		}
-
-		public override void Parse()
-		{
-			while (Memory.BaseStream.Length != Memory.BaseStream.Position)
+			internal MemoryStream Memory
 			{
-				EServerDataPacketType type = (EServerDataPacketType)Memory.ReadByte();
+				get { return _memory; }
+			}
 
-				switch (type)
+			public BinaryWriter BatchStream
+			{
+				get;
+				set;
+			}
+
+			TcpClient _client;
+			public TcpClient Client
+			{
+				get { return _client; }
+				set
 				{
-				case EServerDataPacketType.ConnectPacket:
+					_client = value;
+
+					if (_client != null)
 					{
-						foreach (var p in Server.Clients)
-						{
-							if (p.EndPoint.Address.Equals(EndPoint.Address))
-								throw new Exception();
-						}
-
-						var client = new ConnectedClient(Server);
-						client.Name = Memory.ReadString();
-						client.State = ClientState.Connected;
-						client.EndPoint = EndPoint;
-
-						Server.Clients.Add(client);
-
-						client.Stream.Write((byte)EClientDataPacketType.ConnectedPacket);
-						client.Stream.Write((byte)(Server.Clients.Count - 1));
-
-						Server.Stream.Write((byte)EClientDataPacketType.ChatPacket);
-						Server.Stream.Write("Player "+client.Name+" connected");
-					}
-					break;
-				case EServerDataPacketType.DisconnectPacket:
-					{
-						var p = Server.ClientFromEndPoint(EndPoint);
-
-						if (p == null)
-							throw new Exception();
-
-						Server.Clients.Remove(p);
-
-						Server.Stream.Write((byte)EClientDataPacketType.ChatPacket);
-						Server.Stream.Write("Player "+p.Name+" disconnected");
-					}
-					break;
-				case EServerDataPacketType.ChatPacket:
-					{
-						var p = Server.ClientFromEndPoint(EndPoint);
-						var index = Memory.ReadByte();
-
-						var finalString = p.Name + ": " + Memory.ReadString();
-
-						Server.Stream.Write((byte)EClientDataPacketType.ChatPacket);
-						Server.Stream.Write(finalString);
-						break;
-					}
-				case EServerDataPacketType.ClientCmd:
-					{
-						var p = Server.ClientFromEndPoint(EndPoint);
-						p.Keys = (Form2.GameKeys)Memory.ReadInt32();
-						break;
+						NetStream = _client.GetStream();
+						NetStreamBinary = new BinaryWriter(NetStream);
 					}
 				}
 			}
+
+			public NetworkStream NetStream
+			{
+				get;
+				set;
+			}
+
+			public BinaryWriter NetStreamBinary
+			{
+				get;
+				set;
+			}
+
+			public event NetworkReceivePacket PacketReceived;
+
+			internal void OnPacketReceived(byte packetType, BinaryWrapper reader, IPEndPoint endPoint)
+			{
+				if (PacketReceived != null)
+					PacketReceived(packetType, reader, endPoint);
+			}
+
+			public TCP(Player player)
+			{
+				_player = player;
+				_memory = new MemoryStream();
+				BatchStream = new BinaryWriter(_memory);
+			}
+
+			public void Close()
+			{
+				BatchStream.BaseStream.SetLength(0);
+
+				NetStreamBinary.Close();
+				Client.Close();
+				Client = null;
+				NetStreamBinary = null;
+				NetStream = null;
+			}
+
+			protected override void ReleaseManagedResources()
+			{
+				if (Client != null)
+					Close();
+			}
+
+			protected override void ReleaseUnmanagedResources()
+			{
+				throw new NotImplementedException();
+			}
 		}
-	}
 
-	public enum ClientState
-	{
-		Connecting,
-		Connected,
-		Disconnected
-	}
-
-	public class ConnectedClient
-	{
-		public IPEndPoint EndPoint
+		/// <summary>
+		/// Server we're connected to
+		/// </summary>
+		public Server Server
 		{
 			get;
 			set;
 		}
 
-		public ClientState State
-		{
-			get;
-			set;
-		}
-
-		public string Name
-		{
-			get;
-			set;
-		}
-
-		public class UDP
-		{
-			public MemoryStream Memory
-			{
-				get;
-				private set;
-			}
-
-			public BinaryWriter Stream
-			{
-				get;
-				private set;
-			}
-		}
-
-		public class TCP
-		{
-			public MemoryStream Memory
-			{
-				get;
-				private set;
-			}
-
-			public BinaryWriter Stream
-			{
-				get;
-				private set;
-			}
-
-			public TcpClient Client
-			{
-				get;
-				private set;
-			}
-		}
-
+		/// <summary>
+		/// The UDP backend
+		/// </summary>
 		public UDP Udp
 		{
 			get;
 			set;
 		}
 
+		/// <summary>
+		/// The TCP backend
+		/// </summary>
 		public TCP Tcp
 		{
 			get;
 			set;
 		}
 
-		public NetworkServer Server
+		/// <summary>
+		/// Index of this client
+		/// </summary>
+		public int Index
 		{
 			get;
 			set;
 		}
 
-		public Form2.GameKeys Keys
+		/// <summary>
+		/// Last time we received a message from this player
+		/// </summary>
+		public DateTime LastMessage
 		{
 			get;
 			set;
 		}
 
-		public ConnectedClient(NetworkServer server)
+		/// <summary>
+		/// Player's state
+		/// </summary>
+		public PlayerState State
 		{
-			Udp = new UDP();
-			Tcp = new TCP();
-			Server = server;
-			Stream = new BinaryWriter(Memory = new MemoryStream());
+			get;
+			set;
 		}
 
-		public void SendData()
+		public Player()
 		{
-			if (Stream.BaseStream.Length != 0)
+			Udp = new UDP(this);
+			Tcp = new TCP(this);
+		}
+
+		public void Connect(TcpClient client)
+		{
+			State = PlayerState.Connecting;
+			Tcp.Client = client;
+			Tcp.NetStreamBinary.Write((byte)ClientPacketTypeBase.ConnectionAck);
+		}
+
+		public void Check()
+		{
+			while (Tcp.NetStream.DataAvailable)
 			{
-				Server.Server.Send(Memory.GetBuffer(), (int)Memory.Length, EndPoint);
-				Memory.SetLength(0);
-				Memory.Position = 0;
+				var reader = new BinaryWrapper(Tcp.NetStream);
+
+				while (true)
+				{
+					byte packetType = reader.ReadByte();
+
+					if (packetType == PacketTypeBase.EndOfMessage)
+						break;
+
+					Tcp.OnPacketReceived(packetType, reader, (IPEndPoint)Tcp.Client.Client.RemoteEndPoint);
+				}
 			}
+
+			if (Tcp.BatchStream.BaseStream.Length != 0)
+			{
+				Tcp.NetStreamBinary.Write(Tcp.Memory.ToArray(), 0, (int)Tcp.Memory.Length);
+				Tcp.Memory.SetLength(0);
+			}
+		}
+
+		public void Disconnect()
+		{
+			Udp.Close();
+			Tcp.Close();
 		}
 	}
 
-	public class NetworkServer
+	public class Server
 	{
-		public List<ConnectedClient> Clients
+		public class UDPBackend
 		{
-			get;
-			private set;
+			public const int Port = 10101;
+
+			public UdpClient Listener
+			{
+				get;
+				set;
+			}
+
+			public Server Server
+			{
+				get;
+				set;
+			}
+
+			public UDPBackend(Server server)
+			{
+				Server = server;
+			}
+
+			public void Host()
+			{
+				Listener = new UdpClient(Port);
+			}
+
+			public void Check()
+			{
+				while (Listener.Available != 0)
+				{
+					IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
+					var dgram = Listener.Receive(ref endPoint);
+
+					using (var stream = new MemoryStream(dgram))
+					{
+						var reader = new BinaryWrapper(stream);
+
+						while (stream.Length != stream.Position)
+						{
+							byte packetType = reader.ReadByte();
+							Server.OnReceiveUDPData(packetType, reader, endPoint);
+						}
+					}
+				}
+			}
+
+			public void Close()
+			{
+				Listener.Close();
+			}
 		}
 
-		public long Frame
+		public class TCPBackend
+		{
+			public const int Port = 01010;
+
+			public TcpListener Listener
+			{
+				get;
+				set;
+			}
+			
+			public Server Server
+			{
+				get;
+				set;
+			}
+
+			public TCPBackend(Server server)
+			{
+				Server = server;
+			}
+
+			public static IPAddress GetLocalAddress(string hostname)
+			{
+				IPHostEntry host = Dns.GetHostEntry(hostname);
+
+				foreach (IPAddress ip in host.AddressList)
+				{
+					if (ip.AddressFamily == AddressFamily.InterNetworkV6)
+						continue;
+
+					return ip;
+				}
+
+				throw new Exception("No IPv4 address found?");
+			}
+
+			public void Host()
+			{
+				Listener = new TcpListener(GetLocalAddress("localhost"), Port);
+				Listener.Start();
+			}
+
+			public void Close()
+			{
+				Listener.Stop();
+			}
+
+			public void Check()
+			{
+				while (Listener.Pending())
+				{
+					var client = Listener.AcceptTcpClient();
+
+					Player player = Server.Players.GetFreePlayer();
+					player.Connect(client);
+					player.State = PlayerState.Connecting;
+				}
+			}
+		}
+
+		public UDPBackend Udp
 		{
 			get;
 			set;
 		}
 
-		public ConnectedClient ClientFromEndPoint(IPEndPoint endPoint)
-		{
-			foreach (var p in Clients)
-			{
-				if (p.EndPoint.Address.Equals(endPoint.Address))
-					return p;
-			}
-
-			return null;
-		}
-
-		UdpClient _udpServer;
-
-		public UdpClient Server
-		{
-			get { return _udpServer; }
-		}
-
-		public MemoryStream Memory
+		public PlayerList Players
 		{
 			get;
 			private set;
 		}
 
-		public BinaryWriter Stream
+		public TCPBackend Tcp
 		{
 			get;
-			private set;
+			set;
 		}
 
-		public NetworkServer()
+		public event NetworkReceivePacket ReceiveUDPData;
+
+		private void OnReceiveUDPData(byte packetType, BinaryWrapper reader, IPEndPoint endPoint)
 		{
-			_udpServer = new UdpClient(NetworkSettings.UDPPort);
-			Clients = new List<ConnectedClient>();
-			Memory = new MemoryStream();
-			Stream = new BinaryWriter(Memory);
+			if (ReceiveUDPData != null)
+				ReceiveUDPData(packetType, reader, endPoint);
+		}
+
+		public Server()
+		{
+			Players = new PlayerList();
+		}
+
+		public void Check()
+		{
+			Tcp.Check();
+			Udp.Check();
+		}
+
+		public void Host()
+		{
+			Udp = new UDPBackend(this);
+			Tcp = new TCPBackend(this);
+
+			Tcp.Host();
+			Udp.Host();
 		}
 
 		public void Close()
 		{
-			Memory.SetLength(0);
-			Memory.Position = 0;
-			Stream.Write((byte)EClientDataPacketType.DisconnectedPacket);
-			Check(true);
+			Udp.Close();
+			Tcp.Close();
 
-			_udpServer.Close();
-		}
-
-		public void Check(bool _skipCheck = false)
-		{
-			while (!_skipCheck && _udpServer.Available != 0)
-			{
-				IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
-				var data = new ServerDataPacket(this, _udpServer.Receive(ref endPoint), endPoint);
-				data.Parse();
-			}
-
-			if (Memory.Length != 0)
-			{
-				foreach (var p in Clients)
-					_udpServer.Send(Memory.GetBuffer(), (int)Memory.Length, p.EndPoint);
-				Memory.SetLength(0);
-				Memory.Position = 0;
-			}
+			Udp = null;
+			Tcp = null;
 		}
 	}
 }
