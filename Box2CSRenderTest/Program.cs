@@ -7,7 +7,7 @@ namespace Box2DSharpRenderTest
 {
 	static class Program
 	{
-		public static Form2 MainForm
+		public static Form3 MainForm
 		{
 			get;
 			private set;
@@ -21,7 +21,7 @@ namespace Box2DSharpRenderTest
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(MainForm = new Form2());
+			Application.Run(MainForm = new Form3());
 		}
 	}
 }

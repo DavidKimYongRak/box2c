@@ -79,11 +79,11 @@
   <ItemGroup>
     <Compile Include="Biped\Biped.cs" />
     <Compile Include="Biped\BipedDef.cs" />
-    <Compile Include="Form2.cs">
+    <Compile Include="Form3.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form2.Designer.cs">
-      <DependentUpon>Form2.cs</DependentUpon>
+    <Compile Include="Form3.Designer.cs">
+      <DependentUpon>Form3.cs</DependentUpon>
     </Compile>
     <Compile Include="NetworkDialog.cs">
       <SubType>Form</SubType>
@@ -92,11 +92,13 @@
       <DependentUpon>NetworkDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
+    <Compile Include="Networking\Network.cs" />
     <Compile Include="Networking\Server.cs" />
+    <Compile Include="Paril\Helpers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form2.resx">
-      <DependentUpon>Form2.cs</DependentUpon>
+    <EmbeddedResource Include="Form3.resx">
+      <DependentUpon>Form3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NetworkDialog.resx">
       <DependentUpon>NetworkDialog.cs</DependentUpon>
@@ -120,6 +122,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
