@@ -278,16 +278,16 @@ namespace Testbed
 			aabb.UpperBound = p + d;
 
 			// Query the world for overlapping shapes.
-			Fixture? m_fixture = null;
 			testPoint = p;
+			_selectedFixture = null;
 
 			m_world.QueryAABB(
 			MouseQueryAABB,
 			aabb);
 
-			if (m_fixture != null)
+			if (_selectedFixture != null)
 			{
-				Body body = m_fixture.Value.Body;
+				Body body = _selectedFixture.Value.Body;
 				MouseJointDef md = new MouseJointDef();
 				{
 					md.BodyA = m_groundBody;

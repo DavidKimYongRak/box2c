@@ -478,6 +478,14 @@ namespace Box2CS
 			return new Fixture(ptr);
 		}
 
+		internal static Fixture? FromPtrNoCrash(IntPtr ptr)
+		{
+			if (ptr == IntPtr.Zero)
+				return null;
+
+			return new Fixture(ptr);
+		}
+
 		/// <summary>
 		/// The type of Shape attached to this fixture.
 		/// </summary>
@@ -578,9 +586,9 @@ namespace Box2CS
 		/// <summary>
 		/// Get the next fixture in the attached body's fixture list.
 		/// </summary>
-		public Fixture Next
+		public Fixture? Next
 		{
-			get { return Fixture.FromPtr(NativeMethods.b2fixture_getnext(_fixturePtr)); }
+			get { return Fixture.FromPtrNoCrash(NativeMethods.b2fixture_getnext(_fixturePtr)); }
 		}
 
 		/// <summary>

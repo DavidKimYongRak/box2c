@@ -155,7 +155,7 @@ namespace Testbed
 					TestSettings.restart = false;
 				}
 
-				sw.Start();
+				sw.Reset();
 				TestSettings.hz = settingsHz;
 				test.Step();
 				sw.Stop();

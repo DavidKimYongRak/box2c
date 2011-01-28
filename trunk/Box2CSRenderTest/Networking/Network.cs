@@ -94,6 +94,40 @@ namespace Box2DSharpRenderTest.Networking
 		/// Also gives him time to precache.
 		/// </summary>
 		public const byte ConnectionAck = 0;
+
+		/// <summary>
+		/// Tells the player he has been spawned
+		/// </summary>
+		public const byte SpawnAck = 1;
+
+		/// <summary>
+		/// Player data packet.
+		/// </summary>
+		public const byte PlayerData = 2;
+
+		public static class PlayerDataBits
+		{
+			public const int ActiveBit = (1 << 0);
+			public const int NameBit = (1 << 1);
+		}
+	}
+
+	public static class ServerPacketTypeBase
+	{
+		/// <summary>
+		/// Received ConnectionAck; sending back UDP data + anything else
+		/// </summary>
+		public const byte ConnectionAck = 0;
+
+		/// <summary>
+		/// Change name
+		/// </summary>
+		public const byte ChangeName = 1;
+
+		/// <summary>
+		/// Disconnected from server
+		/// </summary>
+		public const byte Disconnected = 2;
 	}
 
 	public static class PacketTypeBase
@@ -142,5 +176,8 @@ namespace Box2DSharpRenderTest.Networking
 		}
 	}
 
-	public delegate bool NetworkReceivePacket(byte packetType, BinaryWrapper reader, System.Net.IPEndPoint endPoint);
+	public delegate void NetworkReceivePacket(byte packetType, BinaryWrapper reader, System.Net.IPEndPoint endPoint);
+	public delegate void TCPNetworkReceivePacket(byte packetType, BinaryWrapper reader, Player player);
+	public delegate void ServerSendPlayerData(Player player, BinaryWriter writer);
+	public delegate void ClientRecievePlayerData(ConnectedPlayer player, BinaryWrapper reader);
 }
