@@ -729,8 +729,8 @@ namespace Box2CS
 		{
 			get
 			{
-				for (var fixture = FixtureList; fixture != null; fixture = fixture.Next)
-					yield return fixture;
+				for (Fixture? fixture = FixtureList; fixture != null; fixture = fixture.Value.Next)
+					yield return fixture.Value;
 			}
 		}
 

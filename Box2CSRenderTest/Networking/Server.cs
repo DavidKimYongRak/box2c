@@ -27,8 +27,10 @@ namespace Box2DSharpRenderTest.Networking
 		Spawned
 	}
 
-	public class PlayerList
+	public class PlayerList : IEnumerable<Player>, System.Collections.IEnumerable
 	{
+		Server _server;
+
 		List<Player> _players = new List<Player>();
 
 		public Player GetFreePlayer()
@@ -39,10 +41,26 @@ namespace Box2DSharpRenderTest.Networking
 					return x;
 			}
 
-			var player = new Player();
+			var player = new Player(_server);
+			player.Index = _players.Count;
 			_players.Add(player);
 
 			return player;
+		}
+
+		public int Count
+		{
+			get { return _players.Count; }
+		}
+
+		public IEnumerator<Player> GetEnumerator()
+		{
+			return _players.GetEnumerator();
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 
 		public Player this[int index]
@@ -67,6 +85,11 @@ namespace Box2DSharpRenderTest.Networking
 		public void Remove(Player player)
 		{
 			// FIXME: do it if needed.
+		}
+
+		public PlayerList(Server server)
+		{
+			_server = server;
 		}
 	}
 
@@ -157,6 +180,12 @@ namespace Box2DSharpRenderTest.Networking
 				set;
 			}
 
+			public string Name
+			{
+				get;
+				set;
+			}
+
 			public event NetworkReceivePacket PacketReceived;
 
 			internal void OnPacketReceived(byte packetType, BinaryWrapper reader, IPEndPoint endPoint)
@@ -191,7 +220,6 @@ namespace Box2DSharpRenderTest.Networking
 
 			protected override void ReleaseUnmanagedResources()
 			{
-				throw new NotImplementedException();
 			}
 		}
 
@@ -249,8 +277,37 @@ namespace Box2DSharpRenderTest.Networking
 			set;
 		}
 
-		public Player()
+		/// <summary>
+		/// Player's name
+		/// </summary>
+		public string Name
 		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Whether this player is active or not.
+		/// </summary>
+		public bool Active
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// User data
+		/// </summary>
+		public object Data
+		{
+			get;
+			set;
+		}
+
+		public Player(Server server)
+		{
+			Server = server;
+
 			Udp = new UDP(this);
 			Tcp = new TCP(this);
 		}
@@ -260,6 +317,7 @@ namespace Box2DSharpRenderTest.Networking
 			State = PlayerState.Connecting;
 			Tcp.Client = client;
 			Tcp.NetStreamBinary.Write((byte)ClientPacketTypeBase.ConnectionAck);
+			Tcp.NetStreamBinary.Write((byte)PacketTypeBase.EndOfMessage);
 		}
 
 		public void Check()
@@ -274,8 +332,32 @@ namespace Box2DSharpRenderTest.Networking
 
 					if (packetType == PacketTypeBase.EndOfMessage)
 						break;
+					else if (packetType == ServerPacketTypeBase.ConnectionAck)
+					{
+						Active = true;
+						int port = reader.ReadInt();
+						Udp.EndPoint = new IPEndPoint(((IPEndPoint)Tcp.Client.Client.RemoteEndPoint).Address, port);
+						string playerName = StringWriter.Read(reader);
+
+						Name = playerName;
+					}
+					else if (packetType == ServerPacketTypeBase.Disconnected)
+					{
+						Active = false;
+
+						foreach (var x in Server.Players)
+						{
+							if (x == this)
+								continue;
+
+							SendData(x, ClientPacketTypeBase.PlayerDataBits.ActiveBit);
+						}
+
+						Server.Players.Remove(this);
+					}
 
 					Tcp.OnPacketReceived(packetType, reader, (IPEndPoint)Tcp.Client.Client.RemoteEndPoint);
+					Server.OnReceiveTCPData(packetType, reader, this);
 				}
 			}
 
@@ -284,6 +366,27 @@ namespace Box2DSharpRenderTest.Networking
 				Tcp.NetStreamBinary.Write(Tcp.Memory.ToArray(), 0, (int)Tcp.Memory.Length);
 				Tcp.Memory.SetLength(0);
 			}
+		}
+
+		/// <summary>
+		/// Sends this player's data to x
+		/// </summary>
+		/// <param name="x"></param>
+		internal void SendData(Player x, byte bits)
+		{
+			x.Tcp.BatchStream.Write(ClientPacketTypeBase.PlayerData);
+			x.Tcp.BatchStream.Write((byte)Index);
+			x.Tcp.BatchStream.Write(bits);
+
+			if ((bits & ClientPacketTypeBase.PlayerDataBits.ActiveBit) != 0)
+				x.Tcp.BatchStream.Write(Active);
+
+			if ((bits & ClientPacketTypeBase.PlayerDataBits.NameBit) != 0)
+				StringWriter.Write(Name, x.Tcp.BatchStream);
+
+			Server.OnSendPlayerData(this, x.Tcp.BatchStream);
+
+			x.Tcp.BatchStream.Write(PacketTypeBase.EndOfMessage);
 		}
 
 		public void Disconnect()
@@ -298,6 +401,13 @@ namespace Box2DSharpRenderTest.Networking
 		public class UDPBackend
 		{
 			public const int Port = 10101;
+			MemoryStream _memory;
+
+			public BinaryWriter BatchStream
+			{
+				get;
+				set;
+			}
 
 			public UdpClient Listener
 			{
@@ -314,6 +424,8 @@ namespace Box2DSharpRenderTest.Networking
 			public UDPBackend(Server server)
 			{
 				Server = server;
+				_memory = new MemoryStream();
+				BatchStream = new BinaryWriter(_memory);
 			}
 
 			public void Host()
@@ -339,6 +451,28 @@ namespace Box2DSharpRenderTest.Networking
 						}
 					}
 				}
+
+				byte[] batchArray;
+
+				if (BatchStream.BaseStream.Length != 0)
+					batchArray = _memory.ToArray();
+				else
+					batchArray = new byte[0];
+
+				foreach (var c in Server.Players)
+				{
+					if (c.Udp.Stream.BaseStream.Length != 0 ||
+						BatchStream.BaseStream.Length != 0)
+					{
+						var arr = ((MemoryStream)c.Udp.Stream.BaseStream).ToArray().Concat<byte>(batchArray).ToArray<byte>();
+
+						Listener.Send(arr, arr.Length, c.Udp.EndPoint);
+
+						c.Udp.Stream.BaseStream.SetLength(0);
+					}
+				}
+
+				_memory.SetLength(0);
 			}
 
 			public void Close()
@@ -385,7 +519,7 @@ namespace Box2DSharpRenderTest.Networking
 
 			public void Host()
 			{
-				Listener = new TcpListener(GetLocalAddress("localhost"), Port);
+				Listener = new TcpListener(IPAddress.Any, Port);
 				Listener.Start();
 			}
 
@@ -403,6 +537,19 @@ namespace Box2DSharpRenderTest.Networking
 					Player player = Server.Players.GetFreePlayer();
 					player.Connect(client);
 					player.State = PlayerState.Connecting;
+				}
+
+				foreach (var c in Server.Players)
+				{
+					c.Check();
+
+					if (c.Tcp.BatchStream.BaseStream.Length != 0)
+					{
+						var arr = ((MemoryStream)c.Tcp.BatchStream.BaseStream).ToArray();
+						c.Tcp.NetStreamBinary.Write(arr);
+
+						c.Udp.Stream.BaseStream.SetLength(0);
+					}
 				}
 			}
 		}
@@ -433,9 +580,57 @@ namespace Box2DSharpRenderTest.Networking
 				ReceiveUDPData(packetType, reader, endPoint);
 		}
 
+		public event TCPNetworkReceivePacket ReceiveTCPData;
+
+		public void OnReceiveTCPData(byte packetType, BinaryWrapper reader, Player player)
+		{
+			if (ReceiveTCPData != null)
+				ReceiveTCPData(packetType, reader, player);
+		}
+
+		public event ServerSendPlayerData SendPlayerData;
+
+		internal void OnSendPlayerData(Player player, BinaryWriter writer)
+		{
+			if (SendPlayerData != null)
+				SendPlayerData(player, writer);
+		}
+
+		/// <summary>
+		/// Accepts a player's connection and finalizes it.
+		/// Do this after you have all the information you need.
+		/// </summary>
+		/// <param name="endPoint">Endpoint of theplayer</param>
+		public void AcceptPlayer(Player player)
+		{
+			player.State = PlayerState.Spawned;
+			player.Tcp.NetStreamBinary.Write((byte)ClientPacketTypeBase.SpawnAck);
+			player.Tcp.NetStreamBinary.Write(Players.Count);
+			player.Tcp.NetStreamBinary.Write(player.Index);
+			player.Tcp.NetStreamBinary.Write((byte)PacketTypeBase.EndOfMessage);
+
+			// send this player everybody's data
+			foreach (var x in Players)
+			{
+				//if (x == player)
+				//	continue;
+
+				if (x != player)
+				{
+					x.SendData(player,
+								ClientPacketTypeBase.PlayerDataBits.ActiveBit |
+								ClientPacketTypeBase.PlayerDataBits.NameBit);
+				}
+
+				player.SendData(x,
+						ClientPacketTypeBase.PlayerDataBits.ActiveBit |
+						ClientPacketTypeBase.PlayerDataBits.NameBit);
+			}
+		}
+
 		public Server()
 		{
-			Players = new PlayerList();
+			Players = new PlayerList(this);
 		}
 
 		public void Check()
