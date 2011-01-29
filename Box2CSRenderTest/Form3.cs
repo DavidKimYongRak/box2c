@@ -80,12 +80,13 @@ namespace Box2DSharpRenderTest
 			}
 			else if (packetType == MyClientPackets.ServerChat)
 			{
+				var chat = Networking.StringWriter.Read(reader);
 				foreach (var p in server.Players)
 				{
 					// if p == player continue?
 					p.Tcp.BatchStream.Write(MyClientPackets.ClientChat);
 					p.Tcp.BatchStream.Write(player.Index);
-					Networking.StringWriter.Write(Networking.StringWriter.Read(reader), p.Tcp.BatchStream);
+					Networking.StringWriter.Write(chat, p.Tcp.BatchStream);
 					p.Tcp.BatchStream.Write(Networking.PacketTypeBase.EndOfMessage);
 				}
 			}
