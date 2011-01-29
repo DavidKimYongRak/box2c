@@ -600,7 +600,7 @@ namespace Box2DSharpRenderTest.Networking
 		/// Accepts a player's connection and finalizes it.
 		/// Do this after you have all the information you need.
 		/// </summary>
-		/// <param name="endPoint">Endpoint of theplayer</param>
+		/// <param name="endPoint">Endpoint of the player</param>
 		public void AcceptPlayer(Player player)
 		{
 			player.Active = true;
@@ -616,12 +616,12 @@ namespace Box2DSharpRenderTest.Networking
 				//if (x == player)
 				//	continue;
 
-				if (x != player)
-				{
+				//if (x != player)
+				//{
 					x.SendData(player,
 								ClientPacketTypeBase.PlayerDataBits.ActiveBit |
 								ClientPacketTypeBase.PlayerDataBits.NameBit);
-				}
+				//}
 
 				player.SendData(x,
 						ClientPacketTypeBase.PlayerDataBits.ActiveBit |

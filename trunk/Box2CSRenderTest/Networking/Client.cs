@@ -27,6 +27,11 @@ namespace Box2DSharpRenderTest.Networking
 			get;
 			set;
 		}
+
+		public ConnectedPlayer(int index)
+		{
+			Index = index;
+		}
 	}
 
 	public class ConnectedPlayerList : IEnumerable<ConnectedPlayer>, System.Collections.IEnumerable
@@ -42,8 +47,7 @@ namespace Box2DSharpRenderTest.Networking
 					if (index != _players.Count)
 						throw new Exception(); // shouldn't happen!
 
-					var x = new ConnectedPlayer();
-					x.Index = _players.Count;
+					var x = new ConnectedPlayer(_players.Count);
 					_players.Add(x);
 					return x;
 				}
@@ -65,7 +69,7 @@ namespace Box2DSharpRenderTest.Networking
 		public void SetPlayers(int count)
 		{
 			for (int i = 0; i < count; ++i)
-				_players.Add(new ConnectedPlayer());
+				_players.Add(new ConnectedPlayer(i));
 		}
 
 		public void Clear()
