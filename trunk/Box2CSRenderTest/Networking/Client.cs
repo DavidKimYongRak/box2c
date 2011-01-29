@@ -43,6 +43,7 @@ namespace Box2DSharpRenderTest.Networking
 						throw new Exception(); // shouldn't happen!
 
 					var x = new ConnectedPlayer();
+					x.Index = _players.Count;
 					_players.Add(x);
 					return x;
 				}

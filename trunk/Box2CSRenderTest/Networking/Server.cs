@@ -603,6 +603,7 @@ namespace Box2DSharpRenderTest.Networking
 		/// <param name="endPoint">Endpoint of theplayer</param>
 		public void AcceptPlayer(Player player)
 		{
+			player.Active = true;
 			player.State = PlayerState.Spawned;
 			player.Tcp.NetStreamBinary.Write((byte)ClientPacketTypeBase.SpawnAck);
 			player.Tcp.NetStreamBinary.Write(Players.Count);
