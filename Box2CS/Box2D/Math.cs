@@ -188,6 +188,12 @@ namespace Box2CS
 			return (float)Math.Sqrt(X * X + Y * Y);
 		}
 
+		public float Distance(Vec2 v)
+		{
+			var sub = (this - v);
+			return sub.Dot(sub);
+		}
+
 		public float Normalize()
 		{
 			float length = Length();

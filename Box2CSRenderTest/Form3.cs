@@ -31,7 +31,6 @@ namespace Box2DSharpRenderTest
 			timer.Interval = 20;
 			timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
 			timer.SynchronizingObject = this;
-			timer.Start();
 		}
 
 		void Udp_PacketReceived(byte packetType, Networking.BinaryWrapper reader, System.Net.IPEndPoint endPoint)
@@ -120,6 +119,9 @@ namespace Box2DSharpRenderTest
 			{
 				server.Close();
 				server = null;
+
+				if (client == null)
+					timer.Start();
 				return;
 			}
 
@@ -128,18 +130,24 @@ namespace Box2DSharpRenderTest
 
 			server.ReceiveTCPData += new Networking.TCPNetworkReceivePacket(server_ReceiveTCPData);
 			server.ReceiveUDPData += new Networking.NetworkReceivePacket(server_ReceiveUDPData);
+
+			if (!timer.Enabled)
+				timer.Start();
 		}
 
+		IPDlg dlg = new IPDlg();
 		private void connectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (client != null)
 			{
 				client.Close();
 				client = null;
+
+				if (server == null)
+					timer.Start();
 				return;
 			}
 
-			using (IPDlg dlg = new IPDlg())
 			{
 				if (dlg.ShowDialog() != DialogResult.OK)
 					return;
@@ -151,8 +159,21 @@ namespace Box2DSharpRenderTest
 
 				client.Tcp.PacketReceived += new Networking.NetworkReceivePacket(Tcp_PacketReceived);
 				client.Udp.PacketReceived += new Networking.NetworkReceivePacket(Udp_PacketReceived);
+				client.ConnectionStateChanged += new Networking.ClientConnectionStateChanged(client_ConnectionStateChanged);
 
 				client.Connect(dlg.IP, dlg.PlayerName);
+
+				if (!timer.Enabled)
+					timer.Start();
+			}
+		}
+
+		void client_ConnectionStateChanged(Networking.ConnectionState state)
+		{
+			if (state == Networking.ConnectionState.Timeout)
+			{
+				MessageBox.Show("Couldn't connect to server");
+				timer.Stop();
 			}
 		}
 
