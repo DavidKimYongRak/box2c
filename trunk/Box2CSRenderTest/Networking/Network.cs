@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Box2DSharpRenderTest.Networking
 {
@@ -120,9 +122,9 @@ namespace Box2DSharpRenderTest.Networking
 		public const byte ConnectionAck = 0;
 
 		/// <summary>
-		/// Change name
+		/// Change changeable player data
 		/// </summary>
-		public const byte ChangeName = 1;
+		public const byte PlayerData = 1;
 
 		/// <summary>
 		/// Disconnected from server
@@ -176,8 +178,197 @@ namespace Box2DSharpRenderTest.Networking
 		}
 	}
 
+	public enum ConnectionState
+	{
+		Connecting,
+		Connected,
+		Timeout,
+		Disconnected
+	}
+
+	public class TcpFakeNetworkStream : Stream
+	{
+		TcpClientWrapper _wrapper;
+
+		public TcpFakeNetworkStream(TcpClientWrapper wrapper)
+		{
+			_wrapper = wrapper;
+		}
+
+		public override bool CanRead
+		{
+			get { return true; }
+		}
+
+		public override bool CanSeek
+		{
+			get { throw new NotSupportedException(); }
+		}
+
+		public override bool CanWrite
+		{
+			get { return true; }
+		}
+
+		public override long Length
+		{
+			get { throw new NotSupportedException(); }
+		}
+
+		public override long Position
+		{
+			get
+			{
+				throw new NotSupportedException();
+			}
+			set
+			{
+				throw new NotSupportedException();
+			}
+		}
+
+		public override void Flush()
+		{
+			throw new NotSupportedException();
+		}
+
+		public override long Seek(long offset, SeekOrigin origin)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override void SetLength(long value)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override int Read(byte[] buffer, int offset, int count)
+		{
+			return _wrapper.Client.Receive(buffer, offset, count, SocketFlags.None);
+		}
+
+		public override void Write(byte[] buffer, int offset, int count)
+		{
+			_wrapper.Client.Send(buffer, offset, count, SocketFlags.None);
+		}
+
+		public bool DataAvailable
+		{
+			get { return _wrapper.Client.Available != 0; }
+		}
+	}
+
+	public class TcpClientWrapper
+	{
+		Socket _socket;
+		TcpFakeNetworkStream _stream;
+
+		internal TcpClientWrapper(Socket socket)
+		{
+			_socket = socket;
+			socket.Blocking = false;
+		}
+
+		public TcpFakeNetworkStream GetStream()
+		{
+			if (_stream == null)
+				_stream = new TcpFakeNetworkStream(this);
+
+			return _stream;
+		}
+
+		public Socket Client
+		{
+			get { return _socket; }
+		}
+
+		static byte[] _buffer = new byte[0];
+		public bool IsReady()
+		{
+			return _socket.Receive(_buffer, SocketFlags.Peek) >= 0;
+		}
+
+		public void Close()
+		{
+			if (_stream != null)
+				_stream.Dispose();
+
+			if (_socket != null)
+				_socket.Close();
+		}
+	}
+
+	public class TcpWrapper
+	{
+		Socket _socket;
+		EndPoint _endPoint;
+
+		public bool Active
+		{
+			get;
+			set;
+		}
+
+		public TcpWrapper(IPAddress address, int port)
+		{
+			Active = false;
+
+			_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			_endPoint = new IPEndPoint(address, port);
+		}
+
+		public void Start(int backLog)
+		{
+			try
+			{
+				_socket.Bind(_endPoint);
+				_socket.Listen(backLog);
+				Active = true;
+			}
+			catch
+			{
+				Stop();
+				throw;
+			}
+		}
+
+		public void Start()
+		{
+			Start(0x7fffffff);
+		}
+
+		public void Stop()
+		{
+			if (_socket != null)
+			{
+				_socket.Close();
+				_socket = null;
+			}
+
+			Active = false;
+			_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		}
+
+		public void Close()
+		{
+			_socket.Close(2);
+		}
+
+		static byte[] emptyBuffer = new byte[0];
+		public bool Pending()
+		{
+			return _socket.Poll(0, SelectMode.SelectRead);
+		}
+
+		public TcpClientWrapper Accept()
+		{
+			return new TcpClientWrapper(_socket.Accept());
+		}
+	}
+
 	public delegate void NetworkReceivePacket(byte packetType, BinaryWrapper reader, System.Net.IPEndPoint endPoint);
 	public delegate void TCPNetworkReceivePacket(byte packetType, BinaryWrapper reader, Player player);
 	public delegate void ServerSendPlayerData(Player player, BinaryWriter writer);
 	public delegate void ClientRecievePlayerData(ConnectedPlayer player, BinaryWrapper reader);
+	public delegate void ClientConnectionStateChanged(ConnectionState state);
 }

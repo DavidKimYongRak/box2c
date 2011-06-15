@@ -66,10 +66,23 @@ namespace Box2DSharpRenderTest.Networking
 			return GetEnumerator();
 		}
 
+		public IEnumerator<ConnectedPlayer> PlayersFromActive(bool active)
+		{
+			foreach (var x in _players)
+			{
+				if (x.Active)
+					yield return x;
+			}
+		}
+
 		public void SetPlayers(int count)
 		{
 			for (int i = 0; i < count; ++i)
 				_players.Add(new ConnectedPlayer(i));
+		}
+
+		public void Remove(ConnectedPlayer player)
+		{
 		}
 
 		public void Clear()
@@ -121,6 +134,12 @@ namespace Box2DSharpRenderTest.Networking
 				private set;
 			}
 
+			public DateTime ConnectionTime
+			{
+				get;
+				set;
+			}
+
 			public void Connect(string hostName)
 			{
 				Client = new TcpClient();
@@ -131,11 +150,13 @@ namespace Box2DSharpRenderTest.Networking
 						NetStream = Client.GetStream();
 						NetStreamBinary = new BinaryWriter(NetStream);
 						Connected = true;
+						_client.ConnectionState = ConnectionState.Connected;
 					}
 					, null);
 
 				_memory = new MemoryStream();
 				BatchStream = new BinaryWriter(_memory);
+				ConnectionTime = DateTime.Now;
 			}
 
 			public event NetworkReceivePacket PacketReceived;
@@ -149,7 +170,13 @@ namespace Box2DSharpRenderTest.Networking
 			public void Check()
 			{
 				if (!Connected)
+				{
+					if (_client.ConnectionState == ConnectionState.Connecting &&
+						(DateTime.Now - ConnectionTime).Seconds > 4)
+						_client.ConnectionState = ConnectionState.Timeout;
+
 					return;
+				}
 
 				while (Client.Available != 0)
 				{
@@ -185,6 +212,9 @@ namespace Box2DSharpRenderTest.Networking
 							if ((bits & ClientPacketTypeBase.PlayerDataBits.NameBit) != 0)
 								player.Name = StringWriter.Read(reader);
 
+							if (player.Active == false)
+								_client.Players.Remove(player);
+
 							_client.OnPlayerDataReceived(player, reader);
 						}
 
@@ -205,6 +235,8 @@ namespace Box2DSharpRenderTest.Networking
 				Client.Close();
 				Client = null;
 				BatchStream.Close();
+
+				_client.ConnectionState = ConnectionState.Disconnected;
 			}
 		}
 
@@ -328,6 +360,19 @@ namespace Box2DSharpRenderTest.Networking
 			set;
 		}
 
+		ConnectionState _state = ConnectionState.Disconnected;
+		public ConnectionState ConnectionState
+		{
+			get { return _state; }
+			set
+			{
+				if (_state != value)
+					OnConnectionStateChanged(value);
+
+				_state = value;
+			}
+		}
+
 		public event ClientRecievePlayerData PlayerDataReceived;
 
 		internal void OnPlayerDataReceived(ConnectedPlayer player, BinaryWrapper reader)
@@ -367,7 +412,15 @@ namespace Box2DSharpRenderTest.Networking
 		{
 			writer.Write(((IPEndPoint)Udp.Client.Client.LocalEndPoint).Port);
 		}
-		
+
+		public event ClientConnectionStateChanged ConnectionStateChanged;
+
+		internal void OnConnectionStateChanged(ConnectionState state)
+		{
+			if (ConnectionStateChanged != null)
+				ConnectionStateChanged(state);
+		}
+
 		public void Connected()
 		{
 			Tcp.NetStreamBinary.Write(ServerPacketTypeBase.ConnectionAck);
@@ -379,6 +432,7 @@ namespace Box2DSharpRenderTest.Networking
 		{
 			Name = name;
 
+			ConnectionState = Networking.ConnectionState.Connecting;
 			Tcp.Connect(hostName);
 			Udp.Connect(hostName);
 		}

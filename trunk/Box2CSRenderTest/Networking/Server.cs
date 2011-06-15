@@ -152,8 +152,8 @@ namespace Box2DSharpRenderTest.Networking
 				set;
 			}
 
-			TcpClient _client;
-			public TcpClient Client
+			TcpClientWrapper _client;
+			public TcpClientWrapper Client
 			{
 				get { return _client; }
 				set
@@ -168,7 +168,7 @@ namespace Box2DSharpRenderTest.Networking
 				}
 			}
 
-			public NetworkStream NetStream
+			public TcpFakeNetworkStream NetStream
 			{
 				get;
 				set;
@@ -312,7 +312,7 @@ namespace Box2DSharpRenderTest.Networking
 			Tcp = new TCP(this);
 		}
 
-		public void Connect(TcpClient client)
+		public void Connect(TcpClientWrapper client)
 		{
 			State = PlayerState.Connecting;
 			Tcp.Client = client;
@@ -320,8 +320,47 @@ namespace Box2DSharpRenderTest.Networking
 			Tcp.NetStreamBinary.Write((byte)PacketTypeBase.EndOfMessage);
 		}
 
+		DateTime _lastCheck = DateTime.Now;
+		public bool CheckConnect()
+		{
+			try
+			{
+				if ((DateTime.Now - _lastCheck).Seconds >= 7)
+				{
+					_lastCheck = DateTime.Now;
+					return Tcp.Client.IsReady();
+				}
+			}
+			catch (SocketException ex)
+			{
+				switch (ex.SocketErrorCode)
+				{
+				case SocketError.ConnectionAborted:
+				case SocketError.ConnectionReset:
+				case SocketError.HostUnreachable:
+				case SocketError.HostDown:
+				case SocketError.NetworkUnreachable:
+				case SocketError.NotConnected:
+				case SocketError.OperationAborted:
+					return false;
+				case SocketError.WouldBlock:
+					return true;
+				}
+
+				throw;
+			}
+
+			return true;
+		}
+
 		public void Check()
 		{
+			if (!CheckConnect())
+			{
+				Disconnect();
+				return;
+			}
+
 			while (Tcp.NetStream.DataAvailable)
 			{
 				var reader = new BinaryWrapper(Tcp.NetStream);
@@ -343,17 +382,7 @@ namespace Box2DSharpRenderTest.Networking
 					}
 					else if (packetType == ServerPacketTypeBase.Disconnected)
 					{
-						Active = false;
-
-						foreach (var x in Server.Players)
-						{
-							if (x == this)
-								continue;
-
-							SendData(x, ClientPacketTypeBase.PlayerDataBits.ActiveBit);
-						}
-
-						Server.Players.Remove(this);
+						Disconnect();
 					}
 
 					Tcp.OnPacketReceived(packetType, reader, (IPEndPoint)Tcp.Client.Client.RemoteEndPoint);
@@ -391,6 +420,20 @@ namespace Box2DSharpRenderTest.Networking
 
 		public void Disconnect()
 		{
+			Active = false;
+
+			foreach (var x in Server.Players)
+			{
+				if (x == this)
+					continue;
+
+				SendData(x, ClientPacketTypeBase.PlayerDataBits.ActiveBit);
+			}
+
+			State = PlayerState.Disconnected;
+			Name = "";
+			Server.Players.Remove(this);
+
 			Udp.Close();
 			Tcp.Close();
 		}
@@ -485,7 +528,7 @@ namespace Box2DSharpRenderTest.Networking
 		{
 			public const int Port = 01010;
 
-			public TcpListener Listener
+			public TcpWrapper Listener
 			{
 				get;
 				set;
@@ -519,7 +562,7 @@ namespace Box2DSharpRenderTest.Networking
 
 			public void Host()
 			{
-				Listener = new TcpListener(IPAddress.Any, Port);
+				Listener = new TcpWrapper(IPAddress.Any, Port);
 				Listener.Start();
 			}
 
@@ -532,7 +575,7 @@ namespace Box2DSharpRenderTest.Networking
 			{
 				while (Listener.Pending())
 				{
-					var client = Listener.AcceptTcpClient();
+					var client = Listener.Accept();
 
 					Player player = Server.Players.GetFreePlayer();
 					player.Connect(client);
